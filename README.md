@@ -1,0 +1,1 @@
+drops a dragon egg for every ender dragon killed with some special effects!
