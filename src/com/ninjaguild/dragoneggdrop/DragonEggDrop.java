@@ -12,38 +12,34 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class DragonEggDrop extends JavaPlugin implements Listener
-{
-	private static DragonEggDrop instance;
-	private double y = 180D;
+public class DragonEggDrop extends JavaPlugin implements Listener {
 	
-	public void onEnable()
-	{
+	private static DragonEggDrop instance;
+	private static final double DROP_START_HEIGHT = 180D;
+	
+	public void onEnable() {
 		instance = this;
 		
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 	
-	public void onDisable()
-	{
+	public void onDisable() {
 	}
 	
-	private static DragonEggDrop getInstance()
-	{
+	private static DragonEggDrop getInstance() {
 		return instance;
 	}
 	
 	@EventHandler
-	private void onDragonDeath(EntityDeathEvent e)
-	{
-		if (e.getEntityType() == EntityType.ENDER_DRAGON)
-		{
+	private void onDragonDeath(EntityDeathEvent e) {
+		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			new BukkitRunnable()
 			{
+				double startingY = DROP_START_HEIGHT;
+				
 				@Override
-				public void run()
-				{
-					Item egg = e.getEntity().getWorld().dropItem(new Location(e.getEntity().getWorld(), 0.5D, y, 0.5D), new ItemStack(Material.DRAGON_EGG));
+				public void run() {
+					Item egg = e.getEntity().getWorld().dropItem(new Location(e.getEntity().getWorld(), 0.5D, startingY, 0.5D), new ItemStack(Material.DRAGON_EGG));
 					egg.setPickupDelay(Integer.MAX_VALUE);
 
 					new BukkitRunnable()
@@ -51,8 +47,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener
 						@Override
 						public void run()
 						{
-							egg.teleport(new Location(egg.getWorld(), 0.5D, y, 0.5D));
-							y -= 1D;
+							egg.teleport(new Location(egg.getWorld(), 0.5D, startingY, 0.5D));
+							startingY -= 1D;
 							
 							egg.getWorld().spawnParticle(Particle.FLAME, egg.getLocation(), 250);
 
@@ -90,4 +86,5 @@ public class DragonEggDrop extends JavaPlugin implements Listener
 			}.runTaskLater(this, 300L);
 		}
 	}
+	
 }
