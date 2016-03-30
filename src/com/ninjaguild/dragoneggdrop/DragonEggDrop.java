@@ -51,27 +51,24 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 							
 							for (int i = 0; i < 10; i++) {
 								Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(i * -1));
-								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, 1, 0D, 0D, 0D, 0D, 0);
+								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, 1, 0D, 0D, 0D, 0D);
 							}
 
-							if (egg == null || egg.isOnGround() || egg.isDead())
-							{
+							if (egg == null || egg.isOnGround() || egg.isDead()) {
 								cancel();
 
-								if (egg.isOnGround())
-								{
+								if (egg.isOnGround()) {
 								    new BukkitRunnable()
 									{
 									    @Override
-										public void run()
-										{
+										public void run() {
 									    	Location eggLoc = egg.getLocation();
 									    	double eX = eggLoc.getX();
 									    	double eY = eggLoc.getY();
 									    	double eZ = eggLoc.getZ();
 									    	egg.getWorld().createExplosion(eX, eY, eZ, 0f, false, false);
                                             
-									    	int lightningAmount = DragonEggDrop.getInstance().getConfig().getInt("lightning-amount");
+									    	int lightningAmount = DragonEggDrop.getInstance().getConfig().getInt("lightning-amount", 1);
 									    	for (int i = 0; i < lightningAmount; i++) {
 									    	    egg.getWorld().strikeLightningEffect(eggLoc);
 									    	}
