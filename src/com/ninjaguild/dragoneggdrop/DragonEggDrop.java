@@ -35,24 +35,26 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			new BukkitRunnable()
 			{
-				double startingY = DROP_START_HEIGHT;
+				double currentY = DROP_START_HEIGHT;
 				
 				@Override
 				public void run() {
-					Item egg = e.getEntity().getWorld().dropItem(new Location(e.getEntity().getWorld(), 0.5D, startingY, 0.5D), new ItemStack(Material.DRAGON_EGG));
+					Item egg = e.getEntity().getWorld().dropItem(new Location(e.getEntity().getWorld(), 0.5D, currentY, 0.5D), new ItemStack(Material.DRAGON_EGG));
 					egg.setPickupDelay(Integer.MAX_VALUE);
 
 					new BukkitRunnable()
 					{
 						@Override
-						public void run()
-						{
-							egg.teleport(new Location(egg.getWorld(), 0.5D, startingY, 0.5D));
-							startingY -= 1D;
+						public void run() {
+							egg.teleport(new Location(egg.getWorld(), 0.5D, currentY, 0.5D));
+							currentY -= 1D;
 							
-							egg.getWorld().spawnParticle(Particle.FLAME, egg.getLocation(), 250);
+							for (int i = 0; i < 10; i++) {
+								Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(i * -1));
+								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, 1, 0D, 0D, 0D, 0D, 0);
+							}
 
-							if (egg.isOnGround() || egg.isDead() || egg == null)
+							if (egg == null || egg.isOnGround() || egg.isDead())
 							{
 								cancel();
 
@@ -68,8 +70,11 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 									    	double eY = eggLoc.getY();
 									    	double eZ = eggLoc.getZ();
 									    	egg.getWorld().createExplosion(eX, eY, eZ, 0f, false, false);
-
-									    	egg.getWorld().strikeLightningEffect(egg.getLocation());
+                                            
+									    	int lightningAmount = DragonEggDrop.getInstance().getConfig().getInt("lightning-amount");
+									    	for (int i = 0; i < lightningAmount; i++) {
+									    	    egg.getWorld().strikeLightningEffect(eggLoc);
+									    	}
 
 									    	egg.getWorld().getBlockAt(egg.getLocation()).setType(Material.DRAGON_EGG);
 									    	egg.remove();
