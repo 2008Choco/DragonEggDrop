@@ -1,6 +1,5 @@
 package com.ninjaguild.dragoneggdrop;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -22,7 +21,6 @@ public class DragonDeathRunnable implements Runnable {
 	private double oZ = 0D;
 	private Particle particleType = null;
 	
-	//private Item egg = null;
 	private World world = null;
 
 	public DragonDeathRunnable(DragonEggDrop plugin, World world) {
@@ -62,9 +60,6 @@ public class DragonDeathRunnable implements Runnable {
 				}
 
 				if (egg == null || egg.isOnGround() || egg.isDead()) {
-					Bukkit.broadcastMessage("EGG NULL?: " + (egg == null));
-					Bukkit.broadcastMessage("EGG DEAD?: " + egg.isDead());
-					Bukkit.broadcastMessage("EGG GROUND?: " + egg.isOnGround());
 					cancel();
 
 					if (egg.isOnGround()) {
