@@ -3,15 +3,12 @@ package com.ninjaguild.dragoneggdrop;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DragonDeathRunnable implements Runnable {
 
 	private DragonEggDrop plugin = null;
-	private World world = null;
 
 	private int particleAmount = 0;
 	private double particleLength = 0D;
@@ -22,13 +19,13 @@ public class DragonDeathRunnable implements Runnable {
 	private double oZ = 0D;
 	private Particle particleType = null;
 
-	//private Item egg = null;
-
 	private static final double DROP_START_HEIGHT = 180D;
+	
+	private Item egg = null;
 
-	public DragonDeathRunnable(DragonEggDrop plugin, World world) {
+	public DragonDeathRunnable(DragonEggDrop plugin, Item egg) {
 		this.plugin = plugin;
-		this.world = world;
+		this.egg = egg;
 
 		particleAmount = plugin.getConfig().getInt("particle-amount", 4);
 		particleLength = plugin.getConfig().getDouble("particle-length", 6.0D);
@@ -38,16 +35,10 @@ public class DragonDeathRunnable implements Runnable {
 		oY = plugin.getConfig().getDouble("particle-offset-y", 0D);
 		oZ = plugin.getConfig().getDouble("particle-offset-z", 0.25D);
 		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
-
-//		egg = world.dropItem(new Location(world, 0.5D, DragonDeathRunnable.DROP_START_HEIGHT, 0.5D), new ItemStack(Material.DRAGON_EGG));
-//		egg.setPickupDelay(Integer.MAX_VALUE);
 	}
 
 	@Override
 	public void run() {
-		Item egg = world.dropItem(new Location(world, 0.5D, DragonDeathRunnable.DROP_START_HEIGHT, 0.5D), new ItemStack(Material.DRAGON_EGG));
-		egg.setPickupDelay(Integer.MAX_VALUE);
-		
 		new BukkitRunnable()
 		{
 			double currentY = DROP_START_HEIGHT;

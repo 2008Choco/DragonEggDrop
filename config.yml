@@ -2,6 +2,9 @@
 version: 1.0.0
 # ----------------------- #
 
+#The Y location the egg item will spawn at
+egg-start-y: 180.0
+
 #Type of particle, see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
 particle-type: 'FLAME'
 
