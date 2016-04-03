@@ -1,9 +1,12 @@
 package com.ninjaguild.dragoneggdrop;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DragonDeathRunnable implements Runnable {
@@ -18,14 +21,14 @@ public class DragonDeathRunnable implements Runnable {
 	private double oY = 0D;
 	private double oZ = 0D;
 	private Particle particleType = null;
-
-	private static final double DROP_START_HEIGHT = 180D;
 	
 	private Item egg = null;
 
-	public DragonDeathRunnable(DragonEggDrop plugin, Item egg) {
+	public DragonDeathRunnable(DragonEggDrop plugin, World world) {
 		this.plugin = plugin;
-		this.egg = egg;
+		
+		egg = world.dropItem(new Location(world, 0.5D, plugin.getConfig().getDouble("egg-start-y", 180D), 0.5D), new ItemStack(Material.DRAGON_EGG));
+		egg.setPickupDelay(Integer.MAX_VALUE);
 
 		particleAmount = plugin.getConfig().getInt("particle-amount", 4);
 		particleLength = plugin.getConfig().getDouble("particle-length", 6.0D);
@@ -41,7 +44,7 @@ public class DragonDeathRunnable implements Runnable {
 	public void run() {
 		new BukkitRunnable()
 		{
-			double currentY = DROP_START_HEIGHT;
+			double currentY = egg.getLocation().getY();
 			
 			@Override
 			public void run() {
@@ -55,6 +58,9 @@ public class DragonDeathRunnable implements Runnable {
 				}
 
 				if (egg == null || egg.isOnGround() || egg.isDead()) {
+					Bukkit.broadcastMessage("EGG NULL?: " + (egg == null));
+					Bukkit.broadcastMessage("EGG DEAD?: " + egg.isDead());
+					Bukkit.broadcastMessage("EGG GROUND?: " + egg.isOnGround());
 					cancel();
 
 					if (egg.isOnGround()) {
@@ -63,6 +69,7 @@ public class DragonDeathRunnable implements Runnable {
 							@Override
 							public void run() {
 								Location eggLoc = egg.getLocation();
+								egg.remove();
 								double eX = eggLoc.getX();
 								double eY = eggLoc.getY();
 								double eZ = eggLoc.getZ();
@@ -77,7 +84,7 @@ public class DragonDeathRunnable implements Runnable {
 								}
 
 								eggLoc.getWorld().getBlockAt(egg.getLocation()).setType(Material.DRAGON_EGG);
-								egg.remove();
+								//egg.remove();
 							}
 
 						}.runTask(plugin);
@@ -85,6 +92,6 @@ public class DragonDeathRunnable implements Runnable {
 				}
 			}
 
-		}.runTaskTimerAsynchronously(plugin, 20L, particleInterval);
+		}.runTaskTimerAsynchronously(plugin, 300L, particleInterval);
 	}
 }

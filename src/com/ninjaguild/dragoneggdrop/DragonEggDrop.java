@@ -7,16 +7,12 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class DragonEggDrop extends JavaPlugin implements Listener {
 
@@ -45,9 +41,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	private void onDragonDeath(EntityDeathEvent e) {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			World world = e.getEntity().getWorld();
-			Item egg = world.dropItem(new Location(world, 0.5D, getConfig().getDouble("egg-start-y", 180D), 0.5D), new ItemStack(Material.DRAGON_EGG));
-			egg.setPickupDelay(Integer.MAX_VALUE);
-			getServer().getScheduler().runTaskLater(this, new DragonDeathRunnable(this, egg), 300L);
+			getServer().getScheduler().runTask(this, new DragonDeathRunnable(this, world));
 		}
 	}
 	
