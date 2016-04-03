@@ -2,3 +2,12 @@ name: DragonEggDrop
 main: com.ninjaguild.dragoneggdrop.DragonEggDrop
 version: 1.0.0
 author: NinjaStix
+
+commands:
+  dragoneggdrop:
+    usage: /dragoneggdrop [reload]
+    aliases: [ded]
+
+permissions:
+  dragoneggdrop.reload:
+    default: op

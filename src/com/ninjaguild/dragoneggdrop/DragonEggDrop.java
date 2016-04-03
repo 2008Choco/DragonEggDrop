@@ -3,11 +3,15 @@ package com.ninjaguild.dragoneggdrop;
 import java.util.logging.Level;
 
 import org.bukkit.Particle;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.ChatColor;
 
 public class DragonEggDrop extends JavaPlugin implements Listener {
 
@@ -25,6 +29,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		}
 		
 		getServer().getPluginManager().registerEvents(this, this);
+		getCommand("dragoneggdrop").setExecutor(this);
 	}
 	
 	public void onDisable() {
@@ -36,5 +41,37 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			getServer().getScheduler().runTaskLater(this, new DragonDeathRunnable(this, e.getEntity().getWorld()), 300L);
 		}
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("dragoneggdrop")) {
+			if (args.length == 0) {
+        		PluginDescriptionFile pdf = getDescription();
+        		
+    	        sender.sendMessage(ChatColor.GOLD + "-------------------");
+    	        sender.sendMessage(ChatColor.GOLD + "--  DragonEggDrop  --");
+    	        sender.sendMessage(ChatColor.GOLD + "-------------------");
+    	        sender.sendMessage(ChatColor.GOLD + "Author: " + pdf.getAuthors().get(0));
+    	        sender.sendMessage(ChatColor.GOLD + "Version: " + pdf.getVersion());
+    	        sender.sendMessage(ChatColor.GOLD + "-------------------");
+        		
+        		return false;
+			}
+			else if (args.length == 1) {
+				if (args[0].equalsIgnoreCase("reload")) {
+					if (sender.hasPermission("dragoneggdrop.reload")) {
+						reloadConfig();
+						sender.sendMessage(ChatColor.GREEN + "Reload Complete");
+					}
+					else {
+						sender.sendMessage(ChatColor.RED + "Permission Denied!");
+					}
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }
