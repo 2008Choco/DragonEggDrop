@@ -50,9 +50,11 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 							egg.teleport(new Location(egg.getWorld(), 0.5D, currentY, 0.5D));
 							currentY -= 1D;
 							
-							for (int i = 0; i < 10; i++) {
-								Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(i * -1));
-								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, 1, 0D, 0D, 0D, 0D);
+							int particleAmount = getConfig().getInt("particle-amount", 1);
+							int particleLength = getConfig().getInt("particle-length", 4);
+							for (double d = 0; d < particleLength; d+=0.1D) {
+								Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(d * -1));
+								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, particleAmount, 0D, 0D, 0D, 0D);
 							}
 
 							if (egg == null || egg.isOnGround() || egg.isDead()) {
@@ -70,8 +72,11 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 									    	egg.getWorld().createExplosion(eX, eY, eZ, 0f, false, false);
                                             
 									    	int lightningAmount = DragonEggDrop.getInstance().getConfig().getInt("lightning-amount", 1);
-									    	for (int i = 0; i < lightningAmount; i++) {
-									    	    egg.getWorld().strikeLightningEffect(eggLoc);
+									    	egg.getWorld().strikeLightningEffect(eggLoc);
+									    	if (lightningAmount > 1) {
+									    		for (int i = 0; i < (lightningAmount - 1); i++) {
+									    			egg.getWorld().spigot().strikeLightningEffect(eggLoc, true);
+									    		}
 									    	}
 
 									    	egg.getWorld().getBlockAt(egg.getLocation()).setType(Material.DRAGON_EGG);

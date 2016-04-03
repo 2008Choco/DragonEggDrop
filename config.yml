@@ -1,2 +1,3 @@
-#numer of lighting entities to spawn on egg landing
+particle-length: 6
+particle-amount: 4
 lightning-amount: 4
