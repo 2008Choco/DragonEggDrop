@@ -75,7 +75,7 @@ public class DragonDeathRunnable implements Runnable {
 							public void run() {
 								eggLoc.getWorld().createExplosion(eX, eY, eZ, 0f, false, false);
 
-								int lightningAmount = plugin.getConfig().getInt("lightning-amount", 1);
+								int lightningAmount = plugin.getConfig().getInt("lightning-amount", 4);
 								eggLoc.getWorld().strikeLightningEffect(eggLoc);
 								if (lightningAmount > 1) {
 									for (int i = 0; i < (lightningAmount - 1); i++) {
