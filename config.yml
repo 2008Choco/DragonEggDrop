@@ -1,3 +1,26 @@
-particle-length: 6
+# DO NOT REMOVE OR MODIFY #
+version: 1.0.0
+# ----------------------- #
+
+#Type of particle, see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+particle-type: 'FLAME'
+
+#The number of particles to spawn
 particle-amount: 4
+
+#The length of the particle trail
+particle-length: 6.0
+
+#Extra value of the particle
+particle-extra: 0.0
+
+#Particle offsets
+particle-offset-x: 0.25
+particle-offset-y: 0.0
+particle-offset-z: 0.25
+
+#How often to spawn the particles (in ticks)
+particle-interval: 1
+
+#Number of lightning entities to spawn on egg land
 lightning-amount: 4
