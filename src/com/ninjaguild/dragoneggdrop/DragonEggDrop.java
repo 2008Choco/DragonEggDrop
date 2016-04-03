@@ -40,7 +40,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	private void onDragonDeath(EntityDeathEvent e) {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			World world = e.getEntity().getWorld();
-			getServer().getScheduler().runTask(this, new DragonDeathRunnable(this, world));
+			getServer().getScheduler().runTaskLater(this, new DragonDeathRunnable(this, world), 300L);
 		}
 	}
 	

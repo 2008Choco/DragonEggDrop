@@ -38,27 +38,28 @@ public class DragonDeathRunnable implements Runnable {
 		oZ = plugin.getConfig().getDouble("particle-offset-z", 0.25D);
 		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
 	}
-
+	
 	@Override
 	public void run() {
-		Item egg = world.dropItem(new Location(world, 0.5D, plugin.getConfig().getDouble("egg-start-y", 180D), 0.5D), new ItemStack(Material.DRAGON_EGG));
+		double startY = plugin.getConfig().getDouble("egg-start-y", 180D);
+		
+		Item egg = world.dropItem(new Location(world, 0.5D, startY, 0.5D), new ItemStack(Material.DRAGON_EGG));
 		egg.setPickupDelay(Integer.MAX_VALUE);
 		
 		new BukkitRunnable()
 		{
-			double currentY = egg.getLocation().getY();
+			double currentY = startY;
 			
 			@Override
 			public void run() {
 				//don't know why I keep having to tp it back to correct x,z :/
 				egg.teleport(new Location(egg.getWorld(), 0.5D, currentY, 0.5D));
+				currentY -= 1D;
 				
 				for (double d = 0; d < particleLength; d+=0.1D) {
 					Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(d * -1));
 					egg.getWorld().spawnParticle(particleType, particleLoc, particleAmount, oX, oY, oZ, particleExtra, null);
 				}
-				
-				currentY -= 1D;
 
 				if (egg == null || egg.isOnGround() || egg.isDead()) {
 					Bukkit.broadcastMessage("EGG NULL?: " + (egg == null));
@@ -95,6 +96,6 @@ public class DragonDeathRunnable implements Runnable {
 				}
 			}
 
-		}.runTaskTimerAsynchronously(plugin, 300L, particleInterval);
+		}.runTaskTimerAsynchronously(plugin, 0L, particleInterval);
 	}
 }
