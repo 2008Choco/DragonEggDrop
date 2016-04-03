@@ -20,6 +20,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	public void onEnable() {
 		instance = this;
 		
+		saveDefaultConfig();
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 	
