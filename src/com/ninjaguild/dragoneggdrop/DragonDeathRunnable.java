@@ -58,7 +58,7 @@ public class DragonDeathRunnable implements Runnable {
 					Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(d * -1));
 					egg.getWorld().spawnParticle(particleType, particleLoc, particleAmount, oX, oY, oZ, particleExtra, null);
 				}
-
+				
 				if (egg == null || egg.isOnGround() || egg.isDead()) {
 					cancel();
 
