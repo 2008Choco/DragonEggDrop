@@ -9,9 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DragonDeathRunnable implements Runnable {
-	
+
 	private DragonEggDrop plugin = null;
-	
+	private World world = null;
+
 	private int particleAmount = 0;
 	private double particleLength = 0D;
 	private double particleExtra = 0D;
@@ -20,13 +21,14 @@ public class DragonDeathRunnable implements Runnable {
 	private double oY = 0D;
 	private double oZ = 0D;
 	private Particle particleType = null;
-	
-	private Item egg = null;
+
+	//private Item egg = null;
 
 	private static final double DROP_START_HEIGHT = 180D;
-	
+
 	public DragonDeathRunnable(DragonEggDrop plugin, World world) {
 		this.plugin = plugin;
+		this.world = world;
 
 		particleAmount = plugin.getConfig().getInt("particle-amount", 4);
 		particleLength = plugin.getConfig().getDouble("particle-length", 6.0D);
@@ -37,16 +39,19 @@ public class DragonDeathRunnable implements Runnable {
 		oZ = plugin.getConfig().getDouble("particle-offset-z", 0.25D);
 		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
 
-		egg = world.dropItem(new Location(world, 0.5D, DragonDeathRunnable.DROP_START_HEIGHT, 0.5D), new ItemStack(Material.DRAGON_EGG));
-		egg.setPickupDelay(Integer.MAX_VALUE);
+//		egg = world.dropItem(new Location(world, 0.5D, DragonDeathRunnable.DROP_START_HEIGHT, 0.5D), new ItemStack(Material.DRAGON_EGG));
+//		egg.setPickupDelay(Integer.MAX_VALUE);
 	}
 
 	@Override
 	public void run() {
+		Item egg = world.dropItem(new Location(world, 0.5D, DragonDeathRunnable.DROP_START_HEIGHT, 0.5D), new ItemStack(Material.DRAGON_EGG));
+		egg.setPickupDelay(Integer.MAX_VALUE);
+		
 		new BukkitRunnable()
 		{
 			double currentY = DROP_START_HEIGHT;
-
+			
 			@Override
 			public void run() {
 				//don't know why I keep having to tp it back to correct x,z :/
@@ -89,7 +94,7 @@ public class DragonDeathRunnable implements Runnable {
 					}
 				}
 			}
+
 		}.runTaskTimerAsynchronously(plugin, 300L, particleInterval);
 	}
-	
 }
