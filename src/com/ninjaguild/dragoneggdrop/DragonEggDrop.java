@@ -18,7 +18,6 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 
 	public void onEnable() {
 		saveDefaultConfig();
-		reloadConfig();
 
 		try {
 			Particle.valueOf(getConfig().getString("particle-type", "FLAME").toUpperCase());
