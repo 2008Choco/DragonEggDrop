@@ -54,7 +54,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 							int particleLength = getConfig().getInt("particle-length", 4);
 							for (double d = 0; d < particleLength; d+=0.1D) {
 								Location particleLoc = egg.getLocation().clone().add(egg.getVelocity().normalize().multiply(d * -1));
-								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, particleAmount, 0D, 0D, 0D, 0D);
+								egg.getWorld().spawnParticle(Particle.FLAME, particleLoc, particleAmount, 0.25D, 0D, 0.25D, 0D, null);
 							}
 
 							if (egg == null || egg.isOnGround() || egg.isDead()) {
