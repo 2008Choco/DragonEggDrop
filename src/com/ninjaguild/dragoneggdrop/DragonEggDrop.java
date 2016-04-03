@@ -51,7 +51,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
         		PluginDescriptionFile pdf = getDescription();
         		
     	        sender.sendMessage(ChatColor.GOLD + "-------------------");
-    	        sender.sendMessage(ChatColor.GOLD + "--  DragonEggDrop  --");
+    	        sender.sendMessage(ChatColor.GOLD + "    DragonEggDrop");
     	        sender.sendMessage(ChatColor.GOLD + "-------------------");
     	        sender.sendMessage(ChatColor.GOLD + "Author: " + pdf.getAuthors().get(0));
     	        sender.sendMessage(ChatColor.GOLD + "Version: " + pdf.getVersion());
