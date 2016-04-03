@@ -63,7 +63,6 @@ public class DragonDeathRunnable implements Runnable {
 							@Override
 							public void run() {
 								Location eggLoc = egg.getLocation();
-								egg.remove();
 								double eX = eggLoc.getX();
 								double eY = eggLoc.getY();
 								double eZ = eggLoc.getZ();
@@ -78,7 +77,7 @@ public class DragonDeathRunnable implements Runnable {
 								}
 
 								eggLoc.getWorld().getBlockAt(egg.getLocation()).setType(Material.DRAGON_EGG);
-								//egg.remove();
+								egg.remove();
 							}
 
 						}.runTask(plugin);
@@ -86,6 +85,6 @@ public class DragonDeathRunnable implements Runnable {
 				}
 			}
 
-		}.runTaskTimerAsynchronously(plugin, 300L, particleInterval);
+		}.runTaskTimerAsynchronously(plugin, 20L, particleInterval);
 	}
 }
