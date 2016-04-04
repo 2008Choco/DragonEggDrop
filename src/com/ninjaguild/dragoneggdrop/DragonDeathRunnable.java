@@ -93,4 +93,5 @@ public class DragonDeathRunnable implements Runnable {
 
 		}.runTaskTimerAsynchronously(plugin, 0L, particleInterval);
 	}
+	
 }
