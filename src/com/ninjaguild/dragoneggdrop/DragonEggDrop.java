@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 
 public class DragonEggDrop extends JavaPlugin implements Listener {
 
@@ -39,8 +40,10 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	@EventHandler
 	private void onDragonDeath(EntityDeathEvent e) {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
+			//get if the dragon has been previously killed
+			boolean prevKilled = (((CraftEnderDragon)e.getEntity()).getHandle()).cU().d();
 			World world = e.getEntity().getWorld();
-			getServer().getScheduler().runTaskLater(this, new DragonDeathRunnable(this, world), 300L);
+			getServer().getScheduler().runTaskLater(this, new DragonDeathRunnable(this, world, prevKilled), 300L);
 		}
 	}
 	

@@ -22,10 +22,14 @@ public class DragonDeathRunnable implements Runnable {
 	private Particle particleType = null;
 	
 	private World world = null;
+	
+	private boolean placeEgg = false;
 
-	public DragonDeathRunnable(DragonEggDrop plugin, World world) {
+	public DragonDeathRunnable(DragonEggDrop plugin, World world, boolean prevKilled) {
 		this.plugin = plugin;
 		this.world = world;
+		
+		this.placeEgg = prevKilled;
 
 		particleAmount = plugin.getConfig().getInt("particle-amount", 4);
 		particleLength = plugin.getConfig().getDouble("particle-length", 6.0D);
@@ -50,7 +54,7 @@ public class DragonDeathRunnable implements Runnable {
 			
 			@Override
 			public void run() {
-				//don't know why I keep having to tp it back to correct x,z :/
+				//don't know why I keep having to TP it back to correct x,z :/
 				egg.teleport(new Location(egg.getWorld(), 0.5D, currentY, 0.5D));
 				currentY -= 1D;
 				
@@ -83,7 +87,9 @@ public class DragonDeathRunnable implements Runnable {
 									}
 								}
 
-								eggLoc.getWorld().getBlockAt(egg.getLocation()).setType(Material.DRAGON_EGG);
+								if (placeEgg) {
+								    eggLoc.getWorld().getBlockAt(egg.getLocation()).setType(Material.DRAGON_EGG);
+								}
 							}
 
 						}.runTask(plugin);
