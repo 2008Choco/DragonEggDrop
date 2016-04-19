@@ -12,6 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import net.minecraft.server.v1_9_R1.EntityEnderDragon;
+
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 
@@ -40,10 +44,22 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	@EventHandler
 	private void onDragonDeath(EntityDeathEvent e) {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
+			EntityEnderDragon nmsDragon = ((CraftEnderDragon)e.getEntity()).getHandle();
 			//get if the dragon has been previously killed
-			boolean prevKilled = (((CraftEnderDragon)e.getEntity()).getHandle()).cU().d();
+			boolean prevKilled = nmsDragon.cU().d();
 			World world = e.getEntity().getWorld();
-			getServer().getScheduler().runTaskLater(this, new DragonDeathRunnable(this, world, prevKilled), 300L);
+			
+			DragonEggDrop instance = this;
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					if (nmsDragon.bF >= 185) {//dragon is dead at 200
+						cancel();
+					    getServer().getScheduler().runTask(instance, new DragonDeathRunnable(instance, world, prevKilled));
+					}
+				}
+				
+			}.runTaskTimer(this, 0L, 1L);
 		}
 	}
 	
