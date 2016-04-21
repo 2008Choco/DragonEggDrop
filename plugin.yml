@@ -1,6 +1,6 @@
 name: DragonEggDrop
 main: com.ninjaguild.dragoneggdrop.DragonEggDrop
-version: 1.0.0
+version: 1.0.1
 author: NinjaStix
 
 commands:

@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DragonDeathRunnable implements Runnable {
@@ -58,7 +59,8 @@ public class DragonDeathRunnable implements Runnable {
 							particleAmount, oX, oY, oZ, particleExtra, null);
 				}
 
-				if (currentY <= 63) {
+				Block currentBlock = world.getBlockAt(pLoc);
+				if (currentBlock.getType() == Material.BEDROCK) {
 					cancel();
 
 					double eX = pLoc.getX();
