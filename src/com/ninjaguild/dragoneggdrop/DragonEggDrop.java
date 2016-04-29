@@ -21,8 +21,17 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 
 public class DragonEggDrop extends JavaPlugin implements Listener {
 
+	PluginDescriptionFile pdf = null;
+	
 	public void onEnable() {
 		saveDefaultConfig();
+		pdf = getDescription();
+		
+		String configVersion = getConfig().getString("version");
+		if (configVersion != pdf.getVersion()) {
+			getConfig().set("version", pdf.getVersion());
+			saveConfig();
+		}
 
 		try {
 			Particle.valueOf(getConfig().getString("particle-type", "FLAME").toUpperCase());
@@ -67,8 +76,6 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("dragoneggdrop")) {
 			if (args.length == 0) {
-        		PluginDescriptionFile pdf = getDescription();
-        		
     	        sender.sendMessage(ChatColor.GOLD + "-------------------");
     	        sender.sendMessage(ChatColor.GOLD + "    DragonEggDrop");
     	        sender.sendMessage(ChatColor.GOLD + "-------------------");

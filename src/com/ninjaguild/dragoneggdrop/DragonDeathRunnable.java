@@ -66,7 +66,7 @@ public class DragonDeathRunnable implements Runnable {
 					{
 						@Override
 						public void run() {
-							Location prevLoc = pLoc.clone().subtract(new Vector(0D, 1D, 0D));
+							Location prevLoc = pLoc.clone().add(new Vector(0D, 1D, 0D));
 
 							int lightningAmount = plugin.getConfig().getInt("lightning-amount", 4);
 							world.strikeLightningEffect(prevLoc);
