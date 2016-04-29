@@ -4,8 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 public class DragonDeathRunnable implements Runnable {
 
@@ -59,30 +59,25 @@ public class DragonDeathRunnable implements Runnable {
 							particleAmount, oX, oY, oZ, particleExtra, null);
 				}
 
-				Block currentBlock = world.getBlockAt(pLoc);
-				if (currentBlock.getType() == Material.BEDROCK) {
+				if (world.getBlockAt(pLoc).getType() == Material.BEDROCK) {
 					cancel();
-
-					double eX = pLoc.getX();
-					double eY = pLoc.getY();
-					double eZ = pLoc.getZ();
-
+					
 					new BukkitRunnable()
 					{
 						@Override
 						public void run() {
-							world.createExplosion(eX, eY, eZ, 0f, false, false);
+							Location prevLoc = pLoc.clone().subtract(new Vector(0D, 1D, 0D));
 
 							int lightningAmount = plugin.getConfig().getInt("lightning-amount", 4);
-							world.strikeLightningEffect(pLoc);
+							world.strikeLightningEffect(prevLoc);
 							if (lightningAmount > 1) {
 								for (int i = 0; i < (lightningAmount - 1); i++) {
-									world.spigot().strikeLightningEffect(pLoc, true);
+									world.spigot().strikeLightningEffect(prevLoc, true);
 								}
 							}
 
 							if (placeEgg) {
-								world.getBlockAt(pLoc).setType(Material.DRAGON_EGG);
+								world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
 							}
 						}
 
