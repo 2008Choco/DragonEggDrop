@@ -27,3 +27,14 @@ particle-interval: 1
 
 #Number of lightning entities to spawn on egg land
 lightning-amount: 4
+
+#Respawn dragon on death? (delay is in seconds)
+respawn: false
+respawn-delay: 300
+
+#Give the dragon a custom name, or not your choice.
+#If more than one name, the name will be chosen at random.
+#Set to: dragon-name: [] for none.
+dragon-name:
+- 'Endy'
+- 'Falcor'

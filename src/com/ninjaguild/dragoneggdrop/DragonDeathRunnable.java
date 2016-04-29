@@ -19,6 +19,9 @@ public class DragonDeathRunnable implements Runnable {
 	private double oY = 0D;
 	private double oZ = 0D;
 	private Particle particleType = null;
+	
+	private boolean respawnDragon = false;
+	private int respawnDelay = 0;
 
 	private World world = null;
 
@@ -38,6 +41,9 @@ public class DragonDeathRunnable implements Runnable {
 		oY = plugin.getConfig().getDouble("particle-offset-y", 0D);
 		oZ = plugin.getConfig().getDouble("particle-offset-z", 0.25D);
 		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
+		
+		respawnDragon = plugin.getConfig().getBoolean("respawn", false);
+		respawnDelay = plugin.getConfig().getInt("respawn-delay", 300);//seconds
 	}
 
 	@Override
@@ -78,6 +84,18 @@ public class DragonDeathRunnable implements Runnable {
 
 							if (placeEgg) {
 								world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
+							}
+							
+							if (respawnDragon) {
+								new BukkitRunnable() {
+									@Override
+									public void run() {
+										//start respawn process
+										//would be nice to have a countdown in the 
+										//boss bar or action bar
+									}
+									
+								}.runTaskLater(plugin, respawnDelay);
 							}
 						}
 
