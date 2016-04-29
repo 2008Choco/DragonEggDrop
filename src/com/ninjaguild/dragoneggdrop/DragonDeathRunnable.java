@@ -82,7 +82,7 @@ public class DragonDeathRunnable implements Runnable {
 							}
 
 							if (placeEgg) {
-								world.getBlockAt(new Location(world, 0.5D, 63D, 0.5D)).setType(Material.DRAGON_EGG);
+								world.getBlockAt(pLoc).setType(Material.DRAGON_EGG);
 							}
 						}
 
