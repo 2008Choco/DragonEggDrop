@@ -146,7 +146,10 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
         		return false;
 			}
 			else if (args.length == 1) {
-				if (args[0].equalsIgnoreCase("reload")) {
+				if (args[0].equalsIgnoreCase("help")) {
+					//
+				}
+				else if (args[0].equalsIgnoreCase("reload")) {
 					if (sender.hasPermission("dragoneggdrop.reload")) {
 						reloadConfig();
 						sender.sendMessage(ChatColor.GREEN + "Reload Complete");
@@ -155,6 +158,9 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 						sender.sendMessage(ChatColor.RED + "Permission Denied!");
 					}
 					return true;
+				}
+				else if (args[0].equalsIgnoreCase("respawn")) {
+					//
 				}
 			}
 		}

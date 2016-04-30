@@ -39,6 +39,7 @@ dragon-names:
 - 'Endy'
 - 'Falcor'
 - 'Haku'
-#Automatically set to the current dragons name
+
 #Used for restoring BossBar title on server restart, etc.
+#Automatically set by the plugin when a dragon spawns.
 current-dragon-name: 'Endy'
