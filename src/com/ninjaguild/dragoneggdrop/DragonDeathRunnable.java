@@ -4,8 +4,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
+import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import net.minecraft.server.v1_9_R1.WorldProviderTheEnd;
 
 public class DragonDeathRunnable implements Runnable {
 
@@ -100,7 +105,9 @@ public class DragonDeathRunnable implements Runnable {
 										    prevLoc.clone().add(0, -3, -3)
 										};
 										for (int i = 0; i < crystalLocs.length; i++) {
-											world.getBlockAt(crystalLocs[i]).setType(Material.END_CRYSTAL);
+											EnderCrystal crystal = (EnderCrystal)world.spawnEntity(crystalLocs[i], EntityType.ENDER_CRYSTAL);
+											crystal.setShowingBottom(false);
+											((WorldProviderTheEnd)((CraftWorld)world).getHandle().worldProvider).s().e();
 										}
 									}
 									
