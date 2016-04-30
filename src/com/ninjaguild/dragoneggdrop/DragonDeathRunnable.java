@@ -93,9 +93,18 @@ public class DragonDeathRunnable implements Runnable {
 										//start respawn process
 										//would be nice to have a countdown in the 
 										//boss bar or action bar
+										Location[] crystalLocs = new Location[] {
+										    prevLoc.clone().add(2, -3, 0),
+										    prevLoc.clone().add(0, -3, 2),
+										    prevLoc.clone().add(-2, -3, 0),
+										    prevLoc.clone().add(0, -3, -2)
+										};
+										for (int i = 0; i < crystalLocs.length; i++) {
+											world.getBlockAt(crystalLocs[i]).setType(Material.END_CRYSTAL);
+										}
 									}
 									
-								}.runTaskLater(plugin, respawnDelay);
+								}.runTaskLater(plugin, respawnDelay * 20);
 							}
 						}
 
