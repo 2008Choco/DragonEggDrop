@@ -7,8 +7,10 @@ import java.util.logging.Level;
 
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,8 +25,10 @@ import net.minecraft.server.v1_9_R1.ChatMessage;
 import net.minecraft.server.v1_9_R1.EnderDragonBattle;
 import net.minecraft.server.v1_9_R1.EntityEnderDragon;
 import net.minecraft.server.v1_9_R1.PacketPlayOutBoss;
+import net.minecraft.server.v1_9_R1.WorldProviderTheEnd;
 
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 
 public class DragonEggDrop extends JavaPlugin implements Listener {
@@ -58,6 +62,15 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		
 		rand = new Random();
 		dragonNames = getConfig().getStringList("dragon-names");
+		
+		String dragonCurrentName = getConfig().getString("current-dragon-name");
+	    if (!dragonCurrentName.isEmpty()) {
+	    	for (World world : getServer().getWorlds()) {
+	    		if (world.getEnvironment() == Environment.THE_END) {
+	    			setDragonBossBarTitle(dragonCurrentName, getEnderDragonBattleFromWorld(world));
+	    		}
+	    	}
+	    }
 	}
 	
 	public void onDisable() {
@@ -69,18 +82,30 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
         if (e.getEntityType() == EntityType.ENDER_DRAGON) {
             if (!dragonNames.isEmpty()) {
             	String name = dragonNames.get(rand.nextInt(dragonNames.size()));
-				try {
-					Field f = EnderDragonBattle.class.getDeclaredField("c");
-					f.setAccessible(true);
-					BossBattleServer battleServer = (BossBattleServer)f.get(((CraftEnderDragon)e.getEntity()).getHandle().cU());
-					battleServer.title = new ChatMessage(name, new Object[0]);
-					battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
-					f.setAccessible(false);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+                setDragonBossBarTitle(name, getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
             }
         }
+	}
+	
+	private void setDragonBossBarTitle(String title, EnderDragonBattle battle) {
+		try {
+			Field f = EnderDragonBattle.class.getDeclaredField("c");
+			f.setAccessible(true);
+			BossBattleServer battleServer = (BossBattleServer)f.get(battle);
+			battleServer.title = new ChatMessage(ChatColor.translateAlternateColorCodes('&', title), new Object[0]);
+			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
+			f.setAccessible(false);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	protected EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
+		return ((WorldProviderTheEnd)((CraftWorld)world).getHandle().worldProvider).s();
+	}
+	
+	protected EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
+		return ((CraftEnderDragon)dragon).getHandle().cU();
 	}
 	
 	@EventHandler
