@@ -82,6 +82,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
         if (e.getEntityType() == EntityType.ENDER_DRAGON) {
             if (!dragonNames.isEmpty()) {
             	String name = dragonNames.get(rand.nextInt(dragonNames.size()));
+            	getConfig().set("current-dragon-name", name);
+            	saveConfig();
                 setDragonBossBarTitle(name, getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
             }
         }
