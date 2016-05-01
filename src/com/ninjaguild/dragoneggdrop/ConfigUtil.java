@@ -1,13 +1,13 @@
 package com.ninjaguild.dragoneggdrop;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.OutputStream;
+import java.util.Set;
 
-import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigUtil {
@@ -19,51 +19,52 @@ public class ConfigUtil {
 	}
 	
 	public void updateConfig(String configVersion) {
-		Map<String, Object> newConfig = getConfigVals();
+		FileConfiguration newConfig = getNewConfig();
+		Set<String> newKeys = newConfig.getKeys(false);
 		
-        for (String var : plugin.getConfig().getKeys(false)) {
-            newConfig.remove(var);
-        }
-        
-        if (newConfig.size() != 0) {
-            for (String key : newConfig.keySet()) {
-            	plugin.getConfig().set(key, newConfig.get(key));
-            }
-            
-            try {
-            	plugin.getConfig().set("version", configVersion);
-            	plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
-            }
-            catch (IOException ex) {
-            	ex.printStackTrace();
-            }
-        }
+		for (String key : plugin.getConfig().getKeys(false)) {
+			if (key.equalsIgnoreCase("version")) {
+				continue;
+			}
+			if (newKeys.contains(key)) {
+				newConfig.set(key, plugin.getConfig().get(key));
+			}
+		}
+		
+		saveConfig(newConfig);
 	}
 
-    private Map<String, Object> getConfigVals() {
-        Map<String, Object> var = new HashMap<>();
-        YamlConfiguration config = new YamlConfiguration();
+    private FileConfiguration getNewConfig() {
+        File newConfig = null;
         
-        try {
-            config.loadFromString(stringFromInputStream(plugin.getClass().getResourceAsStream("/config.yml")));
-        }
-        catch (InvalidConfigurationException ex) {
-        	ex.printStackTrace();
-        }
+		try {
+			InputStream in = plugin.getResource("config.yml");
+			byte[] buffer = new byte[in.available()];
+			in.read(buffer);
+			in.close();
+			
+	        newConfig = new File(plugin.getDataFolder() + "/config.temp.yml");
+			OutputStream os = new FileOutputStream(newConfig);
+	        os.write(buffer);
+	        os.close();
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(newConfig);
+        newConfig.delete();
         
-        for (String key : config.getKeys(false)) {
-            var.put(key, config.get(key));
-        }
-        
-        return var;
+        return config;
     }
     
-    private String stringFromInputStream(InputStream in) {
-    	Scanner scanner = new Scanner(in);
-    	scanner.useDelimiter("\\A");
-    	String confString = scanner.next();
-    	scanner.close();
-    	return confString;
+    private void saveConfig(FileConfiguration config) {
+    	try {
+			config.save(new File(plugin.getDataFolder() + "/config.yml"));
+		}
+    	catch (IOException ex) {
+			ex.printStackTrace();
+		}
     }
 	
 }
