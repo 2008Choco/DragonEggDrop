@@ -38,7 +38,7 @@ respawn-delay: 300
 dragon-names:
 - 'Endy'
 - 'Falcor'
-- 'Haku'
+- 'Haiku'
 
 #Used for restoring BossBar title on server restart, etc.
 #Automatically set by the plugin when a dragon spawns.
