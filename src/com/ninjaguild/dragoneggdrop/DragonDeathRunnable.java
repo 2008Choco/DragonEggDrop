@@ -77,11 +77,8 @@ public class DragonDeathRunnable implements Runnable {
 							Location prevLoc = pLoc.clone().add(new Vector(0D, 1D, 0D));
 
 							int lightningAmount = plugin.getConfig().getInt("lightning-amount", 4);
-							world.strikeLightningEffect(prevLoc);
-							if (lightningAmount > 1) {
-								for (int i = 0; i < (lightningAmount - 1); i++) {
-									world.spigot().strikeLightningEffect(prevLoc, true);
-								}
+							for (int i = 0; i < lightningAmount; i++) {
+								world.strikeLightningEffect(prevLoc);
 							}
 
 							if (placeEgg) {
