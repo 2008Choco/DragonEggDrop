@@ -101,6 +101,8 @@ public class ConfigUtil {
 	private void mergeCommentsAndSave(String configAsString) {
 		File configFile = new File(plugin.getDataFolder() + "/config.yml");
 		Map<Integer, String> configMap = getConfigMap();
+		
+		//strip header
 		String[] tmp = configAsString.split("\r?\n");
 		List<String> configValues = new ArrayList<>();
 		for (String s : tmp) {
