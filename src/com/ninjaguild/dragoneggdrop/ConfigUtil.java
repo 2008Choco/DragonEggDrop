@@ -36,8 +36,7 @@ public class ConfigUtil {
 				continue;
 			}
 			if (newKeys.contains(key)) {
-				//newConfig.set(key, plugin.getConfig().get(key));
-				newConfig.addDefault(key, plugin.getConfig().get(key));
+				newConfig.set(key, plugin.getConfig().get(key));
 			}
 		}
 
@@ -123,11 +122,9 @@ public class ConfigUtil {
 				String comment = configMap.get(lineNum);
 				if (comment.startsWith("<DATA-")) {
 					String value = configValues.get(configIndex++);
-					plugin.getLogger().log(Level.INFO, value);
 					fw.write(value + "\n");
 				}
 				else {
-					plugin.getLogger().log(Level.INFO, comment);
 					fw.write(comment + "\n");
 				}
 			}
