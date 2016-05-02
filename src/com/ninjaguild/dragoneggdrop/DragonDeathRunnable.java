@@ -104,8 +104,6 @@ public class DragonDeathRunnable implements Runnable {
 									@Override
 									public void run() {
 										//start respawn process
-										//would be nice to have a countdown in the 
-										//boss bar or action bar
 										Location[] crystalLocs = new Location[] {
 										    prevLoc.clone().add(3, -3, 0),
 										    prevLoc.clone().add(0, -3, 3),
@@ -119,8 +117,8 @@ public class DragonDeathRunnable implements Runnable {
 											}
 											EnderCrystal crystal = (EnderCrystal)world.spawnEntity(crystalLocs[i], EntityType.ENDER_CRYSTAL);
 											crystal.setShowingBottom(false);
-											plugin.getEnderDragonBattleFromWorld(world).e();
 										}
+										plugin.getEnderDragonBattleFromWorld(world).e();
 									}
 									
 								}.runTaskLater(plugin, respawnDelay * 20);
