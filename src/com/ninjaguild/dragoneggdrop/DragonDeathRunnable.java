@@ -1,5 +1,6 @@
 package com.ninjaguild.dragoneggdrop;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -112,6 +113,10 @@ public class DragonDeathRunnable implements Runnable {
 										    prevLoc.clone().add(0, -3, -3)
 										};
 										for (int i = 0; i < crystalLocs.length; i++) {
+											Chunk crystalChunk = world.getChunkAt(crystalLocs[i]);
+											if (!crystalChunk.isLoaded()) {
+												crystalChunk.load();
+											}
 											EnderCrystal crystal = (EnderCrystal)world.spawnEntity(crystalLocs[i], EntityType.ENDER_CRYSTAL);
 											crystal.setShowingBottom(false);
 											plugin.getEnderDragonBattleFromWorld(world).e();
