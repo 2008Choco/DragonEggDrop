@@ -43,7 +43,7 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		
 		//update config version to match plugin
 		String configVersion = getConfig().getString("version").trim();
-		if (configVersion != pdf.getVersion().trim()) {
+		if (!configVersion.equals(pdf.getVersion().trim())) {
 			ConfigUtil cu = new ConfigUtil(this);
 			cu.updateConfig(pdf.getVersion());
 		}
