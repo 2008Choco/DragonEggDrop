@@ -1,6 +1,7 @@
 package com.ninjaguild.dragoneggdrop;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -36,11 +37,11 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 	private PluginDescriptionFile pdf = null;
 	private List<String> dragonNames = null;
 	private Random rand = null;
-	
+
 	public void onEnable() {
 		saveDefaultConfig();
 		pdf = getDescription();
-		
+
 		//update config version to match plugin
 		String configVersion = getConfig().getString("version").trim();
 		if (!configVersion.equals(pdf.getVersion().trim())) {
@@ -56,39 +57,41 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 			getLogger().log(Level.INFO, "PLUGIN DISABLED");
 			return;
 		}
-		
+
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("dragoneggdrop").setExecutor(this);
-		
+
 		rand = new Random();
 		dragonNames = getConfig().getStringList("dragon-names");
-		
-		String dragonCurrentName = getConfig().getString("current-dragon-name");
-	    if (!dragonCurrentName.isEmpty()) {
-	    	for (World world : getServer().getWorlds()) {
-	    		if (world.getEnvironment() == Environment.THE_END) {
-	    			setDragonBossBarTitle(dragonCurrentName, getEnderDragonBattleFromWorld(world));
-	    		}
-	    	}
-	    }
+
+		for (World world : getServer().getWorlds()) {
+			if (world.getEnvironment() == Environment.THE_END) {
+				Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
+				if (!dragons.isEmpty()) {
+					String dragonName = dragons.iterator().next().getCustomName();
+					if (dragonName != null && !dragonName.isEmpty()) {
+						setDragonBossBarTitle(dragonName, getEnderDragonBattleFromWorld(world));
+					}
+				}
+			}
+		}
 	}
-	
+
 	public void onDisable() {
 		//
 	}
 
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
-        if (e.getEntityType() == EntityType.ENDER_DRAGON) {
-            if (!dragonNames.isEmpty()) {
-            	String name = dragonNames.get(rand.nextInt(dragonNames.size()));
-            	getConfig().set("current-dragon-name", name);
-            	saveConfig();
-                setDragonBossBarTitle(name, getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
-            }
-        }
+		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
+			if (!dragonNames.isEmpty()) {
+				String name = dragonNames.get(rand.nextInt(dragonNames.size()));
+				e.getEntity().setCustomName(name);
+				setDragonBossBarTitle(name, getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
+			}
+		}
 	}
-	
+
 	private void setDragonBossBarTitle(String title, EnderDragonBattle battle) {
 		try {
 			Field f = EnderDragonBattle.class.getDeclaredField("c");
@@ -101,15 +104,15 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	protected EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
 		return ((WorldProviderTheEnd)((CraftWorld)world).getHandle().worldProvider).s();
 	}
-	
+
 	protected EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		return ((CraftEnderDragon)dragon).getHandle().cU();
 	}
-	
+
 	@EventHandler
 	private void onDragonDeath(EntityDeathEvent e) {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
@@ -117,33 +120,33 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 			//get if the dragon has been previously killed
 			boolean prevKilled = nmsDragon.cU().d();
 			World world = e.getEntity().getWorld();
-			
+
 			DragonEggDrop instance = this;
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					if (nmsDragon.bF >= 185) {//dragon is dead at 200
 						cancel();
-					    getServer().getScheduler().runTask(instance, new DragonDeathRunnable(instance, world, prevKilled));
+						getServer().getScheduler().runTask(instance, new DragonDeathRunnable(instance, world, prevKilled));
 					}
 				}
-				
+
 			}.runTaskTimer(this, 0L, 1L);
 		}
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("dragoneggdrop")) {
 			if (args.length == 0) {
-    	        sender.sendMessage(ChatColor.GOLD + "-------------------");
-    	        sender.sendMessage(ChatColor.GOLD + "    DragonEggDrop");
-    	        sender.sendMessage(ChatColor.GOLD + "-------------------");
-    	        sender.sendMessage(ChatColor.GOLD + "Author: " + pdf.getAuthors().get(0));
-    	        sender.sendMessage(ChatColor.GOLD + "Version: " + pdf.getVersion());
-    	        sender.sendMessage(ChatColor.GOLD + "-------------------");
-        		
-        		return false;
+				sender.sendMessage(ChatColor.GOLD + "-------------------");
+				sender.sendMessage(ChatColor.GOLD + "    DragonEggDrop");
+				sender.sendMessage(ChatColor.GOLD + "-------------------");
+				sender.sendMessage(ChatColor.GOLD + "Author: " + pdf.getAuthors().get(0));
+				sender.sendMessage(ChatColor.GOLD + "Version: " + pdf.getVersion());
+				sender.sendMessage(ChatColor.GOLD + "-------------------");
+
+				return false;
 			}
 			else if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
@@ -164,8 +167,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 }

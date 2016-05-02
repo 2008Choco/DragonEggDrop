@@ -6,6 +6,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EntityType;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -83,6 +84,18 @@ public class DragonDeathRunnable implements Runnable {
 
 							if (placeEgg) {
 								world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
+							}
+							
+							//landing particles
+							for (int i = 0; i <= 360; i++) {
+								double x = Math.cos(i);
+								double y = Math.random();
+								double z = Math.sin(i);
+								Vector vec = new Vector(x, y, z);
+								prevLoc.add(vec);
+									world.spawnParticle(Particle.BLOCK_DUST, prevLoc,
+											2, 0D, 0D, 0D, 0.5D, new MaterialData(Material.BEDROCK));
+								prevLoc.subtract(vec);
 							}
 							
 							if (respawnDragon) {
