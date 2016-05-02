@@ -60,7 +60,8 @@ public class ConfigUtil {
     
     private void saveConfig(FileConfiguration config) {
     	try {
-			config.save(new File(plugin.getDataFolder() + "/config.yml"));
+    		File configFile = new File(plugin.getDataFolder() + "/config.yml");
+			config.save(configFile);
 		}
     	catch (IOException ex) {
 			ex.printStackTrace();
