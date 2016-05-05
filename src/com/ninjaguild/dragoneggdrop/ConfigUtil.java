@@ -1,6 +1,7 @@
 package com.ninjaguild.dragoneggdrop;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Set;
@@ -32,14 +33,12 @@ public class ConfigUtil {
 			}
 		}
 		
-		File oldConfigFile = new File(plugin.getDataFolder() + "/config.yml");
-		if (oldConfigFile.exists()) {
-			oldConfigFile.delete();
+		try {
+			defaultConfig.save(new File(plugin.getDataFolder() + "/config.yml"));
 		}
-		
-		plugin.getConfig().setDefaults(defaultConfig);
-		plugin.getConfig().options().copyDefaults(true);
-		plugin.saveConfig();
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
