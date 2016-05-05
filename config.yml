@@ -28,6 +28,10 @@ particle-interval: 1
 #Number of lightning entities to spawn on egg land
 lightning-amount: 4
 
+#Set a custom name and lore for the egg item (optional)
+egg-name: ''
+egg-lore: []
+
 #Respawn dragon on death? (delay is in seconds)
 respawn: false
 respawn-delay: 300

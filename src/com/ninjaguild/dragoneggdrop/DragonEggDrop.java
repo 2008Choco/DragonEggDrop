@@ -17,6 +17,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -29,6 +32,7 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutBoss;
 import net.minecraft.server.v1_9_R1.WorldProviderTheEnd;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 
@@ -83,6 +87,10 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			if (!dragonNames.isEmpty()) {
 				String name = dragonNames.get(rand.nextInt(dragonNames.size()));
@@ -132,6 +140,41 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 				}
 
 			}.runTaskTimer(this, 0L, 1L);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerPickupItem(PlayerPickupItemEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		ItemStack item = e.getItem().getItemStack();
+		if (item.getType() == Material.DRAGON_EGG) {
+			if (!item.hasItemMeta()) {
+				e.setCancelled(true);
+				
+				ItemStack eggItem = new ItemStack(Material.DRAGON_EGG, e.getItem().getItemStack().getAmount());
+				ItemMeta eggMeta = eggItem.getItemMeta();
+				
+				String eggName = getConfig().getString("egg-name");
+				List<String> eggLore = getConfig().getStringList("egg-lore");
+
+				if (eggName != null && !eggName.isEmpty()) {
+					eggMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', eggName));
+				}
+				if (eggLore != null && !eggLore.isEmpty()) {
+					for (int i = 0; i < eggLore.size(); i++) {
+						eggLore.set(i, ChatColor.translateAlternateColorCodes('&', eggLore.get(i)));
+					}
+					eggMeta.setLore(eggLore);
+				}
+				eggItem.setItemMeta(eggMeta);
+				
+				e.getItem().setItemStack(eggItem);
+				PlayerPickupItemEvent pickupEvent = new PlayerPickupItemEvent(e.getPlayer(), e.getItem(), e.getRemaining());
+				this.getServer().getPluginManager().callEvent(pickupEvent);
+			}
 		}
 	}
 
