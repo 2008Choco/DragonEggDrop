@@ -28,6 +28,10 @@ particle-interval: 1
 #Number of lightning entities to spawn on egg land
 lightning-amount: 4
 
+#Drop type (egg, chest). Option to drop a loot chest instead of an egg.
+#Loot items are defined in loot.yml
+drop-type: egg
+
 #Set a custom name and lore for the egg item (optional)
 egg-name: ''
 egg-lore: []
