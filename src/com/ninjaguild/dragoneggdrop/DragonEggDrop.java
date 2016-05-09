@@ -24,7 +24,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 
-public class DragonEggDrop extends JavaPlugin implements Listener {
+public class DragonEggDrop extends JavaPlugin {
 
 	private PluginDescriptionFile pdf = null;
 	private List<String> dragonNames = null;
@@ -53,8 +53,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 
 		ConfigurationSerialization.registerClass(LootEntry.class);
 		
-		getServer().getPluginManager().registerEvents(this, this);
-		getCommand("dragoneggdrop").setExecutor(this);
+		getServer().getPluginManager().registerEvents(new Events(this), this);
+		getCommand("dragoneggdrop").setExecutor(new Commands(this));
 
 		dragonNames = getConfig().getStringList("dragon-names");
         setDragonBossBarTitle();
