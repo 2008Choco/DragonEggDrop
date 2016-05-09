@@ -40,7 +40,7 @@ public class LootManager {
 
 		@SuppressWarnings("unchecked")
 		Set<LootEntry> lootEntries = (Set<LootEntry>)lootConfig.get("loot-items");
-		if (!lootEntries.isEmpty()) {
+		if (lootEntries != null && !lootEntries.isEmpty()) {
 			for (LootEntry entry : lootEntries) {
 				double weight = entry.getWeight();
 				ItemStack item = entry.getItem();
