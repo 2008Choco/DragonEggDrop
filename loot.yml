@@ -1,0 +1,7 @@
+item1:
+  weight: 30
+  name: '&bSomeSword'
+  mat: 'DIAMOND_SWORD'
+  durability: 0
+  lore:
+  - '&aCustom Sword'
