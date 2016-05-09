@@ -43,6 +43,19 @@ public class Commands implements CommandExecutor {
 				else if (args[0].equalsIgnoreCase("respawn")) {
 					//
 				}
+				else if (args[0].equalsIgnoreCase("removeloot")) {
+					
+				}
+			}
+			else if (args.length == 2) {
+				if (args[0].equalsIgnoreCase("addloot")) {
+					try {
+						int weight = Integer.parseInt(args[1]);
+					}
+					catch (NumberFormatException ex) {
+						sender.sendMessage(ChatColor.RED + "Invalid value for weight!");
+					}
+				}
 			}
 		}
 

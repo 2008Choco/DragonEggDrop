@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -48,6 +49,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 			return;
 		}
 
+		ConfigurationSerialization.registerClass(LootEntry.class);
+		
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("dragoneggdrop").setExecutor(this);
 
