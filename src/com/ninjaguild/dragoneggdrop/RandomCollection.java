@@ -22,15 +22,17 @@ public class RandomCollection<E>
         this.random = random;
     }
 
-    public void add(double weight, E result)
+    public boolean add(double weight, E result)
     {
         if (weight <= 0.0D)
         {
-        	return;
+        	return false;
         }
         
         total += weight;
         map.put(total, result);
+        
+        return true;
     }
     
     public void addAll(RandomCollection<E> collection)

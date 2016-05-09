@@ -84,7 +84,13 @@ public class DragonDeathRunnable implements Runnable {
 							}
 
 							if (placeEgg) {
-								world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
+								if (plugin.getConfig().getString("drop-type", "egg").equalsIgnoreCase("chest")) {
+									//spawn a loot chest
+									plugin.getLootManager().placeChest(prevLoc);
+								}
+								else {
+									world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
+								}
 							}
 							
 							//landing particles

@@ -8,16 +8,16 @@ import org.bukkit.inventory.ItemStack;
 
 public class LootEntry implements ConfigurationSerializable {
 
-	private int weight = 0;
+	private double weight = 0;
 	private ItemStack item = null;
 	
-	public LootEntry(int weight, ItemStack item) {
+	public LootEntry(double weight, ItemStack item) {
 		this.weight = weight;
 		this.item = item;
 	}
 	
 	public LootEntry(Map<String, Object> data) {
-		this.weight = (int)data.get("weight");
+		this.weight = (double)data.get("weight");
 		this.item = (ItemStack)data.get("item");
 	}
 	
@@ -29,7 +29,7 @@ public class LootEntry implements ConfigurationSerializable {
 		return data;
 	}
 	
-	protected final int getWeight() {
+	protected final double getWeight() {
 		return weight;
 	}
 	

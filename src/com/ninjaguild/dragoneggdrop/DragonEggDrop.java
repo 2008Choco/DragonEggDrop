@@ -28,6 +28,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 
 	private PluginDescriptionFile pdf = null;
 	private List<String> dragonNames = null;
+	
+	private LootManager lootMan = null;
 
 	public void onEnable() {
 		saveDefaultConfig();
@@ -56,6 +58,8 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 
 		dragonNames = getConfig().getStringList("dragon-names");
         setDragonBossBarTitle();
+        
+        lootMan = new LootManager(this);
 	}
 
 	public void onDisable() {
@@ -89,11 +93,11 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		}
 	}
 
-	protected EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
+	protected final EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
 		return ((WorldProviderTheEnd)((CraftWorld)world).getHandle().worldProvider).s();
 	}
 
-	protected EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
+	protected final EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		return ((CraftEnderDragon)dragon).getHandle().cU();
 	}
 	
@@ -101,8 +105,12 @@ public class DragonEggDrop extends JavaPlugin implements Listener {
 		return dragonNames;
 	}
 	
-	protected PluginDescriptionFile getDescriptionFile() {
+	protected final PluginDescriptionFile getDescriptionFile() {
 		return pdf;
+	}
+	
+	protected final LootManager getLootManager() {
+		return lootMan;
 	}
 
 }

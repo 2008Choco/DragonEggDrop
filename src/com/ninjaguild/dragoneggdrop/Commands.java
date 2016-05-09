@@ -1,9 +1,12 @@
 package com.ninjaguild.dragoneggdrop;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class Commands implements CommandExecutor {
 	
@@ -43,14 +46,28 @@ public class Commands implements CommandExecutor {
 				else if (args[0].equalsIgnoreCase("respawn")) {
 					//
 				}
-				else if (args[0].equalsIgnoreCase("removeloot")) {
-					
-				}
 			}
 			else if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("addloot")) {
+					if (!(sender instanceof Player)) {
+						sender.sendMessage(ChatColor.RED + "This command can only be executed by a player!");
+						return true;
+					}
+
+					Player player = (Player)sender;
+					
 					try {
-						int weight = Integer.parseInt(args[1]);
+						double weight = Double.parseDouble(args[1]);
+						ItemStack handItem = player.getInventory().getItemInMainHand();
+						if (handItem != null && handItem.getType() != Material.AIR) {
+							boolean result = plugin.getLootManager().addItem(weight, handItem);
+							if (result) {
+								player.sendMessage(ChatColor.GREEN + "Successfully added loot item!");
+							}
+							else {
+								player.sendMessage(ChatColor.RED + "Failed to add loot item! Already exist?");
+							}
+						}	
 					}
 					catch (NumberFormatException ex) {
 						sender.sendMessage(ChatColor.RED + "Invalid value for weight!");
