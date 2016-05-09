@@ -32,7 +32,8 @@ lightning-amount: 4
 #Loot items are defined in loot.yml
 drop-type: egg
 
-#Maximum number of items in a loot chest
+#Number of items in a loot chest
+min-loot: 2
 max-loot: 6
 
 #Set a custom name and lore for the egg item (optional)

@@ -56,14 +56,17 @@ public class LootManager {
 			return;
 		}
 		
+		int minLoot = plugin.getConfig().getInt("min-loot", 2);
+		minLoot = Math.max(minLoot, 1);
 		int maxLoot = plugin.getConfig().getInt("max-loot", 6);
 		maxLoot = Math.max(maxLoot, 1);
+		int numItems = Math.max(rand.nextInt(maxLoot), minLoot);
 		
 		Block chestBlock = loc.getWorld().getBlockAt(loc);
 		chestBlock.setType(Material.CHEST);
-		
 		Chest chest = (Chest)chestBlock.getState();
-		for (int i = 0; i < maxLoot; i++) {
+
+		for (int i = 0; i < numItems; i++) {
 			int slot = rand.nextInt(chest.getBlockInventory().getSize());
 			ItemStack slotItem = chest.getBlockInventory().getItem(slot);
 			if (slotItem != null && slotItem.getType() != Material.AIR) {
