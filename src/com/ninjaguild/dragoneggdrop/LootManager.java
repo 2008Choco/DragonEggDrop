@@ -65,7 +65,8 @@ public class LootManager {
 		Chest chest = (Chest)chestBlock.getState();
 		for (int i = 0; i < maxLoot; i++) {
 			int slot = rand.nextInt(chest.getBlockInventory().getSize());
-			if (chest.getBlockInventory().getItem(slot).getType() != Material.AIR) {
+			ItemStack slotItem = chest.getBlockInventory().getItem(slot);
+			if (slotItem != null && slotItem.getType() != Material.AIR) {
 				i--;
 				continue;
 			}
