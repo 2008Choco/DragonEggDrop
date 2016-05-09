@@ -34,6 +34,7 @@ public class LootManager {
 	private void loadLootItems() {
 		loot = new RandomCollection<>();
 	    
+		plugin.saveResource("loot.yml", false);
 		lootConfigFile = new File(plugin.getDataFolder() + "/loot.yml");
 		lootConfig = YamlConfiguration.loadConfiguration(lootConfigFile);
 
