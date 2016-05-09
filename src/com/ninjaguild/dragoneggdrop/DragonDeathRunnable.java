@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -109,6 +110,10 @@ public class DragonDeathRunnable implements Runnable {
 								new BukkitRunnable() {
 									@Override
 									public void run() {
+										boolean dragonExists = !prevLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
+										if (dragonExists) {
+											return;
+										}
 										//start respawn process
 										Location[] crystalLocs = new Location[] {
 										    prevLoc.clone().add(3, -3, 0),
