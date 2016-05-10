@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.minecraft.server.v1_9_R1.EntityEnderDragon;
+import net.minecraft.server.v1_9_R2.EntityEnderDragon;
 
 public class Events implements Listener {
 	
@@ -52,13 +52,14 @@ public class Events implements Listener {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			EntityEnderDragon nmsDragon = ((CraftEnderDragon)e.getEntity()).getHandle();
 			//get if the dragon has been previously killed
-			boolean prevKilled = nmsDragon.cU().d();
+			//boolean prevKilled = nmsDragon.cU().d();
+			boolean prevKilled = plugin.getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()).d();
 			World world = e.getEntity().getWorld();
 
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					if (nmsDragon.bF >= 185) {//dragon is dead at 200
+					if (nmsDragon.bG >= 185) {//dragon is dead at 200
 						cancel();
 						plugin.getServer().getScheduler().runTask(plugin, new DragonDeathRunnable(plugin, world, prevKilled));
 					}

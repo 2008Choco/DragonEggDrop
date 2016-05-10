@@ -13,15 +13,15 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.minecraft.server.v1_9_R1.BossBattleServer;
-import net.minecraft.server.v1_9_R1.ChatMessage;
-import net.minecraft.server.v1_9_R1.EnderDragonBattle;
-import net.minecraft.server.v1_9_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_9_R1.WorldProviderTheEnd;
+import net.minecraft.server.v1_9_R2.BossBattleServer;
+import net.minecraft.server.v1_9_R2.ChatMessage;
+import net.minecraft.server.v1_9_R2.EnderDragonBattle;
+import net.minecraft.server.v1_9_R2.PacketPlayOutBoss;
+import net.minecraft.server.v1_9_R2.WorldProviderTheEnd;
 
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
 
 public class DragonEggDrop extends JavaPlugin {
 
@@ -97,7 +97,7 @@ public class DragonEggDrop extends JavaPlugin {
 	}
 
 	protected final EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
-		return ((CraftEnderDragon)dragon).getHandle().cU();
+		return ((CraftEnderDragon)dragon).getHandle().cV();
 	}
 	
 	protected final List<String> getDragonNames() {
