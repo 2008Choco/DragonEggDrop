@@ -6,14 +6,16 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -65,38 +67,32 @@ public class Events implements Listener {
 			}.runTaskTimer(plugin, 0L, 1L);
 		}
 	}
-
+	
 	@EventHandler
-	public void onPlayerPickupItem(PlayerPickupItemEvent e) {
-		if (e.isCancelled()) {
-			return;
-		}
-		
-		ItemStack item = e.getItem().getItemStack();
-		if (item.getType() == Material.DRAGON_EGG) {
-			if (!item.hasItemMeta()) {
-				e.setCancelled(true);
-				
-				ItemStack eggItem = new ItemStack(Material.DRAGON_EGG, e.getItem().getItemStack().getAmount());
-				ItemMeta eggMeta = eggItem.getItemMeta();
-				
-				String eggName = plugin.getConfig().getString("egg-name");
-				List<String> eggLore = plugin.getConfig().getStringList("egg-lore");
+	public void onItemSpawn(ItemSpawnEvent e) {
+		Item item = e.getEntity();
+		ItemStack stack = item.getItemStack();
+		if (item.getItemStack().getType() == Material.DRAGON_EGG) {
+			if (item.getWorld().getEnvironment() == Environment.THE_END) {
+				if (!stack.hasItemMeta()) {
+					//ItemStack eggItem = new ItemStack(Material.DRAGON_EGG, 1);
+					ItemMeta eggMeta = stack.getItemMeta();
+					
+					String eggName = plugin.getConfig().getString("egg-name");
+					List<String> eggLore = plugin.getConfig().getStringList("egg-lore");
 
-				if (eggName != null && !eggName.isEmpty()) {
-					eggMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', eggName));
-				}
-				if (eggLore != null && !eggLore.isEmpty()) {
-					for (int i = 0; i < eggLore.size(); i++) {
-						eggLore.set(i, ChatColor.translateAlternateColorCodes('&', eggLore.get(i)));
+					if (eggName != null && !eggName.isEmpty()) {
+						eggMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', eggName));
 					}
-					eggMeta.setLore(eggLore);
+					if (eggLore != null && !eggLore.isEmpty()) {
+						for (int i = 0; i < eggLore.size(); i++) {
+							eggLore.set(i, ChatColor.translateAlternateColorCodes('&', eggLore.get(i)));
+						}
+						eggMeta.setLore(eggLore);
+					}
+					
+					stack.setItemMeta(eggMeta);
 				}
-				eggItem.setItemMeta(eggMeta);
-				
-				e.getItem().setItemStack(eggItem);
-				PlayerPickupItemEvent pickupEvent = new PlayerPickupItemEvent(e.getPlayer(), e.getItem(), e.getRemaining());
-				plugin.getServer().getPluginManager().callEvent(pickupEvent);
 			}
 		}
 	}
