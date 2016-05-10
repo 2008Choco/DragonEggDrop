@@ -52,7 +52,6 @@ public class Events implements Listener {
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			EntityEnderDragon nmsDragon = ((CraftEnderDragon)e.getEntity()).getHandle();
 			//get if the dragon has been previously killed
-			//boolean prevKilled = nmsDragon.cU().d();
 			boolean prevKilled = plugin.getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()).d();
 			World world = e.getEntity().getWorld();
 
@@ -76,7 +75,6 @@ public class Events implements Listener {
 		if (item.getItemStack().getType() == Material.DRAGON_EGG) {
 			if (item.getWorld().getEnvironment() == Environment.THE_END) {
 				if (!stack.hasItemMeta()) {
-					//ItemStack eggItem = new ItemStack(Material.DRAGON_EGG, 1);
 					ItemMeta eggMeta = stack.getItemMeta();
 					
 					String eggName = plugin.getConfig().getString("egg-name");
