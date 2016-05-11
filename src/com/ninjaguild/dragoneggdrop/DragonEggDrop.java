@@ -29,6 +29,8 @@ public class DragonEggDrop extends JavaPlugin {
 	private List<String> dragonNames = null;
 	
 	private LootManager lootMan = null;
+	
+	private String chatPrefix = null;
 
 	public void onEnable() {
 		saveDefaultConfig();
@@ -59,10 +61,16 @@ public class DragonEggDrop extends JavaPlugin {
         setDragonBossBarTitle();
         
         lootMan = new LootManager(this);
+        
+        chatPrefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] ";
 	}
 
 	public void onDisable() {
 		//
+	}
+	
+	public final String getChatPrefix() {
+		return chatPrefix;
 	}
 	
 	private void setDragonBossBarTitle() {

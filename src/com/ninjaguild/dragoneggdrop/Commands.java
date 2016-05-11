@@ -20,37 +20,45 @@ public class Commands implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("dragoneggdrop")) {
 			if (args.length == 0) {
-				sender.sendMessage(ChatColor.GOLD + "-------------------");
-				sender.sendMessage(ChatColor.GOLD + "    DragonEggDrop");
-				sender.sendMessage(ChatColor.GOLD + "-------------------");
+				sender.sendMessage(ChatColor.GOLD + "------------------");
+				sender.sendMessage(ChatColor.GOLD + "-- DragonEggDrop --");
+				sender.sendMessage(ChatColor.GOLD + "------------------");
 				sender.sendMessage(ChatColor.GOLD + "Author: " + plugin.getDescriptionFile().getAuthors().get(0));
 				sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescriptionFile().getVersion());
-				sender.sendMessage(ChatColor.GOLD + "-------------------");
+				sender.sendMessage(ChatColor.YELLOW + "/dragoneggdrop help");
+				sender.sendMessage(ChatColor.GOLD + "------------------");
 
 				return false;
 			}
 			else if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
-					//
+					sender.sendMessage(ChatColor.GOLD + "-----------------------");
+					sender.sendMessage(ChatColor.GOLD + "-- DragonEggDrop HELP --");
+					sender.sendMessage(ChatColor.GOLD + "-----------------------");
+					sender.sendMessage(ChatColor.GOLD + "Alias: ded");
+					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop help");
+					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
+					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot");
+					sender.sendMessage(ChatColor.GOLD + "-----------------------");
 				}
 				else if (args[0].equalsIgnoreCase("reload")) {
 					if (sender.hasPermission("dragoneggdrop.reload")) {
 						plugin.reloadConfig();
-						sender.sendMessage(ChatColor.GREEN + "Reload Complete");
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN + "Reload Complete");
 					}
 					else {
-						sender.sendMessage(ChatColor.RED + "Permission Denied!");
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Permission Denied!");
 					}
 					return true;
 				}
-				else if (args[0].equalsIgnoreCase("respawn")) {
-					//
-				}
+//				else if (args[0].equalsIgnoreCase("respawn")) {
+//					//
+//				}
 			}
 			else if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("addloot")) {
 					if (!(sender instanceof Player)) {
-						sender.sendMessage(ChatColor.RED + "This command can only be executed by a player!");
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "This command can only be executed by a player!");
 						return true;
 					}
 
@@ -62,21 +70,24 @@ public class Commands implements CommandExecutor {
 						if (handItem != null && handItem.getType() != Material.AIR) {
 							boolean result = plugin.getLootManager().addItem(weight, handItem);
 							if (result) {
-								player.sendMessage(ChatColor.GREEN + "Successfully added loot item!");
+								player.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN + "Successfully added loot item!");
 							}
 							else {
-								player.sendMessage(ChatColor.RED + "Failed to add loot item! Already exist?");
+								player.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Failed to add loot item! Already exist?");
 							}
-						}	
+						}
+						else {
+							player.sendMessage(plugin.getChatPrefix() + ChatColor.YELLOW + "Hold the item you wish to add in your main hand.");
+						}
 					}
 					catch (NumberFormatException ex) {
-						sender.sendMessage(ChatColor.RED + "Invalid value for weight!");
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Invalid value for weight!");
 					}
 				}
 			}
 		}
 
-		return false;
+		return true;
 	}
 	
 }

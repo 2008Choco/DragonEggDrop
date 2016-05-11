@@ -29,7 +29,7 @@ particle-interval: 1
 lightning-amount: 4
 
 #Drop type (egg, chest). Option to drop a loot chest instead of an egg.
-#Loot items are defined in loot.yml
+#Loot items are defined in loot.yml via command /ded addloot
 drop-type: egg
 
 #Number of items in a loot chest
@@ -37,6 +37,8 @@ min-loot: 2
 max-loot: 6
 
 #Set a custom name and lore for the egg item (optional)
+#NOTE: Only eggs broken/dropped in the end world without
+#existing ItemMeta will receive the below name/lore.
 egg-name: ''
 egg-lore: []
 
