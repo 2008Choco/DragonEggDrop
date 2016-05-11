@@ -21,7 +21,7 @@ public class Commands implements CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("dragoneggdrop")) {
 			if (args.length == 0) {
 				sender.sendMessage(ChatColor.GOLD + "------------------");
-				sender.sendMessage(ChatColor.GOLD + "-- DragonEggDrop --");
+				sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP --");
 				sender.sendMessage(ChatColor.GOLD + "------------------");
 				sender.sendMessage(ChatColor.GOLD + "Author: " + plugin.getDescriptionFile().getAuthors().get(0));
 				sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescriptionFile().getVersion());
@@ -32,13 +32,18 @@ public class Commands implements CommandExecutor {
 			}
 			else if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
-					sender.sendMessage(ChatColor.GOLD + "-----------------------");
-					sender.sendMessage(ChatColor.GOLD + "-- DragonEggDrop HELP --");
-					sender.sendMessage(ChatColor.GOLD + "-----------------------");
-					sender.sendMessage(ChatColor.YELLOW + "Alias: ded");
-					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
-					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot <weight>");
-					sender.sendMessage(ChatColor.GOLD + "-----------------------");
+					if (sender.hasPermission("dragoneggdrop.help")) {
+						sender.sendMessage(ChatColor.GOLD + "-----------------------");
+						sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP HELP --");
+						sender.sendMessage(ChatColor.GOLD + "-----------------------");
+						sender.sendMessage(ChatColor.YELLOW + "Alias: ded");
+						sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
+						sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot <weight>");
+						sender.sendMessage(ChatColor.GOLD + "-----------------------");
+					}
+					else {
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Permission Denied!");
+					}
 				}
 				else if (args[0].equalsIgnoreCase("reload")) {
 					if (sender.hasPermission("dragoneggdrop.reload")) {
@@ -58,6 +63,10 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("addloot")) {
 					if (!(sender instanceof Player)) {
 						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "This command can only be executed by a player!");
+						return true;
+					}
+					if (!sender.hasPermission("dragoneggdrop.addloot")) {
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Permission Denied!");
 						return true;
 					}
 

@@ -9,5 +9,9 @@ commands:
     aliases: [ded]
 
 permissions:
+  dragoneggdrop.help:
+    default: op
   dragoneggdrop.reload:
+    default: op
+  dragoneggdrop.addloot:
     default: op

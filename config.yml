@@ -48,6 +48,7 @@ respawn-delay: 300
 
 #Give the dragon a custom name, or not, your choice.
 #If more than one name, the name will be chosen at random.
+#Names do support color/format codes i.e. &4 (red).
 #Set to: dragon-names: [] for none.
 dragon-names:
 - 'Endy'
