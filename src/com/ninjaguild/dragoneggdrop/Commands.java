@@ -70,12 +70,11 @@ public class Commands implements CommandExecutor {
 							boolean result = plugin.getLootManager().addItem(weight, handItem);
 							if (result) {
 								player.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN + "Successfully added loot item!");
-								return true;
 							}
 							else {
 								player.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Failed to add loot item! Already exist?");
-								return true;
 							}
+							return true;
 						}
 						else {
 							player.sendMessage(plugin.getChatPrefix() + ChatColor.YELLOW + "Hold the item you wish to add in your main hand.");

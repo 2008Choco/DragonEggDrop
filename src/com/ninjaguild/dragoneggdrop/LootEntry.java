@@ -3,6 +3,8 @@ package com.ninjaguild.dragoneggdrop;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,5 +38,29 @@ public class LootEntry implements ConfigurationSerializable {
 	protected final ItemStack getItem() {
 		return item;
 	}
+	
+    @Override
+    public final int hashCode() {
+    	return new HashCodeBuilder(17, 31).
+    			append(getWeight()).
+    			append(getItem()).
+    			hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof LootEntry)) {
+            return false;
+        }
+    	
+        LootEntry entry = (LootEntry)obj;
+    	return new EqualsBuilder().
+    			append(getWeight(), entry.getWeight()).
+    			append(getItem(), entry.getItem()).
+    			isEquals();
+    }
 
 }
