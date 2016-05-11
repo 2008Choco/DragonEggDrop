@@ -27,18 +27,17 @@ public class Commands implements CommandExecutor {
 				sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescriptionFile().getVersion());
 				sender.sendMessage(ChatColor.YELLOW + "/dragoneggdrop help");
 				sender.sendMessage(ChatColor.GOLD + "------------------");
-
-				return false;
+				
+				return true;
 			}
 			else if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
 					sender.sendMessage(ChatColor.GOLD + "-----------------------");
 					sender.sendMessage(ChatColor.GOLD + "-- DragonEggDrop HELP --");
 					sender.sendMessage(ChatColor.GOLD + "-----------------------");
-					sender.sendMessage(ChatColor.GOLD + "Alias: ded");
-					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop help");
+					sender.sendMessage(ChatColor.YELLOW + "Alias: ded");
 					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
-					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot");
+					sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot <weight>");
 					sender.sendMessage(ChatColor.GOLD + "-----------------------");
 				}
 				else if (args[0].equalsIgnoreCase("reload")) {
@@ -49,11 +48,11 @@ public class Commands implements CommandExecutor {
 					else {
 						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Permission Denied!");
 					}
-					return true;
 				}
 //				else if (args[0].equalsIgnoreCase("respawn")) {
 //					//
 //				}
+				return true;
 			}
 			else if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("addloot")) {
@@ -71,23 +70,27 @@ public class Commands implements CommandExecutor {
 							boolean result = plugin.getLootManager().addItem(weight, handItem);
 							if (result) {
 								player.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN + "Successfully added loot item!");
+								return true;
 							}
 							else {
 								player.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Failed to add loot item! Already exist?");
+								return true;
 							}
 						}
 						else {
 							player.sendMessage(plugin.getChatPrefix() + ChatColor.YELLOW + "Hold the item you wish to add in your main hand.");
+							return true;
 						}
 					}
 					catch (NumberFormatException ex) {
 						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Invalid value for weight!");
+						return false;
 					}
 				}
 			}
 		}
 
-		return true;
+		return false;
 	}
 	
 }
