@@ -76,29 +76,27 @@ public class LootManager {
 			chest.getBlockInventory().setItem(slot, loot.next());
 		}
 	}
-	
+
 	protected boolean addItem(double weight, ItemStack item) {
-		boolean result = loot.add(weight, item);
+		LootEntry le = new LootEntry(weight, item);
+		@SuppressWarnings("unchecked")
+		Set<LootEntry> lootEntries = (Set<LootEntry>)lootConfig.get("loot-items");
+		if (lootEntries == null) {
+			lootEntries = new HashSet<>();
+		}
+		boolean result = lootEntries.add(le);
 		if (result) {
-			LootEntry le = new LootEntry(weight, item);
-			@SuppressWarnings("unchecked")
-			Set<LootEntry> lootEntries = (Set<LootEntry>)lootConfig.get("loot-items");
-			if (lootEntries == null) {
-				lootEntries = new HashSet<>();
-			}
-			result = lootEntries.add(le);
-			if (result) {
-				lootConfig.set("loot-items", lootEntries);
-				try {
-					lootConfig.save(lootConfigFile);
-				} catch (IOException e) {
-					e.printStackTrace();
-					result = false;
-				}
+			result = loot.add(weight, item);
+			lootConfig.set("loot-items", lootEntries);
+			try {
+				lootConfig.save(lootConfigFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+				result = false;
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 }
