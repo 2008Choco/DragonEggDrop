@@ -20,13 +20,13 @@ public class Commands implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("dragoneggdrop")) {
 			if (args.length == 0) {
-				sender.sendMessage(ChatColor.GOLD + "------------------");
-				sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP --");
-				sender.sendMessage(ChatColor.GOLD + "------------------");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------");
+				sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP INFO --");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------");
 				sender.sendMessage(ChatColor.GOLD + "Author: " + plugin.getDescriptionFile().getAuthors().get(0));
 				sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescriptionFile().getVersion());
 				sender.sendMessage(ChatColor.YELLOW + "/dragoneggdrop help");
-				sender.sendMessage(ChatColor.GOLD + "------------------");
+				sender.sendMessage(ChatColor.GOLD + "-----------------------");
 				
 				return true;
 			}
