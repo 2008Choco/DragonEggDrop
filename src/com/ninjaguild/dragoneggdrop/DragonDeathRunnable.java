@@ -87,9 +87,20 @@ public class DragonDeathRunnable implements Runnable {
 							}
 
 							if (placeEgg) {
-								if (plugin.getConfig().getString("drop-type", "egg").equalsIgnoreCase("chest")) {
+								String rewardType = plugin.getConfig().getString("drop-type", "egg");
+								if (rewardType.equalsIgnoreCase("chest")) {
 									//spawn a loot chest
 									plugin.getLootManager().placeChest(prevLoc);
+								}
+								else if (rewardType.equalsIgnoreCase("chance")) {
+									double chance = plugin.getConfig().getInt("chest-spawn-chance", 20);
+									chance = chance / 100D;
+									if (Math.random() <= chance) {
+										plugin.getLootManager().placeChest(prevLoc);
+									}
+									else {
+										world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
+									}
 								}
 								else {
 									world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
