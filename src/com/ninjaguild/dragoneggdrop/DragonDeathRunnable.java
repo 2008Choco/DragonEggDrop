@@ -12,6 +12,8 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import net.minecraft.server.v1_9_R2.EnderDragonBattle;
+
 public class DragonDeathRunnable implements Runnable {
 
 	private DragonEggDrop plugin = null;
@@ -24,7 +26,7 @@ public class DragonDeathRunnable implements Runnable {
 	private double oY = 0D;
 	private double oZ = 0D;
 	private Particle particleType = null;
-	
+
 	private boolean respawnDragon = false;
 	private int respawnDelay = 0;
 
@@ -46,7 +48,7 @@ public class DragonDeathRunnable implements Runnable {
 		oY = plugin.getConfig().getDouble("particle-offset-y", 0D);
 		oZ = plugin.getConfig().getDouble("particle-offset-z", 0.25D);
 		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
-		
+
 		respawnDragon = plugin.getConfig().getBoolean("respawn", false);
 		respawnDelay = plugin.getConfig().getInt("respawn-delay", 300);//seconds
 	}
@@ -72,7 +74,7 @@ public class DragonDeathRunnable implements Runnable {
 
 				if (world.getBlockAt(pLoc).getType() == Material.BEDROCK) {
 					cancel();
-					
+
 					new BukkitRunnable()
 					{
 						@Override
@@ -93,7 +95,7 @@ public class DragonDeathRunnable implements Runnable {
 									world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
 								}
 							}
-							
+
 							//landing particles
 							for (int i = 0; i <= 360; i++) {
 								double x = Math.cos(i);
@@ -101,11 +103,11 @@ public class DragonDeathRunnable implements Runnable {
 								double z = Math.sin(i);
 								Vector vec = new Vector(x, y, z);
 								prevLoc.add(vec);
-									world.spawnParticle(Particle.BLOCK_DUST, prevLoc,
-											2, 0D, 0D, 0D, 0.5D, new MaterialData(Material.BEDROCK));
+								world.spawnParticle(Particle.BLOCK_DUST, prevLoc,
+										2, 0D, 0D, 0D, 0.5D, new MaterialData(Material.BEDROCK));
 								prevLoc.subtract(vec);
 							}
-							
+
 							if (respawnDragon) {
 								new BukkitRunnable() {
 									@Override
@@ -116,22 +118,36 @@ public class DragonDeathRunnable implements Runnable {
 										}
 										//start respawn process
 										Location[] crystalLocs = new Location[] {
-										    prevLoc.clone().add(3, -3, 0),
-										    prevLoc.clone().add(0, -3, 3),
-										    prevLoc.clone().add(-3, -3, 0),
-										    prevLoc.clone().add(0, -3, -3)
+												prevLoc.clone().add(3, -3, 0),
+												prevLoc.clone().add(0, -3, 3),
+												prevLoc.clone().add(-3, -3, 0),
+												prevLoc.clone().add(0, -3, -3)
 										};
+										
+										EnderDragonBattle dragonBattle = plugin.getEnderDragonBattleFromWorld(world);
+										
 										for (int i = 0; i < crystalLocs.length; i++) {
-											Chunk crystalChunk = world.getChunkAt(crystalLocs[i]);
-											if (!crystalChunk.isLoaded()) {
-												crystalChunk.load();
-											}
-											EnderCrystal crystal = (EnderCrystal)world.spawnEntity(crystalLocs[i], EntityType.ENDER_CRYSTAL);
-											crystal.setShowingBottom(false);
+											Location cLoc = crystalLocs[i];
+											new BukkitRunnable() {
+												@Override
+												public void run() {
+													Chunk crystalChunk = world.getChunkAt(cLoc);
+													if (!crystalChunk.isLoaded()) {
+														crystalChunk.load();
+													}
+													EnderCrystal crystal = (EnderCrystal)world.spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
+													crystal.setShowingBottom(false);
+													
+													cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
+													cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
+
+													dragonBattle.e();
+												}
+
+											}.runTaskLater(plugin, (i + 1) * 22);
 										}
-										plugin.getEnderDragonBattleFromWorld(world).e();
 									}
-									
+
 								}.runTaskLater(plugin, respawnDelay * 20);
 							}
 						}
