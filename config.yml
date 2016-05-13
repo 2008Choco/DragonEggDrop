@@ -28,11 +28,14 @@ particle-interval: 1
 #Number of lightning entities to spawn on egg land
 lightning-amount: 4
 
-#Drop type (egg, chest, chance). Option to drop a loot chest instead of an egg.
+#Drop type (egg, chest, chance, all). Option to drop a loot chest instead of an egg.
 #Loot items are defined in loot.yml via command /ded addloot
+#The 'all' type places every item defined in the loot.yml into the chest one time each.
 drop-type: egg
 #If chance, what is the percent chance of spawning a chest?(0 - 100)
 chest-spawn-chance: 20
+#Want a custom title for the loot chest? Set it here.
+loot-chest-title: 'Loot Chest'
 
 #Number of items in a loot chest
 min-loot: 2

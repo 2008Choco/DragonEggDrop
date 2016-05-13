@@ -102,6 +102,9 @@ public class DragonDeathRunnable implements Runnable {
 										world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
 									}
 								}
+								else if (rewardType.equalsIgnoreCase("all")) {
+									plugin.getLootManager().placeChestAll(prevLoc);
+								}
 								else {
 									world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
 								}
