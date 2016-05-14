@@ -16,8 +16,11 @@ import net.minecraft.server.v1_9_R2.EnderDragonBattle;
 
 public class DragonDeathRunnable implements Runnable {
 
-	private DragonEggDrop plugin = null;
-
+	private final DragonEggDrop plugin;
+	
+	private final World world;
+	private final boolean placeEgg;
+	
 	private int particleAmount = 0;
 	private double particleLength = 0D;
 	private double particleExtra = 0D;
@@ -30,14 +33,9 @@ public class DragonDeathRunnable implements Runnable {
 	private boolean respawnDragon = false;
 	private int respawnDelay = 0;
 
-	private World world = null;
-
-	private boolean placeEgg = false;
-
-	public DragonDeathRunnable(DragonEggDrop plugin, World world, boolean prevKilled) {
+	public DragonDeathRunnable(final DragonEggDrop plugin, final World world, boolean prevKilled) {
 		this.plugin = plugin;
 		this.world = world;
-
 		this.placeEgg = prevKilled;
 
 		particleAmount = plugin.getConfig().getInt("particle-amount", 4);

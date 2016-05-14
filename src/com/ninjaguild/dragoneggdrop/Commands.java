@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class Commands implements CommandExecutor {
 	
-	private DragonEggDrop plugin = null;
+	private final DragonEggDrop plugin;
 	
-	public Commands(DragonEggDrop plugin) {
+	public Commands(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 	}
 

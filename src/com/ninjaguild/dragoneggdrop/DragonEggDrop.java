@@ -69,7 +69,7 @@ public class DragonEggDrop extends JavaPlugin {
 		//
 	}
 	
-	public final String getChatPrefix() {
+	protected String getChatPrefix() {
 		return chatPrefix;
 	}
 	
@@ -100,23 +100,23 @@ public class DragonEggDrop extends JavaPlugin {
 		}
 	}
 
-	protected final EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
+	protected EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
 		return ((WorldProviderTheEnd)((CraftWorld)world).getHandle().worldProvider).s();
 	}
 
-	protected final EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
+	protected EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		return ((CraftEnderDragon)dragon).getHandle().cV();
 	}
 	
-	protected final List<String> getDragonNames() {
+	protected List<String> getDragonNames() {
 		return dragonNames;
 	}
 	
-	protected final PluginDescriptionFile getDescriptionFile() {
+	protected PluginDescriptionFile getDescriptionFile() {
 		return pdf;
 	}
 	
-	protected final LootManager getLootManager() {
+	protected LootManager getLootManager() {
 		return lootMan;
 	}
 

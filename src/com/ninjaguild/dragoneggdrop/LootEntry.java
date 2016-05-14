@@ -10,10 +10,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class LootEntry implements ConfigurationSerializable {
 
-	private double weight = 0;
-	private ItemStack item = null;
+	private final double weight;
+	private final ItemStack item;
 	
-	public LootEntry(double weight, ItemStack item) {
+	public LootEntry(final double weight, final ItemStack item) {
 		this.weight = weight;
 		this.item = item;
 	}
@@ -31,16 +31,16 @@ public class LootEntry implements ConfigurationSerializable {
 		return data;
 	}
 	
-	protected final double getWeight() {
+	protected double getWeight() {
 		return weight;
 	}
 	
-	protected final ItemStack getItem() {
+	protected ItemStack getItem() {
 		return item;
 	}
 	
     @Override
-    public final int hashCode() {
+    public int hashCode() {
     	return new HashCodeBuilder(17, 31).
     			append(getWeight()).
     			append(getItem()).

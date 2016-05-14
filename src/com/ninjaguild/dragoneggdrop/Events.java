@@ -24,12 +24,12 @@ import net.minecraft.server.v1_9_R2.EntityEnderDragon;
 
 public class Events implements Listener {
 	
-	private DragonEggDrop plugin = null;
-	private Random rand = null;
+	private final DragonEggDrop plugin;
+	private final Random rand;
 	
-	public Events(DragonEggDrop plugin) {
+	public Events(final DragonEggDrop plugin) {
 		this.plugin = plugin;
-		rand = new Random();
+		this.rand = new Random();
 	}
 
 	@EventHandler

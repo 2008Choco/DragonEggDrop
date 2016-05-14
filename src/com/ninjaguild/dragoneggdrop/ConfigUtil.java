@@ -11,13 +11,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigUtil {
 
-	private DragonEggDrop plugin = null;
+	private final DragonEggDrop plugin;
 
-	public ConfigUtil(DragonEggDrop plugin) {
+	public ConfigUtil(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 	}
 
-	public void updateConfig(String configVersion) {
+	protected void updateConfig(String configVersion) {
 		InputStream in = plugin.getResource("config.yml");
 		InputStreamReader inReader = new InputStreamReader(in);
 		FileConfiguration defaultConfig =

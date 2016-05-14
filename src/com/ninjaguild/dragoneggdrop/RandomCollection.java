@@ -6,26 +6,22 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class RandomCollection<E>
-{
+public class RandomCollection<E> {
+	
     private final NavigableMap<Double, E> map = new TreeMap<Double, E>();
     private final Random random;
     private double total = 0;
 
-    public RandomCollection()
-    {
+    public RandomCollection() {
         this(new Random());
     }
 
-    public RandomCollection(Random random)
-    {
+    public RandomCollection(final Random random) {
         this.random = random;
     }
 
-    public boolean add(double weight, E result)
-    {
-        if (weight <= 0.0D)
-        {
+    protected boolean add(double weight, E result) {
+        if (weight <= 0.0D) {
         	return false;
         }
         
@@ -35,32 +31,27 @@ public class RandomCollection<E>
         return true;
     }
     
-    public void addAll(RandomCollection<E> collection)
-    {
-    	for (double d : collection.keySet())
-    	{
+    protected void addAll(RandomCollection<E> collection) {
+    	for (double d : collection.keySet()) {
     		add(d, collection.get(d));
     	}
     }
     
-    private E get(Object key)
-    {
+    private E get(Object key) {
 		return map.get(key);
 	}
 
-	private Set<Double> keySet()
-    {
+	private Set<Double> keySet() {
     	return map.keySet();
     }
 	
-	public Collection<E> values()
-	{
+	protected Collection<E> values() {
 		return map.values();
 	}
 
-    public E next()
-    {
+    protected E next() {
         double value = random.nextDouble() * total;
         return map.ceilingEntry(value).getValue();
     }
+    
 }

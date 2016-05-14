@@ -21,14 +21,15 @@ import org.bukkit.inventory.ItemStack;
 
 public class LootManager {
 
-	private DragonEggDrop plugin = null;
+	private final DragonEggDrop plugin;
+	
+	private final Random rand;
 	private RandomCollection<ItemStack> loot = null;
-	private Random rand = null;
 	
-	File lootConfigFile = null;
-	FileConfiguration lootConfig = null;
+	private File lootConfigFile = null;
+	private FileConfiguration lootConfig = null;
 	
-	public LootManager(DragonEggDrop plugin) {
+	public LootManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 		rand = new Random();
 		loadLootItems();
@@ -108,7 +109,7 @@ public class LootManager {
 		}
 	}
 
-	protected boolean addItem(double weight, ItemStack item) {
+	protected boolean addItem(final double weight, final ItemStack item) {
 		LootEntry le = new LootEntry(weight, item);
 		@SuppressWarnings("unchecked")
 		Set<LootEntry> lootEntries = (Set<LootEntry>)lootConfig.get("loot-items");
