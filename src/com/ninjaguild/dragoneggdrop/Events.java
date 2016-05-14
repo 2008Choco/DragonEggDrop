@@ -40,7 +40,8 @@ public class Events implements Listener {
 		
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
 			if (!plugin.getDragonNames().isEmpty()) {
-				String name = plugin.getDragonNames().get(rand.nextInt(plugin.getDragonNames().size()));
+				String name = ChatColor.translateAlternateColorCodes('&', 
+						plugin.getDragonNames().get(rand.nextInt(plugin.getDragonNames().size())));
 				e.getEntity().setCustomName(name);
 				plugin.setDragonBossBarTitle(name, plugin.getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
 			}

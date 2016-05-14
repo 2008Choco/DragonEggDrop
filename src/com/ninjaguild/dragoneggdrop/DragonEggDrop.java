@@ -92,7 +92,7 @@ public class DragonEggDrop extends JavaPlugin {
 			Field f = EnderDragonBattle.class.getDeclaredField("c");
 			f.setAccessible(true);
 			BossBattleServer battleServer = (BossBattleServer)f.get(battle);
-			battleServer.title = new ChatMessage(ChatColor.translateAlternateColorCodes('&', title), new Object[0]);
+			battleServer.title = new ChatMessage(title, new Object[0]);
 			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
 			f.setAccessible(false);
 		} catch (Exception ex) {
