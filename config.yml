@@ -49,12 +49,8 @@ egg-lore: []
 
 #Respawn dragon on death? (delay is in seconds)
 respawn: false
-respawn-delay: 300
-
-#If auto respawn is true this will delay the placement of the crystals
-#and thus the respawn process until a player joins the world.
-#If this is false, and respawn is true, the crystals will be placed regardless.
-delay-no-players: true
+join-respawn-delay: 60
+death-respawn-delay: 300
 
 #Give the dragon a custom name, or not, your choice.
 #If more than one name, the name will be chosen at random.

@@ -27,6 +27,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.ninjaguild.dragoneggdrop.DEDManager.RespawnType;
+
 import net.minecraft.server.v1_9_R2.EntityEnderDragon;
 
 public class Events implements Listener {
@@ -123,7 +125,7 @@ public class Events implements Listener {
 				for (; y > 0; y--) {
 					Block block = e.getPlayer().getWorld().getBlockAt(new Location(e.getPlayer().getWorld(), 0D, y, 0D));
 					if (block.getType() == Material.BEDROCK) {
-						plugin.getDEDManager().startRespawn(block.getLocation().add(0.5D, 1D, 0.5D));
+						plugin.getDEDManager().startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
 						break;
 					}
 				}
@@ -141,7 +143,7 @@ public class Events implements Listener {
 				for (; y > 0; y--) {
 					Block block = e.getPlayer().getWorld().getBlockAt(new Location(e.getPlayer().getWorld(), 0D, y, 0D));
 					if (block.getType() == Material.BEDROCK) {
-						plugin.getDEDManager().startRespawn(block.getLocation().add(0.5D, 1D, 0.5D));
+						plugin.getDEDManager().startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
 						break;
 					}
 				}

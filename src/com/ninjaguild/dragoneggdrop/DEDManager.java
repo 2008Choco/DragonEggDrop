@@ -28,6 +28,9 @@ public class DEDManager {
 	
 	private BukkitTask respawnTask = null;
 	
+	private final int joinDelay;
+	private final int deathDelay;
+	
 	public DEDManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 		
@@ -35,6 +38,9 @@ public class DEDManager {
         setDragonBossBarTitle();
         
         lootMan = new LootManager(plugin);
+        
+		joinDelay = plugin.getConfig().getInt("join-respawn-delay", 60);//seconds
+		deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300);//seconds
 	}
 	
 	private void setDragonBossBarTitle() {
@@ -80,10 +86,10 @@ public class DEDManager {
 		return lootMan;
 	}
 	
-	protected void startRespawn(Location eggLoc) {
+	protected void startRespawn(Location eggLoc, RespawnType type) {
 		if (respawnTask == null) {
-			int respawnDelay = plugin.getConfig().getInt("respawn-delay", 300);//seconds
-			respawnTask = Bukkit.getScheduler().runTaskLater(plugin, new RespawnRunnable(plugin, eggLoc), respawnDelay * 20);
+			int respawnDelay = ((type == RespawnType.JOIN) ? joinDelay : deathDelay) * 20;
+			respawnTask = Bukkit.getScheduler().runTaskLater(plugin, new RespawnRunnable(plugin, eggLoc), respawnDelay);
 		}
 	}
 	
@@ -92,6 +98,11 @@ public class DEDManager {
 			respawnTask.cancel();
 			respawnTask = null;
 		}
+	}
+	
+	protected enum RespawnType {
+		JOIN,
+		DEATH
 	}
 	
 }

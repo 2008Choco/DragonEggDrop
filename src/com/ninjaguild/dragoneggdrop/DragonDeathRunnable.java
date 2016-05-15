@@ -8,6 +8,8 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.ninjaguild.dragoneggdrop.DEDManager.RespawnType;
+
 public class DragonDeathRunnable implements Runnable {
 
 	private final DragonEggDrop plugin;
@@ -114,7 +116,7 @@ public class DragonDeathRunnable implements Runnable {
 
 							if (respawnDragon) {
 								if (prevLoc.getWorld().getPlayers().size() > 0) {
-									plugin.getDEDManager().startRespawn(prevLoc);
+									plugin.getDEDManager().startRespawn(prevLoc, RespawnType.DEATH);
 								}
 //								new BukkitRunnable() {
 //									@Override
