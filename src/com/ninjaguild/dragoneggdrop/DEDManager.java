@@ -117,8 +117,10 @@ public class DEDManager {
 	}
 	
 	protected void cancelAnnounce() {
-		announceTask.cancel();
-		announceTask = null;
+		if (announceTask != null) {
+		    announceTask.cancel();
+		    announceTask = null;
+		}
 	}
 	
 	protected enum RespawnType {
