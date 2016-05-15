@@ -36,12 +36,10 @@ public class DragonEggDrop extends JavaPlugin {
 		saveDefaultConfig();
 		pdf = getDescription();
 
-		//update config version to match plugin
-		String configVersion = getConfig().getString("version").trim();
-		if (!configVersion.equals(pdf.getVersion().trim())) {
-			ConfigUtil cu = new ConfigUtil(this);
-			cu.updateConfig(pdf.getVersion());
-		}
+		//update config version
+		String currentVersion = getConfig().getString("version").trim();
+		ConfigUtil cu = new ConfigUtil(this);
+		cu.updateConfig(currentVersion);
 
 		try {
 			Particle.valueOf(getConfig().getString("particle-type", "FLAME").toUpperCase());

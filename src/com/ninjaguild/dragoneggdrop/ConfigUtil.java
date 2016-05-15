@@ -17,13 +17,16 @@ public class ConfigUtil {
 		this.plugin = plugin;
 	}
 
-	protected void updateConfig(String configVersion) {
+	protected void updateConfig(String currentVersion) {
 		InputStream in = plugin.getResource("config.yml");
 		InputStreamReader inReader = new InputStreamReader(in);
 		FileConfiguration defaultConfig =
 				YamlConfiguration.loadConfiguration(inReader);
+		if (defaultConfig.getString("version").equals(currentVersion)) {
+			return;
+		}
+		
 		Set<String> newKeys = defaultConfig.getKeys(false);
-
 		for (String key : plugin.getConfig().getKeys(false)) {
 			if (key.equalsIgnoreCase("version")) {
 				continue;
