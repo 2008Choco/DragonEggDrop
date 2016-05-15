@@ -4,7 +4,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -22,10 +21,6 @@ public class RespawnRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		boolean dragonExists = !eggLocation.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-		if (dragonExists) {
-			return;
-		}
 		//start respawn process
 		Location[] crystalLocs = new Location[] {
 				eggLocation.clone().add(3, -3, 0),

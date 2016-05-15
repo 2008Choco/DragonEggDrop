@@ -2,9 +2,7 @@ package com.ninjaguild.dragoneggdrop;
 
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -108,14 +106,14 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onPlayerSwitchWorlds(PlayerChangedWorldEvent e) {
-		plugin.getLogger().log(Level.INFO, "SWITCH WORLDS");
+		if (!plugin.getConfig().getBoolean("respawn", false)) {
+			return;
+		}
 		
 		if (e.getFrom().getEnvironment() == Environment.THE_END) {
 			if (e.getFrom().getPlayers().size() == 0) {
 				//cancel respawn if scheduled
 				plugin.getDEDManager().stopRespawn();
-				
-				Bukkit.broadcastMessage("Respawn Canceled...");
 			}
 		}
 		else if (e.getPlayer().getWorld().getEnvironment() == Environment.THE_END) {
@@ -129,14 +127,16 @@ public class Events implements Listener {
 						break;
 					}
 				}
-				
-				Bukkit.broadcastMessage("Respawn Started!");
 			}
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
+		if (!plugin.getConfig().getBoolean("respawn", false)) {
+			return;
+		}
+		
 		if (e.getPlayer().getWorld().getEnvironment() == Environment.THE_END) {
 			if (e.getPlayer().getWorld().getPlayers().size() == 0) {
 				int y = e.getPlayer().getWorld().getMaxHeight();
@@ -147,20 +147,19 @@ public class Events implements Listener {
 						break;
 					}
 				}
-				
-				Bukkit.broadcastMessage("Respawn Started!");
 			}
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerQuitEvent e) {
+		if (!plugin.getConfig().getBoolean("respawn", false)) {
+			return;
+		}
+		
 		if (e.getPlayer().getWorld().getEnvironment() == Environment.THE_END) {
 			if (e.getPlayer().getWorld().getPlayers().size() == 1) {
 				plugin.getDEDManager().stopRespawn();
-				
-				Bukkit.broadcastMessage("Respawn Canceled...");
-				plugin.getLogger().log(Level.INFO, "RESPAWN CANCELED");
 			}
 		}
 	}

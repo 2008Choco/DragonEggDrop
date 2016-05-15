@@ -52,11 +52,18 @@ respawn: false
 join-respawn-delay: 60
 death-respawn-delay: 300
 
+#Announce respawn to end world players via the action bar.
+announce-respawn: true
+
+#Announcement colors
+announce-color-one: '&6'
+announce-color-two: '&e'
+
 #Give the dragon a custom name, or not, your choice.
 #If more than one name, the name will be chosen at random.
 #Names do support color/format codes i.e. &4 (red).
 #Set to: dragon-names: [] for none.
 dragon-names:
-- 'Endy'
-- 'Falcor'
-- 'Haiku'
+- '&aEndy'
+- '&bFalcor'
+- '&cHaiku'

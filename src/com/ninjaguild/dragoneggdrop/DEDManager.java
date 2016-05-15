@@ -27,6 +27,7 @@ public class DEDManager {
 	private LootManager lootMan = null;
 	
 	private BukkitTask respawnTask = null;
+	private BukkitTask announceTask = null;
 	
 	private final int joinDelay;
 	private final int deathDelay;
@@ -87,11 +88,20 @@ public class DEDManager {
 	}
 	
 	protected void startRespawn(Location eggLoc, RespawnType type) {
+		boolean dragonExists = !eggLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
+		if (dragonExists) {
+			return;
+		}
+		
 		if (respawnTask == null || 
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
 				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
 			int respawnDelay = ((type == RespawnType.JOIN) ? joinDelay : deathDelay) * 20;
 			respawnTask = Bukkit.getScheduler().runTaskLater(plugin, new RespawnRunnable(plugin, eggLoc), respawnDelay);
+			
+			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
+				announceTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new AnnounceRunnable(plugin, eggLoc.getWorld(), respawnDelay / 20), 0L, 20L);
+			}
 		}
 	}
 	
@@ -99,7 +109,16 @@ public class DEDManager {
 		if (respawnTask != null) {
 			respawnTask.cancel();
 			respawnTask = null;
+			
+			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
+				cancelAnnounce();
+			}
 		}
+	}
+	
+	protected void cancelAnnounce() {
+		announceTask.cancel();
+		announceTask = null;
 	}
 	
 	protected enum RespawnType {
