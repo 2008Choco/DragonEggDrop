@@ -1,18 +1,12 @@
 package com.ninjaguild.dragoneggdrop;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
-import net.minecraft.server.v1_9_R2.EnderDragonBattle;
 
 public class DragonDeathRunnable implements Runnable {
 
@@ -31,7 +25,6 @@ public class DragonDeathRunnable implements Runnable {
 	private Particle particleType = null;
 
 	private boolean respawnDragon = false;
-	private int respawnDelay = 0;
 
 	public DragonDeathRunnable(final DragonEggDrop plugin, final World world, boolean prevKilled) {
 		this.plugin = plugin;
@@ -48,7 +41,6 @@ public class DragonDeathRunnable implements Runnable {
 		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
 
 		respawnDragon = plugin.getConfig().getBoolean("respawn", false);
-		respawnDelay = plugin.getConfig().getInt("respawn-delay", 300);//seconds
 	}
 
 	@Override
@@ -88,20 +80,20 @@ public class DragonDeathRunnable implements Runnable {
 								String rewardType = plugin.getConfig().getString("drop-type", "egg");
 								if (rewardType.equalsIgnoreCase("chest")) {
 									//spawn a loot chest
-									plugin.getLootManager().placeChest(prevLoc);
+									plugin.getDEDManager().getLootManager().placeChest(prevLoc);
 								}
 								else if (rewardType.equalsIgnoreCase("chance")) {
 									double chance = plugin.getConfig().getInt("chest-spawn-chance", 20);
 									chance = chance / 100D;
 									if (Math.random() <= chance) {
-										plugin.getLootManager().placeChest(prevLoc);
+										plugin.getDEDManager().getLootManager().placeChest(prevLoc);
 									}
 									else {
 										world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
 									}
 								}
 								else if (rewardType.equalsIgnoreCase("all")) {
-									plugin.getLootManager().placeChestAll(prevLoc);
+									plugin.getDEDManager().getLootManager().placeChestAll(prevLoc);
 								}
 								else {
 									world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
@@ -121,46 +113,49 @@ public class DragonDeathRunnable implements Runnable {
 							}
 
 							if (respawnDragon) {
-								new BukkitRunnable() {
-									@Override
-									public void run() {
-										boolean dragonExists = !prevLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-										if (dragonExists) {
-											return;
-										}
-										//start respawn process
-										Location[] crystalLocs = new Location[] {
-												prevLoc.clone().add(3, -3, 0),
-												prevLoc.clone().add(0, -3, 3),
-												prevLoc.clone().add(-3, -3, 0),
-												prevLoc.clone().add(0, -3, -3)
-										};
-										
-										EnderDragonBattle dragonBattle = plugin.getEnderDragonBattleFromWorld(world);
-										
-										for (int i = 0; i < crystalLocs.length; i++) {
-											Location cLoc = crystalLocs[i];
-											new BukkitRunnable() {
-												@Override
-												public void run() {
-													Chunk crystalChunk = world.getChunkAt(cLoc);
-													if (!crystalChunk.isLoaded()) {
-														crystalChunk.load();
-													}
-													EnderCrystal crystal = (EnderCrystal)world.spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
-													crystal.setShowingBottom(false);
-													
-													cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
-													cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
-
-													dragonBattle.e();
-												}
-
-											}.runTaskLater(plugin, (i + 1) * 22);
-										}
-									}
-
-								}.runTaskLater(plugin, respawnDelay * 20);
+								if (prevLoc.getWorld().getPlayers().size() > 0) {
+									plugin.getDEDManager().startRespawn(prevLoc);
+								}
+//								new BukkitRunnable() {
+//									@Override
+//									public void run() {
+//										boolean dragonExists = !prevLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
+//										if (dragonExists) {
+//											return;
+//										}
+//										//start respawn process
+//										Location[] crystalLocs = new Location[] {
+//												prevLoc.clone().add(3, -3, 0),
+//												prevLoc.clone().add(0, -3, 3),
+//												prevLoc.clone().add(-3, -3, 0),
+//												prevLoc.clone().add(0, -3, -3)
+//										};
+//										
+//										EnderDragonBattle dragonBattle = plugin.getEnderDragonBattleFromWorld(world);
+//										
+//										for (int i = 0; i < crystalLocs.length; i++) {
+//											Location cLoc = crystalLocs[i];
+//											new BukkitRunnable() {
+//												@Override
+//												public void run() {
+//													Chunk crystalChunk = world.getChunkAt(cLoc);
+//													if (!crystalChunk.isLoaded()) {
+//														crystalChunk.load();
+//													}
+//													EnderCrystal crystal = (EnderCrystal)world.spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
+//													crystal.setShowingBottom(false);
+//													
+//													cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
+//													cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
+//
+//													dragonBattle.e();
+//												}
+//
+//											}.runTaskLater(plugin, (i + 1) * 22);
+//										}
+//									}
+//
+//								}.runTaskLater(plugin, respawnDelay * 20);
 							}
 						}
 

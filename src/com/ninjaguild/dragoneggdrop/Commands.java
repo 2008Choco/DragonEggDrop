@@ -76,7 +76,7 @@ public class Commands implements CommandExecutor {
 						double weight = Double.parseDouble(args[1]);
 						ItemStack handItem = player.getInventory().getItemInMainHand();
 						if (handItem != null && handItem.getType() != Material.AIR) {
-							boolean result = plugin.getLootManager().addItem(weight, handItem);
+							boolean result = plugin.getDEDManager().getLootManager().addItem(weight, handItem);
 							if (result) {
 								player.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN + "Successfully added loot item!");
 							}
