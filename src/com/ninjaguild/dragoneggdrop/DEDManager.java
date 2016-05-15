@@ -88,8 +88,8 @@ public class DEDManager {
 	
 	protected void startRespawn(Location eggLoc, RespawnType type) {
 		if (respawnTask == null || 
-				plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) || 
-				plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId())) {
+				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
+				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
 			int respawnDelay = ((type == RespawnType.JOIN) ? joinDelay : deathDelay) * 20;
 			respawnTask = Bukkit.getScheduler().runTaskLater(plugin, new RespawnRunnable(plugin, eggLoc), respawnDelay);
 		}
