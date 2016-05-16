@@ -42,6 +42,7 @@ public class RespawnRunnable implements Runnable {
 					}
 					EnderCrystal crystal = (EnderCrystal)eggLocation.getWorld().spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
 					crystal.setShowingBottom(false);
+					crystal.setInvulnerable(true);
 
 					cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
 					cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
