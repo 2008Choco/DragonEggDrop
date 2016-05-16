@@ -46,7 +46,13 @@ public class RespawnRunnable implements Runnable {
 					cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
 					cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
 
-					dragonBattle.e();
+//					dragonBattle.e();
+					
+					//HACKY AF!
+					if (cLoc.equals(crystalLocs[crystalLocs.length - 1])) {
+						dragonBattle.e();
+						plugin.getDEDManager().setRespawnInProgress(true);
+					}
 				}
 
 			}.runTaskLater(plugin, (i + 1) * 22);

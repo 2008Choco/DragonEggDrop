@@ -32,6 +32,8 @@ public class DEDManager {
 	private final int joinDelay;
 	private final int deathDelay;
 	
+	private boolean respawnInProgress = false;
+	
 	public DEDManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 		
@@ -89,7 +91,7 @@ public class DEDManager {
 	
 	protected void startRespawn(Location eggLoc, RespawnType type) {
 		boolean dragonExists = !eggLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-		if (dragonExists) {
+		if (dragonExists || respawnInProgress) {
 			return;
 		}
 		
@@ -121,6 +123,14 @@ public class DEDManager {
 		    announceTask.cancel();
 		    announceTask = null;
 		}
+	}
+	
+	protected void setRespawnInProgress(boolean value) {
+		respawnInProgress = value;
+	}
+	
+	protected boolean isRespawnInProgress() {
+		return respawnInProgress;
 	}
 	
 	protected enum RespawnType {

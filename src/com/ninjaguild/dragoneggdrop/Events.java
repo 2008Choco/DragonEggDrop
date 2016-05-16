@@ -46,6 +46,8 @@ public class Events implements Listener {
 		}
 		
 		if (e.getEntityType() == EntityType.ENDER_DRAGON) {
+			plugin.getDEDManager().setRespawnInProgress(false);
+			
 			if (!plugin.getDEDManager().getDragonNames().isEmpty()) {
 				String name = ChatColor.translateAlternateColorCodes('&', 
 						plugin.getDEDManager().getDragonNames().get(rand.nextInt(plugin.getDEDManager().getDragonNames().size())));
