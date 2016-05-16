@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -39,6 +40,10 @@ public class RespawnRunnable implements Runnable {
 					Chunk crystalChunk = eggLocation.getWorld().getChunkAt(cLoc);
 					if (!crystalChunk.isLoaded()) {
 						crystalChunk.load();
+					}
+					//kill any existing entities at this location
+					for (Entity ent : cLoc.getWorld().getNearbyEntities(cLoc, 1, 1, 1)) {
+						ent.remove();
 					}
 					EnderCrystal crystal = (EnderCrystal)eggLocation.getWorld().spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
 					crystal.setShowingBottom(false);

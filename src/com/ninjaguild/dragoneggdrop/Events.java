@@ -16,6 +16,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -162,6 +163,19 @@ public class Events implements Listener {
 		if (e.getPlayer().getWorld().getEnvironment() == Environment.THE_END) {
 			if (e.getPlayer().getWorld().getPlayers().size() == 1) {
 				plugin.getDEDManager().stopRespawn();
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		if (e.getEntityType() == EntityType.ENDER_CRYSTAL) {
+			if (e.getEntity().isInvulnerable()) {
+				e.setCancelled(true);
 			}
 		}
 	}
