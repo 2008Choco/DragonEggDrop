@@ -174,7 +174,8 @@ public class Events implements Listener {
 		}
 		
 		if (e.getEntityType() == EntityType.ENDER_CRYSTAL) {
-			if (e.getEntity().isInvulnerable()) {
+			if (e.getEntity().isInvulnerable() &&
+					e.getEntity().getWorld().getEnvironment() == Environment.THE_END) {
 				e.setCancelled(true);
 			}
 		}
