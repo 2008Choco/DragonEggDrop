@@ -39,8 +39,6 @@ public class DragonEggDrop extends JavaPlugin {
 		getCommand("dragoneggdrop").setExecutor(new Commands(this));
 		
 		dedMan = new DEDManager(this);
-
-
         
         chatPrefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] ";
 	}

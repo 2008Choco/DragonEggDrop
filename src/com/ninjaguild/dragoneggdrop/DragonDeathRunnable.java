@@ -118,46 +118,6 @@ public class DragonDeathRunnable implements Runnable {
 								if (prevLoc.getWorld().getPlayers().size() > 0) {
 									plugin.getDEDManager().startRespawn(prevLoc, RespawnType.DEATH);
 								}
-//								new BukkitRunnable() {
-//									@Override
-//									public void run() {
-//										boolean dragonExists = !prevLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-//										if (dragonExists) {
-//											return;
-//										}
-//										//start respawn process
-//										Location[] crystalLocs = new Location[] {
-//												prevLoc.clone().add(3, -3, 0),
-//												prevLoc.clone().add(0, -3, 3),
-//												prevLoc.clone().add(-3, -3, 0),
-//												prevLoc.clone().add(0, -3, -3)
-//										};
-//										
-//										EnderDragonBattle dragonBattle = plugin.getEnderDragonBattleFromWorld(world);
-//										
-//										for (int i = 0; i < crystalLocs.length; i++) {
-//											Location cLoc = crystalLocs[i];
-//											new BukkitRunnable() {
-//												@Override
-//												public void run() {
-//													Chunk crystalChunk = world.getChunkAt(cLoc);
-//													if (!crystalChunk.isLoaded()) {
-//														crystalChunk.load();
-//													}
-//													EnderCrystal crystal = (EnderCrystal)world.spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
-//													crystal.setShowingBottom(false);
-//													
-//													cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
-//													cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
-//
-//													dragonBattle.e();
-//												}
-//
-//											}.runTaskLater(plugin, (i + 1) * 22);
-//										}
-//									}
-//
-//								}.runTaskLater(plugin, respawnDelay * 20);
 							}
 						}
 

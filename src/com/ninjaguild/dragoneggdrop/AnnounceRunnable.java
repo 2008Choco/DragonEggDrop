@@ -27,7 +27,7 @@ public class AnnounceRunnable implements Runnable {
 		color1 = color2;
 		color2 = temp;
 		
-		String message = color1 + "Dragon Respawn In " + color2 +(delay--) + color1 + " Seconds";
+		String message = color1 + "Dragon Respawn In " + color2 + (delay--) + color1 + " Seconds";
 		ActionBar.sendToSome(world.getPlayers(), message);
 		
 		if (delay == 0) {
