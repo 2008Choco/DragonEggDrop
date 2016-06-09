@@ -8,16 +8,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitTask;
 
-import net.minecraft.server.v1_9_R2.BossBattleServer;
-import net.minecraft.server.v1_9_R2.ChatMessage;
-import net.minecraft.server.v1_9_R2.EnderDragonBattle;
-import net.minecraft.server.v1_9_R2.PacketPlayOutBoss;
-import net.minecraft.server.v1_9_R2.WorldProviderTheEnd;
+import net.minecraft.server.v1_10_R1.BossBattleServer;
+import net.minecraft.server.v1_10_R1.ChatMessage;
+import net.minecraft.server.v1_10_R1.EnderDragonBattle;
+import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
+import net.minecraft.server.v1_10_R1.WorldProviderTheEnd;
 
 public class DEDManager {
 
@@ -78,7 +78,7 @@ public class DEDManager {
 	}
 
 	protected EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
-		return ((CraftEnderDragon)dragon).getHandle().cV();
+		return ((CraftEnderDragon)dragon).getHandle().cZ();
 	}
 	
 	protected List<String> getDragonNames() {

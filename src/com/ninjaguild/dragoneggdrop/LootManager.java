@@ -16,7 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_9_R2.block.CraftChest;
+import org.bukkit.craftbukkit.v1_10_R1.block.CraftChest;
 import org.bukkit.inventory.ItemStack;
 
 public class LootManager {

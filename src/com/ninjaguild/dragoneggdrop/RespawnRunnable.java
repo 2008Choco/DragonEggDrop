@@ -8,7 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.minecraft.server.v1_9_R2.EnderDragonBattle;
+import net.minecraft.server.v1_10_R1.EnderDragonBattle;
 
 public class RespawnRunnable implements Runnable {
 

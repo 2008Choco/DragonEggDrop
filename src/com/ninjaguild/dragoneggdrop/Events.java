@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -28,7 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.ninjaguild.dragoneggdrop.DEDManager.RespawnType;
 
-import net.minecraft.server.v1_9_R2.EntityEnderDragon;
+import net.minecraft.server.v1_10_R1.EntityEnderDragon;
 
 public class Events implements Listener {
 	
@@ -69,7 +69,7 @@ public class Events implements Listener {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					if (nmsDragon.bG >= 185) {//dragon is dead at 200
+					if (nmsDragon.bH >= 185) {//dragon is dead at 200
 						cancel();
 						plugin.getServer().getScheduler().runTask(plugin, new DragonDeathRunnable(plugin, world, prevKilled));
 					}
