@@ -70,7 +70,8 @@ public class LootManager {
 		chestBlock.setType(Material.CHEST);
 		Chest chest = (Chest)chestBlock.getState();
 		//set custom title
-		String chestTitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("loot-chest-title", "Chest"));
+		String chestTitle = ChatColor.translateAlternateColorCodes('&',
+				plugin.getConfig().getString("loot-chest-title", "Chest"));
 		((CraftChest)chest).getTileEntity().a(chestTitle);
 
 		for (int i = 0; i < numItems; i++) {
@@ -94,7 +95,8 @@ public class LootManager {
 		chestBlock.setType(Material.CHEST);
 		Chest chest = (Chest)chestBlock.getState();
 		//set custom title
-		String chestTitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("loot-chest-title", "Chest"));
+		String chestTitle = ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("loot-chest-title", "Chest"));
 		((CraftChest)chest).getTileEntity().a(chestTitle);
 		
 		List<ItemStack> lootItems = new ArrayList<>(loot.values());

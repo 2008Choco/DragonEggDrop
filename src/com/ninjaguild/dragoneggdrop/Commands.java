@@ -62,7 +62,8 @@ public class Commands implements CommandExecutor {
 			else if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("addloot")) {
 					if (!(sender instanceof Player)) {
-						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "This command can only be executed by a player!");
+						sender.sendMessage(plugin.getChatPrefix() + ChatColor.RED +
+								"This command can only be executed by a player!");
 						return true;
 					}
 					if (!sender.hasPermission("dragoneggdrop.addloot")) {
@@ -78,15 +79,18 @@ public class Commands implements CommandExecutor {
 						if (handItem != null && handItem.getType() != Material.AIR) {
 							boolean result = plugin.getDEDManager().getLootManager().addItem(weight, handItem);
 							if (result) {
-								player.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN + "Successfully added loot item!");
+								player.sendMessage(plugin.getChatPrefix() + ChatColor.GREEN +
+                                        "Successfully added loot item!");
 							}
 							else {
-								player.sendMessage(plugin.getChatPrefix() + ChatColor.RED + "Failed to add loot item! Already exist?");
+								player.sendMessage(plugin.getChatPrefix() + ChatColor.RED +
+                                        "Failed to add loot item! Already exist?");
 							}
 							return true;
 						}
 						else {
-							player.sendMessage(plugin.getChatPrefix() + ChatColor.YELLOW + "Hold the item you wish to add in your main hand.");
+							player.sendMessage(plugin.getChatPrefix() + ChatColor.YELLOW +
+                                    "Hold the item you wish to add in your main hand.");
 							return true;
 						}
 					}

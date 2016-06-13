@@ -51,9 +51,11 @@ public class Events implements Listener {
 			
 			if (!plugin.getDEDManager().getDragonNames().isEmpty()) {
 				String name = ChatColor.translateAlternateColorCodes('&', 
-						plugin.getDEDManager().getDragonNames().get(rand.nextInt(plugin.getDEDManager().getDragonNames().size())));
+						plugin.getDEDManager().getDragonNames().get(
+                                rand.nextInt(plugin.getDEDManager().getDragonNames().size())));
 				e.getEntity().setCustomName(name);
-				plugin.getDEDManager().setDragonBossBarTitle(name, plugin.getDEDManager().getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
+				plugin.getDEDManager().setDragonBossBarTitle(name,
+						plugin.getDEDManager().getEnderDragonBattleFromDragon((EnderDragon)e.getEntity()));
 			}
 		}
 	}
@@ -71,7 +73,8 @@ public class Events implements Listener {
 				public void run() {
 					if (nmsDragon.bH >= 185) {//dragon is dead at 200
 						cancel();
-						plugin.getServer().getScheduler().runTask(plugin, new DragonDeathRunnable(plugin, world, prevKilled));
+						plugin.getServer().getScheduler().runTask(plugin,
+                                new DragonDeathRunnable(plugin, world, prevKilled));
 					}
 				}
 

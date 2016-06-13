@@ -9,31 +9,27 @@ import org.bukkit.entity.Player;
 import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 
-public final class ActionBar
-{
+public final class ActionBar {
+
 	private ActionBar() {}
 	
-    public static void sendToPlayer(Player player, String message)
-    {
+    public static void sendToPlayer(Player player, String message) {
     	PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2);
     	((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
     }
     
-    public static void sendToSome(Collection<Player> players, String message)
-    {
+    public static void sendToSome(Collection<Player> players, String message) {
     	PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2);
-    	for (Player player : players)
-    	{
+    	for (Player player : players) {
     		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
     	}
     }
     
-    public static void sendToAll(String message)
-    {
+    public static void sendToAll(String message) {
     	PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2);
-    	for (Player player : Bukkit.getOnlinePlayers())
-    	{
+    	for (Player player : Bukkit.getOnlinePlayers()) {
     		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
     	}
     }
+
 }

@@ -102,7 +102,8 @@ public class DEDManager {
 			respawnTask = Bukkit.getScheduler().runTaskLater(plugin, new RespawnRunnable(plugin, eggLoc), respawnDelay);
 			
 			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
-				announceTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new AnnounceRunnable(plugin, eggLoc.getWorld(), respawnDelay / 20), 0L, 20L);
+				announceTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin,
+						new AnnounceRunnable(plugin, eggLoc.getWorld(), respawnDelay / 20), 0L, 20L);
 			}
 		}
 	}

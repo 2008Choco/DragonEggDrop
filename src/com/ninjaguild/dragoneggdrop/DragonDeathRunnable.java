@@ -59,7 +59,7 @@ public class DragonDeathRunnable implements Runnable {
 				currentY -= 1D;
 				pLoc.setY(currentY);
 
-				for (double d = 0; d < particleLength; d+=0.1D) {
+				for (double d = 0; d < particleLength; d+= 0.1D) {
 					world.spawnParticle(particleType, pLoc.clone().add(pLoc.getDirection().normalize().multiply(d * -1)),
 							particleAmount, oX, oY, oZ, particleExtra, null);
 				}

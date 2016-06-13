@@ -17,8 +17,10 @@ public class AnnounceRunnable implements Runnable {
 		this.world = world;
 		this.delay = delay;
 		
-		color1 = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("announce-color-one", ChatColor.GOLD.toString()));
-		color2 = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("announce-color-two", ChatColor.YELLOW.toString()));
+		color1 = ChatColor.translateAlternateColorCodes('&',
+				plugin.getConfig().getString("announce-color-one", ChatColor.GOLD.toString()));
+		color2 = ChatColor.translateAlternateColorCodes('&',
+				plugin.getConfig().getString("announce-color-two", ChatColor.YELLOW.toString()));
 	}
 	
 	@Override
