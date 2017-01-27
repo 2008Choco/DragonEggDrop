@@ -17,26 +17,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.utils;
 
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_11_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_11_R1.PacketPlayOutChat;
 
+// This will not yet be documented. I may or may not include this class in the final product
 public final class ActionBar {
 
 	private ActionBar() {}
 	
+	// FIXME: NMS-Dependent
     public static void sendToPlayer(Player player, String message) {
     	PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2);
     	((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
     }
     
+    // FIXME: NMS-Dependent
     public static void sendToSome(Collection<Player> players, String message) {
     	PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2);
     	for (Player player : players) {
@@ -44,11 +47,12 @@ public final class ActionBar {
     	}
     }
     
+    // FIXME: NMS-Dependent
     public static void sendToAll(String message) {
     	PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2);
     	for (Player player : Bukkit.getOnlinePlayers()) {
     		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
     	}
     }
-
+    
 }

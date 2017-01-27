@@ -21,61 +21,124 @@ package com.ninjaguild.dragoneggdrop;
 
 import java.util.logging.Level;
 
+import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
+import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
+import com.ninjaguild.dragoneggdrop.events.LootListeners;
+import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
+import com.ninjaguild.dragoneggdrop.loot.LootEntry;
+import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
+import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
+import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.utils.versions.v1_10.NMSAbstract1_10_R1;
+import com.ninjaguild.dragoneggdrop.utils.versions.v1_11.NMSAbstract1_11_R1;
+import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R1;
+import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R2;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Particle;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import org.bukkit.ChatColor;
-
+/**
+ * DragonEggDrop, reward your players with a dragon egg/loot chest 
+ * after every ender dragon battle, in grand fashion!
+ * 
+ * @author NinjaStix
+ * @author Parker Hawke - 2008Choco (Maintainer)
+ */
 public class DragonEggDrop extends JavaPlugin {
+	
+	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] ";
+	
+	static {
+		ConfigurationSerialization.registerClass(LootEntry.class);
+	}
 
-	private PluginDescriptionFile pdf = null;
-	private String chatPrefix = null;
-	private DEDManager dedMan = null;
+	private DEDManager dedManager;
+	private NMSAbstract nmsAbstract;
 
+	@Override
 	public void onEnable() {
-		saveDefaultConfig();
-		pdf = getDescription();
+		this.saveDefaultConfig();
 
-		//update config version
+		// Update configuration version
 		String currentVersion = getConfig().getString("version").trim();
 		ConfigUtil cu = new ConfigUtil(this);
 		cu.updateConfig(currentVersion);
+		
+		// Setup version abstraction
+		if (!this.setupNMSAbstract()) {
+			this.getLogger().severe("THE CURRENT SERVER VERSION IS NOT SUPPORTED. BOTHER THE MAINTAINER");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
 
 		try {
 			Particle.valueOf(getConfig().getString("particle-type", "FLAME").toUpperCase());
 		} catch (IllegalArgumentException ex) {
-			getLogger().log(Level.WARNING, "INVALID PARTICLE TYPE SPECIFIED! DISABLING...");
-			getServer().getPluginManager().disablePlugin(this);
-			getLogger().log(Level.INFO, "PLUGIN DISABLED");
+			this.getLogger().log(Level.WARNING, "INVALID PARTICLE TYPE SPECIFIED! DISABLING...");
+			this.getLogger().log(Level.INFO, "PLUGIN DISABLED");
+			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-
-		ConfigurationSerialization.registerClass(LootEntry.class);
 		
-		getServer().getPluginManager().registerEvents(new Events(this), this);
-		getCommand("dragoneggdrop").setExecutor(new Commands(this));
+		this.dedManager = new DEDManager(this);
 		
-		dedMan = new DEDManager(this);
-        
-        chatPrefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] ";
-	}
+		// Register events
+		Bukkit.getPluginManager().registerEvents(new DragonLifeListeners(this), this);
+		Bukkit.getPluginManager().registerEvents(new LootListeners(this), this);
+		Bukkit.getPluginManager().registerEvents(new RespawnListeners(this), this);
 
-	public void onDisable() {
-		//
+		// Register commands
+		this.getCommand("dragoneggdrop").setExecutor(new DragonEggDropCmd(this));
+		
 	}
 	
-	protected String getChatPrefix() {
-		return chatPrefix;
+	/**
+	 * Send a message to a command sender with the DragonEggDrop chat prefix
+	 * 
+	 * @param sender - The sender to send the message to
+	 * @param message - The message to send
+	 */
+	public void sendMessage(CommandSender sender, String message) {
+		sender.sendMessage(CHAT_PREFIX + message);
 	}
 	
-	protected PluginDescriptionFile getDescriptionFile() {
-		return pdf;
+	/**
+	 * Get the main DEDManager instance
+	 * 
+	 * @return the DEDManager instance
+	 */
+	public DEDManager getDEDManager() {
+		return dedManager;
 	}
 	
-	protected DEDManager getDEDManager() {
-		return dedMan;
+	/**
+	 * Get the current implementation of the NMSAbstract interface
+	 * 
+	 * @return the NMSAbstract interface
+	 */
+	public NMSAbstract getNMSAbstract() {
+		return nmsAbstract;
 	}
-
+	
+	private final boolean setupNMSAbstract(){
+		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        if (version.equalsIgnoreCase("v1_9_R1")){ // 1.9.0 - 1.9.3
+        	this.nmsAbstract = new NMSAbstract1_9_R1();
+        	return true;
+        }else if (version.equalsIgnoreCase("v1_9_R2")){ // 1.9.4
+        	this.nmsAbstract = new NMSAbstract1_9_R2();
+        	return true;
+        }else if (version.equalsIgnoreCase("v1_10_R1")){ // 1.10.0 - 1.10.2
+        	this.nmsAbstract = new NMSAbstract1_10_R1();
+        	return true;
+        }else if (version.equalsIgnoreCase("v1_11_R1")){
+        	this.nmsAbstract = new NMSAbstract1_11_R1();
+        	return true;
+        }
+        return false;
+	}
 }

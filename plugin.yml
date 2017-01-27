@@ -1,11 +1,11 @@
 name: DragonEggDrop
 main: com.ninjaguild.dragoneggdrop.DragonEggDrop
-version: 1.1.6
+version: 1.2.0
 author: NinjaStix
 
 commands:
   dragoneggdrop:
-    usage: /dragoneggdrop [help]
+    usage: /<command> [help]
     aliases: [ded]
 
 permissions:

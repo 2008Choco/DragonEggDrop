@@ -19,7 +19,7 @@
 
 // *The goal was to make this update configs while keeping comments
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,42 +27,54 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Set;
 
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+/**
+ * Represents a YAML configuration file to allow for reload functions
+ * whilst also keeping Bukkit comments
+ */
 public class ConfigUtil {
 
 	private final DragonEggDrop plugin;
 
+	/**
+	 * Constructs a new ConfigUtils object
+	 * 
+	 * @param plugin - An instance of the DragonEggDrop plugin
+	 */
 	public ConfigUtil(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 	}
 
-	protected void updateConfig(String currentVersion) {
+	/**
+	 * Update the configuration file
+	 * 
+	 * @param currentVersion - The version of the configuration file
+	 */
+	public void updateConfig(String currentVersion) {
 		InputStream in = plugin.getResource("config.yml");
-		InputStreamReader inReader = new InputStreamReader(in);
-		FileConfiguration defaultConfig =
-				YamlConfiguration.loadConfiguration(inReader);
-		if (defaultConfig.getString("version").equals(currentVersion)) {
-			return;
-		}
-		
-		Set<String> newKeys = defaultConfig.getKeys(false);
-		for (String key : plugin.getConfig().getKeys(false)) {
-			if (key.equalsIgnoreCase("version")) {
-				continue;
+		try (InputStreamReader inReader = new InputStreamReader(in)) {
+			FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
+			
+			if (defaultConfig.getString("version").equals(currentVersion)) {
+				return;
 			}
-			if (newKeys.contains(key)) {
-				defaultConfig.set(key, plugin.getConfig().get(key));
+			
+			Set<String> newKeys = defaultConfig.getKeys(false);
+			for (String key : plugin.getConfig().getKeys(false)) {
+				if (key.equalsIgnoreCase("version")) {
+					continue;
+				}
+				if (newKeys.contains(key)) {
+					defaultConfig.set(key, plugin.getConfig().get(key));
+				}
 			}
-		}
-		
-		try {
+			
 			defaultConfig.save(new File(plugin.getDataFolder() + "/config.yml"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 
 }

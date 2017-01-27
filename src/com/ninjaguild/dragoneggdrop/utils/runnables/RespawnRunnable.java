@@ -17,7 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.utils.runnables;
+
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -27,13 +29,23 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.minecraft.server.v1_10_R1.EnderDragonBattle;
+import net.minecraft.server.v1_11_R1.EnderDragonBattle;
 
-public class RespawnRunnable implements Runnable {
+/**
+ * Represents a BukkitRunnable that handles the respawning of the 
+ * Ender Dragon after it has been slain
+ */
+public class RespawnRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	private final Location eggLocation;
 
+	/**
+	 * Construct a new RespawnRunnable object
+	 * 
+	 * @param plugin - An instance of the DragonEggDrop plugin
+	 * @param eggLocation - The location in which the egg is located
+	 */
 	public RespawnRunnable(final DragonEggDrop plugin, final Location eggLocation) {
 		this.plugin = plugin;
 		this.eggLocation = eggLocation;
@@ -49,6 +61,7 @@ public class RespawnRunnable implements Runnable {
 				eggLocation.clone().add(0, -3, -3)
 		};
 
+		// FIXME: NMS-Dependent
 		EnderDragonBattle dragonBattle = plugin.getDEDManager().getEnderDragonBattleFromWorld(eggLocation.getWorld());
 
 		for (int i = 0; i < crystalLocs.length; i++) {

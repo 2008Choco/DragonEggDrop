@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.utils;
 
 import java.util.Collection;
 import java.util.NavigableMap;
@@ -25,21 +25,42 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
+/**
+ * An implementation of a Collection based on a TreeMap. The goal of
+ * the RandomCollection is to simplify the process of retrieving a
+ * random object based on its mapped weight
+ * 
+ * @param <E> - The type of object to be stored in the Collection
+ */
 public class RandomCollection<E> {
 	
     private final NavigableMap<Double, E> map = new TreeMap<Double, E>();
     private final Random random;
     private double total = 0;
 
+    /**
+     * Construct a new RandomCollection with a new Random object
+     */
     public RandomCollection() {
         this(new Random());
     }
 
+    /**
+     * Construct a new RandomCollection with a given Random object
+     * @param random
+     */
     public RandomCollection(final Random random) {
         this.random = random;
     }
 
-    protected boolean add(double weight, E result) {
+    /**
+     * Add a new object to the collection with a given weighted random
+     * 
+     * @param weight - The weight of the object
+     * @param result - The object to add
+     * @return true if successfully added, false if an invalid weight was provided
+     */
+    public boolean add(double weight, E result) {
         if (weight <= 0.0D) {
         	return false;
         }
@@ -50,25 +71,51 @@ public class RandomCollection<E> {
         return true;
     }
     
-    protected void addAll(RandomCollection<E> collection) {
+    /**
+     * Add all elements of another RandomCollection
+     * 
+     * @param collection - The collection to add
+     */
+    public void addAll(RandomCollection<E> collection) {
     	for (double d : collection.keySet()) {
     		add(d, collection.get(d));
     	}
     }
     
+    /**
+     * Get an object based on its total weight upon injection
+     * 
+     * @param key - The total weight at the time of injection
+     * @return the object, or null if not found
+     */
     private E get(Object key) {
 		return map.get(key);
 	}
 
+    /**
+     * Get a Set of all keys in the underlying TreeMap
+     * 
+     * @return all key values
+     */
 	private Set<Double> keySet() {
     	return map.keySet();
     }
 	
-	protected Collection<E> values() {
+	/**
+	 * Get a Collection of all values in the underlying TreeMap
+	 * @return
+	 */
+	public Collection<E> values() {
 		return map.values();
 	}
 
-    protected E next() {
+	/**
+	 * Retrieve the next object, being a random object in the collection
+	 * based on its weighted value
+	 * 
+	 * @return a random weighted object
+	 */
+    public E next() {
         double value = random.nextDouble() * total;
         return map.ceilingEntry(value).getValue();
     }

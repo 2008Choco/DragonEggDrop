@@ -17,7 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.utils.runnables;
+
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,9 +30,11 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.ninjaguild.dragoneggdrop.DEDManager.RespawnType;
-
-public class DragonDeathRunnable implements Runnable {
+/**
+ * Represents a BukkitRunnable that handles the generation and particle display
+ * of the loot after the Ender Dragon's death
+ */
+public class DragonDeathRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	
@@ -47,6 +52,13 @@ public class DragonDeathRunnable implements Runnable {
 
 	private boolean respawnDragon = false;
 
+	/**
+	 * Construct a new DragonDeathRunnable object
+	 * 
+	 * @param plugin - An instance of the DragonEggDrop plugin
+	 * @param world - The world in which the dragon death is taking place
+	 * @param prevKilled - Whether the dragon was previously killed or not
+	 */
 	public DragonDeathRunnable(final DragonEggDrop plugin, final World world, boolean prevKilled) {
 		this.plugin = plugin;
 		this.world = world;

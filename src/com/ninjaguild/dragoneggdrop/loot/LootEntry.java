@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.loot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,19 +27,36 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Represents an entry in the LootManager which can determine the weight
+ * of an item when distributing loot after the death of the Ender Dragon
+ */
 public class LootEntry implements ConfigurationSerializable {
 
 	private final double weight;
 	private final ItemStack item;
 	
+	/**
+	 * Construct a new LootEntry with the specified random weight associated
+	 * to the specified item
+	 * 
+	 * @param weight - The weighted randomness of the item
+	 * @param item - The associated item
+	 */
 	public LootEntry(final double weight, final ItemStack item) {
 		this.weight = weight;
 		this.item = item;
 	}
 	
+	/**
+	 * Construct a new LootEntry based on existing data. Used for
+	 * serialization purposes
+	 * 
+	 * @param data - Configuration data
+	 */
 	public LootEntry(Map<String, Object> data) {
-		this.weight = (double)data.get("weight");
-		this.item = (ItemStack)data.get("item");
+		this.weight = (double) data.get("weight");
+		this.item = (ItemStack) data.get("item");
 	}
 	
 	@Override
@@ -50,36 +67,36 @@ public class LootEntry implements ConfigurationSerializable {
 		return data;
 	}
 	
-	protected double getWeight() {
+	/**
+	 * Get the random weight for the LootEntry
+	 * 
+	 * @return the random weight
+	 */
+	public double getWeight() {
 		return weight;
 	}
 	
-	protected ItemStack getItem() {
+	/**
+	 * Get the item associated with this loot entry
+	 * 
+	 * @return the associated item
+	 */
+	public ItemStack getItem() {
 		return item;
 	}
 	
     @Override
     public int hashCode() {
-    	return new HashCodeBuilder(17, 31).
-    			append(getWeight()).
-    			append(getItem()).
-    			hashCode();
+    	return new HashCodeBuilder(17, 31).append(weight).append(item).hashCode();
     }
     
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof LootEntry)) {
-            return false;
-        }
+    	if (!(obj instanceof LootEntry)) return false;
+        if (this == obj) return true;
     	
         LootEntry entry = (LootEntry)obj;
-    	return new EqualsBuilder().
-    			append(getWeight(), entry.getWeight()).
-    			append(getItem(), entry.getItem()).
-    			isEquals();
+    	return new EqualsBuilder().append(weight, entry.weight).append(item, entry.item).isEquals();
     }
-
+    
 }

@@ -17,12 +17,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop;
+package com.ninjaguild.dragoneggdrop.utils.runnables;
+
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.ActionBar;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class AnnounceRunnable implements Runnable {
+/**
+ * Represents a BukkitRunnable that permits action bar announcements
+ * to be displayed to the player with an alternating colour
+ */
+public class AnnounceRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	private final World world;
@@ -31,6 +39,13 @@ public class AnnounceRunnable implements Runnable {
 	private String color1;
 	private String color2;
 	
+	/**
+	 * Construct a new AnnouncementRunnable object
+	 * 
+	 * @param plugin - An instance of the DragonEggDrop plugin
+	 * @param world - The world to broadcast the announcements to
+	 * @param delay - The time it will take the Ender Dragon to respawn (and terminate this runnable)
+	 */
 	public AnnounceRunnable(final DragonEggDrop plugin, final World world, final int delay) {
 		this.plugin = plugin;
 		this.world = world;
