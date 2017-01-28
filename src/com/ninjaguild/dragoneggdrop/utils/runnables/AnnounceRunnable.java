@@ -20,7 +20,6 @@
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.utils.ActionBar;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -64,7 +63,7 @@ public class AnnounceRunnable extends BukkitRunnable {
 		color2 = temp;
 		
 		String message = color1 + "Dragon Respawn In " + color2 + (delay--) + color1 + " Seconds";
-		ActionBar.sendToSome(world.getPlayers(), message);
+		plugin.getNMSAbstract().broadcastActionBar(message, world);
 		
 		if (delay == 0) {
 			plugin.getDEDManager().cancelAnnounce();

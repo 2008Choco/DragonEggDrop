@@ -19,7 +19,6 @@
 
 package com.ninjaguild.dragoneggdrop.utils.manager;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,16 +31,8 @@ import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitTask;
-
-import net.minecraft.server.v1_11_R1.BossBattleServer;
-import net.minecraft.server.v1_11_R1.ChatMessage;
-import net.minecraft.server.v1_11_R1.EnderDragonBattle;
-import net.minecraft.server.v1_11_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_11_R1.WorldProviderTheEnd;
 
 /**
  * The core Dragon Boss Battle manager. Boss battle manipulation and
@@ -98,7 +89,6 @@ public class DEDManager {
 		);
 	}
 
-	// FIXME: NMS-Dependent
 	/**
 	 * Set the title of the boss bar in a given ender dragon battle to 
 	 * a specific name
@@ -106,39 +96,28 @@ public class DEDManager {
 	 * @param title - The title to set
 	 * @param battle - The battle to modifiy
 	 */
-	public void setDragonBossBarTitle(String title, EnderDragonBattle battle) {
-		try {
-			Field f = EnderDragonBattle.class.getDeclaredField("c");
-			f.setAccessible(true);
-			BossBattleServer battleServer = (BossBattleServer)f.get(battle);
-			battleServer.title = new ChatMessage(title, new Object[0]);
-			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
-			f.setAccessible(false);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public void setDragonBossBarTitle(String title, Object battle) {
+		this.plugin.getNMSAbstract().setDragonBossBarTitle(title, battle);
 	}
 
-	// FIXME: NMS-Dependent
 	/**
 	 * Get an EnderDragonBattle object based on the given world
 	 * 
 	 * @param world - The world to retrieve a battle from
 	 * @return the resulting dragon battle
 	 */
-	public EnderDragonBattle getEnderDragonBattleFromWorld(World world) {
-		return ((WorldProviderTheEnd) ((CraftWorld) world).getHandle().worldProvider).t();
+	public Object getEnderDragonBattleFromWorld(World world) {
+		return this.plugin.getNMSAbstract().getEnderDragonBattleFromWorld(world);
 	}
 
-	// FIXME: NMS-Dependent
 	/**
 	 * Get an EnderDragonBattle object based on a specific Ender Dragon
 	 * 
 	 * @param dragon - The dragon to retrieve a battle from
 	 * @return the resulting dragon battle
 	 */
-	public EnderDragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
-		return ((CraftEnderDragon) dragon).getHandle().db();
+	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
+		return this.plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 	}
 	
 	/**

@@ -27,15 +27,12 @@ import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import net.minecraft.server.v1_11_R1.EntityEnderDragon;
 
 public class DragonLifeListeners implements Listener {
 	
@@ -63,21 +60,18 @@ public class DragonLifeListeners implements Listener {
 		}
 	}
 	
-	// FIXME: NMS-Dependent
 	@EventHandler
 	public void onDragonDeath(EntityDeathEvent event) {
 		if (!(event.getEntity() instanceof EnderDragon)) return;
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
-		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		
-		boolean prevKilled = plugin.getDEDManager().getEnderDragonBattleFromDragon(dragon).d(); // PreviouslyKilled
+		boolean prevKilled = this.plugin.getNMSAbstract().hasBeenPreviouslyKilled(dragon); // PreviouslyKilled
 		World world = event.getEntity().getWorld();
 
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if (nmsDragon.bG >= 185) { // Dragon is dead at 200
+				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon)>= 185) { // Dragon is dead at 200
 					this.cancel();
 					new DragonDeathRunnable(plugin, world, prevKilled).runTask(plugin);
 				}

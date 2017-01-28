@@ -29,8 +29,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.minecraft.server.v1_11_R1.EnderDragonBattle;
-
 /**
  * Represents a BukkitRunnable that handles the respawning of the 
  * Ender Dragon after it has been slain
@@ -61,8 +59,7 @@ public class RespawnRunnable extends BukkitRunnable {
 				eggLocation.clone().add(0, -3, -3)
 		};
 
-		// FIXME: NMS-Dependent
-		EnderDragonBattle dragonBattle = plugin.getDEDManager().getEnderDragonBattleFromWorld(eggLocation.getWorld());
+		Object dragonBattle = plugin.getDEDManager().getEnderDragonBattleFromWorld(eggLocation.getWorld());
 
 		for (int i = 0; i < crystalLocs.length; i++) {
 			Location cLoc = crystalLocs[i];
@@ -84,11 +81,11 @@ public class RespawnRunnable extends BukkitRunnable {
 					cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
 					cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
 
-//					dragonBattle.e();
+//					dragonBattle.e(); ** REPLACED WITH NMSAbstract#respawnEnderDragon() **
 					
 					//HACKY AF!
 					if (cLoc.equals(crystalLocs[crystalLocs.length - 1])) {
-						dragonBattle.e();
+						plugin.getNMSAbstract().respawnEnderDragon(dragonBattle);
 						plugin.getDEDManager().setRespawnInProgress(true);
 					}
 				}

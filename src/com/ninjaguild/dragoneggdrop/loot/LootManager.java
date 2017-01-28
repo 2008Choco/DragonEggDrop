@@ -39,7 +39,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_11_R1.block.CraftChest;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -115,7 +114,7 @@ public class LootManager {
 		//set custom title
 		String chestTitle = ChatColor.translateAlternateColorCodes('&',
 				plugin.getConfig().getString("loot-chest-title", "Chest"));
-		((CraftChest)chest).getTileEntity().a(chestTitle);
+		this.plugin.getNMSAbstract().setChestName(chest, chestTitle);
 
 		for (int i = 0; i < numItems; i++) {
 			int slot = rand.nextInt(chest.getBlockInventory().getSize());
@@ -128,7 +127,6 @@ public class LootManager {
 		}
 	}
 	
-	// FIXME: NMS-Dependent
 	/**
 	 * Place a chest with all loot randomly distributed throughout
 	 * the chests' inventory
@@ -147,7 +145,7 @@ public class LootManager {
 		//set custom title
 		String chestTitle = ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("loot-chest-title", "Chest"));
-		((CraftChest)chest).getTileEntity().a(chestTitle);
+		this.plugin.getNMSAbstract().setChestName(chest, chestTitle);
 		
 		List<ItemStack> lootItems = new ArrayList<>(loot.values());
 		for (int i = 0; i < lootItems.size(); i++) {
