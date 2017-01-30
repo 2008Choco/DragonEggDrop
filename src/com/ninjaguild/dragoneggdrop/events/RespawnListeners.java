@@ -22,10 +22,12 @@ package com.ninjaguild.dragoneggdrop.events;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -33,6 +35,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class RespawnListeners implements Listener {
+	
+	private static final String RESOURCE_PAGE = "https://www.spigotmc.org/resources/dragoneggdrop-revival.35570/";
 	
 	private final DragonEggDrop plugin;
 	
@@ -53,7 +57,7 @@ public class RespawnListeners implements Listener {
 			}
 		}
 		
-		else if (toWorld.getEnvironment() == Environment.THE_END) {
+		if (toWorld.getEnvironment() == Environment.THE_END) {
 			if (toWorld.getPlayers().size() == 1) {
 				// Schedule respawn, if not dragon exists, or in progress
 				for (int y = toWorld.getMaxHeight(); y > 0; y--) {
@@ -69,9 +73,16 @@ public class RespawnListeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		// Version notification
+		Player player = event.getPlayer();
+		if (player.isOp() && plugin.isNewVersionAvailable()) {
+			this.plugin.sendMessage(player, ChatColor.GRAY + "A new version is available for download (Version " + this.plugin.getNewVersion() + "). " + RESOURCE_PAGE);
+		}
+		
+		// Dragon respawn logic
 		if (!plugin.getConfig().getBoolean("respawn", false)) return;
 		
-		World world = event.getPlayer().getWorld();
+		World world = player.getWorld();
 		if (world.getEnvironment() != Environment.THE_END || !world.getPlayers().isEmpty()) return;
 		
 		for (int y = world.getMaxHeight(); y > 0; y--) {

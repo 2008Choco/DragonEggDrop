@@ -19,6 +19,10 @@
 
 package com.ninjaguild.dragoneggdrop;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.logging.Level;
 
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
@@ -40,6 +44,9 @@ import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * DragonEggDrop, reward your players with a dragon egg/loot chest 
@@ -55,6 +62,12 @@ public class DragonEggDrop extends JavaPlugin {
 	static {
 		ConfigurationSerialization.registerClass(LootEntry.class);
 	}
+	
+	private static final int RESOURCE_ID = 35570;
+	private static final String SPIGET_LINK = "https://api.spiget.org/v2/resources/" + RESOURCE_ID + "/versions/latest";
+	
+	private boolean newVersionAvailable = false;
+	private String newVersion;
 
 	private DEDManager dedManager;
 	private NMSAbstract nmsAbstract;
@@ -93,6 +106,8 @@ public class DragonEggDrop extends JavaPlugin {
 		// Register commands
 		this.getCommand("dragoneggdrop").setExecutor(new DragonEggDropCmd(this));
 		
+		// Update check
+		this.doVersionCheck();
 	}
 	
 	/**
@@ -121,6 +136,50 @@ public class DragonEggDrop extends JavaPlugin {
 	 */
 	public NMSAbstract getNMSAbstract() {
 		return nmsAbstract;
+	}
+	
+	/**
+	 * Get whether there is a new version available and ready for
+	 * download or not
+	 * 
+	 * @return true if available
+	 */
+	public boolean isNewVersionAvailable() {
+		return newVersionAvailable;
+	}
+	
+	/**
+	 * Get the version of the available update (if one exists). 
+	 * 
+	 * @see #isNewVersionAvailable()
+	 * @return the new version
+	 */
+	public String getNewVersion() {
+		return newVersion;
+	}
+	
+	private void doVersionCheck() {
+		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(SPIGET_LINK).openStream()))){
+
+				JSONParser parser = new JSONParser();
+				JSONObject json = (JSONObject) parser.parse(reader);
+				
+				String currentVersion = getDescription().getVersion(), recentVersion = (String) json.get("name");
+				
+				if (!currentVersion.equals(recentVersion)) {
+					getLogger().info("New version available. Your Version = " + currentVersion + ". New Version = " + recentVersion);
+					newVersionAvailable = true;
+					newVersion = recentVersion;
+				}
+			}catch(IOException e){
+				getLogger().info("Could not check for a new version. Perhaps the website is down?");
+			} catch (ParseException e) {
+				getLogger().info("There was an issue parsing JSON formatted data. If issues continue, please put in a ticket on the "
+						+ "DragonEggDrop Revival development page with the following stacktrace");
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	private final boolean setupNMSAbstract(){
