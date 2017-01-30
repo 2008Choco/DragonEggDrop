@@ -1,29 +1,46 @@
 # DO NOT REMOVE OR MODIFY #
-version: 1
+version: 2
 # ----------------------- #
 
-#The Y location the egg item will spawn at
-egg-start-y: 180.0
-
-#Type of particle, see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
-particle-type: 'FLAME'
-
-#The number of particles to spawn
-particle-amount: 4
-
-#The length of the particle trail
-particle-length: 6.0
-
-#Extra value of the particle
-particle-extra: 0.0
-
-#Particle offsets
-particle-offset-x: 0.25
-particle-offset-y: 0.0
-particle-offset-z: 0.25
-
-#How often to spawn the particles (in ticks)
-particle-interval: 1
+# All data involving the particle effects displayed after the death of the Ender Dragon
+Particles:
+    # The Y location the reward object will spawn at
+    egg-start-y: 180.0
+    
+    # Type of particle, see: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+    type: 'FLAME'
+    
+    # The number of particles to spawn per particle iteration
+    amount: 4
+    
+    # Extra data of the particle (Most are not affected by this value)
+    extra: 0
+    
+    # The particle offsets for each direction
+    x-offset: 0.001
+    y-offset: 0.001
+    z-offset: 0.001
+    
+    # The speed multiplier at which particles will be spawned (how fast they will descend)
+    speed-multiplier: 1
+    
+    # The amount of particle lines that will animate from the ceiling
+    stream-count: 6
+    
+    # How often to spawn the particles (in ticks)
+    interval: 1
+    
+    # Advanced particle functionality! DO NOT TOUCH UNLESS YOU UNDERSTAND WHAT THIS DOES
+    Advanced:
+        # A pre-defined mathematical shape for the particles to be displayed in
+        # (Available: "BALL", "HELIX", "OPEN_END_HELIX", "CUSTOM")
+        preset-shape: 'OPEN_END_HELIX'
+        
+        # The mathematical expression in which particles will be spawned along the x coordinate
+        x-coord-expression: 'cos(theta)'
+        
+        # The mathematical expression in which particles will be spawned along the z coordinate
+        z-coord-expression: 'sin(theta)'
 
 #Number of lightning entities to spawn on egg land
 lightning-amount: 4
@@ -32,8 +49,10 @@ lightning-amount: 4
 #Loot items are defined in loot.yml via command /ded addloot
 #The 'all' type places every item defined in the loot.yml into the chest one time each.
 drop-type: egg
+
 #If chance, what is the percent chance of spawning a chest?(0 - 100)
 chest-spawn-chance: 20
+
 #Want a custom title for the loot chest? Set it here.
 loot-chest-title: 'Loot Chest'
 

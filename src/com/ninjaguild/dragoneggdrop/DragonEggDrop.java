@@ -63,11 +63,10 @@ public class DragonEggDrop extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		this.saveDefaultConfig();
-
+		
 		// Update configuration version
-		String currentVersion = getConfig().getString("version").trim();
 		ConfigUtil cu = new ConfigUtil(this);
-		cu.updateConfig(currentVersion);
+		cu.updateConfig(this.getConfig().getInt("version"));
 		
 		// Setup version abstraction
 		if (!this.setupNMSAbstract()) {

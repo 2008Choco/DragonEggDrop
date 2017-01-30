@@ -1,0 +1,268 @@
+/*
+    DragonEggDrop
+    Copyright (C) 2016  NinjaStix
+    ninjastix84@gmail.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package com.ninjaguild.dragoneggdrop.utils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
+
+/**
+ * A powerful utility class to assist in the parsing and evaluation 
+ * of arithmetic functions with custom variables and operations through
+ * a recursive algorithm
+ * 
+ * @author Parker Hawke - 2008Choco
+ */
+public class MathUtils {
+	
+	/* 
+	 * This code is loosely based off of and modified from an original thread
+	 * on Stackoverflow's forums:
+	 * http://stackoverflow.com/questions/40975678/evaluating-a-math-expression-with-variables-java-8
+	 * 
+	 * Modifications include:
+	 *   - Allow for custom arithmetic functions
+	 *   - Variables included in the function
+	 *   - Java 8 functionality & Object-Oriented format
+	 */
+	
+	private static final Map<String, DoubleUnaryOperator> OPERATORS = new HashMap<>();
+	static {
+		// Basic arithmetics
+		OPERATORS.put("sqrt", x -> StrictMath.sqrt(x));
+		OPERATORS.put("neg", x -> -x);
+		
+		// Trigonometric
+		OPERATORS.put("sin", x -> StrictMath.sin(Math.toRadians(x)));
+		OPERATORS.put("cos", x -> StrictMath.cos(Math.toRadians(x)));
+		OPERATORS.put("tan", x -> StrictMath.tan(Math.toRadians(x)));
+		
+		// Conversion
+		OPERATORS.put("rad", x -> Math.toRadians(x));
+		OPERATORS.put("deg", x -> Math.toDegrees(x));
+	}
+	
+	private MathUtils(){}
+	
+	/**
+	 * Represents an evaluable mathematical expression
+	 * 
+	 * @author Parker Hawke - 2008Choco
+	 */
+	@FunctionalInterface
+	public interface MathExpression {
+		
+		/**
+		 * Evaluate the mathematical expression
+		 * 
+		 * @return the evaluation result
+		 */
+		public double evaluate();
+	}
+	
+	/**
+	 * Evaluate a mathematical expression with given variables
+	 * 
+	 * @param expression - The string to parse
+	 * @param variables - The map containing necessary variables for this expression
+	 * (To modify variables at any given time between evaluations, replace values in the map)
+	 * 
+	 * @return The mathematical expression
+	 */
+	public static MathExpression parseExpression(String expression, Map<String, Double> variables) {
+		return new ExpressionEvaluator(expression, variables).parse();
+	}
+	
+	/**
+	 * Evaluate a basic mathematical expression. Variables are not permitted in
+	 * expressions parsed by this method. For variable-based functions, see
+	 * {@link #parseExpression(String, Map)}
+	 * 
+	 * @param expression - The string to parse
+	 * @return The mathematical expression
+	 */
+	public static MathExpression parseExpression(String expression) {
+		return new ExpressionEvaluator(expression).parse();
+	}
+	
+	/**
+	 * Inject a custom mathematical operation into the expression parser
+	 */
+	public static boolean injectMathematicalOperator(String functionName, DoubleUnaryOperator operator) {
+		if (OPERATORS.containsKey(functionName)) return false;
+		
+		OPERATORS.put(functionName, operator);
+		return true;
+	}
+	
+	/**
+	 * The logic behind the parsing of {@link MathExpression} objects
+	 * 
+	 * @author Parker Hawke - 2008Choco
+	 */
+	private static class ExpressionEvaluator {
+		
+		int pos = -1, ch;
+		
+		private final String expression;
+		private final Map<String, Double> variables;
+		
+		public ExpressionEvaluator(String expression, Map<String, Double> variables) {
+			this.expression = expression;
+			this.variables = variables;
+		}
+		
+		public ExpressionEvaluator(String expression) {
+			this(expression, new HashMap<>());
+		}
+        
+		/**
+		 * Proceed to the next character in the expression
+		 */
+        public void nextChar() {
+            ch = (++pos < expression.length()) ? expression.charAt(pos) : -1;
+        }
+        
+        /**
+         * Attempt to find a given character at the next position in
+         * the expression (whilst ignoring whitespace characters)
+         * 
+         * @param charToEat - The character to find
+         * @return true if found. False otherwise
+         */
+        public boolean eat(int charToEat) {
+            while (ch == ' ') nextChar();
+            if (ch == charToEat) {
+                this.nextChar();
+                return true;
+            }
+            return false;
+        }
+        
+        /**
+         * Parse the provided function into a MathExpression using
+         * recursive functions
+         * 
+         * @return the parsed mathematical expression
+         */
+        public MathExpression parse() {
+        	this.nextChar();
+            MathExpression x = this.parseExpression();
+            if (pos < expression.length()) throw new RuntimeException("Unexpected: " + (char)ch);
+            return x;
+        }
+        
+        /* Grammar:
+         * expression = term | expression + term | expression - term
+         * term = factor | term * factor | term / factor
+         * factor = + factor | - factor | ( expression )
+         *        | number | functionName factor | factor ^ factor
+         */
+        
+        /**
+         * Parse an entire sub-expression in the parent expression
+         * (including addition and subtraction)
+         * 
+         * @return the parsed expression
+         */
+        public MathExpression parseExpression() {
+            MathExpression x = this.parseTerm();
+            while (true) {
+                if (eat('+')) { // addition
+                	MathExpression a = x, b = parseTerm();
+                    x = (() -> a.evaluate() + b.evaluate());
+                }
+                else if (eat('-')) { // subtraction
+                	MathExpression a = x, b = parseTerm();
+                    x = (() -> a.evaluate() - b.evaluate());
+                }
+                else return x;
+            }
+        }
+        
+        /**
+         * Parse a term in the parent expression (including
+         * multiplication and division)
+         * 
+         * @return the parsed term
+         */
+        public MathExpression parseTerm() {
+            MathExpression x = this.parseFactor();
+            while (true) {
+                if (eat('*')){ // multiplication
+                	MathExpression a = x, b = parseFactor();
+                    x = (() -> a.evaluate() * b.evaluate());
+                }
+                else if (eat('/')) { // division
+                	MathExpression a = x, b = parseFactor();
+                    x = (() -> a.evaluate() / b.evaluate());
+                }
+                else return x;
+            }
+        }
+        
+        /**
+         * Parse a factor in the parent expression (including
+         * addition, subtraction, parentheses and injected
+         * operation functions)
+         * 
+         * @return the parsed factor
+         */
+        public MathExpression parseFactor() {
+            if (eat('+')) return parseFactor(); // unary plus
+            if (eat('-')){
+            	double value = -parseFactor().evaluate();
+            	return (() -> value); // unary minus
+            }
+
+            MathExpression x;
+            int startPos = this.pos;
+            if (eat('(')) { // parentheses
+                x = this.parseExpression();
+                eat(')');
+            } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
+                while ((ch >= '0' && ch <= '9') || ch == '.') this.nextChar();
+                
+                String value = expression.substring(startPos, this.pos);
+                x = (() -> Double.parseDouble(value));
+            } else if (ch >= 'a' && ch <= 'z') { // functions
+                while (ch >= 'a' && ch <= 'z') this.nextChar();
+                String func = expression.substring(startPos, this.pos);
+                
+                if (OPERATORS.containsKey(func)) {
+                	DoubleUnaryOperator operand = OPERATORS.get(func);
+                	MathExpression a = this.parseFactor();
+                	x = (() -> operand.applyAsDouble(a.evaluate()));
+                } else {
+                	x = (() -> variables.get(func));
+                }
+            } else {
+                throw new ArithmeticException("Unexpected: \"" + ch + "\"");
+            }
+
+            if (eat('^')) { // exponentiation
+            	MathExpression a = x, b = parseFactor();
+                x = (() -> Math.pow(a.evaluate(), b.evaluate()));
+            }
+
+            return x;
+        }
+	}
+}

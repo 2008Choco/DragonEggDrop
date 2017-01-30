@@ -73,7 +73,7 @@ public class DragonLifeListeners implements Listener {
 			public void run() {
 				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon)>= 185) { // Dragon is dead at 200
 					this.cancel();
-					new DragonDeathRunnable(plugin, world, prevKilled).runTask(plugin);
+					new DragonDeathRunnable(plugin, world, prevKilled);
 				}
 			}
 		}.runTaskTimer(plugin, 0L, 1L);

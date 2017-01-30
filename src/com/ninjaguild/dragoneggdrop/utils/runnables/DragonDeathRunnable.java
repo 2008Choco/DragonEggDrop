@@ -19,38 +19,52 @@
 
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.MathUtils;
+import com.ninjaguild.dragoneggdrop.utils.MathUtils.MathExpression;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.material.MaterialData;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 /**
  * Represents a BukkitRunnable that handles the generation and particle display
  * of the loot after the Ender Dragon's death
  */
 public class DragonDeathRunnable extends BukkitRunnable {
-
+	
+	private final Map<String, Double> variables = new HashMap<>();
+	private final MathExpression xExpression, zExpression;
+	
 	private final DragonEggDrop plugin;
 	
 	private final World world;
 	private final boolean placeEgg;
 	
-	private int particleAmount = 0;
-	private double particleLength = 0D;
-	private double particleExtra = 0D;
-	private long particleInterval = 0L;
-	private double oX = 0D;
-	private double oY = 0D;
-	private double oZ = 0D;
 	private Particle particleType = null;
+	private int particleAmount = 0;
+	private double particleExtra = 0D;
+	private double particleMultiplier = 1D;
+	private int particleStreamInterval = 360;
+	private double xOffset, yOffset, zOffset;
+	private long particleInterval = 0L;
+	private int lightningAmount;
 
 	private boolean respawnDragon = false;
+	private String rewardType;
+	
+	private Location location;
+	private double animationTime = 0;
+	private double theta = 0;
+	private double currentY;
 
 	/**
 	 * Construct a new DragonDeathRunnable object
@@ -63,100 +77,130 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.plugin = plugin;
 		this.world = world;
 		this.placeEgg = prevKilled;
+		
+		FileConfiguration config = plugin.getConfig();
+		this.currentY = config.getDouble("Particles.egg-start-y");
+		this.location = new Location(world, 0.5, this.currentY, 0.5);
+		this.particleType = Particle.valueOf(config.getString("type", "FLAME").toUpperCase());
+		this.particleAmount = config.getInt("Particles.amount", 4);
+		this.particleExtra = config.getDouble("Particles.extra", 0.0D);
+		this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
+		this.particleStreamInterval = 360 / Math.max(1, config.getInt("Particles.stream-count"));
+		this.xOffset = config.getDouble("Particles.xOffset");
+		this.yOffset = config.getDouble("Particles.yOffset");
+		this.zOffset = config.getDouble("Particles.zOffset");
+		this.particleInterval = config.getLong("Particles.interval", 1L);
+		this.lightningAmount = config.getInt("lightning-amount");
+		this.rewardType = config.getString("drop-type");
+		
+		this.variables.put("x", 0.0);
+		this.variables.put("z", 0.0);
+		this.variables.put("theta", theta);
+		this.variables.put("t", animationTime);
+		
+		// Expression parsing
+		String shape = config.getString("Particles.Advanced.preset-shape");
+		String xCoordExpressionString = config.getString("Particles.Advanced.x-coord-expression");
+		String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
+		
+		if (shape.equalsIgnoreCase("BALL")) {
+			this.plugin.getLogger().info("Using Ball particle effect");
+			this.xExpression = MathUtils.parseExpression("x", variables);
+			this.zExpression = MathUtils.parseExpression("z", variables);
+		}
+		else if (shape.equalsIgnoreCase("HELIX")) {
+			this.plugin.getLogger().info("Using Helix particle effect");
+			this.xExpression = MathUtils.parseExpression("cos(theta) * 1.2", variables);
+			this.zExpression = MathUtils.parseExpression("sin(theta) * 1.2", variables);
+		}
+		else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
+			this.plugin.getLogger().info("Using Open End Helix particle effect");
+			this.particleStreamInterval = 360 / 6;
+			this.xExpression = MathUtils.parseExpression("cos(theta) * (100 / t)", variables);
+			this.zExpression = MathUtils.parseExpression("sin(theta) * (100 / t)", variables);
+		}
+		else { // CUSTOM or default
+			this.plugin.getLogger().info("Using custom particle effect");
+			this.xExpression = MathUtils.parseExpression(xCoordExpressionString, variables);
+			this.zExpression = MathUtils.parseExpression(zCoordExpressionString, variables);
+		}
 
-		particleAmount = plugin.getConfig().getInt("particle-amount", 4);
-		particleLength = plugin.getConfig().getDouble("particle-length", 6.0D);
-		particleExtra = plugin.getConfig().getDouble("particle-extra", 0.0D);
-		particleInterval = plugin.getConfig().getLong("particle-interval", 1L);
-		oX = plugin.getConfig().getDouble("particle-offset-x", 0.25D);
-		oY = plugin.getConfig().getDouble("particle-offset-y", 0D);
-		oZ = plugin.getConfig().getDouble("particle-offset-z", 0.25D);
-		particleType = Particle.valueOf(plugin.getConfig().getString("particle-type", "FLAME").toUpperCase());
-
-		respawnDragon = plugin.getConfig().getBoolean("respawn", false);
+		this.respawnDragon = config.getBoolean("respawn", false);
+		
+		this.runTaskTimer(plugin, 0, this.particleInterval);
 	}
 
 	@Override
 	public void run() {
-		double startY = plugin.getConfig().getDouble("egg-start-y", 180D);
-
-		new BukkitRunnable()
-		{
-			double currentY = startY;
-			Location pLoc = new Location(world, 0.5D, currentY, 0.5D, 0f, 90f);
-
-			@Override
-			public void run() {
-				currentY -= 1D;
-				pLoc.setY(currentY);
-
-				for (double d = 0; d < particleLength; d+= 0.1D) {
-					world.spawnParticle(particleType, pLoc.clone().add(pLoc.getDirection().normalize().multiply(d * -1)),
-							particleAmount, oX, oY, oZ, particleExtra, null);
+		this.animationTime++;
+		this.theta += 5;
+		
+		location.subtract(0, 1 / particleMultiplier, 0);
+		if (this.particleStreamInterval < 360) {
+			for (int i = 0; i < 360; i += this.particleStreamInterval){
+				theta += this.particleStreamInterval;
+				
+				this.variables.put("x", location.getX());
+				this.variables.put("z", location.getZ());
+				this.variables.put("theta", theta);
+				this.variables.put("t", animationTime);
+				
+				double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
+				
+				location.add(x, 0, z);
+				this.world.spawnParticle(particleType, location, particleAmount, xOffset, yOffset, zOffset, particleExtra, null);
+				location.subtract(x, 0, z);
+			}
+		} else {
+			this.variables.put("x", location.getX());
+			this.variables.put("z", location.getZ());
+			this.variables.put("theta", theta);
+			this.variables.put("t", animationTime);
+			
+			double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
+			
+			location.add(x, -1 / particleMultiplier, z);
+			this.world.spawnParticle(particleType, location, particleAmount, xOffset, yOffset, zOffset, particleExtra, null);
+			location.subtract(x, 0, z);
+		}
+		
+		// Particles finished, place reward
+		if (this.location.getBlock().getType() == Material.BEDROCK) {
+			this.location.add(0, 1, 0);
+			
+			// Summon Zeus!
+			for (int i = 0; i < this.lightningAmount; i++)
+				this.world.strikeLightning(location);
+			
+			// Place the reward
+			if (placeEgg) {
+				if (this.rewardType.equalsIgnoreCase("CHEST")) {
+					//spawn a loot chest
+					plugin.getDEDManager().getLootManager().placeChest(location);
 				}
-
-				if (world.getBlockAt(pLoc).getType() == Material.BEDROCK) {
-					cancel();
-
-					new BukkitRunnable()
-					{
-						@Override
-						public void run() {
-							Location prevLoc = pLoc.clone().add(new Vector(0D, 1D, 0D));
-
-							int lightningAmount = plugin.getConfig().getInt("lightning-amount", 4);
-							for (int i = 0; i < lightningAmount; i++) {
-								world.strikeLightningEffect(prevLoc);
-							}
-
-							if (placeEgg) {
-								String rewardType = plugin.getConfig().getString("drop-type", "egg");
-								if (rewardType.equalsIgnoreCase("chest")) {
-									//spawn a loot chest
-									plugin.getDEDManager().getLootManager().placeChest(prevLoc);
-								}
-								else if (rewardType.equalsIgnoreCase("chance")) {
-									double chance = plugin.getConfig().getInt("chest-spawn-chance", 20);
-									chance = chance / 100D;
-									if (Math.random() <= chance) {
-										plugin.getDEDManager().getLootManager().placeChest(prevLoc);
-									}
-									else {
-										world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
-									}
-								}
-								else if (rewardType.equalsIgnoreCase("all")) {
-									plugin.getDEDManager().getLootManager().placeChestAll(prevLoc);
-								}
-								else {
-									world.getBlockAt(prevLoc).setType(Material.DRAGON_EGG);
-								}
-							}
-
-							//landing particles
-							for (int i = 0; i <= 360; i++) {
-								double x = Math.cos(i);
-								double y = Math.random();
-								double z = Math.sin(i);
-								Vector vec = new Vector(x, y, z);
-								prevLoc.add(vec);
-								world.spawnParticle(Particle.BLOCK_DUST, prevLoc,
-										2, 0D, 0D, 0D, 0.5D, new MaterialData(Material.BEDROCK));
-								prevLoc.subtract(vec);
-							}
-
-							if (respawnDragon) {
-								if (prevLoc.getWorld().getPlayers().size() > 0) {
-									plugin.getDEDManager().startRespawn(prevLoc, RespawnType.DEATH);
-								}
-							}
-						}
-
-					}.runTask(plugin);
+				else if (rewardType.equalsIgnoreCase("CHANCE")) {
+					double chance = plugin.getConfig().getInt("chest-spawn-chance", 20) / 100D;
+					if (ThreadLocalRandom.current().nextInt(100) <= chance) {
+						plugin.getDEDManager().getLootManager().placeChest(location);
+					}
+					else {
+						world.getBlockAt(location).setType(Material.DRAGON_EGG);
+					}
+				}
+				else if (rewardType.equalsIgnoreCase("ALL")) {
+					plugin.getDEDManager().getLootManager().placeChestAll(location);
+				}
+				else {
+					world.getBlockAt(location).setType(Material.DRAGON_EGG);
 				}
 			}
 
-		}.runTaskTimerAsynchronously(plugin, 0L, particleInterval);
+			if (respawnDragon && world.getPlayers().size() > 0) {
+				plugin.getDEDManager().startRespawn(location, RespawnType.DEATH);
+			}
+			
+			this.cancel();
+		}
 	}
 
 }

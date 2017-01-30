@@ -54,12 +54,12 @@ public class ConfigUtil {
 	 * 
 	 * @param currentVersion - The version of the configuration file
 	 */
-	public void updateConfig(String currentVersion) {
+	public void updateConfig(int currentVersion) {
 		InputStream in = plugin.getResource("config.yml");
 		try (InputStreamReader inReader = new InputStreamReader(in)) {
 			FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
 			
-			if (defaultConfig.getString("version").equals(currentVersion)) {
+			if (defaultConfig.getInt("version") == currentVersion) {
 				return;
 			}
 			
