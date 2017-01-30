@@ -29,7 +29,6 @@ import com.ninjaguild.dragoneggdrop.loot.LootEntry;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstractDefault;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_10.NMSAbstract1_10_R1;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_11.NMSAbstract1_11_R1;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R1;
@@ -73,12 +72,6 @@ public class DragonEggDrop extends JavaPlugin {
 			this.getLogger().severe("THE CURRENT SERVER VERSION IS NOT SUPPORTED. BOTHER THE MAINTAINER");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
-		}
-		
-		// Just a warning for those using NMSAbstractDefault
-		if (this.nmsAbstract instanceof NMSAbstractDefault) {
-			this.getLogger().severe("THERE IS A GOOD CHANCE THAT THIS SERVER VERSION IS NOT SUPPORTED");
-			this.getLogger().severe("PLEASE CONTACT THE MAINTAINER OF THIS PLUGIN TO MAKE A PROPER UPDATE");
 		}
 
 		try {
@@ -140,12 +133,8 @@ public class DragonEggDrop extends JavaPlugin {
         	this.nmsAbstract = new NMSAbstract1_10_R1();
         }else if (version.equalsIgnoreCase("v1_11_R1")){ // 1.11.0 - 1.11.2
         	this.nmsAbstract = new NMSAbstract1_11_R1();
-        }else{
-        	this.nmsAbstract = new NMSAbstractDefault();
         }
         
-        if (this.nmsAbstract != null)
-        	this.nmsAbstract.init(version);
         return this.nmsAbstract != null;
 	}
 }
