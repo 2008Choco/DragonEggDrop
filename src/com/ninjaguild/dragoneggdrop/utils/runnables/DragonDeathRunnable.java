@@ -19,13 +19,10 @@
 
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.utils.MathUtils;
-import com.ninjaguild.dragoneggdrop.utils.MathUtils.MathExpression;
+import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
 import org.bukkit.Location;
@@ -41,10 +38,9 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class DragonDeathRunnable extends BukkitRunnable {
 	
-	private final Map<String, Double> variables = new HashMap<>();
-	private final MathExpression xExpression, zExpression;
-	
 	private final DragonEggDrop plugin;
+	
+	private ParticleShapeDefinition particleShape;
 	
 	private final World world;
 	private final boolean placeEgg;
@@ -93,11 +89,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.lightningAmount = config.getInt("lightning-amount");
 		this.rewardType = config.getString("drop-type");
 		
-		this.variables.put("x", 0.0);
-		this.variables.put("z", 0.0);
-		this.variables.put("theta", theta);
-		this.variables.put("t", animationTime);
-		
 		// Expression parsing
 		String shape = config.getString("Particles.Advanced.preset-shape");
 		String xCoordExpressionString = config.getString("Particles.Advanced.x-coord-expression");
@@ -105,28 +96,23 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		
 		if (shape.equalsIgnoreCase("BALL")) {
 			this.plugin.getLogger().info("Using Ball particle effect");
-			this.xExpression = MathUtils.parseExpression("x", variables);
-			this.zExpression = MathUtils.parseExpression("z", variables);
+			this.particleShape = new ParticleShapeDefinition(location, "x", "z");
 		}
 		else if (shape.equalsIgnoreCase("HELIX")) {
 			this.plugin.getLogger().info("Using Helix particle effect");
-			this.xExpression = MathUtils.parseExpression("cos(theta) * 1.2", variables);
-			this.zExpression = MathUtils.parseExpression("sin(theta) * 1.2", variables);
+			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2");
 		}
 		else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
 			this.plugin.getLogger().info("Using Open End Helix particle effect");
 			this.particleStreamInterval = 360 / 6;
-			this.xExpression = MathUtils.parseExpression("cos(theta) * (100 / t)", variables);
-			this.zExpression = MathUtils.parseExpression("sin(theta) * (100 / t)", variables);
+			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
 		}
 		else { // CUSTOM or default
 			this.plugin.getLogger().info("Using custom particle effect");
-			this.xExpression = MathUtils.parseExpression(xCoordExpressionString, variables);
-			this.zExpression = MathUtils.parseExpression(zCoordExpressionString, variables);
+			this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
 		}
 
 		this.respawnDragon = config.getBoolean("respawn", false);
-		
 		this.runTaskTimer(plugin, 0, this.particleInterval);
 	}
 
@@ -139,29 +125,12 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		if (this.particleStreamInterval < 360) {
 			for (int i = 0; i < 360; i += this.particleStreamInterval){
 				theta += this.particleStreamInterval;
-				
-				this.variables.put("x", location.getX());
-				this.variables.put("z", location.getZ());
-				this.variables.put("theta", theta);
-				this.variables.put("t", animationTime);
-				
-				double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
-				
-				location.add(x, 0, z);
-				this.world.spawnParticle(particleType, location, particleAmount, xOffset, yOffset, zOffset, particleExtra, null);
-				location.subtract(x, 0, z);
+				this.particleShape.updateVariables(location.getX(), location.getZ(), theta, animationTime);
+				this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
 			}
 		} else {
-			this.variables.put("x", location.getX());
-			this.variables.put("z", location.getZ());
-			this.variables.put("theta", theta);
-			this.variables.put("t", animationTime);
-			
-			double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
-			
-			location.add(x, -1 / particleMultiplier, z);
-			this.world.spawnParticle(particleType, location, particleAmount, xOffset, yOffset, zOffset, particleExtra, null);
-			location.subtract(x, 0, z);
+			this.particleShape.updateVariables(location.getX(), location.getZ(), theta, animationTime);
+			this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
 		}
 		
 		// Particles finished, place reward
