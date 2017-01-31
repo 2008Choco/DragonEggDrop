@@ -256,7 +256,7 @@ public class MathUtils {
                 	MathExpression a = this.parseFactor();
                 	x = (() -> operand.applyAsDouble(a.evaluate()));
                 } else {
-                	x = (() -> variables.get(func));
+                	x = (() -> variables != null ? variables.getOrDefault(func, 0.0) : 0);
                 }
             } else {
                 throw new ArithmeticException("Unexpected: \"" + ch + "\"");

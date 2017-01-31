@@ -51,8 +51,8 @@ public class ParticleShapeDefinition {
 		
 		this.initialLocation = initialLocation;
 		this.world = initialLocation.getWorld();
-		this.xExpression = MathUtils.parseExpression(xExpression);
-		this.zExpression = MathUtils.parseExpression(zExpression);
+		this.xExpression = MathUtils.parseExpression(xExpression, variables);
+		this.zExpression = MathUtils.parseExpression(zExpression, variables);
 	}
 	
 	public void updateVariables(double x, double z, double t, double theta) {

@@ -77,7 +77,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		FileConfiguration config = plugin.getConfig();
 		this.currentY = config.getDouble("Particles.egg-start-y");
 		this.location = new Location(world, 0.5, this.currentY, 0.5);
-		this.particleType = Particle.valueOf(config.getString("type", "FLAME").toUpperCase());
+		this.particleType = Particle.valueOf(config.getString("Particles.type", "FLAME").toUpperCase());
 		this.particleAmount = config.getInt("Particles.amount", 4);
 		this.particleExtra = config.getDouble("Particles.extra", 0.0D);
 		this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
@@ -124,12 +124,12 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		location.subtract(0, 1 / particleMultiplier, 0);
 		if (this.particleStreamInterval < 360) {
 			for (int i = 0; i < 360; i += this.particleStreamInterval){
-				theta += this.particleStreamInterval;
-				this.particleShape.updateVariables(location.getX(), location.getZ(), theta, animationTime);
+				this.theta += particleStreamInterval;
+				this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
 				this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
 			}
 		} else {
-			this.particleShape.updateVariables(location.getX(), location.getZ(), theta, animationTime);
+			this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
 			this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
 		}
 		
