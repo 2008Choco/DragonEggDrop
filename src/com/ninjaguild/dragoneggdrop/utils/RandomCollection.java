@@ -120,4 +120,12 @@ public class RandomCollection<E> {
         return map.ceilingEntry(value).getValue();
     }
     
+    /**
+     * Clear all data from the random collection
+     */
+    public void clear() {
+    	this.map.clear();
+    	this.total = 0;
+    }
+    
 }

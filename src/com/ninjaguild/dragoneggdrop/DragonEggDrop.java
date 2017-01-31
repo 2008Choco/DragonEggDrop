@@ -44,6 +44,8 @@ import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -71,6 +73,8 @@ public class DragonEggDrop extends JavaPlugin {
 
 	private DEDManager dedManager;
 	private NMSAbstract nmsAbstract;
+	
+	private BukkitTask updateTask;
 
 	@Override
 	public void onEnable() {
@@ -107,7 +111,29 @@ public class DragonEggDrop extends JavaPlugin {
 		this.getCommand("dragoneggdrop").setExecutor(new DragonEggDropCmd(this));
 		
 		// Update check
-		this.doVersionCheck();
+		this.updateTask = new BukkitRunnable() {
+			@Override
+			public void run() {
+				boolean previousState = newVersionAvailable;
+				doVersionCheck();
+				
+				// New version found
+				if (previousState != newVersionAvailable) {
+					Bukkit.getOnlinePlayers().forEach(p -> {
+						if (p.isOp()) sendMessage(p, ChatColor.GRAY + "A new version is available for download (Version " + newVersion + "). ");
+					});
+				}
+			}
+		}.runTaskTimerAsynchronously(this, 0, 36000);
+	}
+	
+	@Override
+	public void onDisable() {
+		if (this.updateTask != null)
+			this.updateTask.cancel();
+		
+		this.dedManager.getDragonNames().clear();
+		this.dedManager.getLootManager().getLoot().clear();
 	}
 	
 	/**

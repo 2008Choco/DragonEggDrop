@@ -90,7 +90,15 @@ public class LootManager {
 		}
 	}
 	
-	// FIXME: NMS-Dependent
+	/**
+	 * Get all loot loaded into the loot manager
+	 * 
+	 * @return all loaded loot
+	 */
+	public RandomCollection<ItemStack> getLoot() {
+		return loot;
+	}
+	
 	/**
 	 * Place a chest with randomized loot at a specific location
 	 * 
