@@ -47,12 +47,17 @@ public class MathUtils {
 	static {
 		// Basic arithmetics
 		OPERATORS.put("sqrt", x -> StrictMath.sqrt(x));
-		OPERATORS.put("neg", x -> -x);
+		OPERATORS.put("abs", x -> Math.abs(x));
+		OPERATORS.put("log", x -> x <= 0 ? Double.NaN : Math.log10(x));
 		
 		// Trigonometric
 		OPERATORS.put("sin", x -> StrictMath.sin(Math.toRadians(x)));
 		OPERATORS.put("cos", x -> StrictMath.cos(Math.toRadians(x)));
 		OPERATORS.put("tan", x -> StrictMath.tan(Math.toRadians(x)));
+		
+		OPERATORS.put("csc", x -> 1 / StrictMath.sin(Math.toRadians(x)));
+		OPERATORS.put("sec", x -> 1 / StrictMath.cos(Math.toRadians(x)));
+		OPERATORS.put("cot", x -> 1 / StrictMath.tan(Math.toRadians(x)));
 		
 		// Conversion
 		OPERATORS.put("rad", x -> Math.toRadians(x));
