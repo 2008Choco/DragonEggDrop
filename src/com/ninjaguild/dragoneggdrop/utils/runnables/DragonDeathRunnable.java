@@ -148,8 +148,8 @@ public class DragonDeathRunnable extends BukkitRunnable {
 					plugin.getDEDManager().getLootManager().placeChest(location);
 				}
 				else if (rewardType.equalsIgnoreCase("CHANCE")) {
-					double chance = plugin.getConfig().getInt("chest-spawn-chance", 20) / 100D;
-					if (ThreadLocalRandom.current().nextInt(100) <= chance) {
+					double chance = plugin.getConfig().getInt("chest-spawn-chance", 20);
+					if (ThreadLocalRandom.current().nextInt(100) < chance) {
 						plugin.getDEDManager().getLootManager().placeChest(location);
 					}
 					else {
