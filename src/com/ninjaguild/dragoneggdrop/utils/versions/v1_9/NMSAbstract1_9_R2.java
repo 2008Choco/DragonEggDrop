@@ -21,6 +21,7 @@ package com.ninjaguild.dragoneggdrop.utils.versions.v1_9;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
@@ -42,6 +43,7 @@ import net.minecraft.server.v1_9_R2.PacketPlayOutBoss;
 import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
 import net.minecraft.server.v1_9_R2.WorldProvider;
 import net.minecraft.server.v1_9_R2.WorldProviderTheEnd;
+import net.minecraft.server.v1_9_R2.WorldServer;
 
 /**
  * An abstract implementation of necessary net.minecraft.server and
@@ -85,6 +87,35 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.cV();
+	}
+	
+	@Override
+	public EnderDragon getEnderDragonFromBattle(Object battle) {
+		if (!(battle instanceof EnderDragonBattle)) return null;
+		
+		EnderDragon dragon = null;
+		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
+		try {
+			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
+			Field fieldDragonUUID = EnderDragonBattle.class.getDeclaredField("m");
+			fieldWorldServer.setAccessible(true);
+			fieldDragonUUID.setAccessible(true);
+			
+			WorldServer world = (WorldServer) fieldWorldServer.get(dragonBattle);
+			UUID dragonUUID = (UUID) fieldDragonUUID.get(dragonBattle);
+			
+			if (world == null || dragonUUID == null) 
+				return null;
+			
+			dragon = (EnderDragon) world.getEntity(dragonUUID).getBukkitEntity();
+			
+			fieldWorldServer.setAccessible(false);
+			fieldDragonUUID.setAccessible(false);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return dragon;
 	}
 
 	@Override

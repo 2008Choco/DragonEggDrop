@@ -66,9 +66,12 @@ max-loot: 6
 egg-name: ''
 egg-lore: []
 
-#Respawn dragon on death? (delay is in seconds)
-respawn: false
+#Respawn dragon on join? (delay is in seconds)
+respawn-on-join: false
 join-respawn-delay: 60
+
+#Respawn dragon on death? (delay is in seconds)
+respawn-on-death: true
 death-respawn-delay: 300
 
 #Announce respawn to end world players via the action bar.

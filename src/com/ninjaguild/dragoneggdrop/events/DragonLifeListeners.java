@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Random;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.api.BattleState;
+import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.EnderDragon;
@@ -49,6 +52,7 @@ public class DragonLifeListeners implements Listener {
 		if (!(event.getEntity() instanceof EnderDragon)) return;
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
+		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		plugin.getDEDManager().setRespawnInProgress(false);
 		
 		List<String> dragonNames = plugin.getDEDManager().getDragonNames();
@@ -58,6 +62,9 @@ public class DragonLifeListeners implements Listener {
 			
 			plugin.getDEDManager().setDragonBossBarTitle(name, plugin.getDEDManager().getEnderDragonBattleFromDragon(dragon));
 		}
+		
+		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);
+		Bukkit.getPluginManager().callEvent(bscEventCrystals);
 	}
 	
 	@EventHandler
@@ -65,17 +72,23 @@ public class DragonLifeListeners implements Listener {
 		if (!(event.getEntity() instanceof EnderDragon)) return;
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
+		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		boolean prevKilled = this.plugin.getNMSAbstract().hasBeenPreviouslyKilled(dragon); // PreviouslyKilled
 		World world = event.getEntity().getWorld();
+		
+		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_COMMENCED, BattleState.BATTLE_END);
+		Bukkit.getPluginManager().callEvent(bscEventCrystals);
 
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon)>= 185) { // Dragon is dead at 200
 					this.cancel();
-					new DragonDeathRunnable(plugin, world, prevKilled);
+					new DragonDeathRunnable(plugin, world, dragon, prevKilled);
 				}
 			}
 		}.runTaskTimer(plugin, 0L, 1L);
+		
+		
 	}
 }

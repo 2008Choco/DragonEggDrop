@@ -46,7 +46,8 @@ public class RespawnListeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerSwitchWorlds(PlayerChangedWorldEvent event) {
-		if (!plugin.getConfig().getBoolean("respawn", false)) return;
+		if (!plugin.getConfig().getBoolean("respawn-on-join", false)
+				&& !plugin.getConfig().getBoolean("respawn-on-death", true)) return;
 		
 		World fromWorld = event.getFrom(), toWorld = event.getPlayer().getWorld();
 		
@@ -57,8 +58,8 @@ public class RespawnListeners implements Listener {
 			}
 		}
 		
-		if (toWorld.getEnvironment() == Environment.THE_END) {
-			if (toWorld.getPlayers().size() == 1) {
+		if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
+			if (toWorld.getEnvironment() == Environment.THE_END && toWorld.getPlayers().size() == 1) {
 				// Schedule respawn, if not dragon exists, or in progress
 				for (int y = toWorld.getMaxHeight(); y > 0; y--) {
 					Block block = toWorld.getBlockAt(0, y, 0);
@@ -80,7 +81,7 @@ public class RespawnListeners implements Listener {
 		}
 		
 		// Dragon respawn logic
-		if (!plugin.getConfig().getBoolean("respawn", false)) return;
+		if (!plugin.getConfig().getBoolean("respawn-on-join", false)) return;
 		
 		World world = player.getWorld();
 		if (world.getEnvironment() != Environment.THE_END || !world.getPlayers().isEmpty()) return;
@@ -96,7 +97,8 @@ public class RespawnListeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerQuitEvent event) {
-		if (!plugin.getConfig().getBoolean("respawn", false)) return;
+		if (!plugin.getConfig().getBoolean("respawn-on-join", false)
+				&& !plugin.getConfig().getBoolean("respawn-on-death", true)) return;
 		
 		World world = event.getPlayer().getWorld();
 		if (world.getEnvironment() != Environment.THE_END || world.getPlayers().size() != 1) return;

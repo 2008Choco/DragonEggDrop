@@ -20,11 +20,15 @@
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.api.BattleState;
+import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -60,12 +64,16 @@ public class RespawnRunnable extends BukkitRunnable {
 		};
 
 		Object dragonBattle = plugin.getDEDManager().getEnderDragonBattleFromWorld(eggLocation.getWorld());
+		EnderDragon dragon = plugin.getNMSAbstract().getEnderDragonFromBattle(dragonBattle);
 
 		for (int i = 0; i < crystalLocs.length; i++) {
 			Location cLoc = crystalLocs[i];
 			new BukkitRunnable() {
 				@Override
 				public void run() {
+					BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_DEAD, BattleState.CRYSTALS_SPAWNING);
+					Bukkit.getPluginManager().callEvent(bscEventCrystals);
+					
 					Chunk crystalChunk = eggLocation.getWorld().getChunkAt(cLoc);
 					if (!crystalChunk.isLoaded()) {
 						crystalChunk.load();
@@ -87,6 +95,9 @@ public class RespawnRunnable extends BukkitRunnable {
 					if (cLoc.equals(crystalLocs[crystalLocs.length - 1])) {
 						plugin.getNMSAbstract().respawnEnderDragon(dragonBattle);
 						plugin.getDEDManager().setRespawnInProgress(true);
+						
+						BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);
+						Bukkit.getPluginManager().callEvent(bscEventRespawning);
 					}
 				}
 

@@ -22,14 +22,18 @@ package com.ninjaguild.dragoneggdrop.utils.runnables;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.api.BattleState;
+import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -54,6 +58,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	private long particleInterval = 0L;
 	private int lightningAmount;
 
+	private EnderDragon dragon;
 	private boolean respawnDragon = false;
 	private String rewardType;
 	
@@ -69,9 +74,10 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	 * @param world - The world in which the dragon death is taking place
 	 * @param prevKilled - Whether the dragon was previously killed or not
 	 */
-	public DragonDeathRunnable(final DragonEggDrop plugin, final World world, boolean prevKilled) {
+	public DragonDeathRunnable(final DragonEggDrop plugin, final World world, EnderDragon dragon, boolean prevKilled) {
 		this.plugin = plugin;
 		this.world = world;
+		this.dragon = dragon;
 		this.placeEgg = prevKilled;
 		
 		FileConfiguration config = plugin.getConfig();
@@ -114,6 +120,10 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
 		this.respawnDragon = config.getBoolean("respawn", false);
 		this.runTaskTimer(plugin, 0, this.particleInterval);
+		
+		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
+		Bukkit.getPluginManager().callEvent(bscEventCrystals);
 	}
 
 	@Override
@@ -164,9 +174,13 @@ public class DragonDeathRunnable extends BukkitRunnable {
 				}
 			}
 
-			if (respawnDragon && world.getPlayers().size() > 0) {
+			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
 				plugin.getDEDManager().startRespawn(location, RespawnType.DEATH);
 			}
+			
+			Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+			BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
+			Bukkit.getPluginManager().callEvent(bscEventCrystals);
 			
 			this.cancel();
 		}

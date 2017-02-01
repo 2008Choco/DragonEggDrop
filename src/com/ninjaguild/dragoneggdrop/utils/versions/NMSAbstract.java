@@ -60,6 +60,15 @@ public interface NMSAbstract {
 	public Object getEnderDragonBattleFromDragon(EnderDragon dragon);
 	
 	/**
+	 * Get an EnderDragon object based on a specific EnderDragonBattle
+	 * object
+	 * 
+	 * @param battle - The battle to get the dragon from
+	 * @return the resulting dragon
+	 */
+	public EnderDragon getEnderDragonFromBattle(Object battle);
+	
+	/**
 	 * Set the state of EnderDragonBattle to its respawn state, and
 	 * restart the battle once again
 	 * 
