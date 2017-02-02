@@ -37,6 +37,7 @@ import org.bukkit.entity.Player;
 import net.minecraft.server.v1_9_R2.BossBattleServer;
 import net.minecraft.server.v1_9_R2.ChatMessage;
 import net.minecraft.server.v1_9_R2.EnderDragonBattle;
+import net.minecraft.server.v1_9_R2.Entity;
 import net.minecraft.server.v1_9_R2.EntityEnderDragon;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_9_R2.PacketPlayOutBoss;
@@ -59,7 +60,7 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 	
 	@Override
 	public void setDragonBossBarTitle(String title, Object battle) {
-		if (!(battle instanceof EnderDragonBattle)) return;
+		if (battle == null || title == null || !(battle instanceof EnderDragonBattle)) return;
 		
 		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
 		try {
@@ -76,6 +77,8 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 
 	@Override
 	public Object getEnderDragonBattleFromWorld(World world) {
+		if (world == null) return null;
+		
 		CraftWorld craftWorld = (CraftWorld) world;
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 		
@@ -85,13 +88,15 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 
 	@Override
 	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
+		if (dragon == null) return null;
+		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.cV();
 	}
 	
 	@Override
 	public EnderDragon getEnderDragonFromBattle(Object battle) {
-		if (!(battle instanceof EnderDragonBattle)) return null;
+		if (battle == null || !(battle instanceof EnderDragonBattle)) return null;
 		
 		EnderDragon dragon = null;
 		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
@@ -107,7 +112,9 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 			if (world == null || dragonUUID == null) 
 				return null;
 			
-			dragon = (EnderDragon) world.getEntity(dragonUUID).getBukkitEntity();
+			Entity dragonEntity = world.getEntity(dragonUUID);
+			if (dragonEntity == null) return null;
+			dragon = (EnderDragon) dragonEntity.getBukkitEntity();
 			
 			fieldWorldServer.setAccessible(false);
 			fieldDragonUUID.setAccessible(false);
@@ -128,18 +135,24 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 
 	@Override
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
+		if (dragon == null) return false;
+		
 		EnderDragonBattle battle = (EnderDragonBattle) this.getEnderDragonBattleFromDragon(dragon);
 		return battle.d();
 	}
 	
 	@Override
 	public int getEnderDragonDeathAnimationTime(EnderDragon dragon) {
+		if (dragon == null) return -1;
+		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bG;
 	}
 
 	@Override
 	public void setChestName(Chest chest, String name) {
+		if (chest == null || name == null) return;
+		
 		CraftChest craftChest = (CraftChest) chest;
 		craftChest.getTileEntity().a(name);
 	}

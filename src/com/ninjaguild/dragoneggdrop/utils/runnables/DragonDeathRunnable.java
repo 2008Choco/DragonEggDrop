@@ -110,7 +110,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		}
 		else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
 			this.plugin.getLogger().info("Using Open End Helix particle effect");
-			this.particleStreamInterval = 360 / 6;
 			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
 		}
 		else { // CUSTOM or default

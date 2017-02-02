@@ -56,7 +56,7 @@ public class BattleStateChangeEvent extends Event {
 	 * Get an instance of the EnderDragonBattle involved in 
 	 * this event
 	 * 
-	 * @return the involved EnderDragonBattle
+	 * @return the involved EnderDragonBattle. Can return null
 	 */
 	public Object getDragonBattle() {
 		return dragonBattle;
@@ -66,7 +66,7 @@ public class BattleStateChangeEvent extends Event {
 	 * Get an instance of the EnderDragon involved in this
 	 * event
 	 * 
-	 * @return the involved dragon
+	 * @return the involved dragon. Can return null
 	 */
 	public EnderDragon getDragon() {
 		return dragon;
