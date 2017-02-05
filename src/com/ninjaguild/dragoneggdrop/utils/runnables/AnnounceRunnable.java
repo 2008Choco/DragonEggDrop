@@ -19,6 +19,10 @@
 
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 
 import org.bukkit.ChatColor;
@@ -35,8 +39,8 @@ public class AnnounceRunnable extends BukkitRunnable {
 	private final World world;
 	private int delay;
 
-	private String color1;
-	private String color2;
+	private int currentMessage = 0;
+	private List<String> messages = new ArrayList<>();
 	
 	/**
 	 * Construct a new AnnouncementRunnable object
@@ -49,20 +53,17 @@ public class AnnounceRunnable extends BukkitRunnable {
 		this.plugin = plugin;
 		this.world = world;
 		this.delay = delay;
-		
-		color1 = ChatColor.translateAlternateColorCodes('&',
-				plugin.getConfig().getString("announce-color-one", ChatColor.GOLD.toString()));
-		color2 = ChatColor.translateAlternateColorCodes('&',
-				plugin.getConfig().getString("announce-color-two", ChatColor.YELLOW.toString()));
+		this.messages = plugin.getConfig().getStringList("announce-messages").stream()
+				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
+				.collect(Collectors.toList());
 	}
 	
 	@Override
 	public void run() {
-		String temp = color1;
-		color1 = color2;
-		color2 = temp;
+		if (messages.size() == 0) return;
+		if (this.currentMessage >= messages.size()) this.currentMessage = 0;
 		
-		String message = color1 + "Dragon Respawn In " + color2 + (delay--) + color1 + " Seconds";
+		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--));
 		plugin.getNMSAbstract().broadcastActionBar(message, world);
 		
 		if (delay == 0) {

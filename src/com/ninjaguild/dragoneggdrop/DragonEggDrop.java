@@ -111,20 +111,22 @@ public class DragonEggDrop extends JavaPlugin {
 		this.getCommand("dragoneggdrop").setExecutor(new DragonEggDropCmd(this));
 		
 		// Update check
-		this.updateTask = new BukkitRunnable() {
-			@Override
-			public void run() {
-				boolean previousState = newVersionAvailable;
-				doVersionCheck();
-				
-				// New version found
-				if (previousState != newVersionAvailable) {
-					Bukkit.getOnlinePlayers().forEach(p -> {
-						if (p.isOp()) sendMessage(p, ChatColor.GRAY + "A new version is available for download (Version " + newVersion + "). ");
-					});
+		if (this.getConfig().getBoolean("perform-update-checks", true)) {
+			this.updateTask = new BukkitRunnable() {
+				@Override
+				public void run() {
+					boolean previousState = newVersionAvailable;
+					doVersionCheck();
+					
+					// New version found
+					if (previousState != newVersionAvailable) {
+						Bukkit.getOnlinePlayers().forEach(p -> {
+							if (p.isOp()) sendMessage(p, ChatColor.GRAY + "A new version is available for download (Version " + newVersion + "). ");
+						});
+					}
 				}
-			}
-		}.runTaskTimerAsynchronously(this, 0, 36000);
+			}.runTaskTimerAsynchronously(this, 0, 36000);
+		}
 	}
 	
 	@Override

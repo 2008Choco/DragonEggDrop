@@ -2,6 +2,8 @@
 version: 2
 # ----------------------- #
 
+perform-update-checks: true
+
 # All data involving the particle effects displayed after the death of the Ender Dragon
 Particles:
     # The Y location the reward object will spawn at
@@ -77,9 +79,10 @@ death-respawn-delay: 300
 # Announce respawn to end world players via the action bar.
 announce-respawn: true
 
-# Announcement colors
-announce-color-one: '&6'
-announce-color-two: '&e'
+# Announcement message animation
+announce-messages:
+- '&6Dragon respawning in &e%time% &6seconds'
+- '&eDragon respawning in &6%time% &eseconds'
 
 # Give the dragon a custom name, bar style and bar colour. Or not, your choice.
 # If more than one option, one will be chosen at random.

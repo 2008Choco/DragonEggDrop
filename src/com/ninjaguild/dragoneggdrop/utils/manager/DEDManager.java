@@ -49,9 +49,6 @@ public class DEDManager {
 	private BukkitTask respawnTask;
 	private BukkitTask announceTask;
 	
-	private final int joinDelay;
-	private final int deathDelay;
-	
 	private boolean respawnInProgress = false;
 	
 	/**
@@ -67,9 +64,6 @@ public class DEDManager {
         this.setDragonBossBarTitle();
         
         this.lootMan = new LootManager(plugin);
-        
-        this.joinDelay = plugin.getConfig().getInt("join-respawn-delay", 60); // Seconds
-        this.deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
 	}
 	
 	/**
@@ -92,6 +86,11 @@ public class DEDManager {
 		);
 	}
 	
+	/**
+	 * Get a list of all dragon templates
+	 * 
+	 * @return all dragon templates
+	 */
 	public List<DragonTemplate> getDragonTemplates() {
 		return dragonTemplates;
 	}
@@ -117,6 +116,9 @@ public class DEDManager {
 			return;
 		}
 		
+        int joinDelay = plugin.getConfig().getInt("join-respawn-delay", 60); // Seconds
+        int deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
+        
 		if (respawnTask == null || 
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
 				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
