@@ -25,11 +25,12 @@ import java.util.List;
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.loot.LootManager;
+import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
+import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitTask;
@@ -42,7 +43,7 @@ public class DEDManager {
 
 	private final DragonEggDrop plugin;
 	
-	private List<String> dragonNames;
+	private List<DragonTemplate> dragonTemplates;
 	private LootManager lootMan;
 	
 	private BukkitTask respawnTask;
@@ -62,7 +63,7 @@ public class DEDManager {
 	public DEDManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 		
-		this.dragonNames = plugin.getConfig().getStringList("dragon-names");
+		this.dragonTemplates = DragonTemplate.loadTemplates(plugin.getConfig().getStringList("dragon-names"));
         this.setDragonBossBarTitle();
         
         this.lootMan = new LootManager(plugin);
@@ -75,6 +76,8 @@ public class DEDManager {
 	 * Set the title of the boss bar to that of the dragon
 	 */
 	private void setDragonBossBarTitle() {
+		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
+		
 		plugin.getServer().getWorlds().stream()
 			.filter(w -> w.getEnvironment() == Environment.THE_END)
 			.forEach(w -> {
@@ -82,51 +85,15 @@ public class DEDManager {
 				if (!dragons.isEmpty()) {
 					String dragonName = Iterables.get(dragons, 0).getCustomName();
 					if (dragonName != null && !dragonName.isEmpty()) {
-						setDragonBossBarTitle(dragonName, getEnderDragonBattleFromWorld(w));
+						nmsAbstract.setDragonBossBarTitle(dragonName, nmsAbstract.getEnderDragonBattleFromWorld(w));
 					}
 				}
 			}
 		);
 	}
-
-	/**
-	 * Set the title of the boss bar in a given ender dragon battle to 
-	 * a specific name
-	 * 
-	 * @param title - The title to set
-	 * @param battle - The battle to modifiy
-	 */
-	public void setDragonBossBarTitle(String title, Object battle) {
-		this.plugin.getNMSAbstract().setDragonBossBarTitle(title, battle);
-	}
-
-	/**
-	 * Get an EnderDragonBattle object based on the given world
-	 * 
-	 * @param world - The world to retrieve a battle from
-	 * @return the resulting dragon battle
-	 */
-	public Object getEnderDragonBattleFromWorld(World world) {
-		return this.plugin.getNMSAbstract().getEnderDragonBattleFromWorld(world);
-	}
-
-	/**
-	 * Get an EnderDragonBattle object based on a specific Ender Dragon
-	 * 
-	 * @param dragon - The dragon to retrieve a battle from
-	 * @return the resulting dragon battle
-	 */
-	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
-		return this.plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
-	}
 	
-	/**
-	 * Get a list of all possible names the dragon can be set to
-	 * 
-	 * @return all possible dragon names
-	 */
-	public List<String> getDragonNames() {
-		return dragonNames;
+	public List<DragonTemplate> getDragonTemplates() {
+		return dragonTemplates;
 	}
 	
 	/**

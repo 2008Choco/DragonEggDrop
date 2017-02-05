@@ -42,59 +42,63 @@ Particles:
         # The mathematical expression in which particles will be spawned along the z coordinate
         z-coord-expression: 'sin(theta)'
 
-#Number of lightning entities to spawn on egg land
+# Number of lightning entities to spawn on egg land
 lightning-amount: 4
 
-#Drop type (egg, chest, chance, all). Option to drop a loot chest instead of an egg.
-#Loot items are defined in loot.yml via command /ded addloot
-#The 'all' type places every item defined in the loot.yml into the chest one time each.
+# Drop type (egg, chest, chance, all). Option to drop a loot chest instead of an egg.
+# Loot items are defined in loot.yml via command /ded addloot
+# The 'all' type places every item defined in the loot.yml into the chest one time each.
 drop-type: egg
 
-#If chance, what is the percent chance of spawning a chest?(0 - 100)
+# If chance, what is the percent chance of spawning a chest?(0 - 100)
 chest-spawn-chance: 20
 
-#Want a custom title for the loot chest? Set it here.
+# Want a custom title for the loot chest? Set it here.
 loot-chest-title: 'Loot Chest'
 
-#Number of items in a loot chest
+# Number of items in a loot chest
 min-loot: 2
 max-loot: 6
 
-#Set a custom name and lore for the egg item (optional)
-#NOTE: Only eggs broken/dropped in the end world without
-#existing ItemMeta will receive the below name/lore.
+# Set a custom name and lore for the egg item (optional)
+# NOTE: Only eggs broken/dropped in the end world without
+# existing ItemMeta will receive the below name/lore.
 egg-name: ''
 egg-lore: []
 
-#Respawn dragon on join? (delay is in seconds)
+# Respawn dragon on join? (delay is in seconds)
 respawn-on-join: false
 join-respawn-delay: 60
 
-#Respawn dragon on death? (delay is in seconds)
+# Respawn dragon on death? (delay is in seconds)
 respawn-on-death: true
 death-respawn-delay: 300
 
-#Announce respawn to end world players via the action bar.
+# Announce respawn to end world players via the action bar.
 announce-respawn: true
 
-#Announcement colors
+# Announcement colors
 announce-color-one: '&6'
 announce-color-two: '&e'
 
-#Give the dragon a custom name, or not, your choice.
-#If more than one name, the name will be chosen at random.
-#Names do support color/format codes i.e. &4 (red).
-#Set to: dragon-names: [] for none.
+# Give the dragon a custom name, bar style and bar colour. Or not, your choice.
+# If more than one option, one will be chosen at random.
+# Names do support color/format codes i.e. &4 (red).
+# Set to: dragon-names: [] for none.
+# Format: "name=DRAGON'S NAME|style=STYLE|color=COLOR"
+# format and style are optional. See their respective Javadocs for valid values
+# Style: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
+# Colour: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
 dragon-names:
-- '&aEndy'
-- '&bFalcor'
-- '&cHaiku'
-- "&dMylanth"
-- "&eKelarth"
-- "&1Mnerolth the Insane"
-- "&2Verioth the Chosen"
-- "&3Barroth the Gentle"
-- "&4Bassilith, Lord of Ice"
-- "&5Inilth, Lord of Fire"
-- "&6Nveryioth, Lord of Light"
-- "&8Tilenth, Lord of Death"
+- 'name=&aEndy'
+- 'name=&bFalcor|colour=RED'
+- 'name=&cHaiku|colour=GREEN'
+- "name=&dMylanth|style=SEGMENTED_6|colour=WHITE"
+- "name=&eKelarth|style=SEGMENTED_6|colour=YELLOW"
+- "name=&1Mnerolth the Insane|style=SEGMENTED_10|colour=RED"
+- "name=&2Verioth the Chosen|style=SEGMENTED_10|colour=GREEN"
+- "name=&3Barroth the Gentle|style=SEGMENTED_10|color=PINK"
+- "name=&4Bassilith, Lord of Ice|style=SEGMENTED_12|color=BLUE"
+- "name=&5Inilth, Lord of Fire|style=SEGMENTED_12|color=RED"
+- "name=&6Nveryioth, Lord of Light|style=SEGMENTED_20|color=YELLOW"
+- "name=&8Tilenth, Lord of Death|style=SEGMENTED_20|color=PURPLE"

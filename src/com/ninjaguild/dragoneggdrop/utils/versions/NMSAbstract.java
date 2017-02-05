@@ -21,6 +21,8 @@ package com.ninjaguild.dragoneggdrop.utils.versions;
 
 import org.bukkit.World;
 import org.bukkit.block.Chest;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
@@ -58,6 +60,17 @@ public interface NMSAbstract {
 	 * @return the resulting dragon battle
 	 */
 	public Object getEnderDragonBattleFromDragon(EnderDragon dragon);
+	
+	/**
+	 * Set the style and colour of a battle's boss bar
+	 * 
+	 * @param battle - The battle to modify
+	 * @param style - The style of the boss bar
+	 * @param colour - The colour of the boss bar
+	 * 
+	 * @return true if the style change was successful
+	 */
+	public boolean setBattleBossBarStyle(Object battle, BarStyle style, BarColor colour);
 	
 	/**
 	 * Get an EnderDragon object based on a specific EnderDragonBattle

@@ -117,7 +117,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
 		}
 
-		this.respawnDragon = config.getBoolean("respawn", false);
+		this.respawnDragon = config.getBoolean("respawn-on-death", false);
 		this.runTaskTimer(plugin, 0, this.particleInterval);
 		
 		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);

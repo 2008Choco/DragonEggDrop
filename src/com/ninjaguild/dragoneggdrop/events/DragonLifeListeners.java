@@ -25,10 +25,10 @@ import java.util.Random;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
+import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
@@ -55,12 +55,10 @@ public class DragonLifeListeners implements Listener {
 		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		plugin.getDEDManager().setRespawnInProgress(false);
 		
-		List<String> dragonNames = plugin.getDEDManager().getDragonNames();
-		if (!dragonNames.isEmpty()) {
-			String name = ChatColor.translateAlternateColorCodes('&', dragonNames.get(random.nextInt(dragonNames.size())));
-			dragon.setCustomName(name);
-			
-			plugin.getDEDManager().setDragonBossBarTitle(name, plugin.getDEDManager().getEnderDragonBattleFromDragon(dragon));
+		List<DragonTemplate> dragonTemplates = plugin.getDEDManager().getDragonTemplates();
+		if (!dragonTemplates.isEmpty()) {
+			DragonTemplate template = dragonTemplates.get(random.nextInt(dragonTemplates.size()));
+			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
 		}
 		
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);

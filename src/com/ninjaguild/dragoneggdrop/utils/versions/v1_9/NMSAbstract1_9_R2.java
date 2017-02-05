@@ -25,8 +25,11 @@ import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R2.block.CraftChest;
 import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
@@ -34,6 +37,7 @@ import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
+import net.minecraft.server.v1_9_R2.BossBattle;
 import net.minecraft.server.v1_9_R2.BossBattleServer;
 import net.minecraft.server.v1_9_R2.ChatMessage;
 import net.minecraft.server.v1_9_R2.EnderDragonBattle;
@@ -92,6 +96,38 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.cV();
+	}
+	
+	@Override
+	public boolean setBattleBossBarStyle(Object battle, BarStyle style, BarColor colour) {
+		if ((battle == null || !(battle instanceof EnderDragonBattle))) return false;
+		
+		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
+		try {
+			Field field = EnderDragonBattle.class.getDeclaredField("c");
+			field.setAccessible(true);
+			
+			BossBattleServer battleServer = (BossBattleServer) field.get(dragonBattle);
+			if (battleServer == null) return false;
+			
+			if (style != null) {
+				String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "SOLID";
+				if (!EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
+					return false;
+				}
+				
+				battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
+			}
+			if (colour != null) battleServer.color = BossBattle.BarColor.valueOf(colour.name());
+			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
+			
+			field.setAccessible(false);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 	
 	@Override

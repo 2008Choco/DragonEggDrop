@@ -22,6 +22,7 @@ package com.ninjaguild.dragoneggdrop.utils.runnables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
+import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -63,8 +64,9 @@ public class RespawnRunnable extends BukkitRunnable {
 				eggLocation.clone().add(0, -3, -3)
 		};
 
-		Object dragonBattle = plugin.getDEDManager().getEnderDragonBattleFromWorld(eggLocation.getWorld());
-		EnderDragon dragon = plugin.getNMSAbstract().getEnderDragonFromBattle(dragonBattle);
+		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
+		Object dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(eggLocation.getWorld());
+		EnderDragon dragon = nmsAbstract.getEnderDragonFromBattle(dragonBattle);
 
 		for (int i = 0; i < crystalLocs.length; i++) {
 			Location cLoc = crystalLocs[i];
@@ -93,7 +95,7 @@ public class RespawnRunnable extends BukkitRunnable {
 					
 					//HACKY AF!
 					if (cLoc.equals(crystalLocs[crystalLocs.length - 1])) {
-						plugin.getNMSAbstract().respawnEnderDragon(dragonBattle);
+						nmsAbstract.respawnEnderDragon(dragonBattle);
 						plugin.getDEDManager().setRespawnInProgress(true);
 						
 						BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);

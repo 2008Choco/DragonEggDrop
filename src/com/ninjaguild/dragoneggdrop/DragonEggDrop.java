@@ -132,7 +132,7 @@ public class DragonEggDrop extends JavaPlugin {
 		if (this.updateTask != null)
 			this.updateTask.cancel();
 		
-		this.dedManager.getDragonNames().clear();
+		this.dedManager.getDragonTemplates().clear();
 		this.dedManager.getLootManager().getLoot().clear();
 	}
 	
