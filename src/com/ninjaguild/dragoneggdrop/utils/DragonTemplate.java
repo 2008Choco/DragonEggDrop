@@ -30,30 +30,65 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
 
+/**
+ * Represents a template for a custom dragon to be spawned containined
+ * information about its name, as well as the style of its boss bar
+ * 
+ * @author Parker Hawke - 2008Choco
+ */
 public class DragonTemplate {
 	
 	private final String name;
 	private final BarStyle barStyle;
 	private final BarColor barColour;
 	
+	/**
+	 * Construct a new DragonTemplate object
+	 * 
+	 * @param name - The name of the dragon
+	 * @param barStyle - The style of the bar
+	 * @param barColour - The colour of the bar
+	 */
 	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
 		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
 		this.barStyle = barStyle;
 		this.barColour = barColour;
 	}
 	
+	/**
+	 * Get the name of the dragon
+	 * 
+	 * @return the dragon's name
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Get the style of the boss bar
+	 * 
+	 * @return the boss bar style
+	 */
 	public BarStyle getBarStyle() {
 		return barStyle;
 	}
 	
+	/**
+	 * Get the colour of the boss bar
+	 * 
+	 * @return the boss bar colour
+	 */
 	public BarColor getBarColor() {
 		return barColour;
 	}
 	
+	/**
+	 * Apply this templates data to an EnderDragonBattle object
+	 * 
+	 * @param nmsAbstract - An instance of the NMSAbstract interface
+	 * @param dragon - The dragon to modify
+	 * @param battle - The battle to modify
+	 */
 	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, Object battle) {
 		if (name != null) {
 			dragon.setCustomName(name);
@@ -62,6 +97,13 @@ public class DragonTemplate {
 		nmsAbstract.setBattleBossBarStyle(battle, barStyle, barColour);
 	}
 	
+	/**
+	 * Load and parse all DragonTemplate objects (if possible) from
+	 * a List of String data from a configuration file
+	 * 
+	 * @param data - The data to parse
+	 * @return all parsed DragonTemplate objects
+	 */
 	public static List<DragonTemplate> loadTemplates(List<String> data) {
 		List<DragonTemplate> templates = new ArrayList<>();
 		
