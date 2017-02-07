@@ -123,7 +123,7 @@ public class DEDManager {
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
 				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
 			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay) * 20;
-			this.respawnTask = new RespawnRunnable(plugin, eggLoc).runTaskLater(plugin, respawnDelay);
+			this.respawnTask = new RespawnRunnable(plugin, eggLoc).runTaskTimer(plugin, respawnDelay, 20);
 			
 			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
 				this.announceTask = new AnnounceRunnable(plugin, eggLoc.getWorld(), respawnDelay / 20).runTaskTimer(plugin, 0, 20);

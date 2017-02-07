@@ -19,15 +19,20 @@
 
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
+import java.util.stream.Collectors;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -42,6 +47,13 @@ public class RespawnRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	private final Location eggLocation;
+	private final NMSAbstract nmsAbstract;
+	
+	private final Object dragonBattle;
+	private final EnderDragon dragon;
+	
+	private final Location[] crystalLocations;
+	private int currentCrystal = 0;
 
 	/**
 	 * Construct a new RespawnRunnable object
@@ -52,58 +64,76 @@ public class RespawnRunnable extends BukkitRunnable {
 	public RespawnRunnable(final DragonEggDrop plugin, final Location eggLocation) {
 		this.plugin = plugin;
 		this.eggLocation = eggLocation;
+		this.nmsAbstract = plugin.getNMSAbstract();
+		
+		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(eggLocation.getWorld());
+		this.dragon = nmsAbstract.getEnderDragonFromBattle(dragonBattle);
+		
+		this.crystalLocations = new Location[] {
+			eggLocation.clone().add(3, -3, 0),
+			eggLocation.clone().add(0, -3, 3),
+			eggLocation.clone().add(-3, -3, 0),
+			eggLocation.clone().add(0, -3, -3)
+		};
+		
+		// Event call
+		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_DEAD, BattleState.CRYSTALS_SPAWNING);
+		Bukkit.getPluginManager().callEvent(bscEventCrystals);
 	}
 
 	@Override
 	public void run() {
-		//start respawn process
-		Location[] crystalLocs = new Location[] {
-				eggLocation.clone().add(3, -3, 0),
-				eggLocation.clone().add(0, -3, 3),
-				eggLocation.clone().add(-3, -3, 0),
-				eggLocation.clone().add(0, -3, -3)
-		};
+		// Start respawn process
+		Location crystalLocation = this.crystalLocations[currentCrystal++];
+		World crystalWorld = crystalLocation.getWorld();
+		Chunk crystalChunk = crystalWorld.getChunkAt(crystalLocation);
+		
+		if (!crystalChunk.isLoaded()) 
+			crystalChunk.load();
+		
+		// Kill any existing entities at this location
+		for (Entity ent : crystalWorld.getNearbyEntities(crystalLocation, 1, 1, 1))
+			ent.remove();
+		
+		EnderCrystal crystal = (EnderCrystal) crystalWorld.spawnEntity(crystalLocation, EntityType.ENDER_CRYSTAL);
+		crystal.setShowingBottom(false);
+		crystal.setInvulnerable(true);
 
-		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-		Object dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(eggLocation.getWorld());
-		EnderDragon dragon = nmsAbstract.getEnderDragonFromBattle(dragonBattle);
+		crystalWorld.createExplosion(crystalLocation.getX(), crystalLocation.getY(), crystalLocation.getZ(), 0F, false, false);
+		crystalWorld.spawnParticle(Particle.EXPLOSION_HUGE, crystalLocation, 0);
 
-		for (int i = 0; i < crystalLocs.length; i++) {
-			Location cLoc = crystalLocs[i];
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_DEAD, BattleState.CRYSTALS_SPAWNING);
-					Bukkit.getPluginManager().callEvent(bscEventCrystals);
+//		dragonBattle.e(); ** REPLACED WITH NMSAbstract#respawnEnderDragon() **
+		
+		// All crystals respawned
+		if (currentCrystal >= 4) {
+			
+			// If dragon already exists, cancel the respawn process
+			if (crystalWorld.getEntitiesByClass(EnderDragon.class).size() >= 1) {
+				plugin.getLogger().warning("An EnderDragon is already present in world " + crystalWorld.getName() + ". Dragon respawn cancelled");
+				this.nmsAbstract.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
+				
+				// Destroy all crystals
+				for (Location location : this.crystalLocations) {
+					Entity crystalToRemove = crystalWorld.getNearbyEntities(location, 1, 1, 1).stream()
+							.filter(e -> e instanceof EnderCrystal)
+							.collect(Collectors.toList()).get(0);
 					
-					Chunk crystalChunk = eggLocation.getWorld().getChunkAt(cLoc);
-					if (!crystalChunk.isLoaded()) {
-						crystalChunk.load();
-					}
-					//kill any existing entities at this location
-					for (Entity ent : cLoc.getWorld().getNearbyEntities(cLoc, 1, 1, 1)) {
-						ent.remove();
-					}
-					EnderCrystal crystal = (EnderCrystal)eggLocation.getWorld().spawnEntity(cLoc, EntityType.ENDER_CRYSTAL);
-					crystal.setShowingBottom(false);
-					crystal.setInvulnerable(true);
-
-					cLoc.getWorld().createExplosion(cLoc.getX(), cLoc.getY(), cLoc.getZ(), 0F, false, false);
-					cLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cLoc, 0);
-
-//					dragonBattle.e(); ** REPLACED WITH NMSAbstract#respawnEnderDragon() **
-					
-					//HACKY AF!
-					if (cLoc.equals(crystalLocs[crystalLocs.length - 1])) {
-						nmsAbstract.respawnEnderDragon(dragonBattle);
-						plugin.getDEDManager().setRespawnInProgress(true);
-						
-						BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);
-						Bukkit.getPluginManager().callEvent(bscEventRespawning);
-					}
+					crystalWorld.getPlayers().forEach(p -> p.playSound(eggLocation, Sound.BLOCK_FIRE_EXTINGUISH, 1000, 1));
+					crystalWorld.createExplosion(location.getX(), location.getY(), location.getZ(), 0F, false, false);
+					crystalToRemove.remove();
 				}
-
-			}.runTaskLater(plugin, (i + 1) * 22);
+				
+				this.cancel();
+				return;
+			}
+			
+			nmsAbstract.respawnEnderDragon(dragonBattle);
+			plugin.getDEDManager().setRespawnInProgress(true);
+			
+			BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);
+			Bukkit.getPluginManager().callEvent(bscEventRespawning);
+			
+			this.cancel();
 		}
 	}
 
