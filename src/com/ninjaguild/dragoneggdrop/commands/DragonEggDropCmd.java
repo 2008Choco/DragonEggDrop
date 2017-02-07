@@ -46,7 +46,7 @@ public class DragonEggDropCmd implements CommandExecutor {
 			sender.sendMessage(ChatColor.GOLD + "-----------------------");
 			sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP INFO --");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------");
-			sender.sendMessage(ChatColor.GOLD + "Author: " + plugin.getDescription().getAuthors().get(0));
+			sender.sendMessage(ChatColor.GOLD + "Original Author: PixelStix");
 			sender.sendMessage(ChatColor.GOLD + "Maintainer: 2008Choco");
 			sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescription().getVersion());
 			if (sender.isOp() && plugin.isNewVersionAvailable())
