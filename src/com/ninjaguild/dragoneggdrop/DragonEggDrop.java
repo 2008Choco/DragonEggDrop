@@ -92,7 +92,7 @@ public class DragonEggDrop extends JavaPlugin {
 		}
 
 		try {
-			Particle.valueOf(getConfig().getString("particle-type", "FLAME").toUpperCase());
+			Particle.valueOf(getConfig().getString("Particles.type", "FLAME").toUpperCase());
 		} catch (IllegalArgumentException ex) {
 			this.getLogger().log(Level.WARNING, "INVALID PARTICLE TYPE SPECIFIED! DISABLING...");
 			this.getLogger().log(Level.INFO, "PLUGIN DISABLED");

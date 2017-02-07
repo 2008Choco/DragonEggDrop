@@ -19,7 +19,10 @@
 
 package com.ninjaguild.dragoneggdrop.commands;
 
+import java.util.List;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -76,6 +79,12 @@ public class DragonEggDropCmd implements CommandExecutor {
 				}
 				
 				plugin.reloadConfig();
+				
+				// Template reloading
+				List<DragonTemplate> templates = plugin.getDEDManager().getDragonTemplates();
+				templates.clear();
+				templates.addAll(DragonTemplate.loadTemplates(plugin.getConfig().getStringList("dragon-names")));
+				
 				plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
 			}
 			return true;

@@ -51,8 +51,8 @@ public class DragonTemplate {
 	 */
 	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
 		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
-		this.barStyle = barStyle;
-		this.barColour = barColour;
+		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
+		this.barColour = (barColour != null ? barColour : BarColor.PINK);
 	}
 	
 	/**
@@ -117,6 +117,12 @@ public class DragonTemplate {
 			// Here for legacy purposes
 			if (splitData.length == 1) {
 				name = dragonData;
+				
+				// In case name=whatever
+				String[] tempData = name.split("=");
+				if (tempData.length == 2)
+					name = tempData[1];
+				
 				templates.add(new DragonTemplate(name, null, null));
 				continue;
 			}
@@ -125,8 +131,8 @@ public class DragonTemplate {
 				String[] splitInfo = dragonInfo.split("=");
 				if (splitInfo.length != 2) continue;
 				
-				String dataType = splitInfo[0];
-				String value = splitInfo[1];
+				String dataType = splitInfo[0].trim();
+				String value = splitInfo[1].trim();
 				
 				if (dataType.equalsIgnoreCase("name")) {
 					name = value;
