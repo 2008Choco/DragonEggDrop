@@ -206,7 +206,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(dragonBattle);
 			if (worldServer != null && position != null) {
 				World world = worldServer.getWorld();
-				portalLocation = new Location(world, position.getX(), position.getY(), position.getZ());
+				portalLocation = new Location(world, Math.floor(position.getX()) + 0.5, position.getY() + 4, Math.floor(position.getZ()) + 0.5);
 			}
 			
 			fieldWorldServer.setAccessible(false);
