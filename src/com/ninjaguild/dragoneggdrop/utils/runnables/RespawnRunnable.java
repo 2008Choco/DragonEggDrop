@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
+import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Bukkit;
@@ -46,6 +47,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class RespawnRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
+	private final EndWorldWrapper worldWrapper;
 	private final Location eggLocation;
 	private final NMSAbstract nmsAbstract;
 	
@@ -63,6 +65,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	 */
 	public RespawnRunnable(final DragonEggDrop plugin, final Location eggLocation) {
 		this.plugin = plugin;
+		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(eggLocation.getWorld());
 		this.eggLocation = eggLocation;
 		this.nmsAbstract = plugin.getNMSAbstract();
 		
@@ -128,7 +131,7 @@ public class RespawnRunnable extends BukkitRunnable {
 			}
 			
 			nmsAbstract.respawnEnderDragon(dragonBattle);
-			plugin.getDEDManager().setRespawnInProgress(true);
+			this.worldWrapper.setRespawnInProgress(true);
 			
 			BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);
 			Bukkit.getPluginManager().callEvent(bscEventRespawning);

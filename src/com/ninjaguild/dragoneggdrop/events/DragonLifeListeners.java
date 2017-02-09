@@ -53,7 +53,7 @@ public class DragonLifeListeners implements Listener {
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
 		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
-		plugin.getDEDManager().setRespawnInProgress(false);
+		plugin.getDEDManager().getWorldWrapper(dragon.getWorld()).setRespawnInProgress(false);
 		
 		List<DragonTemplate> dragonTemplates = plugin.getDEDManager().getDragonTemplates();
 		if (!dragonTemplates.isEmpty()) {
@@ -81,8 +81,8 @@ public class DragonLifeListeners implements Listener {
 			@Override
 			public void run() {
 				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon)>= 185) { // Dragon is dead at 200
+					new DragonDeathRunnable(plugin, plugin.getDEDManager().getWorldWrapper(world), dragon, prevKilled);
 					this.cancel();
-					new DragonDeathRunnable(plugin, world, dragon, prevKilled);
 				}
 			}
 		}.runTaskTimer(plugin, 0L, 1L);

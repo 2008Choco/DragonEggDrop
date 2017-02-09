@@ -54,7 +54,7 @@ public class RespawnListeners implements Listener {
 		if (fromWorld.getEnvironment() == Environment.THE_END) {
 			if (fromWorld.getPlayers().isEmpty()) {
 				// Cancel respawn if scheduled
-				plugin.getDEDManager().stopRespawn();
+				plugin.getDEDManager().getWorldWrapper(fromWorld).stopRespawn();
 			}
 		}
 		
@@ -64,7 +64,7 @@ public class RespawnListeners implements Listener {
 				for (int y = toWorld.getMaxHeight(); y > 0; y--) {
 					Block block = toWorld.getBlockAt(0, y, 0);
 					if (block.getType() == Material.BEDROCK) {
-						plugin.getDEDManager().startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
+						plugin.getDEDManager().getWorldWrapper(toWorld).startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
 						break;
 					}
 				}
@@ -89,7 +89,7 @@ public class RespawnListeners implements Listener {
 		for (int y = world.getMaxHeight(); y > 0; y--) {
 			Block block = world.getBlockAt(0, y, 0);
 			if (block.getType() == Material.BEDROCK) {
-				plugin.getDEDManager().startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
+				plugin.getDEDManager().getWorldWrapper(world).startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
 				break;
 			}
 		}
@@ -103,6 +103,6 @@ public class RespawnListeners implements Listener {
 		World world = event.getPlayer().getWorld();
 		if (world.getEnvironment() != Environment.THE_END || world.getPlayers().size() != 1) return;
 		
-		plugin.getDEDManager().stopRespawn();
+		plugin.getDEDManager().getWorldWrapper(world).stopRespawn();
 	}
 }

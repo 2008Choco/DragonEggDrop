@@ -20,20 +20,19 @@
 package com.ninjaguild.dragoneggdrop.utils.manager;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.loot.LootManager;
 import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
-import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
-import org.bukkit.Location;
-import org.bukkit.World.Environment;
+import org.bukkit.World;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  * The core Dragon Boss Battle manager. Boss battle manipulation and
@@ -46,10 +45,7 @@ public class DEDManager {
 	private List<DragonTemplate> dragonTemplates;
 	private LootManager lootMan;
 	
-	private BukkitTask respawnTask;
-	private BukkitTask announceTask;
-	
-	private boolean respawnInProgress = false;
+	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
 	
 	/**
 	 * Construct a new DEDManager object. This object should mainly be
@@ -72,8 +68,8 @@ public class DEDManager {
 	private void setDragonBossBarTitle() {
 		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
 		
-		plugin.getServer().getWorlds().stream()
-			.filter(w -> w.getEnvironment() == Environment.THE_END)
+		this.worldWrappers.values().stream()
+			.map(EndWorldWrapper::getWorld)
 			.forEach(w -> {
 				Collection<EnderDragon> dragons = w.getEntitiesByClass(EnderDragon.class);
 				if (!dragons.isEmpty()) {
@@ -105,72 +101,25 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Commence the Dragon's respawning processes
+	 * Get the world wrapper for the specified world
 	 * 
-	 * @param eggLoc - The location in which the egg will spawn
-	 * @param type - The type that triggered this dragon respawn
+	 * @param world - The world to get
+	 * @return the world's respective wrapper
 	 */
-	public void startRespawn(Location eggLoc, RespawnType type) {
-		boolean dragonExists = !eggLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-		if (dragonExists || respawnInProgress) {
-			return;
-		}
-		
-        int joinDelay = plugin.getConfig().getInt("join-respawn-delay", 60); // Seconds
-        int deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
-        
-		if (respawnTask == null || 
-				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
-				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
-			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay) * 20;
-			this.respawnTask = new RespawnRunnable(plugin, eggLoc).runTaskTimer(plugin, respawnDelay, 20);
-			
-			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
-				this.announceTask = new AnnounceRunnable(plugin, eggLoc.getWorld(), respawnDelay / 20).runTaskTimer(plugin, 0, 20);
-			}
-		}
+	public EndWorldWrapper getWorldWrapper(World world) {
+		UUID worldId = world.getUID();
+		if (!worldWrappers.containsKey(worldId))
+			this.worldWrappers.put(worldId, new EndWorldWrapper(plugin, world));
+		return this.worldWrappers.get(worldId);
 	}
 	
 	/**
-	 * Halt the Dragon respawning process, if any are currently running
-	 */
-	public void stopRespawn() {
-		if (respawnTask != null) {
-			respawnTask.cancel();
-			respawnTask = null;
-			
-			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
-				cancelAnnounce();
-			}
-		}
-	}
-	
-	/**
-	 * Cancel the action bar announcement task
-	 */
-	public void cancelAnnounce() {
-		if (announceTask != null) {
-		    announceTask.cancel();
-		    announceTask = null;
-		}
-	}
-	
-	/**
-	 * Set whether a respawn is currently in progress or not
+	 * Get the map containing all world wrappers
 	 * 
-	 * @param value - the respawn progress state
+	 * @return all world wrappers
 	 */
-	public void setRespawnInProgress(boolean value) {
-		respawnInProgress = value;
-	}
-	
-	/**
-	 * Check whether a respawn is currently in progress or not
-	 * 
-	 * @return true if actively respawning
-	 */
-	public boolean isRespawnInProgress() {
-		return respawnInProgress;
+	public Map<UUID, EndWorldWrapper> getWorldWrappers() {
+		return worldWrappers;
 	}
 	
 	/**

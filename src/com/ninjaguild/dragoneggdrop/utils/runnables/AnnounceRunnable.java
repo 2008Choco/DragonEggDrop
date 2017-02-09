@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -36,7 +36,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class AnnounceRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
-	private final World world;
+	private final EndWorldWrapper worldWrapper;
 	private int delay;
 
 	private int currentMessage = 0;
@@ -46,12 +46,12 @@ public class AnnounceRunnable extends BukkitRunnable {
 	 * Construct a new AnnouncementRunnable object
 	 * 
 	 * @param plugin - An instance of the DragonEggDrop plugin
-	 * @param world - The world to broadcast the announcements to
+	 * @param worldWrapper - The world to broadcast the announcements to
 	 * @param delay - The time it will take the Ender Dragon to respawn (and terminate this runnable)
 	 */
-	public AnnounceRunnable(final DragonEggDrop plugin, final World world, final int delay) {
+	public AnnounceRunnable(final DragonEggDrop plugin, final EndWorldWrapper worldWrapper, final int delay) {
 		this.plugin = plugin;
-		this.world = world;
+		this.worldWrapper = worldWrapper;
 		this.delay = delay;
 		this.messages = plugin.getConfig().getStringList("announce-messages").stream()
 				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
@@ -64,10 +64,10 @@ public class AnnounceRunnable extends BukkitRunnable {
 		if (this.currentMessage >= messages.size()) this.currentMessage = 0;
 		
 		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--));
-		plugin.getNMSAbstract().broadcastActionBar(message, world);
+		plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
 		
 		if (delay == 0) {
-			plugin.getDEDManager().cancelAnnounce();
+			this.worldWrapper.cancelAnnounce();
 		}
 	}
 

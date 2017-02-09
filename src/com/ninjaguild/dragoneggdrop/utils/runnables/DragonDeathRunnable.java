@@ -26,6 +26,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,6 +48,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	private ParticleShapeDefinition particleShape;
 	
 	private final World world;
+	private final EndWorldWrapper worldWrapper;
 	private final boolean placeEgg;
 	
 	private Particle particleType = null;
@@ -71,12 +73,13 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	 * Construct a new DragonDeathRunnable object
 	 * 
 	 * @param plugin - An instance of the DragonEggDrop plugin
-	 * @param world - The world in which the dragon death is taking place
+	 * @param worldWrapper - The world in which the dragon death is taking place
 	 * @param prevKilled - Whether the dragon was previously killed or not
 	 */
-	public DragonDeathRunnable(final DragonEggDrop plugin, final World world, EnderDragon dragon, boolean prevKilled) {
+	public DragonDeathRunnable(final DragonEggDrop plugin, final EndWorldWrapper worldWrapper, EnderDragon dragon, boolean prevKilled) {
 		this.plugin = plugin;
-		this.world = world;
+		this.worldWrapper = worldWrapper;
+		this.world = worldWrapper.getWorld();
 		this.dragon = dragon;
 		this.placeEgg = prevKilled;
 		
@@ -148,7 +151,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			
 			// Summon Zeus!
 			for (int i = 0; i < this.lightningAmount; i++)
-				this.world.strikeLightning(location);
+				this.worldWrapper.getWorld().strikeLightning(location);
 			
 			// Place the reward
 			if (placeEgg) {
@@ -174,7 +177,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			}
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
-				plugin.getDEDManager().startRespawn(location, RespawnType.DEATH);
+				this.worldWrapper.startRespawn(location, RespawnType.DEATH);
 			}
 			
 			Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
