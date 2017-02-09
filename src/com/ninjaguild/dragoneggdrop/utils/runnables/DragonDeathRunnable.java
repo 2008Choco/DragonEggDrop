@@ -84,8 +84,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.placeEgg = prevKilled;
 		
 		FileConfiguration config = plugin.getConfig();
-		this.currentY = config.getDouble("Particles.egg-start-y");
-		this.location = new Location(world, 0.5, this.currentY, 0.5);
 		this.particleType = Particle.valueOf(config.getString("Particles.type", "FLAME").toUpperCase());
 		this.particleAmount = config.getInt("Particles.amount", 4);
 		this.particleExtra = config.getDouble("Particles.extra", 0.0D);
@@ -97,6 +95,12 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.particleInterval = config.getLong("Particles.interval", 1L);
 		this.lightningAmount = config.getInt("lightning-amount");
 		this.rewardType = config.getString("drop-type");
+		
+		// Portal location
+		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		Location portalLocation = plugin.getNMSAbstract().getEndPortalLocation(dragonBattle);
+		this.currentY = config.getDouble("Particles.egg-start-y");
+		this.location = new Location(world, portalLocation.getX(), this.currentY, portalLocation.getZ());
 		
 		// Expression parsing
 		String shape = config.getString("Particles.Advanced.preset-shape");
@@ -123,7 +127,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.respawnDragon = config.getBoolean("respawn-on-death", false);
 		this.runTaskTimer(plugin, 0, this.particleInterval);
 		
-		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
 		Bukkit.getPluginManager().callEvent(bscEventCrystals);
 	}
@@ -177,7 +180,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			}
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
-				this.worldWrapper.startRespawn(location, RespawnType.DEATH);
+				this.worldWrapper.startRespawn(RespawnType.DEATH);
 			}
 			
 			Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);

@@ -48,7 +48,7 @@ public class RespawnRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	private final EndWorldWrapper worldWrapper;
-	private final Location eggLocation;
+	private final Location portalLocation;
 	private final NMSAbstract nmsAbstract;
 	
 	private final Object dragonBattle;
@@ -61,22 +61,22 @@ public class RespawnRunnable extends BukkitRunnable {
 	 * Construct a new RespawnRunnable object
 	 * 
 	 * @param plugin - An instance of the DragonEggDrop plugin
-	 * @param eggLocation - The location in which the egg is located
+	 * @param portalLocation - The location in which the egg is located
 	 */
-	public RespawnRunnable(final DragonEggDrop plugin, final Location eggLocation) {
+	public RespawnRunnable(final DragonEggDrop plugin, final Location portalLocation) {
 		this.plugin = plugin;
-		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(eggLocation.getWorld());
-		this.eggLocation = eggLocation;
+		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(portalLocation.getWorld());
+		this.portalLocation = portalLocation;
 		this.nmsAbstract = plugin.getNMSAbstract();
 		
-		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(eggLocation.getWorld());
+		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(portalLocation.getWorld());
 		this.dragon = nmsAbstract.getEnderDragonFromBattle(dragonBattle);
 		
 		this.crystalLocations = new Location[] {
-			eggLocation.clone().add(3, -3, 0),
-			eggLocation.clone().add(0, -3, 3),
-			eggLocation.clone().add(-3, -3, 0),
-			eggLocation.clone().add(0, -3, -3)
+			portalLocation.clone().add(3, -3, 0),
+			portalLocation.clone().add(0, -3, 3),
+			portalLocation.clone().add(-3, -3, 0),
+			portalLocation.clone().add(0, -3, -3)
 		};
 		
 		// Event call
@@ -121,7 +121,7 @@ public class RespawnRunnable extends BukkitRunnable {
 							.filter(e -> e instanceof EnderCrystal)
 							.collect(Collectors.toList()).get(0);
 					
-					crystalWorld.getPlayers().forEach(p -> p.playSound(eggLocation, Sound.BLOCK_FIRE_EXTINGUISH, 1000, 1));
+					crystalWorld.getPlayers().forEach(p -> p.playSound(portalLocation, Sound.BLOCK_FIRE_EXTINGUISH, 1000, 1));
 					crystalWorld.createExplosion(location.getX(), location.getY(), location.getZ(), 0F, false, false);
 					crystalToRemove.remove();
 				}

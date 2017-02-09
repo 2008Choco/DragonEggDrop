@@ -64,7 +64,7 @@ public class RespawnListeners implements Listener {
 				for (int y = toWorld.getMaxHeight(); y > 0; y--) {
 					Block block = toWorld.getBlockAt(0, y, 0);
 					if (block.getType() == Material.BEDROCK) {
-						plugin.getDEDManager().getWorldWrapper(toWorld).startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
+						plugin.getDEDManager().getWorldWrapper(toWorld).startRespawn(RespawnType.JOIN);
 						break;
 					}
 				}
@@ -89,7 +89,7 @@ public class RespawnListeners implements Listener {
 		for (int y = world.getMaxHeight(); y > 0; y--) {
 			Block block = world.getBlockAt(0, y, 0);
 			if (block.getType() == Material.BEDROCK) {
-				plugin.getDEDManager().getWorldWrapper(world).startRespawn(block.getLocation().add(0.5D, 1D, 0.5D), RespawnType.JOIN);
+				plugin.getDEDManager().getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 				break;
 			}
 		}

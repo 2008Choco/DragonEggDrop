@@ -23,6 +23,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
+import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -64,13 +65,12 @@ public class EndWorldWrapper {
 	}
 	
 	/**
-	 * Commence the Dragon's respawning processes
+	 * Commence the Dragon's respawning processes in this world
 	 * 
-	 * @param eggLoc - The location in which the egg will spawn
 	 * @param type - The type that triggered this dragon respawn
 	 */
-	public void startRespawn(Location eggLoc, RespawnType type) {
-		boolean dragonExists = !eggLoc.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
+	public void startRespawn(RespawnType type) {
+		boolean dragonExists = !world.getEntitiesByClasses(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress) {
 			return;
 		}
@@ -78,11 +78,15 @@ public class EndWorldWrapper {
         int joinDelay = plugin.getConfig().getInt("join-respawn-delay", 60); // Seconds
         int deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
         
+        NMSAbstract nmsAbstract = plugin.getNMSAbstract();
+        Object dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
+        Location portalLocation = nmsAbstract.getEndPortalLocation(dragonBattle);
+        
 		if (respawnTask == null || 
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
 				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
 			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay) * 20;
-			this.respawnTask = new RespawnRunnable(plugin, eggLoc).runTaskTimer(plugin, respawnDelay, 20);
+			this.respawnTask = new RespawnRunnable(plugin, portalLocation).runTaskTimer(plugin, respawnDelay, 20);
 			
 			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
 				this.announceTask = new AnnounceRunnable(plugin, this, respawnDelay / 20).runTaskTimer(plugin, 0, 20);
