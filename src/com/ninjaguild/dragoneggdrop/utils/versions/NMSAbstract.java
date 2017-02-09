@@ -19,6 +19,7 @@
 
 package com.ninjaguild.dragoneggdrop.utils.versions;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
@@ -104,6 +105,14 @@ public interface NMSAbstract {
 	 * @return the animation time
 	 */
 	public int getEnderDragonDeathAnimationTime(EnderDragon dragon);
+	
+	/**
+	 * Get the Location of the end portal to the overworld for
+	 * a specific boss battle
+	 * 
+	 * @return the portal location
+	 */
+	public Location getEndPortalLocation(Object battle);
 	
 	/**
 	 * Set the custom name of a chest tile entity

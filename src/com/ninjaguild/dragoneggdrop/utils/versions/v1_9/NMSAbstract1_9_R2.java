@@ -26,6 +26,7 @@ import java.util.UUID;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
@@ -37,6 +38,7 @@ import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
+import net.minecraft.server.v1_9_R2.BlockPosition;
 import net.minecraft.server.v1_9_R2.BossBattle;
 import net.minecraft.server.v1_9_R2.BossBattleServer;
 import net.minecraft.server.v1_9_R2.ChatMessage;
@@ -183,6 +185,33 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bG;
+	}
+	
+	@Override
+	public Location getEndPortalLocation(Object battle) {
+		if (battle == null || !(battle instanceof EnderDragonBattle)) return null;
+		
+		Location portalLocation = null;
+		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
+		try {
+			Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
+			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
+			fieldExitPortalLocation.setAccessible(true);
+			fieldWorldServer.setAccessible(true);
+			
+			WorldServer worldServer = (WorldServer) fieldWorldServer.get(dragonBattle);
+			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(dragonBattle);
+			if (worldServer != null && position != null) {
+				World world = worldServer.getWorld();
+				portalLocation = new Location(world, position.getX(), position.getY(), position.getZ());
+			}
+			
+			fieldWorldServer.setAccessible(false);
+			fieldExitPortalLocation.setAccessible(false);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return portalLocation;
 	}
 
 	@Override

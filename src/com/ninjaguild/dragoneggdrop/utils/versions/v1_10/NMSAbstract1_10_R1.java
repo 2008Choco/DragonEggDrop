@@ -26,6 +26,7 @@ import java.util.UUID;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
@@ -43,6 +44,7 @@ import net.minecraft.server.v1_10_R1.EnderDragonBattle;
 import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityEnderDragon;
 import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.BossBattle;
 import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
 import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
@@ -183,6 +185,33 @@ public class NMSAbstract1_10_R1 implements NMSAbstract {
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bH;
+	}
+	
+	@Override
+	public Location getEndPortalLocation(Object battle) {
+		if (battle == null || !(battle instanceof EnderDragonBattle)) return null;
+		
+		Location portalLocation = null;
+		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
+		try {
+			Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
+			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
+			fieldExitPortalLocation.setAccessible(true);
+			fieldWorldServer.setAccessible(true);
+			
+			WorldServer worldServer = (WorldServer) fieldWorldServer.get(dragonBattle);
+			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(dragonBattle);
+			if (worldServer != null && position != null) {
+				World world = worldServer.getWorld();
+				portalLocation = new Location(world, position.getX(), position.getY(), position.getZ());
+			}
+			
+			fieldWorldServer.setAccessible(false);
+			fieldExitPortalLocation.setAccessible(false);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return portalLocation;
 	}
 
 	@Override

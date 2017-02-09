@@ -26,6 +26,7 @@ import java.util.UUID;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
@@ -37,6 +38,7 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
+import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.BossBattle;
 import net.minecraft.server.v1_9_R1.BossBattleServer;
 import net.minecraft.server.v1_9_R1.ChatMessage;
@@ -68,15 +70,15 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		
 		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
 		try {
-			Field field = EnderDragonBattle.class.getDeclaredField("c");
-			field.setAccessible(true);
+			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
+			fieldBossBattleServer.setAccessible(true);
 			
-			BossBattleServer battleServer = (BossBattleServer) field.get(dragonBattle);
+			BossBattleServer battleServer = (BossBattleServer) fieldBossBattleServer.get(dragonBattle);
 			if (battleServer == null) return;
 			battleServer.title = new ChatMessage(title);
 			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
 			
-			field.setAccessible(false);
+			fieldBossBattleServer.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -107,10 +109,10 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		
 		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
 		try {
-			Field field = EnderDragonBattle.class.getDeclaredField("c");
-			field.setAccessible(true);
+			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
+			fieldBossBattleServer.setAccessible(true);
 			
-			BossBattleServer battleServer = (BossBattleServer) field.get(dragonBattle);
+			BossBattleServer battleServer = (BossBattleServer) fieldBossBattleServer.get(dragonBattle);
 			if (battleServer == null) return false;
 			
 			if (style != null) {
@@ -124,7 +126,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 			if (colour != null) battleServer.color = BossBattle.BarColor.valueOf(colour.name());
 			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
 			
-			field.setAccessible(false);
+			fieldBossBattleServer.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 			return false;
@@ -186,6 +188,33 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bF;
+	}
+	
+	@Override
+	public Location getEndPortalLocation(Object battle) {
+		if (battle == null || !(battle instanceof EnderDragonBattle)) return null;
+		
+		Location portalLocation = null;
+		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
+		try {
+			Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
+			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
+			fieldExitPortalLocation.setAccessible(true);
+			fieldWorldServer.setAccessible(true);
+			
+			WorldServer worldServer = (WorldServer) fieldWorldServer.get(dragonBattle);
+			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(dragonBattle);
+			if (worldServer != null && position != null) {
+				World world = worldServer.getWorld();
+				portalLocation = new Location(world, position.getX(), position.getY(), position.getZ());
+			}
+			
+			fieldWorldServer.setAccessible(false);
+			fieldExitPortalLocation.setAccessible(false);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return portalLocation;
 	}
 
 	@Override
