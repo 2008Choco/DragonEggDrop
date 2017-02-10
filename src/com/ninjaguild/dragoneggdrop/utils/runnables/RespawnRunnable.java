@@ -56,17 +56,21 @@ public class RespawnRunnable extends BukkitRunnable {
 	
 	private final Location[] crystalLocations;
 	private int currentCrystal = 0;
+	
+	private int secondsUntilRespawn;
 
 	/**
 	 * Construct a new RespawnRunnable object
 	 * 
 	 * @param plugin - An instance of the DragonEggDrop plugin
 	 * @param portalLocation - The location in which the egg is located
+	 * @param respawnTime - The time in seconds until the respawn is executed
 	 */
-	public RespawnRunnable(final DragonEggDrop plugin, final Location portalLocation) {
+	public RespawnRunnable(final DragonEggDrop plugin, final Location portalLocation, final int respawnTime) {
 		this.plugin = plugin;
 		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(portalLocation.getWorld());
 		this.portalLocation = portalLocation;
+		this.secondsUntilRespawn = respawnTime;
 		this.nmsAbstract = plugin.getNMSAbstract();
 		
 		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(portalLocation.getWorld());
@@ -86,6 +90,8 @@ public class RespawnRunnable extends BukkitRunnable {
 
 	@Override
 	public void run() {
+		if (this.secondsUntilRespawn-- > 0) return;
+		
 		// Start respawn process
 		Location crystalLocation = this.crystalLocations[currentCrystal++];
 		World crystalWorld = crystalLocation.getWorld();
@@ -140,4 +146,7 @@ public class RespawnRunnable extends BukkitRunnable {
 		}
 	}
 
+	public int getSecondsUntilRespawn() {
+		return secondsUntilRespawn;
+	}
 }

@@ -29,7 +29,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  * Represents a wrapped {@link World} object with {@link Environment#THE_END} to separate
@@ -39,8 +38,8 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public class EndWorldWrapper {
 	
-	private BukkitTask respawnTask;
-	private BukkitTask announceTask;
+	private RespawnRunnable respawnTask;
+	private AnnounceRunnable announceTask;
 	
 	private boolean respawnInProgress = false;
 	
@@ -85,11 +84,13 @@ public class EndWorldWrapper {
 		if (respawnTask == null || 
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
 				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
-			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay) * 20;
-			this.respawnTask = new RespawnRunnable(plugin, portalLocation).runTaskTimer(plugin, respawnDelay, 20);
+			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay);
+			this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay);
+			this.respawnTask.runTaskTimer(plugin, 0, 20);
 			
 			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
-				this.announceTask = new AnnounceRunnable(plugin, this, respawnDelay / 20).runTaskTimer(plugin, 0, 20);
+				this.announceTask = new AnnounceRunnable(plugin, this, respawnDelay);
+				this.announceTask.runTaskTimer(plugin, 0, 20);
 			}
 		}
 	}
@@ -134,5 +135,9 @@ public class EndWorldWrapper {
 	 */
 	public boolean isRespawnInProgress() {
 		return respawnInProgress;
+	}
+
+	public int getTimeUntilRespawn() {
+		return (this.respawnTask != null ? this.respawnTask.getSecondsUntilRespawn() : -1);
 	}
 }
