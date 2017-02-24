@@ -63,9 +63,10 @@ min-loot: 2
 max-loot: 6
 
 # Set a custom name and lore for the egg item (optional)
+# The variable, "%dragon", will be replaced with the name of the killed dragon
 # NOTE: Only eggs broken/dropped in the end world without
 # existing ItemMeta will receive the below name/lore.
-egg-name: ''
+egg-name: "%dragon%'s Egg"
 egg-lore: []
 
 # Respawn dragon on join? (delay is in seconds)

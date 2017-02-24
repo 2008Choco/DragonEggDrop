@@ -26,6 +26,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 
 import org.bukkit.Bukkit;
@@ -72,7 +73,9 @@ public class DragonLifeListeners implements Listener {
 		EnderDragon dragon = (EnderDragon) event.getEntity();
 		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		boolean prevKilled = this.plugin.getNMSAbstract().hasBeenPreviouslyKilled(dragon); // PreviouslyKilled
+		
 		World world = event.getEntity().getWorld();
+		EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
 		
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_COMMENCED, BattleState.BATTLE_END);
 		Bukkit.getPluginManager().callEvent(bscEventCrystals);
@@ -81,12 +84,11 @@ public class DragonLifeListeners implements Listener {
 			@Override
 			public void run() {
 				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon)>= 185) { // Dragon is dead at 200
-					new DragonDeathRunnable(plugin, plugin.getDEDManager().getWorldWrapper(world), dragon, prevKilled);
+					new DragonDeathRunnable(plugin, worldWrapper, dragon, prevKilled);
+					worldWrapper.setPreviousDragonName(dragon.getCustomName());
 					this.cancel();
 				}
 			}
 		}.runTaskTimer(plugin, 0L, 1L);
-		
-		
 	}
 }

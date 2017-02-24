@@ -42,6 +42,7 @@ public class EndWorldWrapper {
 	private AnnounceRunnable announceTask;
 	
 	private boolean respawnInProgress = false;
+	private String previousDragonName = "";
 	
 	private final DragonEggDrop plugin;
 	private final World world;
@@ -61,6 +62,25 @@ public class EndWorldWrapper {
 	 */
 	public World getWorld() {
 		return world;
+	}
+	
+	/**
+	 * Set the name of the dragon that was last killed in this world. The
+	 * name of the dragon will be used as a variable in the DragonEgg loot
+	 * 
+	 * @param previousDragonName - The name to set
+	 */
+	public void setPreviousDragonName(String previousDragonName) {
+		this.previousDragonName = previousDragonName;
+	}
+	
+	/**
+	 * Get the name of the dragon that was last killed in this world
+	 * 
+	 * @return dragon's name
+	 */
+	public String getPreviousDragonName() {
+		return previousDragonName;
 	}
 	
 	/**

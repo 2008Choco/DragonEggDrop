@@ -101,8 +101,8 @@ public class RespawnRunnable extends BukkitRunnable {
 			crystalChunk.load();
 		
 		// Kill any existing entities at this location
-		for (Entity ent : crystalWorld.getNearbyEntities(crystalLocation, 1, 1, 1))
-			ent.remove();
+		for (Entity entity : crystalWorld.getNearbyEntities(crystalLocation, 1, 1, 1))
+			entity.remove();
 		
 		EnderCrystal crystal = (EnderCrystal) crystalWorld.spawnEntity(crystalLocation, EntityType.ENDER_CRYSTAL);
 		crystal.setShowingBottom(false);
@@ -136,7 +136,7 @@ public class RespawnRunnable extends BukkitRunnable {
 				return;
 			}
 			
-			nmsAbstract.respawnEnderDragon(dragonBattle);
+			this.nmsAbstract.respawnEnderDragon(dragonBattle);
 			this.worldWrapper.setRespawnInProgress(true);
 			
 			BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);
