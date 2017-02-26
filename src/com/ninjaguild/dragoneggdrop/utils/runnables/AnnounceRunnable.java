@@ -34,7 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * to be displayed to the player with an alternating colour
  */
 public class AnnounceRunnable extends BukkitRunnable {
-
+	
 	private final DragonEggDrop plugin;
 	private final EndWorldWrapper worldWrapper;
 	private int delay;
@@ -63,12 +63,30 @@ public class AnnounceRunnable extends BukkitRunnable {
 		if (messages.size() == 0) return;
 		if (this.currentMessage >= messages.size()) this.currentMessage = 0;
 		
-		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--));
+		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--)).replace("%formatted-time%", this.getFormattedTime(delay--));
 		plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
 		
 		if (delay == 0) {
 			this.worldWrapper.cancelAnnounce();
 		}
+	}
+	
+	private String getFormattedTime(int timeInSeconds) {
+		StringBuilder resultTime = new StringBuilder();
+		
+		if (timeInSeconds >= 3600) { // Hours
+			int hours = (int) (Math.floor(timeInSeconds / 3600));
+			resultTime.append(hours + " hours, ");
+			timeInSeconds -= hours * 3600;
+		}
+		if (timeInSeconds >= 60) { // Minutes
+			int minutes = (int) (Math.floor(timeInSeconds / 60));
+			resultTime.append(minutes + " minutes, ");
+			timeInSeconds -= minutes * 60;
+		}
+		if (timeInSeconds >= 1) resultTime.append(timeInSeconds + " seconds, ");
+		
+		return resultTime.substring(0, resultTime.length() - 2);
 	}
 
 }

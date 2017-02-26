@@ -82,8 +82,8 @@ announce-respawn: true
 
 # Announcement message animation
 announce-messages:
-- '&6Dragon respawning in &e%time% &6seconds'
-- '&eDragon respawning in &6%time% &eseconds'
+- '&6Dragon respawning in &e%formatted-time%'
+- '&eDragon respawning in &6%formatted-time%'
 
 # Give the dragon a custom name, bar style and bar colour. Or not, your choice.
 # If more than one option, one will be chosen at random.
