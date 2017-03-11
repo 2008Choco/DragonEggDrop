@@ -77,6 +77,9 @@ join-respawn-delay: 60
 respawn-on-death: true
 death-respawn-delay: 300
 
+# Whether the countdown will run even when out of the end
+countdown-across-world: false
+
 # Announce respawn to end world players via the action bar.
 announce-respawn: true
 

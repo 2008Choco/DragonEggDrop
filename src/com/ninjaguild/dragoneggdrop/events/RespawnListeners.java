@@ -23,10 +23,8 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,23 +49,19 @@ public class RespawnListeners implements Listener {
 		
 		World fromWorld = event.getFrom(), toWorld = event.getPlayer().getWorld();
 		
-		if (fromWorld.getEnvironment() == Environment.THE_END) {
-			if (fromWorld.getPlayers().isEmpty()) {
-				// Cancel respawn if scheduled
-				plugin.getDEDManager().getWorldWrapper(fromWorld).stopRespawn();
-			}
+		// Cancel respawn countdown if all players leave the world
+		if (!plugin.getConfig().getBoolean("countdown-across-world", false)) {
+			if (fromWorld.getEnvironment() != Environment.THE_END || fromWorld.getPlayers().isEmpty()) return;
+			
+			plugin.getDEDManager().getWorldWrapper(fromWorld).stopRespawn();
 		}
 		
+		// Start the respawn countdown if joining an empty world
 		if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
 			if (toWorld.getEnvironment() == Environment.THE_END && toWorld.getPlayers().size() == 1) {
-				// Schedule respawn, if not dragon exists, or in progress
-				for (int y = toWorld.getMaxHeight(); y > 0; y--) {
-					Block block = toWorld.getBlockAt(0, y, 0);
-					if (block.getType() == Material.BEDROCK) {
-						plugin.getDEDManager().getWorldWrapper(toWorld).startRespawn(RespawnType.JOIN);
-						break;
-					}
-				}
+				if (plugin.getDEDManager().getWorldWrapper(toWorld).getTimeUntilRespawn() >= 0) return;
+				
+				plugin.getDEDManager().getWorldWrapper(toWorld).startRespawn(RespawnType.JOIN);
 			}
 		}
 	}
@@ -85,14 +79,9 @@ public class RespawnListeners implements Listener {
 		
 		World world = player.getWorld();
 		if (world.getEnvironment() != Environment.THE_END || !world.getPlayers().isEmpty()) return;
+		if (plugin.getDEDManager().getWorldWrapper(world).getTimeUntilRespawn() >= 0) return;
 		
-		for (int y = world.getMaxHeight(); y > 0; y--) {
-			Block block = world.getBlockAt(0, y, 0);
-			if (block.getType() == Material.BEDROCK) {
-				plugin.getDEDManager().getWorldWrapper(world).startRespawn(RespawnType.JOIN);
-				break;
-			}
-		}
+		plugin.getDEDManager().getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 	}
 	
 	@EventHandler
@@ -101,8 +90,12 @@ public class RespawnListeners implements Listener {
 				&& !plugin.getConfig().getBoolean("respawn-on-death", true)) return;
 		
 		World world = event.getPlayer().getWorld();
-		if (world.getEnvironment() != Environment.THE_END || world.getPlayers().size() != 1) return;
 		
-		plugin.getDEDManager().getWorldWrapper(world).stopRespawn();
+		// Cancel respawn countdown if all players quit the world
+		if (!plugin.getConfig().getBoolean("countdown-across-world", false)) {
+			if (world.getEnvironment() != Environment.THE_END || world.getPlayers().isEmpty()) return;
+			
+			plugin.getDEDManager().getWorldWrapper(world).stopRespawn();
+		}
 	}
 }

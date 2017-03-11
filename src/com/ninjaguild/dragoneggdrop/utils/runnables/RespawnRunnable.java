@@ -58,7 +58,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	private int currentCrystal = 0;
 	
 	private int secondsUntilRespawn;
-
+	
 	/**
 	 * Construct a new RespawnRunnable object
 	 * 
@@ -90,7 +90,14 @@ public class RespawnRunnable extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		if (this.secondsUntilRespawn-- > 0) return;
+		if (this.secondsUntilRespawn > 0) {
+			this.secondsUntilRespawn--;
+			return;
+		}
+		
+		// Only respawn if a Player is in the World
+		World world = this.worldWrapper.getWorld();
+		if (world.getPlayers().size() <= 0) return;
 		
 		// Start respawn process
 		Location crystalLocation = this.crystalLocations[currentCrystal++];

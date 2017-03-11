@@ -63,7 +63,7 @@ public class AnnounceRunnable extends BukkitRunnable {
 		if (messages.size() == 0) return;
 		if (this.currentMessage >= messages.size()) this.currentMessage = 0;
 		
-		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--)).replace("%formatted-time%", this.getFormattedTime(delay--));
+		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--)).replace("%formatted-time%", this.getFormattedTime(delay));
 		plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
 		
 		if (delay == 0) {
@@ -86,7 +86,7 @@ public class AnnounceRunnable extends BukkitRunnable {
 		}
 		if (timeInSeconds >= 1) resultTime.append(timeInSeconds + " seconds, ");
 		
-		return resultTime.substring(0, resultTime.length() - 2);
+		return resultTime.substring(0, resultTime.length() - (resultTime.length() < 2 ? 0 : 2));
 	}
 
 }

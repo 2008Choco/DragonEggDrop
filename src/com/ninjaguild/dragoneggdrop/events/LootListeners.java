@@ -49,11 +49,11 @@ public class LootListeners implements Listener {
 	public void onItemSpawn(ItemSpawnEvent event) {
 		Item item = event.getEntity();
 		ItemStack stack = item.getItemStack();
-		EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(item.getWorld());
 		
 		if (item.getWorld().getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG
 				|| stack.hasItemMeta()) return;
 		
+		EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(item.getWorld());
 		ItemMeta eggMeta = stack.getItemMeta();
 		String eggName = plugin.getConfig().getString("egg-name").replace("%dragon%", worldWrapper.getPreviousDragonName());
 		List<String> eggLore = plugin.getConfig().getStringList("egg-lore");
