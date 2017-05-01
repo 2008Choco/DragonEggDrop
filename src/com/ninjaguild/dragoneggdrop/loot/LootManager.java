@@ -39,6 +39,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -150,6 +151,7 @@ public class LootManager {
 		Block chestBlock = loc.getWorld().getBlockAt(loc);
 		chestBlock.setType(Material.CHEST);
 		Chest chest = (Chest)chestBlock.getState();
+		Inventory inv = chest.getBlockInventory();
 		//set custom title
 		String chestTitle = ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("loot-chest-title", "Chest"));
@@ -157,7 +159,9 @@ public class LootManager {
 		
 		List<ItemStack> lootItems = new ArrayList<>(loot.values());
 		for (int i = 0; i < lootItems.size(); i++) {
-			int slot = rand.nextInt(chest.getBlockInventory().getSize());
+			if (inv.firstEmpty() == -1) break;
+			
+			int slot = rand.nextInt(inv.getSize());
 			ItemStack slotItem = chest.getBlockInventory().getItem(slot);
 			if (slotItem != null && slotItem.getType() != Material.AIR) {
 				i--;
