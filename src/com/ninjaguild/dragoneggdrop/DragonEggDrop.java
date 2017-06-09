@@ -36,6 +36,7 @@ import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_10.NMSAbstract1_10_R1;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_11.NMSAbstract1_11_R1;
+import com.ninjaguild.dragoneggdrop.utils.versions.v1_12.NMSAbstract1_12_R1;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R1;
 import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R2;
 
@@ -206,10 +207,10 @@ public class DragonEggDrop extends JavaPlugin {
 				
 				if (!currentVersion.equals(recentVersion)) {
 					getLogger().info("New version available. Your Version = " + currentVersion + ". New Version = " + recentVersion);
-					newVersionAvailable = true;
-					newVersion = recentVersion;
+					this.newVersionAvailable = true;
+					this.newVersion = recentVersion;
 				}
-			}catch(IOException e){
+			} catch (IOException e) {
 				getLogger().info("Could not check for a new version. Perhaps the website is down?");
 			} catch (ParseException e) {
 				getLogger().info("There was an issue parsing JSON formatted data. If issues continue, please put in a ticket on the "
@@ -221,14 +222,16 @@ public class DragonEggDrop extends JavaPlugin {
 	
 	private final boolean setupNMSAbstract(){
 		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        if (version.equalsIgnoreCase("v1_9_R1")){ // 1.9.0 - 1.9.3
+        if (version.equals("v1_9_R1")){ // 1.9.0 - 1.9.3
         	this.nmsAbstract = new NMSAbstract1_9_R1();
-        }else if (version.equalsIgnoreCase("v1_9_R2")){ // 1.9.4
+        } else if (version.equals("v1_9_R2")){ // 1.9.4
         	this.nmsAbstract = new NMSAbstract1_9_R2();
-        }else if (version.equalsIgnoreCase("v1_10_R1")){ // 1.10.0 - 1.10.2
+        } else if (version.equals("v1_10_R1")){ // 1.10.0 - 1.10.2
         	this.nmsAbstract = new NMSAbstract1_10_R1();
-        }else if (version.equalsIgnoreCase("v1_11_R1")){ // 1.11.0 - 1.11.2
+        } else if (version.equals("v1_11_R1")){ // 1.11.0 - 1.11.2
         	this.nmsAbstract = new NMSAbstract1_11_R1();
+        } else if (version.equals("v1_12_R1")) { // 1.12.0
+        	this.nmsAbstract = new NMSAbstract1_12_R1();
         }
         
         return this.nmsAbstract != null;
