@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.UUID;
 
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -82,22 +83,22 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 	}
 
 	@Override
-	public Object getEnderDragonBattleFromWorld(World world) {
+	public DragonBattle getEnderDragonBattleFromWorld(World world) {
 		if (world == null) return null;
 		
 		CraftWorld craftWorld = (CraftWorld) world;
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 		
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return ((WorldProviderTheEnd) worldProvider).s();
+		return new DragonBattle1_9_R2(((WorldProviderTheEnd) worldProvider).s());
 	}
 
 	@Override
-	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
+	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		if (dragon == null) return null;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.cV();
+		return new DragonBattle1_9_R2(nmsDragon.cV());
 	}
 	
 	@Override

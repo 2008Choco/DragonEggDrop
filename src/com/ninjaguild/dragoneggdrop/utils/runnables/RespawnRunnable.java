@@ -25,6 +25,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Bukkit;
@@ -51,7 +52,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	private final Location portalLocation;
 	private final NMSAbstract nmsAbstract;
 	
-	private final Object dragonBattle;
+	private final DragonBattle dragonBattle;
 	private final EnderDragon dragon;
 	
 	private final Location[] crystalLocations;
@@ -74,7 +75,7 @@ public class RespawnRunnable extends BukkitRunnable {
 		this.nmsAbstract = plugin.getNMSAbstract();
 		
 		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(portalLocation.getWorld());
-		this.dragon = nmsAbstract.getEnderDragonFromBattle(dragonBattle);
+		this.dragon = dragonBattle.getEnderDragon();
 		
 		this.crystalLocations = new Location[] {
 			portalLocation.clone().add(3, -3, 0),
@@ -143,7 +144,7 @@ public class RespawnRunnable extends BukkitRunnable {
 				return;
 			}
 			
-			this.nmsAbstract.respawnEnderDragon(dragonBattle);
+			this.dragonBattle.respawnEnderDragon();
 			this.worldWrapper.setRespawnInProgress(true);
 			
 			BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);

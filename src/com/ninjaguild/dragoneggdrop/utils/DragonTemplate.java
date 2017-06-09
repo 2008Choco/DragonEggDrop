@@ -22,6 +22,7 @@ package com.ninjaguild.dragoneggdrop.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -89,12 +90,12 @@ public class DragonTemplate {
 	 * @param dragon - The dragon to modify
 	 * @param battle - The battle to modify
 	 */
-	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, Object battle) {
+	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, DragonBattle battle) {
 		if (name != null) {
 			dragon.setCustomName(name);
-			nmsAbstract.setDragonBossBarTitle(name, battle);
+			battle.setBossBarTitle(name);
 		}
-		nmsAbstract.setBattleBossBarStyle(battle, barStyle, barColour);
+		battle.setBossBarStyle(barStyle, barColour);
 	}
 	
 	/**

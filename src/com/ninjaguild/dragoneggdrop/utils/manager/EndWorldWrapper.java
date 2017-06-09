@@ -23,6 +23,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.bukkit.Location;
@@ -98,8 +99,8 @@ public class EndWorldWrapper {
         int deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
         
         NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-        Object dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
-        Location portalLocation = nmsAbstract.getEndPortalLocation(dragonBattle);
+        DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
+        Location portalLocation = dragonBattle.getEndPortalLocation();
         
 		if (respawnTask == null || 
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 

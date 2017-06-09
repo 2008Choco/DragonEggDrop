@@ -75,7 +75,7 @@ public class DEDManager {
 				if (!dragons.isEmpty()) {
 					String dragonName = Iterables.get(dragons, 0).getCustomName();
 					if (dragonName != null && !dragonName.isEmpty()) {
-						nmsAbstract.setDragonBossBarTitle(dragonName, nmsAbstract.getEnderDragonBattleFromWorld(w));
+						nmsAbstract.getEnderDragonBattleFromWorld(w).setBossBarTitle(dragonName);
 					}
 				}
 			}

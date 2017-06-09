@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.UUID;
 
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -46,12 +47,12 @@ import net.minecraft.server.v1_12_R1.ChatMessageType;
 import net.minecraft.server.v1_12_R1.EnderDragonBattle;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityEnderDragon;
+import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_12_R1.PacketPlayOutBoss;
 import net.minecraft.server.v1_12_R1.PacketPlayOutChat;
 import net.minecraft.server.v1_12_R1.WorldProvider;
 import net.minecraft.server.v1_12_R1.WorldProviderTheEnd;
 import net.minecraft.server.v1_12_R1.WorldServer;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
 
 /**
  * An abstract implementation of necessary net.minecraft.server and
@@ -83,22 +84,22 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 	}
 
 	@Override
-	public Object getEnderDragonBattleFromWorld(World world) {
+	public DragonBattle getEnderDragonBattleFromWorld(World world) {
 		if (world == null) return null;
 		
 		CraftWorld craftWorld = (CraftWorld) world;
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 		
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return ((WorldProviderTheEnd) worldProvider).t();
+		return new DragonBattle1_12_R1(((WorldProviderTheEnd) worldProvider).t());
 	}
 
 	@Override
-	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
+	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		if (dragon == null) return null;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.db();
+		return new DragonBattle1_12_R1(nmsDragon.dd());
 	}
 	
 	@Override

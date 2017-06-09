@@ -27,6 +27,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -97,8 +98,8 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.rewardType = config.getString("drop-type");
 		
 		// Portal location
-		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
-		Location portalLocation = plugin.getNMSAbstract().getEndPortalLocation(dragonBattle);
+		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		Location portalLocation = dragonBattle.getEndPortalLocation();
 		this.currentY = config.getDouble("Particles.egg-start-y");
 		this.location = new Location(world, portalLocation.getX(), this.currentY, portalLocation.getZ());
 		

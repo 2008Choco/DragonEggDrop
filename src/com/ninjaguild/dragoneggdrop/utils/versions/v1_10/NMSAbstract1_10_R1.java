@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.UUID;
 
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -38,14 +39,14 @@ import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
+import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.BossBattle;
 import net.minecraft.server.v1_10_R1.BossBattleServer;
 import net.minecraft.server.v1_10_R1.ChatMessage;
 import net.minecraft.server.v1_10_R1.EnderDragonBattle;
 import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityEnderDragon;
 import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_10_R1.BlockPosition;
-import net.minecraft.server.v1_10_R1.BossBattle;
 import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
 import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 import net.minecraft.server.v1_10_R1.WorldProvider;
@@ -82,22 +83,22 @@ public class NMSAbstract1_10_R1 implements NMSAbstract {
 	}
 
 	@Override
-	public Object getEnderDragonBattleFromWorld(World world) {
+	public DragonBattle getEnderDragonBattleFromWorld(World world) {
 		if (world == null) return null;
 		
 		CraftWorld craftWorld = (CraftWorld) world;
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 		
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return ((WorldProviderTheEnd) worldProvider).s();
+		return new DragonBattle1_10_R1(((WorldProviderTheEnd) worldProvider).s());
 	}
 
 	@Override
-	public Object getEnderDragonBattleFromDragon(EnderDragon dragon) {
+	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		if (dragon == null) return null;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.cZ();
+		return new DragonBattle1_10_R1(nmsDragon.cZ());
 	}
 	
 	@Override

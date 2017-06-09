@@ -43,7 +43,10 @@ public interface NMSAbstract {
 	 * 
 	 * @param title - The title to set
 	 * @param battle - The battle to modify
+	 * 
+	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#setBossBarTitle(String)}
 	 */
+	@Deprecated
 	public void setDragonBossBarTitle(String title, Object battle);
 	
 	/**
@@ -52,7 +55,7 @@ public interface NMSAbstract {
 	 * @param world - The world to retrieve a battle from
 	 * @return the resulting dragon battle
 	 */
-	public Object getEnderDragonBattleFromWorld(World world);
+	public DragonBattle getEnderDragonBattleFromWorld(World world);
 	
 	/**
 	 * Get an EnderDragonBattle object based on a specific Ender Dragon
@@ -60,7 +63,7 @@ public interface NMSAbstract {
 	 * @param dragon - The dragon to retrieve a battle from
 	 * @return the resulting dragon battle
 	 */
-	public Object getEnderDragonBattleFromDragon(EnderDragon dragon);
+	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon);
 	
 	/**
 	 * Set the style and colour of a battle's boss bar
@@ -70,7 +73,10 @@ public interface NMSAbstract {
 	 * @param colour - The colour of the boss bar
 	 * 
 	 * @return true if the style change was successful
+	 * 
+	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#setBossBarStyle(BarStyle, BarColor)}
 	 */
+	@Deprecated
 	public boolean setBattleBossBarStyle(Object battle, BarStyle style, BarColor colour);
 	
 	/**
@@ -79,7 +85,10 @@ public interface NMSAbstract {
 	 * 
 	 * @param battle - The battle to get the dragon from
 	 * @return the resulting dragon
+	 * 
+	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEnderDragon()}
 	 */
+	@Deprecated
 	public EnderDragon getEnderDragonFromBattle(Object battle);
 	
 	/**
@@ -87,7 +96,10 @@ public interface NMSAbstract {
 	 * restart the battle once again
 	 * 
 	 * @param dragonBattle - The battle to modify
+	 * 
+	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#respawnEnderDragon()}
 	 */
+	@Deprecated
 	public void respawnEnderDragon(Object dragonBattle);
 	
 	/**
@@ -111,7 +123,10 @@ public interface NMSAbstract {
 	 * a specific boss battle
 	 * 
 	 * @return the portal location
+	 * 
+	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEndPortalLocation()}
 	 */
+	@Deprecated
 	public Location getEndPortalLocation(Object battle);
 	
 	/**
