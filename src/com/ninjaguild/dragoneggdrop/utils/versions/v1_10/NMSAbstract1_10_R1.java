@@ -21,7 +21,6 @@ package com.ninjaguild.dragoneggdrop.utils.versions.v1_10;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
@@ -39,19 +38,15 @@ import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.BossBattle;
 import net.minecraft.server.v1_10_R1.BossBattleServer;
-import net.minecraft.server.v1_10_R1.ChatMessage;
 import net.minecraft.server.v1_10_R1.EnderDragonBattle;
-import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityEnderDragon;
 import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
 import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 import net.minecraft.server.v1_10_R1.WorldProvider;
 import net.minecraft.server.v1_10_R1.WorldProviderTheEnd;
-import net.minecraft.server.v1_10_R1.WorldServer;
 
 /**
  * An abstract implementation of necessary net.minecraft.server and
@@ -66,20 +61,8 @@ import net.minecraft.server.v1_10_R1.WorldServer;
 public class NMSAbstract1_10_R1 implements NMSAbstract {
 	
 	@Override
-	public void setDragonBossBarTitle(String title, Object battle) {
-		if (battle == null || title == null || !(battle instanceof EnderDragonBattle)) return;
-		
-		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
-		try {
-			Field field = EnderDragonBattle.class.getDeclaredField("c");
-			field.setAccessible(true);
-			BossBattleServer battleServer = (BossBattleServer) field.get(dragonBattle);
-			battleServer.title = new ChatMessage(title);
-			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
-			field.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
+	public void setDragonBossBarTitle(String title, DragonBattle battle) {
+		battle.setBossBarTitle(title);
 	}
 
 	@Override
@@ -134,42 +117,13 @@ public class NMSAbstract1_10_R1 implements NMSAbstract {
 	}
 	
 	@Override
-	public EnderDragon getEnderDragonFromBattle(Object battle) {
-		if (battle == null || !(battle instanceof EnderDragonBattle)) return null;
-		
-		EnderDragon dragon = null;
-		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
-		try {
-			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
-			Field fieldDragonUUID = EnderDragonBattle.class.getDeclaredField("m");
-			fieldWorldServer.setAccessible(true);
-			fieldDragonUUID.setAccessible(true);
-			
-			WorldServer world = (WorldServer) fieldWorldServer.get(dragonBattle);
-			UUID dragonUUID = (UUID) fieldDragonUUID.get(dragonBattle);
-			
-			if (world == null || dragonUUID == null) 
-				return null;
-			
-			Entity dragonEntity = world.getEntity(dragonUUID);
-			if (dragonEntity == null) return null;
-			dragon = (EnderDragon) dragonEntity.getBukkitEntity();
-			
-			fieldWorldServer.setAccessible(false);
-			fieldDragonUUID.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		
-		return dragon;
+	public EnderDragon getEnderDragonFromBattle(DragonBattle battle) {
+		return battle.getEnderDragon();
 	}
 
 	@Override
-	public void respawnEnderDragon(Object battle) {
-		if (!(battle instanceof EnderDragonBattle)) return;
-		
-		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
-		dragonBattle.e();
+	public void respawnEnderDragon(DragonBattle battle) {
+		battle.respawnEnderDragon();
 	}
 
 	@Override
@@ -189,30 +143,8 @@ public class NMSAbstract1_10_R1 implements NMSAbstract {
 	}
 	
 	@Override
-	public Location getEndPortalLocation(Object battle) {
-		if (battle == null || !(battle instanceof EnderDragonBattle)) return null;
-		
-		Location portalLocation = null;
-		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
-		try {
-			Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
-			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
-			fieldExitPortalLocation.setAccessible(true);
-			fieldWorldServer.setAccessible(true);
-			
-			WorldServer worldServer = (WorldServer) fieldWorldServer.get(dragonBattle);
-			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(dragonBattle);
-			if (worldServer != null && position != null) {
-				World world = worldServer.getWorld();
-				portalLocation = new Location(world, Math.floor(position.getX()) + 0.5, position.getY() + 4, Math.floor(position.getZ()) + 0.5);
-			}
-			
-			fieldWorldServer.setAccessible(false);
-			fieldExitPortalLocation.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return portalLocation;
+	public Location getEndPortalLocation(DragonBattle battle) {
+		return battle.getEndPortalLocation();
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public interface NMSAbstract {
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#setBossBarTitle(String)}
 	 */
 	@Deprecated
-	public void setDragonBossBarTitle(String title, Object battle);
+	public void setDragonBossBarTitle(String title, DragonBattle battle);
 	
 	/**
 	 * Get an EnderDragonBattle object based on the given world
@@ -89,7 +89,7 @@ public interface NMSAbstract {
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEnderDragon()}
 	 */
 	@Deprecated
-	public EnderDragon getEnderDragonFromBattle(Object battle);
+	public EnderDragon getEnderDragonFromBattle(DragonBattle battle);
 	
 	/**
 	 * Set the state of EnderDragonBattle to its respawn state, and
@@ -100,7 +100,7 @@ public interface NMSAbstract {
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#respawnEnderDragon()}
 	 */
 	@Deprecated
-	public void respawnEnderDragon(Object dragonBattle);
+	public void respawnEnderDragon(DragonBattle dragonBattle);
 	
 	/**
 	 * Check whether the dragon has been previously killed or not
@@ -127,7 +127,7 @@ public interface NMSAbstract {
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEndPortalLocation()}
 	 */
 	@Deprecated
-	public Location getEndPortalLocation(Object battle);
+	public Location getEndPortalLocation(DragonBattle battle);
 	
 	/**
 	 * Set the custom name of a chest tile entity
