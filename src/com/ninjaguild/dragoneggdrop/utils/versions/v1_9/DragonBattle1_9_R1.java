@@ -60,6 +60,8 @@ public class DragonBattle1_9_R1 implements DragonBattle {
 
 	@Override
 	public void setBossBarTitle(String title) {
+		if (title == null) return;
+		
 		try {
 			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
 			fieldBossBattleServer.setAccessible(true);
@@ -77,6 +79,8 @@ public class DragonBattle1_9_R1 implements DragonBattle {
 
 	@Override
 	public boolean setBossBarStyle(BarStyle style, BarColor colour) {
+		if (style == null || colour == null) return false;
+		
 		try {
 			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
 			fieldBossBattleServer.setAccessible(true);
