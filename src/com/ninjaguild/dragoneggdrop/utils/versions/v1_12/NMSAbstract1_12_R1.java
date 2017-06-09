@@ -1,3 +1,22 @@
+/*
+    DragonEggDrop
+    Copyright (C) 2016  NinjaStix
+    ninjastix84@gmail.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package com.ninjaguild.dragoneggdrop.utils.versions.v1_12;
 
 import java.lang.reflect.Field;
@@ -34,6 +53,16 @@ import net.minecraft.server.v1_12_R1.WorldProviderTheEnd;
 import net.minecraft.server.v1_12_R1.WorldServer;
 import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
 
+/**
+ * An abstract implementation of necessary net.minecraft.server and
+ * org.bukkit.craftbukkit methods that vary between versions causing
+ * version dependencies. Allows for version independency through
+ * abstraction per Bukkit/Spigot release
+ * <p>
+ * <b><i>Supported Minecraft Versions:</i></b> 1.12.0
+ * 
+ * @author Parker Hawke - 2008Choco
+ */
 public class NMSAbstract1_12_R1 implements NMSAbstract {
 	
 	@Override
