@@ -130,7 +130,7 @@ public class NMSAbstract1_9_R2 implements NMSAbstract {
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
 		if (dragon == null) return false;
 		
-		EnderDragonBattle battle = (EnderDragonBattle) this.getEnderDragonBattleFromDragon(dragon);
+		EnderDragonBattle battle = ((DragonBattle1_9_R2) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
 		return battle.d();
 	}
 	
