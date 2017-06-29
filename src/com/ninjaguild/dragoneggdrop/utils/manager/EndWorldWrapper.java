@@ -48,6 +48,12 @@ public class EndWorldWrapper {
 	private final DragonEggDrop plugin;
 	private final World world;
 	
+	/**
+	 * Construct a new EndWorldWrapper around an existing world
+	 * 
+	 * @param plugin the plugin instance
+	 * @param world the world to wrap
+	 */
 	public EndWorldWrapper(DragonEggDrop plugin, World world) {
 		this.plugin = plugin;
 		this.world = world;
@@ -158,6 +164,11 @@ public class EndWorldWrapper {
 		return respawnInProgress;
 	}
 
+	/**
+	 * Get the amount of time remaining until the dragon respawns
+	 * 
+	 * @return the time remaining (in seconds), or -1 if no time remaining at all
+	 */
 	public int getTimeUntilRespawn() {
 		return (this.respawnTask != null ? this.respawnTask.getSecondsUntilRespawn() : -1);
 	}
