@@ -52,7 +52,7 @@ public class AnnounceRunnable extends BukkitRunnable {
 	public AnnounceRunnable(final DragonEggDrop plugin, final EndWorldWrapper worldWrapper, final int delay) {
 		this.plugin = plugin;
 		this.worldWrapper = worldWrapper;
-		this.delay = delay;
+		this.delay = delay + 1;
 		this.messages = plugin.getConfig().getStringList("announce-messages").stream()
 				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
 				.collect(Collectors.toList());
@@ -63,12 +63,13 @@ public class AnnounceRunnable extends BukkitRunnable {
 		if (messages.size() == 0) return;
 		if (this.currentMessage >= messages.size()) this.currentMessage = 0;
 		
-		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay--)).replace("%formatted-time%", this.getFormattedTime(delay));
-		plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
-		
-		if (delay == 0) {
+		if (--delay == 0) {
 			this.worldWrapper.cancelAnnounce();
+			return;
 		}
+		
+		String message = messages.get(currentMessage++).replace("%time%", String.valueOf(delay)).replace("%formatted-time%", this.getFormattedTime(delay));
+		plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
 	}
 	
 	private String getFormattedTime(int timeInSeconds) {
