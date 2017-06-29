@@ -20,6 +20,7 @@
 package com.ninjaguild.dragoneggdrop.events;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 
 import org.bukkit.ChatColor;
@@ -37,31 +38,30 @@ public class RespawnListeners implements Listener {
 	private static final String RESOURCE_PAGE = "https://www.spigotmc.org/resources/dragoneggdrop-revival.35570/";
 	
 	private final DragonEggDrop plugin;
+	private final DEDManager manager;
 	
 	public RespawnListeners(DragonEggDrop plugin) {
 		this.plugin = plugin;
+		this.manager = plugin.getDEDManager();
 	}
 	
 	@EventHandler
 	public void onPlayerSwitchWorlds(PlayerChangedWorldEvent event) {
-		if (!plugin.getConfig().getBoolean("respawn-on-join", false)
-				&& !plugin.getConfig().getBoolean("respawn-on-death", true)) return;
-		
 		World fromWorld = event.getFrom(), toWorld = event.getPlayer().getWorld();
 		
 		// Cancel respawn countdown if all players leave the world
 		if (!plugin.getConfig().getBoolean("countdown-across-world", false)) {
 			if (fromWorld.getEnvironment() != Environment.THE_END || fromWorld.getPlayers().isEmpty()) return;
 			
-			plugin.getDEDManager().getWorldWrapper(fromWorld).stopRespawn();
+			manager.getWorldWrapper(fromWorld).stopRespawn();
 		}
 		
 		// Start the respawn countdown if joining an empty world
 		if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
 			if (toWorld.getEnvironment() == Environment.THE_END && toWorld.getPlayers().size() == 1) {
-				if (plugin.getDEDManager().getWorldWrapper(toWorld).getTimeUntilRespawn() >= 0) return;
+				if (manager.getWorldWrapper(toWorld).getTimeUntilRespawn() >= 0) return;
 				
-				plugin.getDEDManager().getWorldWrapper(toWorld).startRespawn(RespawnType.JOIN);
+				manager.getWorldWrapper(toWorld).startRespawn(RespawnType.JOIN);
 			}
 		}
 	}
@@ -79,9 +79,9 @@ public class RespawnListeners implements Listener {
 		
 		World world = player.getWorld();
 		if (world.getEnvironment() != Environment.THE_END || !world.getPlayers().isEmpty()) return;
-		if (plugin.getDEDManager().getWorldWrapper(world).getTimeUntilRespawn() >= 0) return;
+		if (manager.getWorldWrapper(world).getTimeUntilRespawn() >= 0) return;
 		
-		plugin.getDEDManager().getWorldWrapper(world).startRespawn(RespawnType.JOIN);
+		manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 	}
 	
 	@EventHandler
