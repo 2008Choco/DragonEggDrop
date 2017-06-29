@@ -19,6 +19,8 @@
 
 package com.ninjaguild.dragoneggdrop.utils.manager;
 
+import java.util.UUID;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
@@ -26,6 +28,7 @@ import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -46,7 +49,7 @@ public class EndWorldWrapper {
 	private String previousDragonName = "";
 	
 	private final DragonEggDrop plugin;
-	private final World world;
+	private final UUID world;
 	
 	/**
 	 * Construct a new EndWorldWrapper around an existing world
@@ -56,7 +59,7 @@ public class EndWorldWrapper {
 	 */
 	public EndWorldWrapper(DragonEggDrop plugin, World world) {
 		this.plugin = plugin;
-		this.world = world;
+		this.world = world.getUID();
 		
 		if (world.getEnvironment() != Environment.THE_END)
 			throw new IllegalArgumentException("EndWorldWrapper worlds must be of environment \"THE_END\"");
@@ -68,7 +71,7 @@ public class EndWorldWrapper {
 	 * @return the represented world
 	 */
 	public World getWorld() {
-		return world;
+		return Bukkit.getWorld(world);
 	}
 	
 	/**
@@ -96,7 +99,7 @@ public class EndWorldWrapper {
 	 * @param type - The type that triggered this dragon respawn
 	 */
 	public void startRespawn(RespawnType type) {
-		boolean dragonExists = !world.getEntitiesByClasses(EnderDragon.class).isEmpty();
+		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress) {
 			return;
 		}
@@ -105,7 +108,7 @@ public class EndWorldWrapper {
         int deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
         
         NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-        DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
+        DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(this.getWorld());
         Location portalLocation = dragonBattle.getEndPortalLocation();
         
 		if (respawnTask == null || 
