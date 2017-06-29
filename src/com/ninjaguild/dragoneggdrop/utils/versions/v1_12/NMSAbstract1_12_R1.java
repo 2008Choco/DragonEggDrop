@@ -82,7 +82,7 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 		if (dragon == null) return null;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return new DragonBattle1_12_R1(nmsDragon.dd());
+		return new DragonBattle1_12_R1(nmsDragon.df());
 	}
 	
 	@Override
