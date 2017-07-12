@@ -35,7 +35,6 @@ public interface DragonBattle {
 	 * Set the title of the boss bar to a specific name
 	 * 
 	 * @param title the title to set
-	 * @param battle the battle to modify
 	 */
 	public void setBossBarTitle(String title);
 	

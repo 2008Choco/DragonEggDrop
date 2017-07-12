@@ -109,6 +109,11 @@ public class MathUtils {
 	
 	/**
 	 * Inject a custom mathematical operation into the expression parser
+	 * 
+	 * @param functionName the name of the function to inject (i.e. "sqrt")
+	 * @param operator the operation to perform when parsing this function
+	 * 
+	 * @return true if successful. false if operator already exists
 	 */
 	public static boolean injectMathematicalOperator(String functionName, DoubleUnaryOperator operator) {
 		if (OPERATORS.containsKey(functionName)) return false;
