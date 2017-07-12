@@ -46,8 +46,8 @@ public class MathUtils {
 	private static final Map<String, DoubleUnaryOperator> OPERATORS = new HashMap<>();
 	static {
 		// Basic arithmetics
-		OPERATORS.put("sqrt", x -> StrictMath.sqrt(x));
-		OPERATORS.put("abs", x -> Math.abs(x));
+		OPERATORS.put("sqrt", StrictMath::sqrt);
+		OPERATORS.put("abs", Math::abs);
 		OPERATORS.put("log", x -> x <= 0 ? Double.NaN : Math.log10(x));
 		
 		// Trigonometric
@@ -60,8 +60,8 @@ public class MathUtils {
 		OPERATORS.put("cot", x -> 1 / StrictMath.tan(Math.toRadians(x)));
 		
 		// Conversion
-		OPERATORS.put("rad", x -> Math.toRadians(x));
-		OPERATORS.put("deg", x -> Math.toDegrees(x));
+		OPERATORS.put("rad", Math::toRadians);
+		OPERATORS.put("deg", Math::toDegrees);
 	}
 	
 	private MathUtils(){}
