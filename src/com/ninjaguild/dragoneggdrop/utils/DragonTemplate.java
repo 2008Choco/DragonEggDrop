@@ -22,8 +22,8 @@ package com.ninjaguild.dragoneggdrop.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;

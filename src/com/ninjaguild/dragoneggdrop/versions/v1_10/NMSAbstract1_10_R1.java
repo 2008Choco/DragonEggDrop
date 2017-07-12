@@ -17,13 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils.versions.v1_9;
+package com.ninjaguild.dragoneggdrop.versions.v1_10;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Location;
@@ -31,22 +31,22 @@ import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_9_R1.block.CraftChest;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_10_R1.block.CraftChest;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_9_R1.BossBattle;
-import net.minecraft.server.v1_9_R1.BossBattleServer;
-import net.minecraft.server.v1_9_R1.EnderDragonBattle;
-import net.minecraft.server.v1_9_R1.EntityEnderDragon;
-import net.minecraft.server.v1_9_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_9_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_9_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_9_R1.WorldProvider;
-import net.minecraft.server.v1_9_R1.WorldProviderTheEnd;
+import net.minecraft.server.v1_10_R1.BossBattle;
+import net.minecraft.server.v1_10_R1.BossBattleServer;
+import net.minecraft.server.v1_10_R1.EnderDragonBattle;
+import net.minecraft.server.v1_10_R1.EntityEnderDragon;
+import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
+import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_10_R1.WorldProvider;
+import net.minecraft.server.v1_10_R1.WorldProviderTheEnd;
 
 /**
  * An abstract implementation of necessary net.minecraft.server and
@@ -54,11 +54,11 @@ import net.minecraft.server.v1_9_R1.WorldProviderTheEnd;
  * version dependencies. Allows for version independency through
  * abstraction per Bukkit/Spigot release
  * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.9.0, 1.9.1, 1.9.2 and 1.9.3
+ * <b><i>Supported Minecraft Versions:</i></b> 1.10.0, 1.10.1 and 1.10.2
  * 
  * @author Parker Hawke - 2008Choco
  */
-public class NMSAbstract1_9_R1 implements NMSAbstract {
+public class NMSAbstract1_10_R1 implements NMSAbstract {
 	
 	@Override
 	public void setDragonBossBarTitle(String title, DragonBattle battle) {
@@ -73,7 +73,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 		
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return new DragonBattle1_9_R1(((WorldProviderTheEnd) worldProvider).s());
+		return new DragonBattle1_10_R1(((WorldProviderTheEnd) worldProvider).s());
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		if (dragon == null) return null;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return new DragonBattle1_9_R1(nmsDragon.cU());
+		return new DragonBattle1_10_R1(nmsDragon.cZ());
 	}
 	
 	@Override
@@ -90,10 +90,10 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		
 		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
 		try {
-			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
-			fieldBossBattleServer.setAccessible(true);
+			Field field = EnderDragonBattle.class.getDeclaredField("c");
+			field.setAccessible(true);
 			
-			BossBattleServer battleServer = (BossBattleServer) fieldBossBattleServer.get(dragonBattle);
+			BossBattleServer battleServer = (BossBattleServer) field.get(dragonBattle);
 			if (battleServer == null) return false;
 			
 			if (style != null) {
@@ -107,7 +107,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 			if (colour != null) battleServer.color = BossBattle.BarColor.valueOf(colour.name());
 			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
 			
-			fieldBossBattleServer.setAccessible(false);
+			field.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 			return false;
@@ -130,7 +130,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
 		if (dragon == null) return false;
 		
-		EnderDragonBattle battle = ((DragonBattle1_9_R1) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
+		EnderDragonBattle battle = ((DragonBattle1_10_R1) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
 		return battle.d();
 	}
 	
@@ -139,7 +139,7 @@ public class NMSAbstract1_9_R1 implements NMSAbstract {
 		if (dragon == null) return -1;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.bF;
+		return nmsDragon.bH;
 	}
 	
 	@Override

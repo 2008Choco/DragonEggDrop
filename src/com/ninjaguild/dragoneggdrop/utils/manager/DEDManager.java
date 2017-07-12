@@ -29,7 +29,7 @@ import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.loot.LootManager;
 import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.World;
 import org.bukkit.entity.EnderDragon;

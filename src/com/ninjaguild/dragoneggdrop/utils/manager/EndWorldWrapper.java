@@ -25,8 +25,8 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

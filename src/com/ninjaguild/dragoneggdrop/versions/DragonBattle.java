@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils.versions;
+package com.ninjaguild.dragoneggdrop.versions;
 
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;

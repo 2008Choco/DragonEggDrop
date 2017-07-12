@@ -17,12 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils.versions.v1_9;
+package com.ninjaguild.dragoneggdrop.versions.v1_9;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
 
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Location;

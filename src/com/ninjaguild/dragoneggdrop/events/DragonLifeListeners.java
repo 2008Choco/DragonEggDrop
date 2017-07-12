@@ -28,7 +28,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;

@@ -17,13 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils.versions.v1_12;
+package com.ninjaguild.dragoneggdrop.versions.v1_9;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Location;
@@ -31,23 +31,22 @@ import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.block.CraftChest;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_9_R2.block.CraftChest;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_12_R1.BossBattle;
-import net.minecraft.server.v1_12_R1.BossBattleServer;
-import net.minecraft.server.v1_12_R1.ChatMessageType;
-import net.minecraft.server.v1_12_R1.EnderDragonBattle;
-import net.minecraft.server.v1_12_R1.EntityEnderDragon;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_12_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_12_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_12_R1.WorldProvider;
-import net.minecraft.server.v1_12_R1.WorldProviderTheEnd;
+import net.minecraft.server.v1_9_R2.BossBattle;
+import net.minecraft.server.v1_9_R2.BossBattleServer;
+import net.minecraft.server.v1_9_R2.EnderDragonBattle;
+import net.minecraft.server.v1_9_R2.EntityEnderDragon;
+import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_9_R2.PacketPlayOutBoss;
+import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
+import net.minecraft.server.v1_9_R2.WorldProvider;
+import net.minecraft.server.v1_9_R2.WorldProviderTheEnd;
 
 /**
  * An abstract implementation of necessary net.minecraft.server and
@@ -55,11 +54,11 @@ import net.minecraft.server.v1_12_R1.WorldProviderTheEnd;
  * version dependencies. Allows for version independency through
  * abstraction per Bukkit/Spigot release
  * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.12.0
+ * <b><i>Supported Minecraft Versions:</i></b> 1.9.4
  * 
  * @author Parker Hawke - 2008Choco
  */
-public class NMSAbstract1_12_R1 implements NMSAbstract {
+public class NMSAbstract1_9_R2 implements NMSAbstract {
 	
 	@Override
 	public void setDragonBossBarTitle(String title, DragonBattle battle) {
@@ -74,7 +73,7 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 		
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return new DragonBattle1_12_R1(((WorldProviderTheEnd) worldProvider).t());
+		return new DragonBattle1_9_R2(((WorldProviderTheEnd) worldProvider).s());
 	}
 
 	@Override
@@ -82,7 +81,7 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 		if (dragon == null) return null;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return new DragonBattle1_12_R1(nmsDragon.df());
+		return new DragonBattle1_9_R2(nmsDragon.cV());
 	}
 	
 	@Override
@@ -131,7 +130,7 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
 		if (dragon == null) return false;
 		
-		EnderDragonBattle battle = ((DragonBattle1_12_R1) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
+		EnderDragonBattle battle = ((DragonBattle1_9_R2) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
 		return battle.d();
 	}
 	
@@ -140,7 +139,7 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 		if (dragon == null) return -1;
 		
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.bH;
+		return nmsDragon.bG;
 	}
 	
 	@Override
@@ -153,18 +152,18 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 		if (chest == null || name == null) return;
 		
 		CraftChest craftChest = (CraftChest) chest;
-		craftChest.getTileEntity().setCustomName(name);
+		craftChest.getTileEntity().a(name);
 	}
 
 	@Override
 	public void sendActionBar(String message, Player... players) {
-		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
+		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte) 2);
 		Arrays.stream(players).forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}
 
 	@Override
 	public void broadcastActionBar(String message, World world) {
-		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
+		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte) 2);
 		world.getPlayers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}
 }

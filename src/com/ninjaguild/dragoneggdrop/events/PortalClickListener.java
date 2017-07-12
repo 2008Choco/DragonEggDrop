@@ -2,8 +2,8 @@ package com.ninjaguild.dragoneggdrop.events;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
-import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

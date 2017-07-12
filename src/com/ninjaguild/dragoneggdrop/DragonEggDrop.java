@@ -33,12 +33,12 @@ import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.loot.LootEntry;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
-import com.ninjaguild.dragoneggdrop.utils.versions.NMSAbstract;
-import com.ninjaguild.dragoneggdrop.utils.versions.v1_10.NMSAbstract1_10_R1;
-import com.ninjaguild.dragoneggdrop.utils.versions.v1_11.NMSAbstract1_11_R1;
-import com.ninjaguild.dragoneggdrop.utils.versions.v1_12.NMSAbstract1_12_R1;
-import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R1;
-import com.ninjaguild.dragoneggdrop.utils.versions.v1_9.NMSAbstract1_9_R2;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.versions.v1_10.NMSAbstract1_10_R1;
+import com.ninjaguild.dragoneggdrop.versions.v1_11.NMSAbstract1_11_R1;
+import com.ninjaguild.dragoneggdrop.versions.v1_12.NMSAbstract1_12_R1;
+import com.ninjaguild.dragoneggdrop.versions.v1_9.NMSAbstract1_9_R1;
+import com.ninjaguild.dragoneggdrop.versions.v1_9.NMSAbstract1_9_R2;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
