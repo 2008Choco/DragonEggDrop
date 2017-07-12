@@ -61,7 +61,7 @@ public class LootManager {
 	 * Construct a new LootManager instance. This object should mainly be
 	 * managed by the {@link DEDManager} class
 	 * 
-	 * @param plugin - An instance of the DragonEggDrop plugin
+	 * @param plugin an instance of the DragonEggDrop plugin
 	 */
 	public LootManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
@@ -103,7 +103,7 @@ public class LootManager {
 	/**
 	 * Place a chest with randomized loot at a specific location
 	 * 
-	 * @param loc - The location to place the chest
+	 * @param loc the location to place the chest
 	 */
 	public void placeChest(Location loc) {
 		if (loot.values().isEmpty()) {
@@ -140,7 +140,7 @@ public class LootManager {
 	 * Place a chest with all loot randomly distributed throughout
 	 * the chests' inventory
 	 * 
-	 * @param loc - The location to place the chest
+	 * @param loc the location to place the chest
 	 */
 	public void placeChestAll(Location loc) {
 		if (loot.values().isEmpty()) {
@@ -177,11 +177,12 @@ public class LootManager {
 	 * <br><b>NOTE:</b> This method will also save loot information to the
 	 * loot.yml file
 	 * 
-	 * @param weight - The weighted randomness of the item
-	 * @param item - The item to add
+	 * @param weight the weighted randomness of the item
+	 * @param item the item to add
+	 * 
 	 * @return true if the item was successfully added
 	 */
-	public boolean addItem(final double weight, final ItemStack item) {
+	public boolean addItem(double weight, ItemStack item) {
 		LootEntry le = new LootEntry(weight, item);
 		@SuppressWarnings("unchecked")
 		Set<LootEntry> lootEntries = (Set<LootEntry>) lootConfig.get("loot-items");

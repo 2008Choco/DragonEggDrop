@@ -63,9 +63,9 @@ public class RespawnRunnable extends BukkitRunnable {
 	/**
 	 * Construct a new RespawnRunnable object
 	 * 
-	 * @param plugin - An instance of the DragonEggDrop plugin
-	 * @param portalLocation - The location in which the egg is located
-	 * @param respawnTime - The time in seconds until the respawn is executed
+	 * @param plugin an instance of the DragonEggDrop plugin
+	 * @param portalLocation the location in which the egg is located
+	 * @param respawnTime the time in seconds until the respawn is executed
 	 */
 	public RespawnRunnable(final DragonEggDrop plugin, final Location portalLocation, final int respawnTime) {
 		this.plugin = plugin;
@@ -118,8 +118,6 @@ public class RespawnRunnable extends BukkitRunnable {
 
 		crystalWorld.createExplosion(crystalLocation.getX(), crystalLocation.getY(), crystalLocation.getZ(), 0F, false, false);
 		crystalWorld.spawnParticle(Particle.EXPLOSION_HUGE, crystalLocation, 0);
-
-//		dragonBattle.e(); ** REPLACED WITH NMSAbstract#respawnEnderDragon() **
 		
 		// All crystals respawned
 		if (currentCrystal >= 4) {
@@ -154,6 +152,11 @@ public class RespawnRunnable extends BukkitRunnable {
 		}
 	}
 
+	/**
+	 * Get the amount of time remaining (in seconds) until the dragon respawns
+	 * 
+	 * @return the remaining time
+	 */
 	public int getSecondsUntilRespawn() {
 		return secondsUntilRespawn;
 	}

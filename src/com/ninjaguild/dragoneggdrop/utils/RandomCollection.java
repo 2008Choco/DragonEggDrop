@@ -47,17 +47,19 @@ public class RandomCollection<E> {
 
     /**
      * Construct a new RandomCollection with a given Random object
-     * @param random
+     * 
+     * @param random an instance of Random to use
      */
-    public RandomCollection(final Random random) {
+    public RandomCollection(Random random) {
         this.random = random;
     }
 
     /**
      * Add a new object to the collection with a given weighted random
      * 
-     * @param weight - The weight of the object
-     * @param result - The object to add
+     * @param weight the weight of the object
+     * @param result the object to add
+     * 
      * @return true if successfully added, false if an invalid weight was provided
      */
     public boolean add(double weight, E result) {
@@ -74,7 +76,7 @@ public class RandomCollection<E> {
     /**
      * Add all elements of another RandomCollection
      * 
-     * @param collection - The collection to add
+     * @param collection the collection to add
      */
     public void addAll(RandomCollection<E> collection) {
     	for (double d : collection.keySet()) {
@@ -85,7 +87,7 @@ public class RandomCollection<E> {
     /**
      * Get an object based on its total weight upon injection
      * 
-     * @param key - The total weight at the time of injection
+     * @param key the total weight at the time of injection
      * @return the object, or null if not found
      */
     private E get(Object key) {
@@ -103,7 +105,8 @@ public class RandomCollection<E> {
 	
 	/**
 	 * Get a Collection of all values in the underlying TreeMap
-	 * @return
+	 * 
+	 * @return get all values in the collection
 	 */
 	public Collection<E> values() {
 		return map.values();

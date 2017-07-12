@@ -78,7 +78,7 @@ public class EndWorldWrapper {
 	 * Set the name of the dragon that was last killed in this world. The
 	 * name of the dragon will be used as a variable in the DragonEgg loot
 	 * 
-	 * @param previousDragonName - The name to set
+	 * @param previousDragonName the name to set
 	 */
 	public void setPreviousDragonName(String previousDragonName) {
 		this.previousDragonName = previousDragonName;
@@ -96,7 +96,7 @@ public class EndWorldWrapper {
 	/**
 	 * Commence the Dragon's respawning processes in this world
 	 * 
-	 * @param type - The type that triggered this dragon respawn
+	 * @param type the type that triggered this dragon respawn
 	 */
 	public void startRespawn(RespawnType type) {
 		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
@@ -152,7 +152,7 @@ public class EndWorldWrapper {
 	/**
 	 * Set whether a respawn is currently in progress or not
 	 * 
-	 * @param value - the respawn progress state
+	 * @param value the respawn progress state
 	 */
 	public void setRespawnInProgress(boolean value) {
 		respawnInProgress = value;

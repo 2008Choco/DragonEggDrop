@@ -51,7 +51,7 @@ public class DEDManager {
 	 * Construct a new DEDManager object. This object should mainly be
 	 * managed by the {@link DragonEggDrop} class
 	 * 
-	 * @param plugin - An instance of the DragonEggDrop plugin
+	 * @param plugin an instance of the DragonEggDrop plugin
 	 */
 	public DEDManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
@@ -103,7 +103,7 @@ public class DEDManager {
 	/**
 	 * Get the world wrapper for the specified world
 	 * 
-	 * @param world - The world to get
+	 * @param world the world to get
 	 * @return the world's respective wrapper
 	 */
 	public EndWorldWrapper getWorldWrapper(World world) {
@@ -128,10 +128,14 @@ public class DEDManager {
 	 */
 	public enum RespawnType {
 		
-		/** A player joined the world */
+		/** 
+		 * A player joined the world
+		 */
 		JOIN,
 		
-		/** The ender dragon has died */
+		/** 
+		 * The ender dragon was killed
+		 */
 		DEATH
 	}
 }

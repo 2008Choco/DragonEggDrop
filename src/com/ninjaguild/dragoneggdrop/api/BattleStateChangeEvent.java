@@ -42,10 +42,10 @@ public class BattleStateChangeEvent extends Event {
 	/**
 	 * Construct a new BattleStateChangeEvent
 	 * 
-	 * @param dragonBattle - An instance of the EnderDragonBattle
-	 * @param dragon - An instance of the dragon
-	 * @param previousState - The previous state of the battle
-	 * @param newState - The new state of the battle
+	 * @param dragonBattle an instance of the EnderDragonBattle
+	 * @param dragon an instance of the dragon
+	 * @param previousState the previous state of the battle
+	 * @param newState the new state of the battle
 	 */
 	public BattleStateChangeEvent(DragonBattle dragonBattle, EnderDragon dragon, BattleState previousState, BattleState newState) {
 		this.dragonBattle = dragonBattle;

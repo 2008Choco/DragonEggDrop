@@ -40,8 +40,8 @@ public class LootEntry implements ConfigurationSerializable {
 	 * Construct a new LootEntry with the specified random weight associated
 	 * to the specified item
 	 * 
-	 * @param weight - The weighted randomness of the item
-	 * @param item - The associated item
+	 * @param weight the weighted randomness of the item
+	 * @param item the associated item
 	 */
 	public LootEntry(final double weight, final ItemStack item) {
 		this.weight = weight;
@@ -52,7 +52,7 @@ public class LootEntry implements ConfigurationSerializable {
 	 * Construct a new LootEntry based on existing data. Used for
 	 * serialization purposes
 	 * 
-	 * @param data - Configuration data
+	 * @param data configuration data
 	 */
 	public LootEntry(Map<String, Object> data) {
 		this.weight = (double) data.get("weight");

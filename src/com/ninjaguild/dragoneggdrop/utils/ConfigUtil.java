@@ -43,7 +43,7 @@ public class ConfigUtil {
 	/**
 	 * Constructs a new ConfigUtils object
 	 * 
-	 * @param plugin - An instance of the DragonEggDrop plugin
+	 * @param plugin an instance of the DragonEggDrop plugin
 	 */
 	public ConfigUtil(final DragonEggDrop plugin) {
 		this.plugin = plugin;
@@ -52,7 +52,7 @@ public class ConfigUtil {
 	/**
 	 * Update the configuration file
 	 * 
-	 * @param currentVersion - The version of the configuration file
+	 * @param currentVersion the version of the configuration file
 	 */
 	public void updateConfig(int currentVersion) {
 		InputStream in = plugin.getResource("config.yml");

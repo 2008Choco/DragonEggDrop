@@ -41,8 +41,8 @@ public interface NMSAbstract {
 	 * Set the title of the boss bar in a given ender dragon battle to 
 	 * a specific name
 	 * 
-	 * @param title - The title to set
-	 * @param battle - The battle to modify
+	 * @param title the title to set
+	 * @param battle the battle to modify
 	 * 
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#setBossBarTitle(String)}
 	 */
@@ -52,7 +52,7 @@ public interface NMSAbstract {
 	/**
 	 * Get an EnderDragonBattle object based on the given world
 	 * 
-	 * @param world - The world to retrieve a battle from
+	 * @param world the world to retrieve a battle from
 	 * @return the resulting dragon battle
 	 */
 	public DragonBattle getEnderDragonBattleFromWorld(World world);
@@ -60,7 +60,7 @@ public interface NMSAbstract {
 	/**
 	 * Get an EnderDragonBattle object based on a specific Ender Dragon
 	 * 
-	 * @param dragon - The dragon to retrieve a battle from
+	 * @param dragon the dragon to retrieve a battle from
 	 * @return the resulting dragon battle
 	 */
 	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon);
@@ -68,9 +68,9 @@ public interface NMSAbstract {
 	/**
 	 * Set the style and colour of a battle's boss bar
 	 * 
-	 * @param battle - The battle to modify
-	 * @param style - The style of the boss bar
-	 * @param colour - The colour of the boss bar
+	 * @param battle the battle to modify
+	 * @param style the style of the boss bar
+	 * @param colour the colour of the boss bar
 	 * 
 	 * @return true if the style change was successful
 	 * 
@@ -83,7 +83,7 @@ public interface NMSAbstract {
 	 * Get an EnderDragon object based on a specific EnderDragonBattle
 	 * object
 	 * 
-	 * @param battle - The battle to get the dragon from
+	 * @param battle the battle to get the dragon from
 	 * @return the resulting dragon
 	 * 
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEnderDragon()}
@@ -95,7 +95,7 @@ public interface NMSAbstract {
 	 * Set the state of EnderDragonBattle to its respawn state, and
 	 * restart the battle once again
 	 * 
-	 * @param dragonBattle - The battle to modify
+	 * @param dragonBattle the battle to modify
 	 * 
 	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#respawnEnderDragon()}
 	 */
@@ -105,7 +105,7 @@ public interface NMSAbstract {
 	/**
 	 * Check whether the dragon has been previously killed or not
 	 * 
-	 * @param dragon - The dragon to check
+	 * @param dragon the dragon to check
 	 * @return true if the dragon has been previously killed
 	 */
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon);
@@ -113,7 +113,7 @@ public interface NMSAbstract {
 	/**
 	 * Get the Ender Dragon's current death animation time
 	 * 
-	 * @param dragon - The dragon to check
+	 * @param dragon the dragon to check
 	 * @return the animation time
 	 */
 	public int getEnderDragonDeathAnimationTime(EnderDragon dragon);
@@ -132,24 +132,24 @@ public interface NMSAbstract {
 	/**
 	 * Set the custom name of a chest tile entity
 	 * 
-	 * @param chest - The chest to set the name of
-	 * @param name - The name to set the chest to
+	 * @param chest the chest to set the name of
+	 * @param name the name to set the chest to
 	 */
 	public void setChestName(Chest chest, String name);
 	
 	/**
 	 * Send an action bar to a list of given players
 	 * 
-	 * @param message - The message to send
-	 * @param players - The players to send the message to
+	 * @param message the message to send
+	 * @param players the players to send the message to
 	 */
 	public void sendActionBar(String message, Player... players);
 	
 	/**
 	 * Send an action bar to all players in a given world
 	 * 
-	 * @param message - The message to send
-	 * @param world - The world to broadcast the message to
+	 * @param message the message to send
+	 * @param world the world to broadcast the message to
 	 */
 	public void broadcastActionBar(String message, World world);
 	

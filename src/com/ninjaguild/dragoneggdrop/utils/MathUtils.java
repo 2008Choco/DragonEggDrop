@@ -85,8 +85,8 @@ public class MathUtils {
 	/**
 	 * Evaluate a mathematical expression with given variables
 	 * 
-	 * @param expression - The string to parse
-	 * @param variables - The map containing necessary variables for this expression
+	 * @param expression the string to parse
+	 * @param variables the map containing necessary variables for this expression
 	 * (To modify variables at any given time between evaluations, replace values in the map)
 	 * 
 	 * @return The mathematical expression
@@ -100,7 +100,7 @@ public class MathUtils {
 	 * expressions parsed by this method. For variable-based functions, see
 	 * {@link #parseExpression(String, Map)}
 	 * 
-	 * @param expression - The string to parse
+	 * @param expression the string to parse
 	 * @return The mathematical expression
 	 */
 	public static MathExpression parseExpression(String expression) {
@@ -149,7 +149,7 @@ public class MathUtils {
          * Attempt to find a given character at the next position in
          * the expression (whilst ignoring whitespace characters)
          * 
-         * @param charToEat - The character to find
+         * @param charToEat the character to find
          * @return true if found. False otherwise
          */
         public boolean eat(int charToEat) {

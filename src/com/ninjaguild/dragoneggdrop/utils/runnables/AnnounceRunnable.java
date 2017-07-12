@@ -45,9 +45,9 @@ public class AnnounceRunnable extends BukkitRunnable {
 	/**
 	 * Construct a new AnnouncementRunnable object
 	 * 
-	 * @param plugin - An instance of the DragonEggDrop plugin
-	 * @param worldWrapper - The world to broadcast the announcements to
-	 * @param delay - The time it will take the Ender Dragon to respawn (and terminate this runnable)
+	 * @param plugin an instance of the DragonEggDrop plugin
+	 * @param worldWrapper the world to broadcast the announcements to
+	 * @param delay the time it will take the Ender Dragon to respawn (and terminate this runnable)
 	 */
 	public AnnounceRunnable(final DragonEggDrop plugin, final EndWorldWrapper worldWrapper, final int delay) {
 		this.plugin = plugin;

@@ -151,8 +151,8 @@ public class DragonEggDrop extends JavaPlugin {
 	/**
 	 * Send a message to a command sender with the DragonEggDrop chat prefix
 	 * 
-	 * @param sender - The sender to send the message to
-	 * @param message - The message to send
+	 * @param sender the sender to send the message to
+	 * @param message the message to send
 	 */
 	public void sendMessage(CommandSender sender, String message) {
 		sender.sendMessage(CHAT_PREFIX + message);

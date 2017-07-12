@@ -46,9 +46,9 @@ public class DragonTemplate {
 	/**
 	 * Construct a new DragonTemplate object
 	 * 
-	 * @param name - The name of the dragon
-	 * @param barStyle - The style of the bar
-	 * @param barColour - The colour of the bar
+	 * @param name the name of the dragon
+	 * @param barStyle the style of the bar
+	 * @param barColour the colour of the bar
 	 */
 	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
 		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
@@ -86,9 +86,9 @@ public class DragonTemplate {
 	/**
 	 * Apply this templates data to an EnderDragonBattle object
 	 * 
-	 * @param nmsAbstract - An instance of the NMSAbstract interface
-	 * @param dragon - The dragon to modify
-	 * @param battle - The battle to modify
+	 * @param nmsAbstract an instance of the NMSAbstract interface
+	 * @param dragon the dragon to modify
+	 * @param battle the battle to modify
 	 */
 	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, DragonBattle battle) {
 		if (name != null) {
@@ -102,7 +102,7 @@ public class DragonTemplate {
 	 * Load and parse all DragonTemplate objects (if possible) from
 	 * a List of String data from a configuration file
 	 * 
-	 * @param data - The data to parse
+	 * @param data the data to parse
 	 * @return all parsed DragonTemplate objects
 	 */
 	public static List<DragonTemplate> loadTemplates(List<String> data) {

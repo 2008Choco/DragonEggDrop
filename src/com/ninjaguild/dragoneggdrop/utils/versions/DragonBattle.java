@@ -34,16 +34,16 @@ public interface DragonBattle {
 	/**
 	 * Set the title of the boss bar to a specific name
 	 * 
-	 * @param title - The title to set
-	 * @param battle - The battle to modify
+	 * @param title the title to set
+	 * @param battle the battle to modify
 	 */
 	public void setBossBarTitle(String title);
 	
 	/**
 	 * Set the style and colour of the boss bar
 	 * 
-	 * @param style - The style of the boss bar
-	 * @param colour - The colour of the boss bar
+	 * @param style the style of the boss bar
+	 * @param colour the colour of the boss bar
 	 * 
 	 * @return true if the style change was successful
 	 */
