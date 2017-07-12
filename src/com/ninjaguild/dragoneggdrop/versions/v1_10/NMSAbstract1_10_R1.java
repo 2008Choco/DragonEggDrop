@@ -19,34 +19,26 @@
 
 package com.ninjaguild.dragoneggdrop.versions.v1_10;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
-import org.apache.commons.lang3.EnumUtils;
-import org.bukkit.Location;
+import net.minecraft.server.v1_10_R1.EnderDragonBattle;
+import net.minecraft.server.v1_10_R1.EntityEnderDragon;
+import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_10_R1.WorldProvider;
+import net.minecraft.server.v1_10_R1.WorldProviderTheEnd;
+
 import org.bukkit.World;
 import org.bukkit.block.Chest;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_10_R1.block.CraftChest;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEnderDragon;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
-
-import net.minecraft.server.v1_10_R1.BossBattle;
-import net.minecraft.server.v1_10_R1.BossBattleServer;
-import net.minecraft.server.v1_10_R1.EnderDragonBattle;
-import net.minecraft.server.v1_10_R1.EntityEnderDragon;
-import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_10_R1.WorldProvider;
-import net.minecraft.server.v1_10_R1.WorldProviderTheEnd;
 
 /**
  * An abstract implementation of necessary net.minecraft.server and
@@ -59,11 +51,6 @@ import net.minecraft.server.v1_10_R1.WorldProviderTheEnd;
  * @author Parker Hawke - 2008Choco
  */
 public class NMSAbstract1_10_R1 implements NMSAbstract {
-	
-	@Override
-	public void setDragonBossBarTitle(String title, DragonBattle battle) {
-		battle.setBossBarTitle(title);
-	}
 
 	@Override
 	public DragonBattle getEnderDragonBattleFromWorld(World world) {
@@ -83,48 +70,6 @@ public class NMSAbstract1_10_R1 implements NMSAbstract {
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return new DragonBattle1_10_R1(nmsDragon.cZ());
 	}
-	
-	@Override
-	public boolean setBattleBossBarStyle(Object battle, BarStyle style, BarColor colour) {
-		if ((battle == null || !(battle instanceof EnderDragonBattle))) return false;
-		
-		EnderDragonBattle dragonBattle = (EnderDragonBattle) battle;
-		try {
-			Field field = EnderDragonBattle.class.getDeclaredField("c");
-			field.setAccessible(true);
-			
-			BossBattleServer battleServer = (BossBattleServer) field.get(dragonBattle);
-			if (battleServer == null) return false;
-			
-			if (style != null) {
-				String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "SOLID";
-				if (!EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
-					return false;
-				}
-				
-				battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
-			}
-			if (colour != null) battleServer.color = BossBattle.BarColor.valueOf(colour.name());
-			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
-			
-			field.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		return true;
-	}
-	
-	@Override
-	public EnderDragon getEnderDragonFromBattle(DragonBattle battle) {
-		return battle.getEnderDragon();
-	}
-
-	@Override
-	public void respawnEnderDragon(DragonBattle battle) {
-		battle.respawnEnderDragon();
-	}
 
 	@Override
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
@@ -142,11 +87,6 @@ public class NMSAbstract1_10_R1 implements NMSAbstract {
 		return nmsDragon.bH;
 	}
 	
-	@Override
-	public Location getEndPortalLocation(DragonBattle battle) {
-		return battle.getEndPortalLocation();
-	}
-
 	@Override
 	public void setChestName(Chest chest, String name) {
 		if (chest == null || name == null) return;

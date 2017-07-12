@@ -19,11 +19,8 @@
 
 package com.ninjaguild.dragoneggdrop.versions;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
@@ -36,18 +33,6 @@ import org.bukkit.entity.Player;
  * @author Parker Hawke - 2008Choco
  */
 public interface NMSAbstract {
-	
-	/**
-	 * Set the title of the boss bar in a given ender dragon battle to 
-	 * a specific name
-	 * 
-	 * @param title the title to set
-	 * @param battle the battle to modify
-	 * 
-	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#setBossBarTitle(String)}
-	 */
-	@Deprecated
-	public void setDragonBossBarTitle(String title, DragonBattle battle);
 	
 	/**
 	 * Get an EnderDragonBattle object based on the given world
@@ -66,43 +51,6 @@ public interface NMSAbstract {
 	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon);
 	
 	/**
-	 * Set the style and colour of a battle's boss bar
-	 * 
-	 * @param battle the battle to modify
-	 * @param style the style of the boss bar
-	 * @param colour the colour of the boss bar
-	 * 
-	 * @return true if the style change was successful
-	 * 
-	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#setBossBarStyle(BarStyle, BarColor)}
-	 */
-	@Deprecated
-	public boolean setBattleBossBarStyle(Object battle, BarStyle style, BarColor colour);
-	
-	/**
-	 * Get an EnderDragon object based on a specific EnderDragonBattle
-	 * object
-	 * 
-	 * @param battle the battle to get the dragon from
-	 * @return the resulting dragon
-	 * 
-	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEnderDragon()}
-	 */
-	@Deprecated
-	public EnderDragon getEnderDragonFromBattle(DragonBattle battle);
-	
-	/**
-	 * Set the state of EnderDragonBattle to its respawn state, and
-	 * restart the battle once again
-	 * 
-	 * @param dragonBattle the battle to modify
-	 * 
-	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#respawnEnderDragon()}
-	 */
-	@Deprecated
-	public void respawnEnderDragon(DragonBattle dragonBattle);
-	
-	/**
 	 * Check whether the dragon has been previously killed or not
 	 * 
 	 * @param dragon the dragon to check
@@ -117,17 +65,6 @@ public interface NMSAbstract {
 	 * @return the animation time
 	 */
 	public int getEnderDragonDeathAnimationTime(EnderDragon dragon);
-	
-	/**
-	 * Get the Location of the end portal to the overworld for
-	 * a specific boss battle
-	 * 
-	 * @return the portal location
-	 * 
-	 * @deprecated Replaced with a wrapper... see {@link DragonBattle#getEndPortalLocation()}
-	 */
-	@Deprecated
-	public Location getEndPortalLocation(DragonBattle battle);
 	
 	/**
 	 * Set the custom name of a chest tile entity
