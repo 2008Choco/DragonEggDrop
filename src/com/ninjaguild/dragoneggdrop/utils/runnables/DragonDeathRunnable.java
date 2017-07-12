@@ -184,7 +184,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 				this.worldWrapper.startRespawn(RespawnType.DEATH);
 			}
 			
-			Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 			BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
 			Bukkit.getPluginManager().callEvent(bscEventCrystals);
 			

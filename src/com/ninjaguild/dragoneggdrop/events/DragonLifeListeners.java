@@ -72,7 +72,7 @@ public class DragonLifeListeners implements Listener {
 		if (!(event.getEntity() instanceof EnderDragon)) return;
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
-		Object dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		boolean prevKilled = this.plugin.getNMSAbstract().hasBeenPreviouslyKilled(dragon); // PreviouslyKilled
 		
 		World world = event.getEntity().getWorld();

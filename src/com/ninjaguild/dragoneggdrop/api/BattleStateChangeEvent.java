@@ -19,6 +19,8 @@
 
 package com.ninjaguild.dragoneggdrop.api;
 
+import com.ninjaguild.dragoneggdrop.utils.versions.DragonBattle;
+
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -32,7 +34,7 @@ public class BattleStateChangeEvent extends Event {
 	
 	private static final HandlerList handlers = new HandlerList();
 	
-	private final Object dragonBattle; // net.minecraft.server.EnderDragonBattle
+	private final DragonBattle dragonBattle;
 	private final EnderDragon dragon;
 	
 	private final BattleState previousState, newState;
@@ -45,7 +47,7 @@ public class BattleStateChangeEvent extends Event {
 	 * @param previousState - The previous state of the battle
 	 * @param newState - The new state of the battle
 	 */
-	public BattleStateChangeEvent(Object dragonBattle, EnderDragon dragon, BattleState previousState, BattleState newState) {
+	public BattleStateChangeEvent(DragonBattle dragonBattle, EnderDragon dragon, BattleState previousState, BattleState newState) {
 		this.dragonBattle = dragonBattle;
 		this.dragon = dragon;
 		this.previousState = previousState;
@@ -58,7 +60,7 @@ public class BattleStateChangeEvent extends Event {
 	 * 
 	 * @return the involved EnderDragonBattle. Can return null
 	 */
-	public Object getDragonBattle() {
+	public DragonBattle getDragonBattle() {
 		return dragonBattle;
 	}
 	
