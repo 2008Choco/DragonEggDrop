@@ -168,6 +168,26 @@ public class DragonBattle1_11_R1 implements DragonBattle {
 		return portalLocation;
 	}
 	
+	@Override
+	public void resetBattleState() {
+		try {
+			Field fieldDragonBattleState = EnderDragonBattle.class.getDeclaredField("p");
+			Field fieldDragonKilled = EnderDragonBattle.class.getDeclaredField("k");
+			fieldDragonBattleState.setAccessible(true);
+			fieldDragonKilled.setAccessible(true);
+			
+			fieldDragonBattleState.set(battle, null);
+			fieldDragonKilled.set(battle, true);
+			
+			fieldDragonBattleState.setAccessible(false);
+			fieldDragonKilled.setAccessible(false);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		this.battle.f();
+	}
+	
 	/**
 	 * Get the net.minecraft.server implementation of DragonBattle
 	 * 

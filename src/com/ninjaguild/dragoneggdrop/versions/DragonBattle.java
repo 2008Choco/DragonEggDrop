@@ -68,4 +68,12 @@ public interface DragonBattle {
 	 */
 	public Location getEndPortalLocation();
 	
+	/**
+	 * Reset the end world's battle state.
+	 * <br><b>NOTE:</b> This is to be used internally and is for emergency cases ONLY.
+	 * Mojang's code breaks rather frequently when attempting to respawn the dragon
+	 * and will occasionally prevent dragons from spawning at all
+	 */
+	public void resetBattleState();
+	
 }
