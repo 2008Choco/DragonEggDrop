@@ -17,12 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils.manager;
+package com.ninjaguild.dragoneggdrop.management;
 
 import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;

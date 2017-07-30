@@ -25,8 +25,8 @@ import java.util.Random;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
-import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 

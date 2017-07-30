@@ -31,8 +31,8 @@ import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.loot.LootEntry;
+import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
-import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 import com.ninjaguild.dragoneggdrop.versions.v1_10.NMSAbstract1_10_R1;
 import com.ninjaguild.dragoneggdrop.versions.v1_11.NMSAbstract1_11_R1;
@@ -66,6 +66,12 @@ public class DragonEggDrop extends JavaPlugin {
 	static {
 		ConfigurationSerialization.registerClass(LootEntry.class);
 	}
+	
+	/* TODO for version (or 1.4.0)
+	 * - Aesthetic oriented update
+	 * - The portal should display a broken fire sphere-like effect surrounding it
+	 * - Configuration option, "eerie-end", which covers the central end island with purple particles and smoke
+	 */
 	
 	private static final int RESOURCE_ID = 35570;
 	private static final String SPIGET_LINK = "https://api.spiget.org/v2/resources/" + RESOURCE_ID + "/versions/latest";

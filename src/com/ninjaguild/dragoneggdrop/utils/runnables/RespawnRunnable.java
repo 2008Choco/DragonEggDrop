@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
-import com.ninjaguild.dragoneggdrop.utils.manager.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 

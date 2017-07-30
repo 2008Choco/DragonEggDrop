@@ -29,8 +29,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
-import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

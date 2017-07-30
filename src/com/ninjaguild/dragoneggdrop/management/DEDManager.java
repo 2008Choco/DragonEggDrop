@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils.manager;
+package com.ninjaguild.dragoneggdrop.management;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,8 +27,8 @@ import java.util.UUID;
 
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.loot.LootManager;
-import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.World;

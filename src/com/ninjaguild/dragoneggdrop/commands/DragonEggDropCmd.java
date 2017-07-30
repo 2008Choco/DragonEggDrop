@@ -22,7 +22,7 @@ package com.ninjaguild.dragoneggdrop.commands;
 import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.utils.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

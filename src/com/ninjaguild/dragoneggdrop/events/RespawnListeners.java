@@ -20,8 +20,8 @@
 package com.ninjaguild.dragoneggdrop.events;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager;
-import com.ninjaguild.dragoneggdrop.utils.manager.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.management.DEDManager;
+import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;

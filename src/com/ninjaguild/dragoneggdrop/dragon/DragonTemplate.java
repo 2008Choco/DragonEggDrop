@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils;
+package com.ninjaguild.dragoneggdrop.dragon;
 
 import java.util.ArrayList;
 import java.util.List;
