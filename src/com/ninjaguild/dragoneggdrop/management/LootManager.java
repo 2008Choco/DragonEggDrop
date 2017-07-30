@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.loot;
+package com.ninjaguild.dragoneggdrop.management;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
+import com.ninjaguild.dragoneggdrop.dragon.loot.LootEntry;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
 import org.bukkit.ChatColor;

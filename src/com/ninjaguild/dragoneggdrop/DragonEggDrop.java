@@ -26,11 +26,11 @@ import java.net.URL;
 import java.util.logging.Level;
 
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
+import com.ninjaguild.dragoneggdrop.dragon.loot.LootEntry;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
-import com.ninjaguild.dragoneggdrop.loot.LootEntry;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;

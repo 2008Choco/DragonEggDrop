@@ -28,7 +28,6 @@ import java.util.UUID;
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.loot.LootManager;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.World;
