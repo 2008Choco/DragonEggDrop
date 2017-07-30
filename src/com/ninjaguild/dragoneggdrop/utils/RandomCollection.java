@@ -131,4 +131,16 @@ public class RandomCollection<E> {
     	this.total = 0;
     }
     
+    /**
+     * Copy a RandomCollection with identical elements and Random instance
+     * 
+     * @param toCopy the collection to copy
+     * @return the collection copy
+     */
+    public static <E> RandomCollection<E> copyOf(RandomCollection<E> toCopy) {
+    	RandomCollection<E> result = new RandomCollection<E>(toCopy.random);
+    	result.addAll(toCopy);
+    	return result;
+    }
+    
 }
