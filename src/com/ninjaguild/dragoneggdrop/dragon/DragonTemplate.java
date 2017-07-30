@@ -19,9 +19,11 @@
 
 package com.ninjaguild.dragoneggdrop.dragon;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
@@ -30,18 +32,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Represents a template for a custom dragon to be spawned containined
- * information about its name, as well as the style of its boss bar
+ * Represents a template for a custom dragon to be spawned containing
+ * information about its name, the style of its boss bar, as well as
+ * the loot it will drop after it is killed
  * 
  * @author Parker Hawke - 2008Choco
  */
 public class DragonTemplate {
 	
+	private static final File DRAGONS_FOLDER = new File(JavaPlugin.getPlugin(DragonEggDrop.class).getDataFolder(), "dragons/");
+	private static final DragonLoot DEFAULT_DRAGON_LOOT = null;
+	
 	private final String name;
 	private final BarStyle barStyle;
 	private final BarColor barColour;
+	
+	private final DragonLoot loot;
 	
 	/**
 	 * Construct a new DragonTemplate object
@@ -49,11 +58,24 @@ public class DragonTemplate {
 	 * @param name the name of the dragon
 	 * @param barStyle the style of the bar
 	 * @param barColour the colour of the bar
+	 * @param loot the loot to drop after the dragon has been killed
 	 */
-	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
+	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour, DragonLoot loot) {
 		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
 		this.barColour = (barColour != null ? barColour : BarColor.PINK);
+		this.loot = loot;
+	}
+	
+	/**
+	 * Construct a new DragonTemplate object with the default dragon loot
+	 * 
+	 * @param name the name of the dragon
+	 * @param barStyle the style of the bar
+	 * @param barcolour the colour of the bar
+	 */
+	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
+		this(name, barStyle, barColour, DEFAULT_DRAGON_LOOT);
 	}
 	
 	/**
@@ -81,6 +103,15 @@ public class DragonTemplate {
 	 */
 	public BarColor getBarColor() {
 		return barColour;
+	}
+	
+	/**
+	 * Get the loot to be dropped after the dragon is killed
+	 * 
+	 * @return the dragon loot
+	 */
+	public DragonLoot getLoot() {
+		return loot;
 	}
 	
 	/**
@@ -153,6 +184,17 @@ public class DragonTemplate {
 			}
 			
 			templates.add(new DragonTemplate(name, style, colour));
+		}
+		
+		return templates;
+	}
+	
+	public static List<DragonTemplate> loadTemplates() {
+		List<DragonTemplate> templates = new ArrayList<>();
+		
+		// Return empty list if the folder was just created
+		if (DRAGONS_FOLDER.mkdir()) {
+			return templates;
 		}
 		
 		return templates;
