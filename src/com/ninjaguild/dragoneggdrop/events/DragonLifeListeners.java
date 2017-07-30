@@ -60,7 +60,7 @@ public class DragonLifeListeners implements Listener {
 		List<DragonTemplate> dragonTemplates = plugin.getDEDManager().getDragonTemplates();
 		if (!dragonTemplates.isEmpty()) {
 			DragonTemplate template = dragonTemplates.get(random.nextInt(dragonTemplates.size()));
-			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
+			template.applyToBattle(plugin.getNMSAbstract(), dragonBattle);
 		}
 		
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);

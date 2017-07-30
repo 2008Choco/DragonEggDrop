@@ -121,11 +121,12 @@ public class DragonTemplate {
 	 * @param dragon the dragon to modify
 	 * @param battle the battle to modify
 	 */
-	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, DragonBattle battle) {
+	public void applyToBattle(NMSAbstract nmsAbstract, DragonBattle battle) {
 		if (name != null) {
-			dragon.setCustomName(name);
+			battle.getEnderDragon().setCustomName(name);
 			battle.setBossBarTitle(name);
 		}
+		
 		battle.setBossBarStyle(barStyle, barColour);
 	}
 	
