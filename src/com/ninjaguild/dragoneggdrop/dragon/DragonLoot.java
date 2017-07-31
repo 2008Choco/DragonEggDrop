@@ -22,16 +22,22 @@ package com.ninjaguild.dragoneggdrop.dragon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
+import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +49,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Parker Hawke - 2008Choco
  */
 public class DragonLoot {
+	
+	private static final Random RANDOM = new Random();
+	private static final NMSAbstract NMS_ABSTRACT = JavaPlugin.getPlugin(DragonEggDrop.class).getNMSAbstract();
 	
 	private final FileConfiguration dragonFile;
 	private final RandomCollection<ItemStack> loot = new RandomCollection<>();
@@ -155,6 +164,55 @@ public class DragonLoot {
 	 */
 	public boolean canSpawnChest() {
 		return chestSpawnChance > 0;
+	}
+	
+	/**
+	 * Spawn loot for the specific dragon battle
+	 * 
+	 * @param battle the battle to spawn loot for
+	 */
+	public void spawnLootFor(DragonBattle battle) {
+		Location location = battle.getEndPortalLocation();
+		
+		boolean spawnEgg = RANDOM.nextDouble() * 100 <= eggSpawnChance;
+		boolean spawnChest = RANDOM.nextDouble() * 100 <= chestSpawnChance;
+		
+		if (spawnChest) {
+			location.getBlock().setType(Material.CHEST);
+			Chest chest = (Chest) location.getBlock().getState();
+			NMS_ABSTRACT.setChestName(chest, chestName);
+			
+			Inventory inventory = chest.getInventory();
+			inventory.clear();
+			
+			if (spawnEgg) {
+				ItemStack eggItem = new ItemStack(Material.DRAGON_EGG);
+				ItemMeta eggMeta = eggItem.getItemMeta();
+				eggMeta.setDisplayName(eggName.replace("%dragon%", battle.getEnderDragon().getName()));
+				eggMeta.setLore(eggLore);
+				eggItem.setItemMeta(eggMeta);
+				
+				inventory.setItem(inventory.getSize() / 2, eggItem);
+			}
+			
+			int itemGenCount = Math.max(RANDOM.nextInt(maxLootGen), minLootGen);
+			for (int i = 0; i < itemGenCount; i++) {
+				if (inventory.firstEmpty() == -1) break;
+				
+				int slot = RANDOM.nextInt(inventory.getSize());
+				
+				if (inventory.getItem(slot) != null) {
+					i--;
+					continue;
+				}
+				
+				inventory.setItem(slot, loot.next());
+			}
+		}
+		
+		else if (spawnEgg) {
+			location.getBlock().setType(Material.DRAGON_EGG);
+		}
 	}
 	
 	private void parseDragonLoot() {
