@@ -25,12 +25,9 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class DragonEggDropCmd implements CommandExecutor {
 	
@@ -90,42 +87,6 @@ public class DragonEggDropCmd implements CommandExecutor {
 			return true;
 		}
 		
-		else if (args.length == 2) {
-			if (args[0].equalsIgnoreCase("addloot")) {
-				if (!(sender instanceof Player)) {
-					plugin.sendMessage(sender, ChatColor.RED + "This command can only be executed by a player!");
-					return true;
-				}
-				
-				if (!sender.hasPermission("dragoneggdrop.addloot")) {
-					plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
-					return true;
-				}
-
-				Player player = (Player) sender;
-				
-				try {
-					double weight = Double.parseDouble(args[1]);
-					ItemStack handItem = player.getInventory().getItemInMainHand();
-					if (handItem != null && handItem.getType() != Material.AIR) {
-						boolean result = plugin.getDEDManager().getLootManager().addItem(weight, handItem);
-						plugin.sendMessage(player, (result 
-							? ChatColor.GREEN + "Successfully added loot item!" 
-							: ChatColor.RED + "Failed to add loot item! Already exists?")
-						);
-						return true;
-					}
-					else {
-						plugin.sendMessage(player, ChatColor.YELLOW + "Hold the item you wish to add in your main hand");
-						return true;
-					}
-				}
-				catch (NumberFormatException ex) {
-					plugin.sendMessage(sender, ChatColor.RED + "Invalid value for weight!");
-					return false;
-				}
-			}
-		}
 		return false;
 	}
 }

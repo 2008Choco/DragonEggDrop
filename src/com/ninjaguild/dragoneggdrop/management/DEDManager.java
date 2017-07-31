@@ -42,7 +42,6 @@ public class DEDManager {
 	private final DragonEggDrop plugin;
 	
 	private List<DragonTemplate> dragonTemplates;
-	private LootManager lootMan;
 	
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
 	
@@ -57,8 +56,6 @@ public class DEDManager {
 		
 		this.dragonTemplates = DragonTemplate.loadTemplates(plugin.getConfig().getStringList("dragon-names"));
         this.setDragonBossBarTitle();
-        
-        this.lootMan = new LootManager(plugin);
 	}
 	
 	/**
@@ -88,15 +85,6 @@ public class DEDManager {
 	 */
 	public List<DragonTemplate> getDragonTemplates() {
 		return dragonTemplates;
-	}
-	
-	/**
-	 * Get the main LootManager instance used to distribute loot
-	 * 
-	 * @return the LootManager instance
-	 */
-	public LootManager getLootManager() {
-		return lootMan;
 	}
 	
 	/**

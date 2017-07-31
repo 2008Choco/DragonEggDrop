@@ -19,13 +19,11 @@
 
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
@@ -50,7 +48,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	
 	private final World world;
 	private final EndWorldWrapper worldWrapper;
-	private final boolean placeEgg;
 	
 	private Particle particleType = null;
 	private int particleAmount = 0;
@@ -63,7 +60,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
 	private EnderDragon dragon;
 	private boolean respawnDragon = false;
-	private String rewardType;
 	
 	private Location location;
 	private double animationTime = 0;
@@ -83,7 +79,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.worldWrapper = worldWrapper;
 		this.world = worldWrapper.getWorld();
 		this.dragon = dragon;
-		this.placeEgg = prevKilled;
 		
 		FileConfiguration config = plugin.getConfig();
 		this.particleType = Particle.valueOf(config.getString("Particles.type", "FLAME").toUpperCase());
@@ -96,7 +91,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.zOffset = config.getDouble("Particles.zOffset");
 		this.particleInterval = config.getLong("Particles.interval", 1L);
 		this.lightningAmount = config.getInt("lightning-amount");
-		this.rewardType = config.getString("drop-type");
 		
 		// Portal location
 		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
@@ -158,28 +152,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			for (int i = 0; i < this.lightningAmount; i++)
 				this.worldWrapper.getWorld().strikeLightning(location);
 			
-			// Place the reward
-			if (placeEgg) {
-				if (this.rewardType.equalsIgnoreCase("CHEST")) {
-					//spawn a loot chest
-					plugin.getDEDManager().getLootManager().placeChest(location);
-				}
-				else if (rewardType.equalsIgnoreCase("CHANCE")) {
-					double chance = plugin.getConfig().getInt("chest-spawn-chance", 20);
-					if (ThreadLocalRandom.current().nextInt(100) < chance) {
-						plugin.getDEDManager().getLootManager().placeChest(location);
-					}
-					else {
-						world.getBlockAt(location).setType(Material.DRAGON_EGG);
-					}
-				}
-				else if (rewardType.equalsIgnoreCase("ALL")) {
-					plugin.getDEDManager().getLootManager().placeChestAll(location);
-				}
-				else {
-					world.getBlockAt(location).setType(Material.DRAGON_EGG);
-				}
-			}
+			// TODO: SPAWN LOOT HERE (DEDManager#getRecentBattle())
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
 				this.worldWrapper.startRespawn(RespawnType.DEATH);

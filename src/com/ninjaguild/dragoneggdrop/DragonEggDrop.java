@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.logging.Level;
 
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
-import com.ninjaguild.dragoneggdrop.dragon.loot.LootEntry;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
@@ -44,7 +43,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -62,10 +60,6 @@ import org.json.simple.parser.ParseException;
 public class DragonEggDrop extends JavaPlugin {
 	
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] ";
-	
-	static {
-		ConfigurationSerialization.registerClass(LootEntry.class);
-	}
 	
 	/* TODO for version (or 1.4.0)
 	 * - Aesthetic oriented update
@@ -144,7 +138,6 @@ public class DragonEggDrop extends JavaPlugin {
 			this.updateTask.cancel();
 		
 		this.dedManager.getDragonTemplates().clear();
-		this.dedManager.getLootManager().getLoot().clear();
 		
 		// Clear the world wrappers
 		this.dedManager.getWorldWrappers().forEach((u, w) -> {
