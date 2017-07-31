@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public class DragonLoot {
 	
-	private final DragonTemplate template;
 	private final ConfigurationSection lootSection;
 	
 	private final RandomCollection<ItemStack> loot = new RandomCollection<>();
@@ -47,23 +46,12 @@ public class DragonLoot {
 	/**
 	 * Construct a new DragonLoot
 	 * 
-	 * @param template the parent dragon template
 	 * @param lootSection the loot section to parse
 	 */
-	public DragonLoot(DragonTemplate template, ConfigurationSection lootSection) {
-		this.template = template;
+	public DragonLoot(ConfigurationSection lootSection) {
 		this.lootSection = lootSection;
 		
 		this.parseDragonLoot();
-	}
-	
-	/**
-	 * Get the template that holds this dragon loot
-	 * 
-	 * @return the parent dragon template
-	 */
-	public DragonTemplate getTemplate() {
-		return template;
 	}
 	
 	/**
