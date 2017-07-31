@@ -152,13 +152,13 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			for (int i = 0; i < this.lightningAmount; i++)
 				this.worldWrapper.getWorld().strikeLightning(location);
 			
-			// TODO: SPAWN LOOT HERE (DEDManager#getRecentBattle())
+			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+			this.plugin.getDEDManager().getCurrentBattle().getLoot().spawnLootFor(dragonBattle);
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
 				this.worldWrapper.startRespawn(RespawnType.DEATH);
 			}
 			
-			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 			BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
 			Bukkit.getPluginManager().callEvent(bscEventCrystals);
 			

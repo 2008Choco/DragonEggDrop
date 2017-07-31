@@ -61,6 +61,7 @@ public class DragonLifeListeners implements Listener {
 		if (!dragonTemplates.isEmpty()) {
 			DragonTemplate template = dragonTemplates.get(random.nextInt(dragonTemplates.size()));
 			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
+			plugin.getDEDManager().setCurrentBattle(template);
 		}
 		
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);
@@ -86,7 +87,6 @@ public class DragonLifeListeners implements Listener {
 			public void run() {
 				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon)>= 185) { // Dragon is dead at 200
 					new DragonDeathRunnable(plugin, worldWrapper, dragon, prevKilled);
-					worldWrapper.setPreviousDragonName(dragon.getCustomName());
 					this.cancel();
 				}
 			}

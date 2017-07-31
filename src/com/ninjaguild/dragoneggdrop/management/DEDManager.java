@@ -42,6 +42,7 @@ public class DEDManager {
 	private final DragonEggDrop plugin;
 	
 	private List<DragonTemplate> dragonTemplates;
+	private DragonTemplate currentBattle;
 	
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
 	
@@ -85,6 +86,24 @@ public class DEDManager {
 	 */
 	public List<DragonTemplate> getDragonTemplates() {
 		return dragonTemplates;
+	}
+	
+	/**
+	 * Set the battle that is currently taking (or most recently took) place
+	 * 
+	 * @param currentBattle the battle to set
+	 */
+	public void setCurrentBattle(DragonTemplate currentBattle) {
+		this.currentBattle = currentBattle;
+	}
+	
+	/**
+	 * Get the current (or most recent) battle
+	 * 
+	 * @return the current battle
+	 */
+	public DragonTemplate getCurrentBattle() {
+		return currentBattle;
 	}
 	
 	/**
