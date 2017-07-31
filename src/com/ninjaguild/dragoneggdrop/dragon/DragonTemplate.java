@@ -54,6 +54,9 @@ public class DragonTemplate {
 	
 	private final DragonLoot loot;
 	
+	private double spawnWeight;
+	private boolean announceRespawn;
+	
 	/**
 	 * Construct a new DragonTemplate object
 	 * 
@@ -117,6 +120,24 @@ public class DragonTemplate {
 	}
 	
 	/**
+	 * Get the weight of this dragon's spawn percentage
+	 * 
+	 * @return the spawn weight
+	 */
+	public double getSpawnWeight() {
+		return spawnWeight;
+	}
+	
+	/**
+	 * Check whether this dragon's name should be announced as it respawns
+	 * 
+	 * @return true if announce name, false otherwise
+	 */
+	public boolean shouldAnnounceRespawn() {
+		return announceRespawn;
+	}
+	
+	/**
 	 * Apply this templates data to an EnderDragonBattle object
 	 * 
 	 * @param nmsAbstract an instance of the NMSAbstract interface
@@ -151,6 +172,8 @@ public class DragonTemplate {
 			DragonLoot loot = new DragonLoot(dragonFile);
 			
 			DragonTemplate template = new DragonTemplate(name, style, color, loot);
+			template.spawnWeight = dragonFile.getDouble("spawn-weight", 1);
+			template.announceRespawn = dragonFile.getBoolean("announce-respawn", false);
 			
 			if (templates.contains(template)) {
 				JavaPlugin.getPlugin(DragonEggDrop.class).getLogger().warning("Duplicate dragon template with file name " + file.getName() + ". Ignoring");

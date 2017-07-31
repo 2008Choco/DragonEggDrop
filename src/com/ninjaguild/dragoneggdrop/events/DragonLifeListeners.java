@@ -19,18 +19,17 @@
 
 package com.ninjaguild.dragoneggdrop.events;
 
-import java.util.List;
-import java.util.Random;
-
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
@@ -42,11 +41,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class DragonLifeListeners implements Listener {
 	
 	private final DragonEggDrop plugin;
-	private final Random random;
 	
 	public DragonLifeListeners(DragonEggDrop plugin) {
 		this.plugin = plugin;
-		this.random = new Random();
 	}
 	
 	@EventHandler
@@ -57,11 +54,18 @@ public class DragonLifeListeners implements Listener {
 		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		plugin.getDEDManager().getWorldWrapper(dragon.getWorld()).setRespawnInProgress(false);
 		
-		List<DragonTemplate> dragonTemplates = plugin.getDEDManager().getDragonTemplates();
+		RandomCollection<DragonTemplate> dragonTemplates = plugin.getDEDManager().getDragonTemplates();
 		if (!dragonTemplates.isEmpty()) {
-			DragonTemplate template = dragonTemplates.get(random.nextInt(dragonTemplates.size()));
+			DragonTemplate template = dragonTemplates.next();
 			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
 			plugin.getDEDManager().setCurrentBattle(template);
+			
+			if (template.shouldAnnounceRespawn()) {
+				Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
+						ChatColor.DARK_GRAY + "[" + ChatColor.RED.toString() + ChatColor.BOLD + "!!!" + ChatColor.DARK_GRAY + "] " 
+						+ template.getName() + ChatColor.DARK_GRAY + " has respawned in the end!")
+				);
+			}
 		}
 		
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);

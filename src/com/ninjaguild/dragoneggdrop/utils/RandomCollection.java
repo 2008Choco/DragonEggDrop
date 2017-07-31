@@ -135,6 +135,15 @@ public class RandomCollection<E> {
     }
     
     /**
+     * Check if this collection is completely empty and contains no entries
+     * 
+     * @return true if empty, false if elements exist
+     */
+    public boolean isEmpty() {
+    	return map.isEmpty();
+    }
+    
+    /**
      * Copy a RandomCollection with identical elements and Random instance
      * 
      * @param toCopy the collection to copy

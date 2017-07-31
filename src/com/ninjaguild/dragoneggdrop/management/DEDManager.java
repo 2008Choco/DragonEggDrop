@@ -19,17 +19,15 @@
 
 package com.ninjaguild.dragoneggdrop.management;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.World;
@@ -43,7 +41,7 @@ public class DEDManager {
 
 	private final DragonEggDrop plugin;
 	
-	private List<DragonTemplate> dragonTemplates = new ArrayList<>();
+	private RandomCollection<DragonTemplate> dragonTemplates = new RandomCollection<>();
 	private DragonTemplate currentBattle;
 	
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
@@ -86,8 +84,8 @@ public class DEDManager {
 	 * 
 	 * @return all dragon templates
 	 */
-	public List<DragonTemplate> getDragonTemplates() {
-		return ImmutableList.copyOf(dragonTemplates);
+	public RandomCollection<DragonTemplate> getDragonTemplates() {
+		return RandomCollection.copyOf(dragonTemplates);
 	}
 	
 	/**
@@ -102,7 +100,9 @@ public class DEDManager {
 	 */
 	public void reloadDragonTemplates() {
 		this.dragonTemplates.clear();
-		this.dragonTemplates.addAll(DragonTemplate.loadTemplates());
+		
+		for (DragonTemplate template : DragonTemplate.loadTemplates())
+			this.dragonTemplates.add(template.getSpawnWeight(), template);
 	}
 	
 	/**
