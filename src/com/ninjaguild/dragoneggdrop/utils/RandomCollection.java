@@ -20,6 +20,7 @@
 package com.ninjaguild.dragoneggdrop.utils;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.Set;
@@ -120,7 +121,9 @@ public class RandomCollection<E> {
 	 */
     public E next() {
         double value = random.nextDouble() * total;
-        return map.ceilingEntry(value).getValue();
+        Entry<Double, E> entry = map.ceilingEntry(value);
+        
+        return (entry != null ? entry.getValue() : null);
     }
     
     /**
