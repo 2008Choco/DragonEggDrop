@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
@@ -31,6 +32,7 @@ import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
@@ -222,8 +224,10 @@ public class DragonLoot {
 		
 		// Parse the basic loot rewards (i.e. spawn chances & names)
 		this.eggSpawnChance = dragonFile.getDouble("egg-spawn-chance", 100.0);
-		this.eggName = dragonFile.getString("egg-name", "%dragon%&r's Egg");
-		this.eggLore = dragonFile.getStringList("egg-lore");
+		this.eggName = ChatColor.translateAlternateColorCodes('&', dragonFile.getString("egg-name", "%dragon%&r's Egg"));
+		this.eggLore = dragonFile.getStringList("egg-lore").stream()
+				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
+				.collect(Collectors.toList());
 		
 		this.chestSpawnChance = dragonFile.getDouble("chest-spawn-chance", 0);
 		this.chestName = dragonFile.getString("chest-name", "Loot Chest");
@@ -271,8 +275,8 @@ public class DragonLoot {
 			
 			// Meta updating
 			ItemMeta meta = item.getItemMeta();
-			if (displayName != null) meta.setDisplayName(displayName);
-			if (!lore.isEmpty()) meta.setLore(lore);
+			if (displayName != null) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+			if (!lore.isEmpty()) meta.setLore(lore.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
 			enchantments.forEach((e, level) -> meta.addEnchant(e, level, true));
 			item.setItemMeta(meta);
 			
