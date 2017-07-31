@@ -44,7 +44,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class DragonTemplate {
 	
-	private static final File DRAGONS_FOLDER = new File(JavaPlugin.getPlugin(DragonEggDrop.class).getDataFolder(), "dragons/");
+	public static final File DRAGONS_FOLDER = new File(JavaPlugin.getPlugin(DragonEggDrop.class).getDataFolder(), "dragons/");
 	private static final DragonLoot DEFAULT_DRAGON_LOOT = null;
 	
 	private final String name;
@@ -208,7 +208,7 @@ public class DragonTemplate {
 			String name = dragonFile.getString("dragon-name");
 			BarStyle style = EnumUtils.getEnum(BarStyle.class, dragonFile.getString("bar-style").toUpperCase());
 			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color").toUpperCase());
-			DragonLoot loot = new DragonLoot(dragonFile.getConfigurationSection("loot"));
+			DragonLoot loot = new DragonLoot(dragonFile);
 			
 			DragonTemplate template = new DragonTemplate(name, style, color, loot);
 			

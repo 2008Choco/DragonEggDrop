@@ -30,6 +30,7 @@ import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,25 +44,24 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class DragonLoot {
 	
-	private final ConfigurationSection lootSection;
-	
+	private final FileConfiguration dragonFile;
 	private final RandomCollection<ItemStack> loot = new RandomCollection<>();
 	
-	private double eggSpawnChance = 100.0;
-	private String eggName = "%dragon%'s &rEgg";
+	private double eggSpawnChance;
+	private String eggName;
+	private List<String> eggLore;
 	
-	private int minLootGen = 0, maxLootGen = 0;
-	private double chestSpawnChance = 0.0;
-	private String chestName = "Loot Chest";
+	private double chestSpawnChance;
+	private String chestName;
+	private int minLootGen, maxLootGen;
 	
 	/**
 	 * Construct a new DragonLoot
 	 * 
 	 * @param lootSection the loot section to parse
 	 */
-	public DragonLoot(ConfigurationSection lootSection) {
-		this.lootSection = lootSection;
-		
+	public DragonLoot(FileConfiguration dragonFile) {
+		this.dragonFile = dragonFile;
 		this.parseDragonLoot();
 	}
 	
@@ -97,10 +97,19 @@ public class DragonLoot {
 	/**
 	 * Get the name to be displayed on the dragon egg
 	 * 
-	 * @return the name to be displayed on the dragon egg
+	 * @return the name display
 	 */
 	public String getEggName() {
 		return eggName;
+	}
+	
+	/**
+	 * Get the lore to be displayed on the dragon egg
+	 * 
+	 * @return the lore to display
+	 */
+	public List<String> getEggLore() {
+		return eggLore;
 	}
 	
 	/**
@@ -151,6 +160,18 @@ public class DragonLoot {
 	private void parseDragonLoot() {
 		Logger logger = JavaPlugin.getPlugin(DragonEggDrop.class).getLogger();
 		
+		// Parse the basic loot rewards (i.e. spawn chances & names)
+		this.eggSpawnChance = dragonFile.getDouble("egg-spawn-chance", 100.0);
+		this.eggName = dragonFile.getString("egg-name", "%dragon%&r's Egg");
+		this.eggLore = dragonFile.getStringList("egg-lore");
+		
+		this.chestSpawnChance = dragonFile.getDouble("chest-spawn-chance", 0);
+		this.chestName = dragonFile.getString("chest-name", "Loot Chest");
+		this.minLootGen = dragonFile.getInt("min-loot");
+		this.maxLootGen = dragonFile.getInt("max-loot");
+		
+		// Parse loot items
+		ConfigurationSection lootSection = dragonFile.getConfigurationSection("loot");
 		for (String itemKey : lootSection.getKeys(false)) {
 			// Parse root values (type, damage, amount and weight)
 			double weight = lootSection.getDouble(itemKey + ".weight");
