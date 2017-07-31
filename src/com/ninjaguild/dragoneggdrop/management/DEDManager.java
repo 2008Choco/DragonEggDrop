@@ -91,6 +91,13 @@ public class DEDManager {
 	}
 	
 	/**
+	 * Clear all loaded dragon templates
+	 */
+	public void clearTemplates() {
+		this.dragonTemplates.clear();
+	}
+	
+	/**
 	 * Load the dragon template files from the "dragons" folder
 	 */
 	public void reloadDragonTemplates() {

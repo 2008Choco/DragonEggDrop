@@ -137,7 +137,7 @@ public class DragonEggDrop extends JavaPlugin {
 		if (this.updateTask != null)
 			this.updateTask.cancel();
 		
-		this.dedManager.getDragonTemplates().clear();
+		this.dedManager.clearTemplates();
 		
 		// Clear the world wrappers
 		this.dedManager.getWorldWrappers().forEach((u, w) -> {

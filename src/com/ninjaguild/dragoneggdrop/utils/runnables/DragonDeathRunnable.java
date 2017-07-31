@@ -22,6 +22,7 @@ package com.ninjaguild.dragoneggdrop.utils.runnables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
@@ -153,7 +154,11 @@ public class DragonDeathRunnable extends BukkitRunnable {
 				this.worldWrapper.getWorld().strikeLightning(location);
 			
 			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
-			this.plugin.getDEDManager().getCurrentBattle().getLoot().spawnLootFor(dragonBattle);
+			DragonTemplate currentBattle = plugin.getDEDManager().getCurrentBattle();
+			
+			if (currentBattle != null) {
+				currentBattle.getLoot().spawnLootFor(dragonBattle);
+			}
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
 				this.worldWrapper.startRespawn(RespawnType.DEATH);

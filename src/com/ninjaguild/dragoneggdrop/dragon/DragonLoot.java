@@ -230,6 +230,8 @@ public class DragonLoot {
 		
 		// Parse loot items
 		ConfigurationSection lootSection = dragonFile.getConfigurationSection("loot");
+		if (lootSection == null) return;
+		
 		for (String itemKey : lootSection.getKeys(false)) {
 			// Parse root values (type, damage, amount and weight)
 			double weight = lootSection.getDouble(itemKey + ".weight");
