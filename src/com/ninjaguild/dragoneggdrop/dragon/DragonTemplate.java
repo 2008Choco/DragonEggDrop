@@ -201,8 +201,8 @@ public class DragonTemplate {
 			FileConfiguration dragonFile = YamlConfiguration.loadConfiguration(file);
 			
 			String name = dragonFile.getString("dragon-name");
-			BarStyle style = EnumUtils.getEnum(BarStyle.class, dragonFile.getString("bar-style"));
-			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color"));
+			BarStyle style = EnumUtils.getEnum(BarStyle.class, dragonFile.getString("bar-style").toUpperCase());
+			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color").toUpperCase());
 			DragonLoot loot = new DragonLoot(dragonFile.getConfigurationSection("loot"));
 			
 			DragonTemplate template = new DragonTemplate(name, style, color, loot);
