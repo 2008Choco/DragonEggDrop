@@ -31,7 +31,8 @@ import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.entity.EnderDragon;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -194,8 +195,24 @@ public class DragonTemplate {
 		List<DragonTemplate> templates = new ArrayList<>();
 		
 		// Return empty list if the folder was just created
-		if (DRAGONS_FOLDER.mkdir()) {
-			return templates;
+		if (DRAGONS_FOLDER.mkdir()) return templates;
+		
+		for (File file : DRAGONS_FOLDER.listFiles((file, name) -> name.endsWith(".yml"))) {
+			FileConfiguration dragonFile = YamlConfiguration.loadConfiguration(file);
+			
+			String name = dragonFile.getString("dragon-name");
+			BarStyle style = EnumUtils.getEnum(BarStyle.class, dragonFile.getString("bar-style"));
+			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color"));
+			DragonLoot loot = new DragonLoot(dragonFile.getConfigurationSection("loot"));
+			
+			DragonTemplate template = new DragonTemplate(name, style, color, loot);
+			
+			if (templates.contains(template)) {
+				JavaPlugin.getPlugin(DragonEggDrop.class).getLogger().warning("Duplicate dragon template with file name " + file.getName() + ". Ignoring");
+				continue;
+			}
+			
+			templates.add(template);
 		}
 		
 		return templates;
