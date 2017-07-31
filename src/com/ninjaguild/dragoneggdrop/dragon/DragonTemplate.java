@@ -191,6 +191,11 @@ public class DragonTemplate {
 		return templates;
 	}
 	
+	/**
+	 * Load and parse all DragonTemplate objects from the dragons folder
+	 * 
+	 * @return all parsed DragonTemplate objects
+	 */
 	public static List<DragonTemplate> loadTemplates() {
 		List<DragonTemplate> templates = new ArrayList<>();
 		

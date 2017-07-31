@@ -19,10 +19,21 @@
 
 package com.ninjaguild.dragoneggdrop.dragon;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
+import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Represents a dragon's loot information (similar to a loot table) which may 
@@ -138,7 +149,52 @@ public class DragonLoot {
 	}
 	
 	private void parseDragonLoot() {
-		this.lootSection.get(""); // TODO
+		Logger logger = JavaPlugin.getPlugin(DragonEggDrop.class).getLogger();
+		
+		for (String itemKey : lootSection.getKeys(false)) {
+			// Parse root values (type, damage, amount and weight)
+			double weight = lootSection.getDouble(itemKey + ".weight");
+			
+			Material type = EnumUtils.getEnum(Material.class, lootSection.getString(itemKey + ".type").toUpperCase());
+			short damage = (short) lootSection.getInt(itemKey + ".damage");
+			int amount = lootSection.getInt(itemKey + ".amount");
+			
+			if (type == null) {
+				logger.warning("Invalid material type \"" + lootSection.getString(itemKey + ".type") + "\". Ignoring loot value...");
+				continue;
+			}
+			
+			// Create new item stack with passed values
+			ItemStack item = new ItemStack(type, damage);
+			item.setAmount(amount);
+			
+			// Parse meta
+			String displayName = lootSection.getString(itemKey + ".display-name");
+			List<String> lore = lootSection.getStringList(itemKey + ".lore");
+			Map<Enchantment, Integer> enchantments = new HashMap<>();
+			
+			// Enchantment parsing
+			for (String enchant : lootSection.getConfigurationSection("enchantments").getKeys(false)) {
+				Enchantment enchantment = Enchantment.getByName(enchant);
+				int level = lootSection.getInt(itemKey + ".enchants." + enchant);
+				
+				if (enchantment == null || level == 0) {
+					logger.warning("Invalid enchantment \"" + enchant + "\" with level " + level);
+					continue;
+				}
+				
+				enchantments.put(enchantment, level);
+			}
+			
+			// Meta updating
+			ItemMeta meta = item.getItemMeta();
+			if (displayName != null) meta.setDisplayName(displayName);
+			if (!lore.isEmpty()) meta.setLore(lore);
+			enchantments.forEach((e, level) -> meta.addEnchant(e, level, true));
+			item.setItemMeta(meta);
+			
+			this.loot.add(weight, item);
+		}
 	}
 	
 }
