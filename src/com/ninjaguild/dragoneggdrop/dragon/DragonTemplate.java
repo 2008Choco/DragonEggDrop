@@ -33,6 +33,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -122,12 +123,11 @@ public class DragonTemplate {
 	 * @param dragon the dragon to modify
 	 * @param battle the battle to modify
 	 */
-	public void applyToBattle(NMSAbstract nmsAbstract, DragonBattle battle) {
+	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, DragonBattle battle) {
 		if (name != null) {
-			battle.getEnderDragon().setCustomName(name);
+			dragon.setCustomName(name);
 			battle.setBossBarTitle(name);
 		}
-		
 		battle.setBossBarStyle(barStyle, barColour);
 	}
 	
