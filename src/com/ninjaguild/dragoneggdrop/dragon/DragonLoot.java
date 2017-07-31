@@ -37,6 +37,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -170,8 +171,9 @@ public class DragonLoot {
 	 * Spawn loot for the specific dragon battle
 	 * 
 	 * @param battle the battle to spawn loot for
+	 * @param dragon the dragon whose egg should be spawned
 	 */
-	public void spawnLootFor(DragonBattle battle) {
+	public void spawnLootFor(DragonBattle battle, EnderDragon dragon) {
 		Location location = battle.getEndPortalLocation();
 		
 		boolean spawnEgg = RANDOM.nextDouble() * 100 <= eggSpawnChance;
@@ -188,7 +190,7 @@ public class DragonLoot {
 			if (spawnEgg) {
 				ItemStack eggItem = new ItemStack(Material.DRAGON_EGG);
 				ItemMeta eggMeta = eggItem.getItemMeta();
-				eggMeta.setDisplayName(eggName.replace("%dragon%", battle.getEnderDragon().getName()));
+				eggMeta.setDisplayName(eggName.replace("%dragon%", dragon.getName()));
 				eggMeta.setLore(eggLore);
 				eggItem.setItemMeta(eggMeta);
 				

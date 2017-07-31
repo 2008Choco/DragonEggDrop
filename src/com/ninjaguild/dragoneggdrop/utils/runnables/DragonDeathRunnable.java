@@ -157,7 +157,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			DragonTemplate currentBattle = plugin.getDEDManager().getCurrentBattle();
 			
 			if (currentBattle != null) {
-				currentBattle.getLoot().spawnLootFor(dragonBattle);
+				currentBattle.getLoot().spawnLootFor(dragonBattle, dragon);
 			}
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
