@@ -132,66 +132,6 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Load and parse all DragonTemplate objects (if possible) from
-	 * a List of String data from a configuration file
-	 * 
-	 * @param data the data to parse
-	 * @return all parsed DragonTemplate objects
-	 */
-	public static List<DragonTemplate> loadTemplates(List<String> data) {
-		List<DragonTemplate> templates = new ArrayList<>();
-		
-		for (String dragonData : data) {
-			String[] splitData = dragonData.split("\\|");
-			
-			String name = null;
-			BarStyle style = null;
-			BarColor colour = null;
-			
-			// Here for legacy purposes
-			if (splitData.length == 1) {
-				name = dragonData;
-				
-				// In case name=whatever
-				String[] tempData = name.split("=");
-				if (tempData.length == 2)
-					name = tempData[1];
-				
-				templates.add(new DragonTemplate(name, null, null));
-				continue;
-			}
-			
-			for (String dragonInfo : splitData) {
-				String[] splitInfo = dragonInfo.split("=");
-				if (splitInfo.length != 2) continue;
-				
-				String dataType = splitInfo[0].trim();
-				String value = splitInfo[1].trim();
-				
-				if (dataType.equalsIgnoreCase("name")) {
-					name = value;
-				}
-				else if (dataType.equalsIgnoreCase("style")) {
-					value = value.toUpperCase();
-					
-					if (!EnumUtils.isValidEnum(BarStyle.class, value)) continue;
-					style = BarStyle.valueOf(value);
-				}
-				else if (dataType.equalsIgnoreCase("color") || dataType.equalsIgnoreCase("colour")) {
-					value = value.toUpperCase();
-					
-					if (!EnumUtils.isValidEnum(BarColor.class, value)) continue;
-					colour = BarColor.valueOf(value);
-				}
-			}
-			
-			templates.add(new DragonTemplate(name, style, colour));
-		}
-		
-		return templates;
-	}
-	
-	/**
 	 * Load and parse all DragonTemplate objects from the dragons folder
 	 * 
 	 * @return all parsed DragonTemplate objects

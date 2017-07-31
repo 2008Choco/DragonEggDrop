@@ -19,12 +19,14 @@
 
 package com.ninjaguild.dragoneggdrop.management;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
@@ -41,7 +43,7 @@ public class DEDManager {
 
 	private final DragonEggDrop plugin;
 	
-	private List<DragonTemplate> dragonTemplates;
+	private List<DragonTemplate> dragonTemplates = new ArrayList<>();
 	private DragonTemplate currentBattle;
 	
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
@@ -55,8 +57,8 @@ public class DEDManager {
 	public DEDManager(final DragonEggDrop plugin) {
 		this.plugin = plugin;
 		
-		this.dragonTemplates = DragonTemplate.loadTemplates(plugin.getConfig().getStringList("dragon-names"));
-        this.setDragonBossBarTitle();
+		this.reloadDragonTemplates();
+		this.setDragonBossBarTitle();
 	}
 	
 	/**
@@ -85,7 +87,15 @@ public class DEDManager {
 	 * @return all dragon templates
 	 */
 	public List<DragonTemplate> getDragonTemplates() {
-		return dragonTemplates;
+		return ImmutableList.copyOf(dragonTemplates);
+	}
+	
+	/**
+	 * Load the dragon template files from the "dragons" folder
+	 */
+	public void reloadDragonTemplates() {
+		this.dragonTemplates.clear();
+		this.dragonTemplates.addAll(DragonTemplate.loadTemplates());
 	}
 	
 	/**

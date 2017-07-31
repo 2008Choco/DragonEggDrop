@@ -19,10 +19,7 @@
 
 package com.ninjaguild.dragoneggdrop.commands;
 
-import java.util.List;
-
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -57,7 +54,7 @@ public class DragonEggDropCmd implements CommandExecutor {
 		else if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("help")) {
 				if (!sender.hasPermission("dragoneggdrop.help")) {
-					plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
+					this.plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
 					return true;
 				}
 				
@@ -75,14 +72,10 @@ public class DragonEggDropCmd implements CommandExecutor {
 					return true;
 				}
 				
-				plugin.reloadConfig();
+				this.plugin.reloadConfig();
+				this.plugin.getDEDManager().reloadDragonTemplates();
 				
-				// Template reloading
-				List<DragonTemplate> templates = plugin.getDEDManager().getDragonTemplates();
-				templates.clear();
-				templates.addAll(DragonTemplate.loadTemplates(plugin.getConfig().getStringList("dragon-names")));
-				
-				plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
+				this.plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
 			}
 			return true;
 		}
