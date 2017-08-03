@@ -19,6 +19,7 @@
 
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
@@ -55,9 +56,12 @@ public class RespawnRunnable extends BukkitRunnable {
 	private final DragonBattle dragonBattle;
 	private final EnderDragon dragon;
 	
-	private final Location[] crystalLocations;
-	private int currentCrystal = 0;
+	private final boolean announceRespawn;
+	private final List<String> announceMessages;
 	
+	private final Location[] crystalLocations;
+	
+	private int currentCrystal = 0, currentMessage = 0;
 	private int secondsUntilRespawn;
 	
 	/**
@@ -67,7 +71,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	 * @param portalLocation the location in which the egg is located
 	 * @param respawnTime the time in seconds until the respawn is executed
 	 */
-	public RespawnRunnable(final DragonEggDrop plugin, final Location portalLocation, final int respawnTime) {
+	public RespawnRunnable(DragonEggDrop plugin, Location portalLocation, int respawnTime, boolean announceRespawn) {
 		this.plugin = plugin;
 		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(portalLocation.getWorld());
 		this.portalLocation = portalLocation;
@@ -76,6 +80,11 @@ public class RespawnRunnable extends BukkitRunnable {
 		
 		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(portalLocation.getWorld());
 		this.dragon = dragonBattle.getEnderDragon();
+		
+		this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream()
+				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
+				.collect(Collectors.toList());
+		this.announceRespawn = announceRespawn && (announceMessages.size() > 0);
 		
 		this.crystalLocations = new Location[] {
 			portalLocation.clone().add(3, -3, 0),
@@ -93,7 +102,15 @@ public class RespawnRunnable extends BukkitRunnable {
 	public void run() {
 		if (this.secondsUntilRespawn > 0) {
 			this.secondsUntilRespawn--;
-			return;
+			
+			if (!announceRespawn) return;
+			if (this.currentMessage >= announceMessages.size()) this.currentMessage = 0;
+			
+			// Show actionbar messages
+			String message = announceMessages.get(currentMessage++)
+					.replace("%time%", String.valueOf(secondsUntilRespawn))
+					.replace("%formatted-time%", this.getFormattedTime(secondsUntilRespawn));
+			plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
 		}
 		
 		// Only respawn if a Player is in the World
@@ -160,5 +177,23 @@ public class RespawnRunnable extends BukkitRunnable {
 	 */
 	public int getSecondsUntilRespawn() {
 		return secondsUntilRespawn;
+	}
+	
+	private String getFormattedTime(int timeInSeconds) {
+		StringBuilder resultTime = new StringBuilder();
+		
+		if (timeInSeconds >= 3600) { // Hours
+			int hours = (int) (Math.floor(timeInSeconds / 3600));
+			resultTime.append(hours + " hours, ");
+			timeInSeconds -= hours * 3600;
+		}
+		if (timeInSeconds >= 60) { // Minutes
+			int minutes = (int) (Math.floor(timeInSeconds / 60));
+			resultTime.append(minutes + " minutes, ");
+			timeInSeconds -= minutes * 60;
+		}
+		if (timeInSeconds >= 1) resultTime.append(timeInSeconds + " seconds, ");
+		
+		return resultTime.substring(0, resultTime.length() - (resultTime.length() < 2 ? 0 : 2));
 	}
 }

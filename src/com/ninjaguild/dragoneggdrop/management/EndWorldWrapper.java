@@ -23,7 +23,6 @@ import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
-import com.ninjaguild.dragoneggdrop.utils.runnables.AnnounceRunnable;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
@@ -43,7 +42,6 @@ import org.bukkit.entity.EnderDragon;
 public class EndWorldWrapper {
 	
 	private RespawnRunnable respawnTask;
-	private AnnounceRunnable announceTask;
 	
 	private boolean respawnInProgress = false;
 	
@@ -95,13 +93,9 @@ public class EndWorldWrapper {
 				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
 				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
 			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay);
-			this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay);
-			this.respawnTask.runTaskTimer(plugin, 0, 20);
 			
-			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
-				this.announceTask = new AnnounceRunnable(plugin, this, respawnDelay);
-				this.announceTask.runTaskTimer(plugin, 0, 20);
-			}
+			this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay, plugin.getConfig().getBoolean("announce-respawn", true));
+			this.respawnTask.runTaskTimer(plugin, 0, 20);
 		}
 	}
 	
@@ -112,20 +106,6 @@ public class EndWorldWrapper {
 		if (respawnTask != null) {
 			respawnTask.cancel();
 			respawnTask = null;
-			
-			if (plugin.getConfig().getBoolean("announce-respawn", true)) {
-				cancelAnnounce();
-			}
-		}
-	}
-	
-	/**
-	 * Cancel the action bar announcement task
-	 */
-	public void cancelAnnounce() {
-		if (announceTask != null) {
-		    announceTask.cancel();
-		    announceTask = null;
 		}
 	}
 	
