@@ -101,16 +101,18 @@ public class RespawnRunnable extends BukkitRunnable {
 	@Override
 	public void run() {
 		if (this.secondsUntilRespawn > 0) {
+			if (announceRespawn) {
+				if (this.currentMessage >= announceMessages.size()) this.currentMessage = 0;
+				
+				// Show actionbar messages
+				String message = announceMessages.get(currentMessage++)
+						.replace("%time%", String.valueOf(secondsUntilRespawn))
+						.replace("%formatted-time%", this.getFormattedTime(secondsUntilRespawn));
+				plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
+			}
+
 			this.secondsUntilRespawn--;
-			
-			if (!announceRespawn) return;
-			if (this.currentMessage >= announceMessages.size()) this.currentMessage = 0;
-			
-			// Show actionbar messages
-			String message = announceMessages.get(currentMessage++)
-					.replace("%time%", String.valueOf(secondsUntilRespawn))
-					.replace("%formatted-time%", this.getFormattedTime(secondsUntilRespawn));
-			plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
+			return;
 		}
 		
 		// Only respawn if a Player is in the World
