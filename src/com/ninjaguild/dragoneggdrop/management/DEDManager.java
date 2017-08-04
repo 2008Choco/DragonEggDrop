@@ -89,6 +89,19 @@ public class DEDManager {
 	}
 	
 	/**
+	 * Get a template based on its file's name
+	 * 
+	 * @param fileName the file name of the template to get
+	 * @return the resulting template, or null if none exists
+	 */
+	public DragonTemplate getTemplate(String fileName) {
+		return dragonTemplates.stream()
+				.filter(t -> t.getFile() != null) // Ignore null files. These are custom templates
+				.filter(t -> t.getFile().getName().equalsIgnoreCase(fileName))
+				.findFirst().orElse(null);
+	}
+	
+	/**
 	 * Clear all loaded dragon templates
 	 */
 	public void clearTemplates() {

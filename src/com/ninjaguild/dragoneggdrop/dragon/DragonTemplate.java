@@ -48,6 +48,8 @@ public class DragonTemplate {
 	public static final File DRAGONS_FOLDER = new File(JavaPlugin.getPlugin(DragonEggDrop.class).getDataFolder(), "dragons/");
 	private static final DragonLoot DEFAULT_DRAGON_LOOT = null;
 	
+	private final File file;
+	
 	private final String name;
 	private final BarStyle barStyle;
 	private final BarColor barColour;
@@ -60,16 +62,42 @@ public class DragonTemplate {
 	/**
 	 * Construct a new DragonTemplate object
 	 * 
+	 * @param file the file holding this template data. Can be null
+	 * @param name the name of the dragon
+	 * @param barStyle the style of the bar
+	 * @param barColour the colour of the bar
+	 * @param loot the loot to drop after the dragon has been killed
+	 */
+	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour, DragonLoot loot) {
+		this.file = file;
+		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
+		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
+		this.barColour = (barColour != null ? barColour : BarColor.PINK);
+		this.loot = loot;
+	}
+	
+	/**
+	 * Construct a new DragonTemplate object with the default dragon loot
+	 * 
+	 * @param file the file holding this template data. Can be null
+	 * @param name the name of the dragon
+	 * @param barStyle the style of the bar
+	 * @param barcolour the colour of the bar
+	 */
+	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour) {
+		this(file, name, barStyle, barColour, DEFAULT_DRAGON_LOOT);
+	}
+	
+	/**
+	 * Construct a new DragonTemplate object
+	 * 
 	 * @param name the name of the dragon
 	 * @param barStyle the style of the bar
 	 * @param barColour the colour of the bar
 	 * @param loot the loot to drop after the dragon has been killed
 	 */
 	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour, DragonLoot loot) {
-		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
-		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
-		this.barColour = (barColour != null ? barColour : BarColor.PINK);
-		this.loot = loot;
+		this(null, name, barStyle, barColour, loot);
 	}
 	
 	/**
@@ -80,7 +108,17 @@ public class DragonTemplate {
 	 * @param barcolour the colour of the bar
 	 */
 	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
-		this(name, barStyle, barColour, DEFAULT_DRAGON_LOOT);
+		this(null, name, barStyle, barColour, DEFAULT_DRAGON_LOOT);
+	}
+	
+	/**
+	 * Get the file in the "dragons" folder that holds information for
+	 * this dragon template
+	 * 
+	 * @return the dragon template file
+	 */
+	public File getFile() {
+		return file;
 	}
 	
 	/**
@@ -171,7 +209,7 @@ public class DragonTemplate {
 			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color", "SOLID").toUpperCase());
 			DragonLoot loot = new DragonLoot(dragonFile);
 			
-			DragonTemplate template = new DragonTemplate(name, style, color, loot);
+			DragonTemplate template = new DragonTemplate(file, name, style, color, loot);
 			template.spawnWeight = dragonFile.getDouble("spawn-weight", 1);
 			template.announceRespawn = dragonFile.getBoolean("announce-respawn", false);
 			
