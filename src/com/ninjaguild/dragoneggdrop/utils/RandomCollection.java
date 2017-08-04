@@ -25,6 +25,7 @@ import java.util.NavigableMap;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 /**
  * An implementation of a Collection based on a TreeMap. The goal of
@@ -141,6 +142,18 @@ public class RandomCollection<E> {
      */
     public boolean isEmpty() {
     	return map.isEmpty();
+    }
+    
+    /**
+     * Return a Stream consisting of the values of this collection
+     * 
+     * @return a stream consisting of all values
+     */
+	public Stream<E> stream() {
+		@SuppressWarnings("unchecked")
+    	Stream<E> stream = Stream.of((E[]) map.values().toArray());
+		
+		return stream;
     }
     
     /**
