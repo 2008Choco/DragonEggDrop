@@ -1,0 +1,143 @@
+/*
+    DragonEggDrop
+    Copyright (C) 2016  NinjaStix
+    ninjastix84@gmail.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package com.ninjaguild.dragoneggdrop.commands;
+
+import java.util.Collection;
+
+import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.management.DEDManager;
+
+import org.apache.commons.lang3.math.NumberUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+public class DragonTemplateCmd implements CommandExecutor {
+	
+	private final DragonEggDrop plugin;
+	private final DEDManager manager;
+	
+	public DragonTemplateCmd(DragonEggDrop plugin) {
+		this.plugin = plugin;
+		this.manager = plugin.getDEDManager();
+	}
+	
+	// TODO: create/delete subcommands
+	// /template <list|"template"> <(view/info)|edit>
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (args.length == 0) {
+			this.plugin.sendMessage(sender, "Please specify the name of a template, or \"list\" to list all templates");
+			return true;
+		}
+		
+		Collection<DragonTemplate> templates = manager.getDragonTemplates();
+		
+		// TODO: Allow for synthetic templates to be listed as well... somehow
+		// List all existing templates
+		if (args[0].equalsIgnoreCase("list")) {
+			String[] templateNames = templates.stream()
+				.filter(t -> t.getFile() != null)
+				.map(t -> {
+					String name = t.getFile().getName();
+					return ChatColor.GREEN + name.substring(0, name.lastIndexOf('.'));
+				})
+				.toArray(String[]::new);
+			
+			this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
+			return true;
+		}
+		
+		// Template was identified
+		DragonTemplate template = templates.stream()
+				.filter(t -> t.getFile() != null)
+				.filter(t -> {
+					String name = t.getFile().getName();
+					name = name.substring(0, name.lastIndexOf('.'));
+					return name.equals(args[0]);
+				})
+				.findFirst().orElse(null);
+		
+		// No template found
+		if (template == null) {
+			this.plugin.sendMessage(sender, "Could not find a template with the name \"" + args[0] + "\"");
+			return true;
+		}
+		
+		if (args.length < 2) {
+			this.plugin.sendMessage(sender, cmd.getLabel() + " " + args[0] + " <(view/info)|edit>");
+			return true;
+		}
+		
+		// "view/info" and "edit" params
+		if (args[1].equalsIgnoreCase("view") || args[1].equalsIgnoreCase("info")) {
+			sender.sendMessage(ChatColor.GRAY + "Dragon Name: " + ChatColor.GREEN + template.getName());
+			sender.sendMessage(ChatColor.GRAY + "Bar Style: " + ChatColor.GREEN + template.getBarStyle());
+			sender.sendMessage(ChatColor.GRAY + "Bar Color: " + ChatColor.GREEN + template.getBarColor());
+			sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.GREEN + template.getSpawnWeight());
+			sender.sendMessage(ChatColor.GRAY + "Announce Respawn: " + (template.shouldAnnounceRespawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceRespawn());
+		}
+		
+		else if (args[1].equalsIgnoreCase("edit")) {
+			if (args.length < 3) {
+				this.plugin.sendMessage(sender, cmd.getLabel() + " " + args[0] + " edit <addloot|set>");
+				return true;
+			}
+			
+			// "addloot" and "set" params
+			if (args[2].equalsIgnoreCase("addloot")) {
+				if (!(sender instanceof Player)) {
+					this.plugin.sendMessage(sender, "You must be a player to add loot to a template. An item must be held in hand");
+					return true;
+				}
+				
+				Player player = (Player) sender;
+				ItemStack item = player.getInventory().getItemInMainHand();
+				double weight = 1;
+				
+				if (item == null) {
+					this.plugin.sendMessage(sender, "You must be holding an item in your main hand to add it to the dragon loot");
+					return true;
+				}
+				
+				if (args.length >= 4) {
+					weight = NumberUtils.toDouble(args[3], 1.0);
+				}
+				
+				template.getLoot().addLootItem(item, weight);
+				this.plugin.sendMessage(sender, "Added " + ChatColor.GREEN + item.getType() + ChatColor.GRAY + " with a weight of " 
+						+ ChatColor.YELLOW + weight + ChatColor.GRAY + " to " + args[0] + "'s loot");
+				return true;
+			}
+			
+			if (args[2].equalsIgnoreCase("set")) {
+				// TODO
+			}
+		}
+		
+		return true;
+	}
+	
+}

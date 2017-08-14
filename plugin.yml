@@ -7,6 +7,9 @@ commands:
   dragoneggdrop:
     usage: /<command> [help]
     aliases: [ded]
+  dragontemplate:
+    usage: /<command>
+    aliases: [dragontemplates, template, templates]
 
 permissions:
   dragoneggdrop.help:

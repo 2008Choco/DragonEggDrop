@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.logging.Level;
 
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
+import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
@@ -59,7 +60,7 @@ import org.json.simple.parser.ParseException;
  */
 public class DragonEggDrop extends JavaPlugin {
 	
-	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] ";
+	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	
 	/* TODO for version (or 1.4.0)
 	 * - Aesthetic oriented update
@@ -112,6 +113,7 @@ public class DragonEggDrop extends JavaPlugin {
 
 		// Register commands
 		this.getCommand("dragoneggdrop").setExecutor(new DragonEggDropCmd(this));
+		this.getCommand("dragontemplate").setExecutor(new DragonTemplateCmd(this));
 		
 		// Update check
 		if (this.getConfig().getBoolean("perform-update-checks", true)) {
