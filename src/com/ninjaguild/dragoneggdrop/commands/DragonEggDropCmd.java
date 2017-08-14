@@ -51,35 +51,34 @@ public class DragonEggDropCmd implements CommandExecutor {
 			return true;
 		}
 		
-		else if (args.length == 1) {
-			if (args[0].equalsIgnoreCase("help")) {
-				if (!sender.hasPermission("dragoneggdrop.help")) {
-					this.plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
-					return true;
-				}
-				
-				sender.sendMessage(ChatColor.GOLD + "-----------------------");
-				sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP HELP --");
-				sender.sendMessage(ChatColor.GOLD + "-----------------------");
-				sender.sendMessage(ChatColor.YELLOW + "Alias: ded");
-				sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
-				sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot <weight>");
-				sender.sendMessage(ChatColor.GOLD + "-----------------------");
+		// "help" and "reload" params
+		if (args[0].equalsIgnoreCase("help")) {
+			if (!sender.hasPermission("dragoneggdrop.help")) {
+				this.plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
+				return true;
 			}
-			else if (args[0].equalsIgnoreCase("reload")) {
-				if (!sender.hasPermission("dragoneggdrop.reload")) {
-					plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
-					return true;
-				}
-				
-				this.plugin.reloadConfig();
-				this.plugin.getDEDManager().reloadDragonTemplates();
-				
-				this.plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
-			}
-			return true;
+			
+			sender.sendMessage(ChatColor.GOLD + "-----------------------");
+			sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP HELP --");
+			sender.sendMessage(ChatColor.GOLD + "-----------------------");
+			sender.sendMessage(ChatColor.YELLOW + "Alias: ded");
+			sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
+			sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop addloot <weight>");
+			sender.sendMessage(ChatColor.GOLD + "-----------------------");
 		}
 		
-		return false;
+		else if (args[0].equalsIgnoreCase("reload")) {
+			if (!sender.hasPermission("dragoneggdrop.reload")) {
+				this.plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
+				return true;
+			}
+			
+			this.plugin.reloadConfig();
+			this.plugin.getDEDManager().reloadDragonTemplates();
+			
+			this.plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
+		}
+		
+		return true;
 	}
 }
