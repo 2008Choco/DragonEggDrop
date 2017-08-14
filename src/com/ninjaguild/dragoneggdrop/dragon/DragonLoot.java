@@ -19,6 +19,7 @@
 
 package com.ninjaguild.dragoneggdrop.dragon;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,24 +57,24 @@ public class DragonLoot {
 	private static final Random RANDOM = new Random();
 	private static final NMSAbstract NMS_ABSTRACT = JavaPlugin.getPlugin(DragonEggDrop.class).getNMSAbstract();
 	
-	private final FileConfiguration dragonFile;
+	private final DragonTemplate template;
 	private final RandomCollection<ItemStack> loot = new RandomCollection<>();
 	
-	private double eggSpawnChance;
-	private String eggName;
-	private List<String> eggLore;
+	private double eggSpawnChance = 100.0;
+	private String eggName = "%dragon%'s Egg";
+	private List<String> eggLore = new ArrayList<>();
 	
-	private double chestSpawnChance;
-	private String chestName;
-	private int minLootGen, maxLootGen;
+	private double chestSpawnChance = 0.0;
+	private String chestName = "Loot Chest";
+	private int minLootGen = 3, maxLootGen = 6;
 	
 	/**
 	 * Construct a new DragonLoot
 	 * 
-	 * @param lootSection the loot section to parse
+	 * @param template the parent template for this loot
 	 */
-	public DragonLoot(FileConfiguration dragonFile) {
-		this.dragonFile = dragonFile;
+	public DragonLoot(DragonTemplate template) {
+		this.template = template;
 		this.parseDragonLoot();
 	}
 	
@@ -220,7 +221,10 @@ public class DragonLoot {
 	}
 	
 	private void parseDragonLoot() {
+		if (template.file == null) return; // No file to parse loot from
+		
 		Logger logger = JavaPlugin.getPlugin(DragonEggDrop.class).getLogger();
+		FileConfiguration dragonFile = template.configFile;
 		
 		// Parse the basic loot rewards (i.e. spawn chances & names)
 		this.eggSpawnChance = dragonFile.getDouble("egg-spawn-chance", 100.0);
