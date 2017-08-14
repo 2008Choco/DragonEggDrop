@@ -142,6 +142,15 @@ public class RandomCollection<E> {
     public boolean isEmpty() {
     	return map.isEmpty();
     }
+    
+    /**
+     * Get the size of the random collection
+     * 
+     * @return the collection size
+     */
+    public int size() {
+    	return map.size();
+    }
 	
 	/**
 	 * Get the values of this random collection as an iterable java.util.Collection 

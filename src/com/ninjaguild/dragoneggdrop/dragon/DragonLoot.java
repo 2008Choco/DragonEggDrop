@@ -19,6 +19,7 @@
 
 package com.ninjaguild.dragoneggdrop.dragon;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,6 +86,56 @@ public class DragonLoot {
 	 */
 	public RandomCollection<ItemStack> getLoot() {
 		return RandomCollection.copyOf(loot);
+	}
+	
+	/**
+	 * Add a loot item to the random loot collection
+	 * 
+	 * @param item the item to add
+	 * @param weight the generation weight of the item
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void addLootItem(ItemStack item, double weight, boolean updateFile) {
+		this.loot.add(weight, item);
+		
+		if (updateFile && template.configFile != null) {
+			FileConfiguration config = template.configFile;
+			int itemID = loot.size() + 1;
+			
+			config.set("loot." + itemID + ".weight", weight);
+			config.set("loot." + itemID + ".type", item.getType());
+			config.set("loot." + itemID + ".damage", item.getDurability());
+			config.set("loot." + itemID + ".amount", item.getAmount());
+			
+			if (item.hasItemMeta()) {
+				ItemMeta meta = item.getItemMeta();
+				
+				if (meta.hasDisplayName()) config.set("loot." + itemID + ".display-name", meta.getDisplayName());
+				if (meta.hasLore()) config.set("loot." + itemID + ".lore", meta.getLore());
+				if (meta.hasEnchants()) {
+					for (Enchantment enchant : meta.getEnchants().keySet()) {
+						config.set("loot." + itemID + ".enchantments." + enchant.getName(), meta.getEnchantLevel(enchant));
+					}
+				}
+			}
+			
+			try {
+				config.save(template.file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Add a loot item to the random loot collection and update the dragon file
+	 * (if one exists)
+	 * 
+	 * @param item the item to add
+	 * @param weight the generation weight of the item
+	 */
+	public void addLootItem(ItemStack item, double weight) {
+		this.addLootItem(item, weight, true);
 	}
 	
 	/**
@@ -435,7 +486,7 @@ public class DragonLoot {
 			// Enchantment parsing
 			for (String enchant : lootSection.getConfigurationSection("enchantments").getKeys(false)) {
 				Enchantment enchantment = Enchantment.getByName(enchant);
-				int level = lootSection.getInt(itemKey + ".enchants." + enchant);
+				int level = lootSection.getInt(itemKey + ".enchantments." + enchant);
 				
 				if (enchantment == null || level == 0) {
 					logger.warning("Invalid enchantment \"" + enchant + "\" with level " + level);
