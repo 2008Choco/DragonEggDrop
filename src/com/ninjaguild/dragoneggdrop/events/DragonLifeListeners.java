@@ -24,7 +24,6 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
-import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
@@ -54,9 +53,8 @@ public class DragonLifeListeners implements Listener {
 		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		plugin.getDEDManager().getWorldWrapper(dragon.getWorld()).setRespawnInProgress(false);
 		
-		RandomCollection<DragonTemplate> dragonTemplates = plugin.getDEDManager().getDragonTemplates();
-		if (!dragonTemplates.isEmpty()) {
-			DragonTemplate template = dragonTemplates.next();
+		DragonTemplate template = plugin.getDEDManager().getRandomTemplate();
+		if (template != null) {
 			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
 			plugin.getDEDManager().setCurrentBattle(template);
 			

@@ -80,12 +80,21 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get a list of all dragon templates
+	 * Get a collection of all dragon templates
 	 * 
 	 * @return all dragon templates
 	 */
-	public RandomCollection<DragonTemplate> getDragonTemplates() {
-		return RandomCollection.copyOf(dragonTemplates);
+	public Collection<DragonTemplate> getDragonTemplates() {
+		return dragonTemplates.toCollection();
+	}
+	
+	/**
+	 * Get a random dragon template from the random collection
+	 * 
+	 * @return a random dragon template. null if none
+	 */
+	public DragonTemplate getRandomTemplate() {
+		return dragonTemplates.next();
 	}
 	
 	/**
@@ -95,7 +104,7 @@ public class DEDManager {
 	 * @return the resulting template, or null if none exists
 	 */
 	public DragonTemplate getTemplate(String fileName) {
-		return dragonTemplates.stream()
+		return dragonTemplates.toCollection().stream()
 				.filter(t -> t.getFile() != null) // Ignore null files. These are custom templates
 				.filter(t -> t.getFile().getName().equalsIgnoreCase(fileName))
 				.findFirst().orElse(null);
