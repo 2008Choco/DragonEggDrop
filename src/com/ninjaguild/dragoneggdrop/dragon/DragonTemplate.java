@@ -20,6 +20,7 @@
 package com.ninjaguild.dragoneggdrop.dragon;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,11 +51,11 @@ public class DragonTemplate {
 	protected final File file;
 	protected final FileConfiguration configFile;
 	
-	private final String name;
-	private final BarStyle barStyle;
-	private final BarColor barColour;
-	
 	private final DragonLoot loot;
+	
+	private String name;
+	private BarStyle barStyle;
+	private BarColor barColour;
 	
 	private double spawnWeight;
 	private boolean announceRespawn;
@@ -98,6 +99,29 @@ public class DragonTemplate {
 	}
 	
 	/**
+	 * Set the name of the dragon
+	 * 
+	 * @param name the dragon's new name
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setName(String name, boolean updateFile) {
+		this.name = name;
+		
+		if (updateFile) {
+			this.updateConfig("dragon-name", name);
+		}
+	}
+	
+	/**
+	 * Set the name of the dragon and update the dragon file (if one exists)
+	 * 
+	 * @param name the dragon's new name
+	 */
+	public void setName(String name) {
+		this.setName(name, true);
+	}
+	
+	/**
 	 * Get the name of the dragon
 	 * 
 	 * @return the dragon's name
@@ -107,12 +131,58 @@ public class DragonTemplate {
 	}
 	
 	/**
+	 * Set the style of the boss bar
+	 * 
+	 * @param barStyle the new boss bar style
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setBarStyle(BarStyle barStyle, boolean updateFile) {
+		this.barStyle = barStyle;
+		
+		if (updateFile) {
+			this.updateConfig("bar-style", barStyle);
+		}
+	}
+	
+	/**
+	 * Set the style of the boss bar and update the dragon file (if one exists)
+	 * 
+	 * @param barStyle the new boss bar style
+	 */
+	public void setBarStyle(BarStyle barStyle) {
+		this.setBarStyle(barStyle);
+	}
+	
+	/**
 	 * Get the style of the boss bar
 	 * 
 	 * @return the boss bar style
 	 */
 	public BarStyle getBarStyle() {
 		return barStyle;
+	}
+	
+	/**
+	 * Set the colour of the boss bar
+	 * 
+	 * @param barColour the new boss bar colour
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setBarColor(BarColor barColour, boolean updateFile) {
+		this.barColour = barColour;
+		
+		if (updateFile) {
+			this.updateConfig("bar-color", barColour);
+		}
+	}
+	
+	/**
+	 * Set the colour of the boss bar and update the dragon file (if one exists)
+	 * 
+	 * @param barColour the new boss bar colour
+	 */
+	public void setBarColor(BarColor barColour) {
+		this.setBarColor(barColour, true);
 	}
 	
 	/**
@@ -134,12 +204,60 @@ public class DragonTemplate {
 	}
 	
 	/**
+	 * Set the weight of this dragon's spawn percentage
+	 * 
+	 * @param spawnWeight the new spawn weight
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setSpawnWeight(double spawnWeight, boolean updateFile) {
+		this.spawnWeight = spawnWeight;
+		
+		if (updateFile) {
+			this.updateConfig("spawn-weight", spawnWeight);
+		}
+	}
+	
+	/**
+	 * Set the weight of this dragon's spawn percentage and update the dragon file
+	 * (if one exists)
+	 * 
+	 * @param spawnWeight the new spawn weight
+	 */
+	public void setSoawnWeight(double spawnWeight) {
+		this.setSpawnWeight(spawnWeight, true);
+	}
+	
+	/**
 	 * Get the weight of this dragon's spawn percentage
 	 * 
 	 * @return the spawn weight
 	 */
 	public double getSpawnWeight() {
 		return spawnWeight;
+	}
+	
+	/**
+	 * Set whether this dragon's name should be announced as it respawns
+	 * 
+	 * @param announceRespawn the new announcement state
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setAnnounceRespawn(boolean announceRespawn, boolean updateFile) {
+		this.announceRespawn = announceRespawn;
+		
+		if (updateFile) {
+			this.updateConfig("announce-respawn", announceRespawn);
+		}
+	}
+	
+	/**
+	 * Set whether this dragon's name should be announced as it respawns and
+	 * update the dragon file (if one exists)
+	 * 
+	 * @param announceRespawn the new announcement state
+	 */
+	public void setAnnounceRespawn(boolean announceRespawn) {
+		this.setAnnounceRespawn(announceRespawn, true);
 	}
 	
 	/**
@@ -164,6 +282,25 @@ public class DragonTemplate {
 			battle.setBossBarTitle(name);
 		}
 		battle.setBossBarStyle(barStyle, barColour);
+	}
+	
+	/**
+	 * Update a configuration value in this template's file (if one exists).
+	 * If the file for this dragon template does not exist (i.e. a synthetically
+	 * created template from an extension plugin), this method will fail silently
+	 * 
+	 * @param path the configuration path to update
+	 * @param value the value to set
+	 */
+	protected void updateConfig(String path, Object value) {
+		if (configFile == null) return;
+		
+		configFile.set(path, value);
+		try {
+			configFile.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

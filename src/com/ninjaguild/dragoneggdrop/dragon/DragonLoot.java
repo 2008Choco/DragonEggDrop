@@ -97,6 +97,30 @@ public class DragonLoot {
 	}
 	
 	/**
+	 * Set the chance that an egg will spawn
+	 * 
+	 * @param eggSpawnChance the new egg spawn chance
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setEggSpawnChance(double eggSpawnChance, boolean updateFile) {
+		this.eggSpawnChance = eggSpawnChance;
+		
+		if (updateFile) {
+			this.template.updateConfig("egg-spawn-chance", eggSpawnChance);
+		}
+	}
+	
+	/**
+	 * Set the chance that an egg will spawn and update the dragon file (if one
+	 * exists)
+	 * 
+	 * @param eggSpawnChance the new egg spawn chance
+	 */
+	public void setEggSpawnChance(double eggSpawnChance) {
+		this.setEggSpawnChance(eggSpawnChance, true);
+	}
+	
+	/**
 	 * Get the chance that an egg will spawn. If {@link #getChestSpawnChance()} is
 	 * greater than 0.0%, then the egg will spawn within the chest given that the
 	 * egg spawn percentage has been met.
@@ -105,6 +129,30 @@ public class DragonLoot {
 	 */
 	public double getEggSpawnChance() {
 		return eggSpawnChance;
+	}
+	
+	/**
+	 * Set the name to be displayed on the dragon egg
+	 * 
+	 * @param eggName the new name
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setEggName(String eggName, boolean updateFile) {
+		this.eggName = eggName;
+		
+		if (updateFile) {
+			this.template.updateConfig("egg-name", eggName);
+		}
+	}
+	
+	/**
+	 * Set the name to be displayed on the dragon egg and update the dragon
+	 * file (if one exists)
+	 * 
+	 * @param eggName the new name
+	 */
+	public void setEggName(String eggName) {
+		this.setEggName(eggName, true);
 	}
 	
 	/**
@@ -117,12 +165,60 @@ public class DragonLoot {
 	}
 	
 	/**
+	 * Set the lore to be displayed on the dragon egg
+	 * 
+	 * @param eggLore the new lore
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setEggLore(List<String> eggLore, boolean updateFile) {
+		this.eggLore = eggLore;
+		
+		if (updateFile) {
+			this.template.updateConfig("egg-lore", eggLore);
+		}
+	}
+	
+	/**
+	 * Set the lore to be displayed on the dragon egg and update the dragon
+	 * file (if one exists)
+	 * 
+	 * @param eggLore the new lore
+	 */
+	public void setEggLore(List<String> eggLore) {
+		this.setEggLore(eggLore, true);
+	}
+	
+	/**
 	 * Get the lore to be displayed on the dragon egg
 	 * 
 	 * @return the lore to display
 	 */
 	public List<String> getEggLore() {
 		return eggLore;
+	}
+	
+	/**
+	 * Set the minimum amount of loot to generate in the chest
+	 * 
+	 * @param minLootGen the new minimum loot count
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setMinLootGen(int minLootGen, boolean updateFile) {
+		this.minLootGen = minLootGen;
+		
+		if (updateFile) {
+			this.template.updateConfig("min-loot", minLootGen);
+		}
+	}
+	
+	/**
+	 * Set the minimum amount of loot to generate in the chest and update
+	 * the dragon file (if one exists)
+	 * 
+	 * @param minLootGen the new minimum loot gen count
+	 */
+	public void setMinLootGen(int minLootGen) {
+		this.setMinLootGen(minLootGen, true);
 	}
 	
 	/**
@@ -135,6 +231,30 @@ public class DragonLoot {
 	}
 	
 	/**
+	 * Set the maximum amount of loot to generate in the chest
+	 * 
+	 * @param maxLootGen the new maximum loot count
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setMaxLootGen(int maxLootGen, boolean updateFile) {
+		this.maxLootGen = maxLootGen;
+		
+		if (updateFile) {
+			this.template.updateConfig("max-loot", maxLootGen);
+		}
+	}
+	
+	/**
+	 * Set the maximum amount of loot to generate in the chest and update
+	 * the dragon file (if one exists)
+	 * 
+	 * @param maxLootGen the new maximum loot count
+	 */
+	public void setMaxLootGen(int maxLootGen) {
+		this.setMaxLootGen(maxLootGen, true);
+	}
+	
+	/**
 	 * Get the maximum amount of loot to generate in the chest
 	 * 
 	 * @return the maximum loot count
@@ -144,12 +264,60 @@ public class DragonLoot {
 	}
 	
 	/**
+	 * Set the chance that a chest will spawn in place of an egg
+	 * 
+	 * @param chestSpawnChance the new chest spawn chance
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setChestSpawnChance(double chestSpawnChance, boolean updateFile) {
+		this.chestSpawnChance = chestSpawnChance;
+		
+		if (updateFile) {
+			this.template.updateConfig("chest-spawn-chance", chestSpawnChance);
+		}
+	}
+	
+	/**
+	 * Set the chance that a chest will spawn in place of an egg and
+	 * update the dragon file (if one exists)
+	 * 
+	 * @param chestSpawnChance the new chest spawn chance
+	 */
+	public void setChestSpawnChance(double chestSpawnChance) {
+		this.setChestSpawnChance(chestSpawnChance, true);
+	}
+	
+	/**
 	 * Get the chance that a chest will spawn in place of an egg
 	 * 
 	 * @return the chest spawn chance
 	 */
 	public double getChestSpawnChance() {
 		return chestSpawnChance;
+	}
+	
+	/**
+	 * Set the name that will be displayed within the Chest
+	 * 
+	 * @param chestName the new chest name
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void setChestName(String chestName, boolean updateFile) {
+		this.chestName = chestName;
+		
+		if (updateFile) {
+			this.template.updateConfig("chest-name", chestName);
+		}
+	}
+	
+	/**
+	 * Set the name that will be displayed within the Chest and update
+	 * the dragon file (if one exists)
+	 * 
+	 * @param chestName the new chest name
+	 */
+	public void setChestName(String chestName) {
+		this.setChestName(chestName, true);
 	}
 	
 	/**
