@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.ninjaguild.dragoneggdrop.utils;
+package com.ninjaguild.dragoneggdrop.utils.math;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +44,7 @@ public class MathUtils {
 	 */
 	
 	private static final Map<String, DoubleUnaryOperator> OPERATORS = new HashMap<>();
+	
 	static {
 		// Basic arithmetics
 		OPERATORS.put("sqrt", StrictMath::sqrt);
@@ -65,22 +66,6 @@ public class MathUtils {
 	}
 	
 	private MathUtils(){}
-	
-	/**
-	 * Represents an evaluable mathematical expression
-	 * 
-	 * @author Parker Hawke - 2008Choco
-	 */
-	@FunctionalInterface
-	public interface MathExpression {
-		
-		/**
-		 * Evaluate the mathematical expression
-		 * 
-		 * @return the evaluation result
-		 */
-		public double evaluate();
-	}
 	
 	/**
 	 * Evaluate a mathematical expression with given variables
@@ -129,7 +114,7 @@ public class MathUtils {
 	 */
 	private static class ExpressionEvaluator {
 		
-		int pos = -1, ch;
+		private int pos = -1, ch;
 		
 		private final String expression;
 		private final Map<String, Double> variables;

@@ -22,7 +22,8 @@ package com.ninjaguild.dragoneggdrop.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ninjaguild.dragoneggdrop.utils.MathUtils.MathExpression;
+import com.ninjaguild.dragoneggdrop.utils.math.MathExpression;
+import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
