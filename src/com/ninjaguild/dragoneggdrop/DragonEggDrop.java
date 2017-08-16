@@ -23,12 +23,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
@@ -100,6 +104,11 @@ public class DragonEggDrop extends JavaPlugin {
 			this.getLogger().log(Level.INFO, "PLUGIN DISABLED");
 			this.getServer().getPluginManager().disablePlugin(this);
 			return;
+		}
+		
+		// Load default templates
+		if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {
+			this.saveDefaultTemplates();
 		}
 		
 		this.dedManager = new DEDManager(this);
@@ -193,6 +202,23 @@ public class DragonEggDrop extends JavaPlugin {
 	 */
 	public String getNewVersion() {
 		return newVersion;
+	}
+	
+	private void saveDefaultTemplates() {
+		try (JarFile jar = new JarFile(getFile())){
+			Enumeration<JarEntry> entries = jar.entries();
+			
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				String name = entry.getName();
+				
+				if (!name.startsWith("dragons/")) continue;
+				
+				this.saveResource(name, false);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void doVersionCheck() {
