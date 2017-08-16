@@ -1,0 +1,29 @@
+dragon-name: "&eKelarth"
+bar-style: SEGMENTED_6
+bar-color: YELLOW
+
+egg-spawn-chance: 100.0
+egg-name: "%dragon%'s Egg"
+egg-lore:
+  - "&fI don't have a pun for this one"
+
+chest-spawn-chance: 10.0
+chest-name: "Loot Chest"
+min-loot: 1
+max-loot: 3
+
+announce-respawn: false
+spawn-weight: 0.65
+
+loot:
+  '1':
+    weight: 1.0
+    type: STICK
+    damage: 1
+    amount: 1
+    display-name: '&bExample Item'
+    lore:
+    - '&6Configure me'
+    - '&6to any item'
+    enchantments:
+      DURABILITY: 1

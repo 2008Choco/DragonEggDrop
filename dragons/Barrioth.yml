@@ -1,0 +1,28 @@
+dragon-name: "&3Barrioth the Gentle"
+bar-style: SEGMENTED_10
+bar-color: PINK
+
+egg-spawn-chance: 75.0
+egg-name: "%dragon%'s Egg"
+egg-lore: []
+
+chest-spawn-chance: 25.0
+chest-name: "Loot Chest"
+min-loot: 2
+max-loot: 4
+
+announce-respawn: false
+spawn-weight: 0.25
+
+loot:
+  '1':
+    weight: 1.0
+    type: STICK
+    damage: 1
+    amount: 1
+    display-name: '&bExample Item'
+    lore:
+    - '&6Configure me'
+    - '&6to any item'
+    enchantments:
+      DURABILITY: 1

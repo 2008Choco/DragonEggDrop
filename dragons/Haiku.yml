@@ -1,0 +1,18 @@
+dragon-name: "&cHaiku"
+bar-style: SOLID
+bar-color: GREEN
+
+egg-spawn-chance: 100.0
+egg-name: "%dragon%'s Egg"
+egg-lore:
+  - "&aFrom yonder o'er"
+  - "&aThe high seas, fast encroaching"
+  - "&aHere Come The Dragons"
+
+chest-spawn-chance: 0.0
+chest-name: "Loot Chest"
+min-loot: 0
+max-loot: 0
+
+announce-respawn: false
+spawn-weight: 2

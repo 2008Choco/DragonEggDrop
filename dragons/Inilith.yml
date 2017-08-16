@@ -1,0 +1,28 @@
+dragon-name: "&5Inilth, Lord of Fire"
+bar-style: SEGMENTED_12
+bar-color: RED
+
+egg-spawn-chance: 80.0
+egg-name: "%dragon%'s Egg"
+egg-lore: []
+
+chest-spawn-chance: 50.0
+chest-name: "Loot Chest"
+min-loot: 3
+max-loot: 6
+
+announce-respawn: true
+spawn-weight: 0.15
+
+loot:
+  '1':
+    weight: 1.0
+    type: STICK
+    damage: 1
+    amount: 1
+    display-name: '&bExample Item'
+    lore:
+    - '&6Configure me'
+    - '&6to any item'
+    enchantments:
+      DURABILITY: 1

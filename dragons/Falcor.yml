@@ -1,0 +1,16 @@
+dragon-name: "&bFalcor"
+bar-style: SOLID
+bar-color: RED
+
+egg-spawn-chance: 100.0
+egg-name: "%dragon%'s Egg"
+egg-lore:
+  - "&c&lFALCOR PUNCH!"
+
+chest-spawn-chance: 0.0
+chest-name: "Loot Chest"
+min-loot: 0
+max-loot: 0
+
+announce-respawn: false
+spawn-weight: 2
