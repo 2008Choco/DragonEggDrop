@@ -47,28 +47,6 @@ Particles:
 # Number of lightning entities to spawn on egg land
 lightning-amount: 4
 
-# Drop type (egg, chest, chance, all). Option to drop a loot chest instead of an egg.
-# Loot items are defined in loot.yml via command /ded addloot
-# The 'all' type places every item defined in the loot.yml into the chest one time each.
-drop-type: egg
-
-# If chance, what is the percent chance of spawning a chest?(0 - 100)
-chest-spawn-chance: 20
-
-# Want a custom title for the loot chest? Set it here.
-loot-chest-title: 'Loot Chest'
-
-# Number of items in a loot chest
-min-loot: 2
-max-loot: 6
-
-# Set a custom name and lore for the egg item (optional)
-# The variable, "%dragon", will be replaced with the name of the killed dragon
-# NOTE: Only eggs broken/dropped in the end world without
-# existing ItemMeta will receive the below name/lore.
-egg-name: "%dragon%'s Egg"
-egg-lore: []
-
 # Respawn dragon on join? (delay is in seconds)
 respawn-on-join: false
 join-respawn-delay: 60
@@ -80,32 +58,7 @@ death-respawn-delay: 300
 # Whether the countdown will run even when out of the end
 countdown-across-world: false
 
-# Announce respawn to end world players via the action bar.
-announce-respawn: true
-
 # Announcement message animation
 announce-messages:
 - '&6Dragon respawning in &e%formatted-time%'
 - '&eDragon respawning in &6%formatted-time%'
-
-# Give the dragon a custom name, bar style and bar colour. Or not, your choice.
-# If more than one option, one will be chosen at random.
-# Names do support color/format codes i.e. &4 (red).
-# Set to: dragon-names: [] for none.
-# Format: "name=DRAGON'S NAME|style=STYLE|color=COLOR"
-# format and style are optional. See their respective Javadocs for valid values
-# Style: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
-# Colour: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
-dragon-names:
-- 'name=&aEndy'
-- 'name=&bFalcor|colour=RED'
-- 'name=&cHaiku|colour=GREEN'
-- "name=&dMylanth|style=SEGMENTED_6|colour=WHITE"
-- "name=&eKelarth|style=SEGMENTED_6|colour=YELLOW"
-- "name=&1Mnerolth the Insane|style=SEGMENTED_10|colour=RED"
-- "name=&2Verioth the Chosen|style=SEGMENTED_10|colour=GREEN"
-- "name=&3Barroth the Gentle|style=SEGMENTED_10|color=PINK"
-- "name=&4Bassilith, Lord of Ice|style=SEGMENTED_12|color=BLUE"
-- "name=&5Inilth, Lord of Fire|style=SEGMENTED_12|color=RED"
-- "name=&6Nveryioth, Lord of Light|style=SEGMENTED_20|color=YELLOW"
-- "name=&8Tilenth, Lord of Death|style=SEGMENTED_20|color=PURPLE"
