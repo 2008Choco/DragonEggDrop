@@ -43,7 +43,6 @@ public class DragonTemplateCmd implements CommandExecutor {
 		this.manager = plugin.getDEDManager();
 	}
 	
-	// TODO: create/delete subcommands
 	// /template <list|"template"> <(view/info)|edit>
 	
 	@Override
@@ -58,6 +57,11 @@ public class DragonTemplateCmd implements CommandExecutor {
 		// TODO: Allow for synthetic templates to be listed as well... somehow
 		// List all existing templates
 		if (args[0].equalsIgnoreCase("list")) {
+			if (!sender.hasPermission("dragoneggdrop.template.list")) {
+				this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+				return true;
+			}
+			
 			String[] templateNames = templates.stream()
 				.filter(t -> t.getFile() != null)
 				.map(t -> {
@@ -93,6 +97,11 @@ public class DragonTemplateCmd implements CommandExecutor {
 		
 		// "view/info" and "edit" params
 		if (args[1].equalsIgnoreCase("view") || args[1].equalsIgnoreCase("info")) {
+			if (!sender.hasPermission("dragoneggdrop.template.info")) {
+				this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+				return true;
+			}
+			
 			sender.sendMessage(ChatColor.GRAY + "Dragon Name: " + ChatColor.GREEN + template.getName());
 			sender.sendMessage(ChatColor.GRAY + "Bar Style: " + ChatColor.GREEN + template.getBarStyle());
 			sender.sendMessage(ChatColor.GRAY + "Bar Color: " + ChatColor.GREEN + template.getBarColor());
@@ -110,6 +119,11 @@ public class DragonTemplateCmd implements CommandExecutor {
 			if (args[2].equalsIgnoreCase("addloot")) {
 				if (!(sender instanceof Player)) {
 					this.plugin.sendMessage(sender, "You must be a player to add loot to a template. An item must be held in hand");
+					return true;
+				}
+				
+				if (!sender.hasPermission("dragoneggdrop.template.edit.addloot")) {
+					this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
 					return true;
 				}
 				
@@ -133,7 +147,12 @@ public class DragonTemplateCmd implements CommandExecutor {
 			}
 			
 			if (args[2].equalsIgnoreCase("set")) {
-				// TODO
+				if (!sender.hasPermission("dragoneggdrop.template.edit.set")) {
+					this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+					return true;
+				}
+				
+				// TODO set variables in configuration file
 			}
 		}
 		
