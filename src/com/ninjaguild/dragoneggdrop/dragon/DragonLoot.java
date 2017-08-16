@@ -100,11 +100,11 @@ public class DragonLoot {
 		
 		if (updateFile && template.configFile != null) {
 			FileConfiguration config = template.configFile;
-			int itemID = loot.size() + 1;
+			int itemID = loot.size();
 			
 			config.set("loot." + itemID + ".weight", weight);
-			config.set("loot." + itemID + ".type", item.getType());
-			config.set("loot." + itemID + ".damage", item.getDurability());
+			config.set("loot." + itemID + ".type", item.getType().name());
+			if (item.getDurability() != 0) config.set("loot." + itemID + ".damage", item.getDurability());
 			config.set("loot." + itemID + ".amount", item.getAmount());
 			
 			if (item.hasItemMeta()) {
@@ -484,16 +484,18 @@ public class DragonLoot {
 			Map<Enchantment, Integer> enchantments = new HashMap<>();
 			
 			// Enchantment parsing
-			for (String enchant : lootSection.getConfigurationSection("enchantments").getKeys(false)) {
-				Enchantment enchantment = Enchantment.getByName(enchant);
-				int level = lootSection.getInt(itemKey + ".enchantments." + enchant);
-				
-				if (enchantment == null || level == 0) {
-					logger.warning("Invalid enchantment \"" + enchant + "\" with level " + level);
-					continue;
+			if (lootSection.contains("enchantments")) {
+				for (String enchant : lootSection.getConfigurationSection("enchantments").getKeys(false)) {
+					Enchantment enchantment = Enchantment.getByName(enchant);
+					int level = lootSection.getInt(itemKey + ".enchantments." + enchant);
+					
+					if (enchantment == null || level == 0) {
+						logger.warning("Invalid enchantment \"" + enchant + "\" with level " + level);
+						continue;
+					}
+					
+					enchantments.put(enchantment, level);
 				}
-				
-				enchantments.put(enchantment, level);
 			}
 			
 			// Meta updating
