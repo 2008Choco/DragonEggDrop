@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.logging.Level;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
@@ -47,9 +49,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * DragonEggDrop, reward your players with a dragon egg/loot chest 
@@ -197,27 +196,27 @@ public class DragonEggDrop extends JavaPlugin {
 	}
 	
 	private void doVersionCheck() {
-		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(SPIGET_LINK).openStream()))){
-
-				JSONParser parser = new JSONParser();
-				JSONObject json = (JSONObject) parser.parse(reader);
-				
-				String currentVersion = getDescription().getVersion(), recentVersion = (String) json.get("name");
-				
-				if (!currentVersion.equals(recentVersion)) {
-					getLogger().info("New version available. Your Version = " + currentVersion + ". New Version = " + recentVersion);
-					this.newVersionAvailable = true;
-					this.newVersion = recentVersion;
+		new BukkitRunnable() {
+			
+			private final Gson gson = new Gson();
+			
+			@Override
+			public void run() {
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(SPIGET_LINK).openStream()))){
+					JsonObject object = gson.fromJson(reader, JsonObject.class);
+					String currentVersion = getDescription().getVersion();
+					String recentVersion = object.get("name").getAsString();
+					
+					if (!currentVersion.equals(recentVersion)) {
+						getLogger().info("New version available. Your Version = " + currentVersion + ". New Version = " + recentVersion);
+						newVersionAvailable = true;
+						newVersion = recentVersion;
+					}
+				} catch (IOException e) {
+					getLogger().info("Could not check for a new version. Perhaps the website is down?");
 				}
-			} catch (IOException e) {
-				getLogger().info("Could not check for a new version. Perhaps the website is down?");
-			} catch (ParseException e) {
-				getLogger().info("There was an issue parsing JSON formatted data. If issues continue, please put in a ticket on the "
-						+ "DragonEggDrop Revival development page with the following stacktrace");
-				e.printStackTrace();
 			}
-		});
+		}.runTaskAsynchronously(this);
 	}
 	
 	private final boolean setupNMSAbstract(){
@@ -230,7 +229,7 @@ public class DragonEggDrop extends JavaPlugin {
         	this.nmsAbstract = new NMSAbstract1_10_R1();
         } else if (version.equals("v1_11_R1")){ // 1.11.0 - 1.11.2
         	this.nmsAbstract = new NMSAbstract1_11_R1();
-        } else if (version.equals("v1_12_R1")) { // 1.12.0
+        } else if (version.equals("v1_12_R1")) { // 1.12.0 - 1.12.1
         	this.nmsAbstract = new NMSAbstract1_12_R1();
         }
         
