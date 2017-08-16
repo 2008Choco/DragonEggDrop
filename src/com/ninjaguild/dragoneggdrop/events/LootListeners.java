@@ -20,10 +20,12 @@
 package com.ninjaguild.dragoneggdrop.events;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonLoot;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderCrystal;
@@ -52,17 +54,20 @@ public class LootListeners implements Listener {
 		if (item.getWorld().getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG
 				|| stack.hasItemMeta()) return;
 		
-		ItemMeta eggMeta = stack.getItemMeta();
-		String eggName = plugin.getConfig().getString("egg-name").replace("%dragon%", plugin.getDEDManager().getCurrentBattle().getName());
-		List<String> eggLore = plugin.getConfig().getStringList("egg-lore");
+		DragonTemplate dragon = plugin.getDEDManager().getCurrentBattle();
+		DragonLoot loot = dragon.getLoot();
+		
+		String eggName = loot.getEggName().replace("%dragon%", dragon.getName());
+		List<String> eggLore = loot.getEggLore().stream()
+				.map(s -> s.replace("%dragon%", dragon.getName()))
+				.collect(Collectors.toList());
 
+		ItemMeta eggMeta = stack.getItemMeta();
+		
 		if (eggName != null && !eggName.isEmpty()) {
-			eggMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', eggName));
+			eggMeta.setDisplayName(eggName);
 		}
 		if (eggLore != null && !eggLore.isEmpty()) {
-			for (int i = 0; i < eggLore.size(); i++) {
-				eggLore.set(i, ChatColor.translateAlternateColorCodes('&', eggLore.get(i).replace("%dragon%", plugin.getDEDManager().getCurrentBattle().getName())));
-			}
 			eggMeta.setLore(eggLore);
 		}
 		
