@@ -105,19 +105,15 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
 		
 		if (shape.equalsIgnoreCase("BALL")) {
-			this.plugin.getLogger().info("Using Ball particle effect");
 			this.particleShape = new ParticleShapeDefinition(location, "x", "z");
 		}
 		else if (shape.equalsIgnoreCase("HELIX")) {
-			this.plugin.getLogger().info("Using Helix particle effect");
 			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2");
 		}
 		else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
-			this.plugin.getLogger().info("Using Open End Helix particle effect");
 			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
 		}
 		else { // CUSTOM or default
-			this.plugin.getLogger().info("Using custom particle effect");
 			this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
 		}
 
