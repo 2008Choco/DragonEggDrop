@@ -309,12 +309,18 @@ public class DragonTemplate {
 	 * @return all parsed DragonTemplate objects
 	 */
 	public static List<DragonTemplate> loadTemplates() {
+		DragonEggDrop plugin = JavaPlugin.getPlugin(DragonEggDrop.class);
 		List<DragonTemplate> templates = new ArrayList<>();
 		
 		// Return empty list if the folder was just created
 		if (DRAGONS_FOLDER.mkdir()) return templates;
 		
 		for (File file : DRAGONS_FOLDER.listFiles((file, name) -> name.endsWith(".yml"))) {
+			if (file.getName().contains(" ")) {
+				plugin.getLogger().warning("Dragon template files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
+				continue;
+			}
+			
 			FileConfiguration dragonFile = YamlConfiguration.loadConfiguration(file);
 			
 			String name = dragonFile.getString("dragon-name", "Ender Dragon");
