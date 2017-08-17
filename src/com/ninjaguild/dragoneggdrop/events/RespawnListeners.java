@@ -31,7 +31,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public class RespawnListeners implements Listener {
 	
@@ -47,21 +46,14 @@ public class RespawnListeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerSwitchWorlds(PlayerChangedWorldEvent event) {
-		World fromWorld = event.getFrom(), toWorld = event.getPlayer().getWorld();
-		
-		// Cancel respawn countdown if all players leave the world
-		if (!plugin.getConfig().getBoolean("countdown-across-world", false)) {
-			if (fromWorld.getEnvironment() != Environment.THE_END || fromWorld.getPlayers().isEmpty()) return;
-			
-			manager.getWorldWrapper(fromWorld).stopRespawn();
-		}
+		World world = event.getPlayer().getWorld();
 		
 		// Start the respawn countdown if joining an empty world
 		if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
-			if (toWorld.getEnvironment() == Environment.THE_END && toWorld.getPlayers().size() == 1) {
-				if (manager.getWorldWrapper(toWorld).getTimeUntilRespawn() >= 0) return;
+			if (world.getEnvironment() == Environment.THE_END && world.getPlayers().size() == 1) {
+				if (manager.getWorldWrapper(world).getTimeUntilRespawn() >= 0) return;
 				
-				manager.getWorldWrapper(toWorld).startRespawn(RespawnType.JOIN);
+				manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 			}
 		}
 	}
@@ -84,18 +76,4 @@ public class RespawnListeners implements Listener {
 		manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 	}
 	
-	@EventHandler
-	public void onPlayerLeave(PlayerQuitEvent event) {
-		if (!plugin.getConfig().getBoolean("respawn-on-join", false)
-				&& !plugin.getConfig().getBoolean("respawn-on-death", true)) return;
-		
-		World world = event.getPlayer().getWorld();
-		
-		// Cancel respawn countdown if all players quit the world
-		if (!plugin.getConfig().getBoolean("countdown-across-world", false)) {
-			if (world.getEnvironment() != Environment.THE_END || world.getPlayers().isEmpty()) return;
-			
-			plugin.getDEDManager().getWorldWrapper(world).stopRespawn();
-		}
-	}
 }
