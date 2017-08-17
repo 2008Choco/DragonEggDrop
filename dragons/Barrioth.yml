@@ -18,6 +18,7 @@ loot:
   '1':
     weight: 1.0
     type: STICK
+    data: 0
     damage: 1
     amount: 1
     display-name: '&bExample Item'

@@ -95,6 +95,7 @@ public class DragonLoot {
 	 * @param weight the generation weight of the item
 	 * @param updateFile whether to update the dragon file or not
 	 */
+	@SuppressWarnings("deprecation")
 	public void addLootItem(ItemStack item, double weight, boolean updateFile) {
 		this.loot.add(weight, item);
 		
@@ -104,6 +105,7 @@ public class DragonLoot {
 			
 			config.set("loot." + itemID + ".weight", weight);
 			config.set("loot." + itemID + ".type", item.getType().name());
+			if (item.getData().getData() != 0) config.set("loot." + itemID + ".data", item.getData().getData());
 			if (item.getDurability() != 0) config.set("loot." + itemID + ".damage", item.getDurability());
 			config.set("loot." + itemID + ".amount", item.getAmount());
 			
@@ -466,6 +468,7 @@ public class DragonLoot {
 			double weight = lootSection.getDouble(itemKey + ".weight");
 			
 			Material type = EnumUtils.getEnum(Material.class, lootSection.getString(itemKey + ".type").toUpperCase());
+			byte data = (byte) lootSection.getInt(itemKey + ".data");
 			short damage = (short) lootSection.getInt(itemKey + ".damage");
 			int amount = lootSection.getInt(itemKey + ".amount");
 			
@@ -475,7 +478,8 @@ public class DragonLoot {
 			}
 			
 			// Create new item stack with passed values
-			ItemStack item = new ItemStack(type, damage);
+			@SuppressWarnings("deprecation")
+			ItemStack item = new ItemStack(type, 1, damage, data);
 			item.setAmount(amount);
 			
 			// Parse meta
