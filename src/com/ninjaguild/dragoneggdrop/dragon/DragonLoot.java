@@ -484,8 +484,8 @@ public class DragonLoot {
 			Map<Enchantment, Integer> enchantments = new HashMap<>();
 			
 			// Enchantment parsing
-			if (lootSection.contains("enchantments")) {
-				for (String enchant : lootSection.getConfigurationSection("enchantments").getKeys(false)) {
+			if (lootSection.contains(itemKey + ".enchantments")) {
+				for (String enchant : lootSection.getConfigurationSection(itemKey + ".enchantments").getKeys(false)) {
 					Enchantment enchantment = Enchantment.getByName(enchant);
 					int level = lootSection.getInt(itemKey + ".enchantments." + enchant);
 					
