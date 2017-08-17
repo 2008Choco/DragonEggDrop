@@ -18,7 +18,6 @@ permissions:
     children:
       dragoneggdrop.help: true
       dragoneggdrop.reload: true
-      dragoneggdrop.addloot: true
       dragoneggdrop.template.*: true
   
   dragoneggdrop.template.*:
