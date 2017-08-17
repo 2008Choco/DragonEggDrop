@@ -50,6 +50,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -133,9 +134,9 @@ public class DragonEggDrop extends JavaPlugin {
 					
 					// New version found
 					if (previousState != newVersionAvailable) {
-						Bukkit.getOnlinePlayers().forEach(p -> {
-							if (p.isOp()) sendMessage(p, ChatColor.GRAY + "A new version is available for download (Version " + newVersion + "). ");
-						});
+						Bukkit.getOnlinePlayers().stream()
+							.filter(Player::isOp)
+							.forEach(p -> sendMessage(p, ChatColor.GRAY + "A new version is available for download (Version " + newVersion + "). "));
 					}
 				}
 			}.runTaskTimerAsynchronously(this, 0, 36000);
@@ -150,9 +151,7 @@ public class DragonEggDrop extends JavaPlugin {
 		this.dedManager.clearTemplates();
 		
 		// Clear the world wrappers
-		this.dedManager.getWorldWrappers().forEach((u, w) -> {
-			w.stopRespawn();
-		});
+		this.dedManager.getWorldWrappers().forEach((u, w) -> w.stopRespawn());
 		this.dedManager.getWorldWrappers().clear();
 	}
 	
