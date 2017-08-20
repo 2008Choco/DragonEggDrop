@@ -53,15 +53,22 @@ public class RespawnSafeguardRunnable extends BukkitRunnable {
 	
 	@Override
 	public void run() {
-		// Ender dragon exists. No need to reset. It's safe
-		if (world.getEntitiesByClass(EnderDragon.class).size() >= 1) return;
+		// Ender dragon was not found. Forcibly respawn it
+		if (world.getEntitiesByClass(EnderDragon.class).size() == 0) {
+			this.plugin.getLogger().warning("Something went wrong! Had to forcibly reset dragon battle...");
+			
+			this.battle.resetBattleState();
+			this.removeCrystals();
+			
+			new RespawnRunnable(plugin, battle.getEndPortalLocation(), 0, plugin.getConfig().getBoolean("announce-respawn", true)).runTaskTimer(plugin, 0, 20L);
+			return;
+		}
 		
-		this.plugin.getLogger().warning("Something went wrong! Had to forcibly reset dragon battle...");
-		
-		this.battle.resetBattleState();
-		this.removeCrystals();
-		
-		new RespawnRunnable(plugin, battle.getEndPortalLocation(), 0, plugin.getConfig().getBoolean("announce-respawn", true)).runTaskTimer(plugin, 0, 20L);
+		// Ensure all crystals are not invulnerable
+		this.world.getEntitiesByClass(EnderCrystal.class).forEach(c -> {
+			c.setInvulnerable(false);
+			c.setBeamTarget(null);
+		});
 	}
 	
 	private void removeCrystals() {
