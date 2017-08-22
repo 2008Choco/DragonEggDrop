@@ -55,7 +55,7 @@ public class EndWorldWrapper {
 	 * @param plugin the plugin instance
 	 * @param world the world to wrap
 	 */
-	public EndWorldWrapper(DragonEggDrop plugin, World world) {
+	protected EndWorldWrapper(DragonEggDrop plugin, World world) {
 		this.plugin = plugin;
 		this.world = world.getUID();
 		
