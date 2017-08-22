@@ -93,6 +93,13 @@ public class EndWorldWrapper {
 		this.respawnInProgress = true;
 	}
 	
+	/**
+	 * Commence the Dragon's respawning processes in this world based 
+	 * on provided values rather than configured ones.
+	 * 
+	 * @param respawnDelay the time until the dragon respawns
+	 * @param announceRespawn whether to show the time remaining in the action bar
+	 */
 	public void startRespawn(int respawnDelay, boolean announceRespawn) {
 		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return;

@@ -66,7 +66,7 @@ public class DragonTemplate {
 	 * @param file the file holding this template data. Can be null
 	 * @param name the name of the dragon
 	 * @param barStyle the style of the bar
-	 * @param barcolour the colour of the bar
+	 * @param barColour the colour of the bar
 	 */
 	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour) {
 		this.file = file;

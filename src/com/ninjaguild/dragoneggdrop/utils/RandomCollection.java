@@ -167,6 +167,8 @@ public class RandomCollection<E> {
      * 
      * @param toCopy the collection to copy
      * @return the collection copy
+     * 
+     * @param <E> - The type of object stored in the Collections
      */
     public static <E> RandomCollection<E> copyOf(RandomCollection<E> toCopy) {
     	RandomCollection<E> result = new RandomCollection<E>(toCopy.random);

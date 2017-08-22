@@ -31,8 +31,8 @@ import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import org.bukkit.World;
 
 /**
- * The core Dragon Boss Battle manager. Boss battle manipulation and
- * loot generation mechanics are managed in this class
+ * The central manager holding all information regarding world wrappers,
+ * loaded dragon templates, and the currently active dragon battle
  */
 public class DEDManager {
 
@@ -49,14 +49,13 @@ public class DEDManager {
 	 * 
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 */
-	public DEDManager(final DragonEggDrop plugin) {
+	public DEDManager(DragonEggDrop plugin) {
 		this.plugin = plugin;
-		
 		this.reloadDragonTemplates();
 	}
 	
 	/**
-	 * Get a collection of all dragon templates
+	 * Get a collection of all loaded dragon templates
 	 * 
 	 * @return all dragon templates
 	 */
@@ -65,16 +64,18 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get a random dragon template from the random collection
+	 * Get a weighted random dragon template pooled from all loaded templates. 
 	 * 
 	 * @return a random dragon template. null if none
+	 * 
+	 * @see #getDragonTemplates()
 	 */
 	public DragonTemplate getRandomTemplate() {
 		return dragonTemplates.next();
 	}
 	
 	/**
-	 * Get a template based on its file's name
+	 * Get a template based on its file name
 	 * 
 	 * @param fileName the file name of the template to get
 	 * @return the resulting template, or null if none exists
@@ -94,7 +95,9 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Load the dragon template files from the "dragons" folder
+	 * Load and parse all dragon template files from the "dragons" folder.
+	 * This method implicitly invokes {@link #clearTemplates()} before loading any
+	 * other templates
 	 */
 	public void reloadDragonTemplates() {
 		this.dragonTemplates.clear();
@@ -104,16 +107,17 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Set the battle that is currently taking (or most recently took) place
+	 * Set the battle that is active according to DragonEggDrop. This battle
+	 * instance will be used to generate names and lore for loot respectively
 	 * 
-	 * @param currentBattle the battle to set
+	 * @param activeBattle the battle to set
 	 */
 	public void setActiveBattle(DragonTemplate activeBattle) {
 		this.activeBattle = activeBattle;
 	}
 	
 	/**
-	 * Get the current (or most recent) battle
+	 * Get the template represented in the active battle
 	 * 
 	 * @return the current battle
 	 */

@@ -70,6 +70,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 * @param portalLocation the location in which the egg is located
 	 * @param respawnTime the time in seconds until the respawn is executed
+	 * @param announceRespawn whether to show remaining time in the action bar or not
 	 */
 	public RespawnRunnable(DragonEggDrop plugin, Location portalLocation, int respawnTime, boolean announceRespawn) {
 		this.plugin = plugin;
