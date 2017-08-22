@@ -307,13 +307,10 @@ public class DragonEggDrop extends JavaPlugin {
 	
 	private void doVersionCheck() {
 		new BukkitRunnable() {
-			
-			private final Gson gson = new Gson();
-			
 			@Override
 			public void run() {
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(SPIGET_LINK).openStream()))){
-					JsonObject object = gson.fromJson(reader, JsonObject.class);
+					JsonObject object = GSON.fromJson(reader, JsonObject.class);
 					String currentVersion = getDescription().getVersion();
 					String recentVersion = object.get("name").getAsString();
 					
