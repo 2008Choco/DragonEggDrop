@@ -24,14 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.bukkit.World;
-import org.bukkit.entity.EnderDragon;
 
 /**
  * The core Dragon Boss Battle manager. Boss battle manipulation and
@@ -56,27 +53,6 @@ public class DEDManager {
 		this.plugin = plugin;
 		
 		this.reloadDragonTemplates();
-		this.setDragonBossBarTitle();
-	}
-	
-	/**
-	 * Set the title of the boss bar to that of the dragon
-	 */
-	private void setDragonBossBarTitle() {
-		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-		
-		this.worldWrappers.values().stream()
-			.map(EndWorldWrapper::getWorld)
-			.forEach(w -> {
-				Collection<EnderDragon> dragons = w.getEntitiesByClass(EnderDragon.class);
-				if (!dragons.isEmpty()) {
-					String dragonName = Iterables.get(dragons, 0).getCustomName();
-					if (dragonName != null && !dragonName.isEmpty()) {
-						nmsAbstract.getEnderDragonBattleFromWorld(w).setBossBarTitle(dragonName);
-					}
-				}
-			}
-		);
 	}
 	
 	/**
