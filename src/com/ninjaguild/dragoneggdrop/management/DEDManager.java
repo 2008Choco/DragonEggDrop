@@ -121,8 +121,16 @@ public class DEDManager {
 	 * 
 	 * @return all world wrappers
 	 */
-	public Map<UUID, EndWorldWrapper> getWorldWrappers() {
-		return worldWrappers;
+	public Collection<EndWorldWrapper> getWorldWrappers() {
+		return worldWrappers.values();
+	}
+	
+	/**
+	 * Clear all world wrapper data. This deletes all information to do with
+	 * active battles, as well as the state of a world according to DragonEggDrop
+	 */
+	public void clearWorldWrappers() {
+		this.worldWrappers.clear();
 	}
 	
 	/**

@@ -184,8 +184,8 @@ public class DragonEggDrop extends JavaPlugin {
 		this.dedManager.clearTemplates();
 		
 		// Clear the world wrappers
-		this.dedManager.getWorldWrappers().forEach((u, w) -> w.stopRespawn());
-		this.dedManager.getWorldWrappers().clear();
+		this.dedManager.getWorldWrappers().forEach(EndWorldWrapper::stopRespawn);
+		this.dedManager.clearWorldWrappers();
 	}
 	
 	/**
@@ -256,7 +256,7 @@ public class DragonEggDrop extends JavaPlugin {
 	private void writeTempData(File file) {
 		JsonObject root = new JsonObject();
 		
-		for (EndWorldWrapper world : dedManager.getWorldWrappers().values()) {
+		for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
 			if (!world.isRespawnInProgress() && world.getActiveBattle() == null) return;
 			
 			JsonObject jsonWorld = new JsonObject();
