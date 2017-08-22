@@ -39,7 +39,6 @@ public class DEDManager {
 	private final DragonEggDrop plugin;
 	
 	private RandomCollection<DragonTemplate> dragonTemplates = new RandomCollection<>();
-	private DragonTemplate activeBattle;
 	
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
 	
@@ -104,25 +103,6 @@ public class DEDManager {
 		
 		for (DragonTemplate template : DragonTemplate.loadTemplates())
 			this.dragonTemplates.add(template.getSpawnWeight(), template);
-	}
-	
-	/**
-	 * Set the battle that is active according to DragonEggDrop. This battle
-	 * instance will be used to generate names and lore for loot respectively
-	 * 
-	 * @param activeBattle the battle to set
-	 */
-	public void setActiveBattle(DragonTemplate activeBattle) {
-		this.activeBattle = activeBattle;
-	}
-	
-	/**
-	 * Get the template represented in the active battle
-	 * 
-	 * @return the current battle
-	 */
-	public DragonTemplate getActiveBattle() {
-		return activeBattle;
 	}
 	
 	/**

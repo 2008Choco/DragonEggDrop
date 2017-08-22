@@ -27,6 +27,7 @@ import com.ninjaguild.dragoneggdrop.dragon.DragonLoot;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
@@ -50,11 +51,12 @@ public class LootListeners implements Listener {
 	public void onItemSpawn(ItemSpawnEvent event) {
 		Item item = event.getEntity();
 		ItemStack stack = item.getItemStack();
+		World world = item.getWorld();
 		
-		if (item.getWorld().getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG
+		if (world.getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG
 				|| stack.hasItemMeta()) return;
 		
-		DragonTemplate dragon = plugin.getDEDManager().getActiveBattle();
+		DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getActiveBattle();
 		DragonLoot loot = dragon.getLoot();
 		
 		String eggName = loot.getEggName().replace("%dragon%", dragon.getName());

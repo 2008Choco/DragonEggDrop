@@ -55,7 +55,7 @@ public class DragonLifeListeners implements Listener {
 		DragonTemplate template = plugin.getDEDManager().getRandomTemplate();
 		if (template != null) {
 			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
-			plugin.getDEDManager().setActiveBattle(template);
+			plugin.getDEDManager().getWorldWrapper(dragon.getWorld()).setActiveBattle(template);
 			
 			if (template.shouldAnnounceRespawn()) {
 				Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(

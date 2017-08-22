@@ -22,6 +22,7 @@ package com.ninjaguild.dragoneggdrop.management;
 import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
@@ -45,6 +46,7 @@ public class EndWorldWrapper {
 	private RespawnRunnable respawnTask;
 	
 	private boolean respawnInProgress = false;
+	private DragonTemplate activeBattle;
 	
 	private final DragonEggDrop plugin;
 	private final UUID world;
@@ -141,4 +143,25 @@ public class EndWorldWrapper {
 	public int getTimeUntilRespawn() {
 		return (this.respawnTask != null ? this.respawnTask.getSecondsUntilRespawn() : -1);
 	}
+	
+
+	/**
+	 * Set the battle that is active according to DragonEggDrop. This battle
+	 * instance will be used to generate names and lore for loot respectively
+	 * 
+	 * @param activeBattle the battle to set
+	 */
+	public void setActiveBattle(DragonTemplate activeBattle) {
+		this.activeBattle = activeBattle;
+	}
+	
+	/**
+	 * Get the template represented in the active battle
+	 * 
+	 * @return the current battle
+	 */
+	public DragonTemplate getActiveBattle() {
+		return activeBattle;
+	}
+	
 }
