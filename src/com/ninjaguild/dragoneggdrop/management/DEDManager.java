@@ -36,11 +36,9 @@ import org.bukkit.World;
  */
 public class DEDManager {
 
-	private final DragonEggDrop plugin;
-	
-	private RandomCollection<DragonTemplate> dragonTemplates = new RandomCollection<>();
-	
+	private final RandomCollection<DragonTemplate> dragonTemplates = new RandomCollection<>();
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
+	private final DragonEggDrop plugin;
 	
 	/**
 	 * Construct a new DEDManager object. This object should mainly be
