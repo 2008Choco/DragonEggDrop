@@ -39,7 +39,7 @@ public class DEDManager {
 	private final DragonEggDrop plugin;
 	
 	private RandomCollection<DragonTemplate> dragonTemplates = new RandomCollection<>();
-	private DragonTemplate currentBattle;
+	private DragonTemplate activeBattle;
 	
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
 	
@@ -108,8 +108,8 @@ public class DEDManager {
 	 * 
 	 * @param currentBattle the battle to set
 	 */
-	public void setCurrentBattle(DragonTemplate currentBattle) {
-		this.currentBattle = currentBattle;
+	public void setActiveBattle(DragonTemplate activeBattle) {
+		this.activeBattle = activeBattle;
 	}
 	
 	/**
@@ -117,8 +117,8 @@ public class DEDManager {
 	 * 
 	 * @return the current battle
 	 */
-	public DragonTemplate getCurrentBattle() {
-		return currentBattle;
+	public DragonTemplate getActiveBattle() {
+		return activeBattle;
 	}
 	
 	/**

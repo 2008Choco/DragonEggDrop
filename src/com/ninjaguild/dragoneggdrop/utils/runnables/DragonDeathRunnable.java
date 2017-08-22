@@ -150,7 +150,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 				this.worldWrapper.getWorld().strikeLightning(location);
 			
 			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
-			DragonTemplate currentBattle = plugin.getDEDManager().getCurrentBattle();
+			DragonTemplate currentBattle = plugin.getDEDManager().getActiveBattle();
 			
 			if (currentBattle != null) {
 				currentBattle.getLoot().spawnLootFor(dragonBattle, dragon);

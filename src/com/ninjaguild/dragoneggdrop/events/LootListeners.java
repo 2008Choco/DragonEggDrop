@@ -54,7 +54,7 @@ public class LootListeners implements Listener {
 		if (item.getWorld().getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG
 				|| stack.hasItemMeta()) return;
 		
-		DragonTemplate dragon = plugin.getDEDManager().getCurrentBattle();
+		DragonTemplate dragon = plugin.getDEDManager().getActiveBattle();
 		DragonLoot loot = dragon.getLoot();
 		
 		String eggName = loot.getEggName().replace("%dragon%", dragon.getName());
