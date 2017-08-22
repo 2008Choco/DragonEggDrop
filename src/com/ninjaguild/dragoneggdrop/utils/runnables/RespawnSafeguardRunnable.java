@@ -60,7 +60,7 @@ public class RespawnSafeguardRunnable extends BukkitRunnable {
 			this.battle.resetBattleState();
 			this.removeCrystals();
 			
-			new RespawnRunnable(plugin, battle.getEndPortalLocation(), 0, plugin.getConfig().getBoolean("announce-respawn", true)).runTaskTimer(plugin, 0, 20L);
+			plugin.getDEDManager().getWorldWrapper(world).startRespawn(0, plugin.getConfig().getBoolean("announce-respawn", true));
 			return;
 		}
 		

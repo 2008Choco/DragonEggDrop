@@ -162,12 +162,12 @@ public class RespawnRunnable extends BukkitRunnable {
 			}
 			
 			this.dragonBattle.respawnEnderDragon();
-			this.worldWrapper.setRespawnInProgress(true);
 			RespawnSafeguardRunnable.newTimeout(plugin, worldWrapper.getWorld(), dragonBattle);
 			
 			BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);
 			Bukkit.getPluginManager().callEvent(bscEventRespawning);
 			
+			this.worldWrapper.stopRespawn();
 			this.cancel();
 		}
 	}

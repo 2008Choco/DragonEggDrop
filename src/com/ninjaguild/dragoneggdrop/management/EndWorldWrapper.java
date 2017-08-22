@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderDragon;
 
 /**
@@ -78,44 +79,42 @@ public class EndWorldWrapper {
 	 */
 	public void startRespawn(RespawnType type) {
 		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-		if (dragonExists || respawnInProgress) {
-			return;
-		}
+		if (dragonExists || respawnInProgress || respawnTask != null) return;
 		
-        int joinDelay = plugin.getConfig().getInt("join-respawn-delay", 60); // Seconds
-        int deathDelay = plugin.getConfig().getInt("death-respawn-delay", 300); // Seconds
-        
         NMSAbstract nmsAbstract = plugin.getNMSAbstract();
         DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(this.getWorld());
         Location portalLocation = dragonBattle.getEndPortalLocation();
         
-		if (respawnTask == null || 
-				(!plugin.getServer().getScheduler().isCurrentlyRunning(respawnTask.getTaskId()) && 
-				!plugin.getServer().getScheduler().isQueued(respawnTask.getTaskId()))) {
-			int respawnDelay = (type == RespawnType.JOIN ? joinDelay : deathDelay);
-			
-			this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay, plugin.getConfig().getBoolean("announce-respawn", true));
-			this.respawnTask.runTaskTimer(plugin, 0, 20);
-		}
+        FileConfiguration config = plugin.getConfig();
+		int respawnDelay = (type == RespawnType.JOIN ? config.getInt("join-respawn-delay", 60) : config.getInt("death-respawn-delay", 300));
+		
+		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay, plugin.getConfig().getBoolean("announce-respawn", true));
+		this.respawnTask.runTaskTimer(plugin, 0, 20);
+		this.respawnInProgress = true;
+	}
+	
+	public void startRespawn(int respawnDelay, boolean announceRespawn) {
+		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
+		if (dragonExists || respawnInProgress || respawnTask != null) return;
+		
+		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
+		DragonBattle battle = nmsAbstract.getEnderDragonBattleFromWorld(getWorld());
+		Location portalLocation = battle.getEndPortalLocation();
+		
+		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay, announceRespawn);
+		this.respawnTask.runTaskTimer(plugin, 0, 20);
+		this.respawnInProgress = true;
 	}
 	
 	/**
-	 * Halt the Dragon respawning process, if any are currently running
+	 * Halt the Dragon respawning process if any are currently running
 	 */
 	public void stopRespawn() {
 		if (respawnTask != null) {
-			respawnTask.cancel();
-			respawnTask = null;
+			this.respawnTask.cancel();
+			this.respawnTask = null;
+			this.respawnInProgress = false;
 		}
-	}
-	
-	/**
-	 * Set whether a respawn is currently in progress or not
-	 * 
-	 * @param value the respawn progress state
-	 */
-	public void setRespawnInProgress(boolean value) {
-		respawnInProgress = value;
 	}
 	
 	/**

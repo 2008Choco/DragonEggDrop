@@ -51,7 +51,6 @@ public class DragonLifeListeners implements Listener {
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
 		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
-		plugin.getDEDManager().getWorldWrapper(dragon.getWorld()).setRespawnInProgress(false);
 		
 		DragonTemplate template = plugin.getDEDManager().getRandomTemplate();
 		if (template != null) {
