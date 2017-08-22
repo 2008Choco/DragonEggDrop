@@ -52,6 +52,7 @@ public class DragonTemplate {
 	protected final FileConfiguration configFile;
 	
 	private final DragonLoot loot;
+	private final String identifier;
 	
 	private String name;
 	private BarStyle barStyle;
@@ -61,16 +62,18 @@ public class DragonTemplate {
 	private boolean announceRespawn;
 	
 	/**
-	 * Construct a new DragonTemplate object with the default dragon loot
+	 * Construct a new DragonTemplate object
 	 * 
-	 * @param file the file holding this template data. Can be null
+	 * @param file the file holding this template data
 	 * @param name the name of the dragon
 	 * @param barStyle the style of the bar
 	 * @param barColour the colour of the bar
 	 */
 	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour) {
 		this.file = file;
-		this.configFile = (file != null ? YamlConfiguration.loadConfiguration(file) : null);
+		this.configFile = YamlConfiguration.loadConfiguration(file);
+		this.identifier = file.getName().substring(file.getName().lastIndexOf('.'));
+		
 		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
 		this.barColour = (barColour != null ? barColour : BarColor.PINK);
@@ -80,12 +83,31 @@ public class DragonTemplate {
 	/**
 	 * Construct a new DragonTemplate object
 	 * 
+	 * @param identifier the name to identify this template
 	 * @param name the name of the dragon
 	 * @param barStyle the style of the bar
 	 * @param barColour the colour of the bar
 	 */
-	public DragonTemplate(String name, BarStyle barStyle, BarColor barColour) {
-		this(null, name, barStyle, barColour);
+	public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour) {
+		this.file = null;
+		this.configFile = null;
+		this.identifier = identifier;
+		
+		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
+		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
+		this.barColour = (barColour != null ? barColour : BarColor.PINK);
+		this.loot = new DragonLoot(this);
+	}
+	
+	/**
+	 * Get the string that identifies this template. If a file was passed
+	 * as a parameter in the creation of this template, the file's name
+	 * will be used as the identifier.
+	 * 
+	 * @return the unique template identifier
+	 */
+	public String getIdentifier() {
+		return identifier;
 	}
 	
 	/**

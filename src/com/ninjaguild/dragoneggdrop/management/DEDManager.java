@@ -72,15 +72,15 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get a template based on its file name
+	 * Get a template based on its identifier (see {@link DragonTemplate#getIdentifier()}).
+	 * This search is case-sensitive.
 	 * 
-	 * @param fileName the file name of the template to get
+	 * @param template the template's unique identifier
 	 * @return the resulting template, or null if none exists
 	 */
-	public DragonTemplate getTemplate(String fileName) {
+	public DragonTemplate getTemplate(String template) {
 		return dragonTemplates.toCollection().stream()
-				.filter(t -> t.getFile() != null) // Ignore null files. These are custom templates
-				.filter(t -> t.getFile().getName().equalsIgnoreCase(fileName))
+				.filter(t -> t.getIdentifier().equals(template))
 				.findFirst().orElse(null);
 	}
 	

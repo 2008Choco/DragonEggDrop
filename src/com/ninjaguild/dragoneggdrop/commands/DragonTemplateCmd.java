@@ -54,7 +54,6 @@ public class DragonTemplateCmd implements CommandExecutor {
 		
 		Collection<DragonTemplate> templates = manager.getDragonTemplates();
 		
-		// TODO: Allow for synthetic templates to be listed as well... somehow
 		// List all existing templates
 		if (args[0].equalsIgnoreCase("list")) {
 			if (!sender.hasPermission("dragoneggdrop.template.list")) {
@@ -63,25 +62,16 @@ public class DragonTemplateCmd implements CommandExecutor {
 			}
 			
 			String[] templateNames = templates.stream()
-				.filter(t -> t.getFile() != null)
-				.map(t -> {
-					String name = t.getFile().getName();
-					return ChatColor.GREEN + name.substring(0, name.lastIndexOf('.'));
-				})
-				.toArray(String[]::new);
+					.map(DragonTemplate::getIdentifier)
+					.toArray(String[]::new);
 			
-			this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
+			this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", " + ChatColor.GREEN, templateNames));
 			return true;
 		}
 		
 		// Template was identified
 		DragonTemplate template = templates.stream()
-				.filter(t -> t.getFile() != null)
-				.filter(t -> {
-					String name = t.getFile().getName();
-					name = name.substring(0, name.lastIndexOf('.'));
-					return name.equals(args[0]);
-				})
+				.filter(t -> t.getName().equals(args[0]))
 				.findFirst().orElse(null);
 		
 		// No template found

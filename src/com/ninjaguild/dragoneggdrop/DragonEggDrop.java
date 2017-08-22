@@ -262,7 +262,7 @@ public class DragonEggDrop extends JavaPlugin {
 			JsonObject jsonWorld = new JsonObject();
 			
 			if (world.isRespawnInProgress()) jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
-			if (world.getActiveBattle() != null) jsonWorld.addProperty("activeTemplate", world.getActiveBattle().getFile().getName());
+			if (world.getActiveBattle() != null) jsonWorld.addProperty("activeTemplate", world.getActiveBattle().getIdentifier());
 			
 			root.add(world.getWorld().getName(), jsonWorld);
 		}
