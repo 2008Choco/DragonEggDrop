@@ -21,6 +21,9 @@ package com.ninjaguild.dragoneggdrop.utils;
 
 import java.util.Collection;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang.Validate;
+
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.Set;
@@ -52,6 +55,7 @@ public class RandomCollection<E> {
      * @param random an instance of Random to use
      */
     public RandomCollection(Random random) {
+    	Validate.notNull(random, "Random instance must not be null");
         this.random = random;
     }
 
@@ -171,6 +175,8 @@ public class RandomCollection<E> {
      * @param <E> - The type of object stored in the Collections
      */
     public static <E> RandomCollection<E> copyOf(RandomCollection<E> toCopy) {
+    	Validate.notNull(toCopy, "Cannot copy a null collection");
+    	
     	RandomCollection<E> result = new RandomCollection<E>(toCopy.random);
     	result.addAll(toCopy);
     	return result;

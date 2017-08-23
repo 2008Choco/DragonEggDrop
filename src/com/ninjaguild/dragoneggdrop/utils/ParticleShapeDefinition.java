@@ -25,6 +25,7 @@ import java.util.Map;
 import com.ninjaguild.dragoneggdrop.utils.math.MathExpression;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -53,6 +54,10 @@ public class ParticleShapeDefinition {
 	 * @param zExpression the expression for the y axis
 	 */
 	public ParticleShapeDefinition(Location initialLocation, String xExpression, String zExpression) {
+		Validate.notNull(initialLocation, "Null initial locations are not supported");
+		Validate.notEmpty(xExpression, "The x axis expression cannot be null or empty");
+		Validate.notEmpty(zExpression, "The z axis expression cannot be null or empty");
+		
 		this.variables.put("x", 0.0);
 		this.variables.put("z", 0.0);
 		this.variables.put("t", 0.0);
@@ -92,6 +97,8 @@ public class ParticleShapeDefinition {
 	 * dependent on the type of particle used)
 	 */
 	public void executeExpression(Particle particleType, int particleAmount, double xOffset, double yOffset, double zOffset, double particleExtra) {
+		Validate.notNull(particleType, "Cannot spawn Particle of type null");
+		
 		double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
 		
 		this.initialLocation.add(x, 0, z);

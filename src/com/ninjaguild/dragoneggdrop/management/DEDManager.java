@@ -110,6 +110,8 @@ public class DEDManager {
 	 * @return the world's respective wrapper
 	 */
 	public EndWorldWrapper getWorldWrapper(World world) {
+		if (world == null) return null;
+		
 		UUID worldId = world.getUID();
 		if (!worldWrappers.containsKey(worldId))
 			this.worldWrappers.put(worldId, new EndWorldWrapper(plugin, world));

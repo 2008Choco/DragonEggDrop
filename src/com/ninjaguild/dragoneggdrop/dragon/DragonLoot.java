@@ -28,11 +28,13 @@ import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -97,6 +99,9 @@ public class DragonLoot {
 	 */
 	@SuppressWarnings("deprecation")
 	public void addLootItem(ItemStack item, double weight, boolean updateFile) {
+		Validate.notNull(item, "Cannot add null ItemStack to loot");
+		if (weight < 0) weight = 0;
+		
 		this.loot.add(weight, item);
 		
 		if (updateFile && template.configFile != null) {
@@ -156,6 +161,9 @@ public class DragonLoot {
 	 * @param updateFile whether to update the dragon file or not
 	 */
 	public void setEggSpawnChance(double eggSpawnChance, boolean updateFile) {
+		if (eggSpawnChance < 0) eggSpawnChance = 0;
+		else if (eggSpawnChance > 100) eggSpawnChance = 100;
+		
 		this.eggSpawnChance = eggSpawnChance;
 		
 		if (updateFile) {
@@ -257,6 +265,9 @@ public class DragonLoot {
 	 * @param updateFile whether to update the dragon file or not
 	 */
 	public void setMinLootGen(int minLootGen, boolean updateFile) {
+		if (minLootGen < 0) minLootGen = 0;
+		Preconditions.checkArgument(minLootGen <= maxLootGen, "Minimum loot gen cannot be greater than maximum loot gen (%s)", maxLootGen);
+		
 		this.minLootGen = minLootGen;
 		
 		if (updateFile) {
@@ -290,6 +301,9 @@ public class DragonLoot {
 	 * @param updateFile whether to update the dragon file or not
 	 */
 	public void setMaxLootGen(int maxLootGen, boolean updateFile) {
+		if (maxLootGen < 0) maxLootGen = 0;
+		Preconditions.checkArgument(maxLootGen >= minLootGen, "Maximum loot gen cannot be less than minimum loot gen (%s)", minLootGen);
+		
 		this.maxLootGen = maxLootGen;
 		
 		if (updateFile) {
@@ -323,6 +337,9 @@ public class DragonLoot {
 	 * @param updateFile whether to update the dragon file or not
 	 */
 	public void setChestSpawnChance(double chestSpawnChance, boolean updateFile) {
+		if (chestSpawnChance < 0) chestSpawnChance = 0;
+		else if (chestSpawnChance > 100) chestSpawnChance = 100;
+		
 		this.chestSpawnChance = chestSpawnChance;
 		
 		if (updateFile) {
@@ -398,6 +415,9 @@ public class DragonLoot {
 	 * @param dragon the dragon whose egg should be spawned
 	 */
 	public void spawnLootFor(DragonBattle battle, EnderDragon dragon) {
+		Validate.notNull(battle, "Cannot spawn loot for null dragon battle");
+		Validate.notNull(dragon, "Cannot spawn loot for null ender dragon");
+		
 		Location location = battle.getEndPortalLocation();
 		
 		boolean spawnEgg = RANDOM.nextDouble() * 100 <= eggSpawnChance;

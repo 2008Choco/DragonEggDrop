@@ -28,6 +28,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -65,11 +66,13 @@ public class DragonTemplate {
 	 * Construct a new DragonTemplate object
 	 * 
 	 * @param file the file holding this template data
-	 * @param name the name of the dragon
-	 * @param barStyle the style of the bar
-	 * @param barColour the colour of the bar
+	 * @param name the name of the dragon. Can be null
+	 * @param barStyle the style of the bar. Can be null
+	 * @param barColour the colour of the bar. Can be null
 	 */
 	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour) {
+		Validate.notNull(file, "File cannot be null. See DragonTemplate(String, String, BarStyle, BarColor) for null files");
+		
 		this.file = file;
 		this.configFile = YamlConfiguration.loadConfiguration(file);
 		this.identifier = file.getName().substring(file.getName().lastIndexOf('.'));
@@ -84,11 +87,13 @@ public class DragonTemplate {
 	 * Construct a new DragonTemplate object
 	 * 
 	 * @param identifier the name to identify this template
-	 * @param name the name of the dragon
-	 * @param barStyle the style of the bar
-	 * @param barColour the colour of the bar
+	 * @param name the name of the dragon. Can be null
+	 * @param barStyle the style of the bar. Can be null
+	 * @param barColour the colour of the bar. Can be null
 	 */
 	public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour) {
+		Validate.notEmpty(identifier, "Idenfitier must not be empty or null");
+		
 		this.file = null;
 		this.configFile = null;
 		this.identifier = identifier;
@@ -232,6 +237,8 @@ public class DragonTemplate {
 	 * @param updateFile whether to update the dragon file or not
 	 */
 	public void setSpawnWeight(double spawnWeight, boolean updateFile) {
+		if (spawnWeight < 0) spawnWeight = 0;
+		
 		this.spawnWeight = spawnWeight;
 		
 		if (updateFile) {
@@ -299,6 +306,10 @@ public class DragonTemplate {
 	 * @param battle the battle to modify
 	 */
 	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, DragonBattle battle) {
+		Validate.notNull(nmsAbstract, "Instance of NMSAbstract cannot be null. See DragonEggDrop#getNMSAbstract()");
+		Validate.notNull(dragon, "Ender Dragon cannot be null");
+		Validate.notNull(battle, "Instance of DragonBattle cannot be null");
+		
 		if (name != null) {
 			dragon.setCustomName(name);
 			battle.setBossBarTitle(name);

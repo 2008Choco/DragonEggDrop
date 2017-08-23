@@ -28,6 +28,7 @@ import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -80,6 +81,8 @@ public class EndWorldWrapper {
 	 * @param type the type that triggered this dragon respawn
 	 */
 	public void startRespawn(RespawnType type) {
+		Validate.notNull(type, "Cannot respawn a dragon under a null respawn type");
+		
 		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return;
 		
@@ -103,6 +106,8 @@ public class EndWorldWrapper {
 	 * @param announceRespawn whether to show the time remaining in the action bar
 	 */
 	public void startRespawn(int respawnDelay, boolean announceRespawn) {
+		if (respawnDelay < 0) respawnDelay = 0;
+		
 		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return;
 		
@@ -119,11 +124,11 @@ public class EndWorldWrapper {
 	 * Halt the Dragon respawning process if any are currently running
 	 */
 	public void stopRespawn() {
-		if (respawnTask != null) {
-			this.respawnTask.cancel();
-			this.respawnTask = null;
-			this.respawnInProgress = false;
-		}
+		if (respawnTask == null) return;
+		
+		this.respawnTask.cancel();
+		this.respawnTask = null;
+		this.respawnInProgress = false;
 	}
 	
 	/**
