@@ -245,7 +245,7 @@ public class DragonTemplate {
 	 * 
 	 * @param spawnWeight the new spawn weight
 	 */
-	public void setSoawnWeight(double spawnWeight) {
+	public void setSpawnWeight(double spawnWeight) {
 		this.setSpawnWeight(spawnWeight, true);
 	}
 	
