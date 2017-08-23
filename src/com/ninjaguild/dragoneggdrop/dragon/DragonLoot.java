@@ -76,7 +76,7 @@ public class DragonLoot {
 	 * 
 	 * @param template the parent template for this loot
 	 */
-	public DragonLoot(DragonTemplate template) {
+	protected DragonLoot(DragonTemplate template) {
 		this.template = template;
 		this.parseDragonLoot();
 	}
