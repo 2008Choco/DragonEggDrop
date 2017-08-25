@@ -103,7 +103,6 @@ public class EndWorldWrapper {
 	 * on provided values rather than configured ones.
 	 * 
 	 * @param respawnDelay the time until the dragon respawns
-	 * @param announceRespawn whether to show the time remaining in the action bar
 	 */
 	public void startRespawn(int respawnDelay) {
 		if (respawnDelay < 0) respawnDelay = 0;
