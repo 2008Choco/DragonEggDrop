@@ -70,9 +70,8 @@ public class RespawnRunnable extends BukkitRunnable {
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 * @param portalLocation the location in which the egg is located
 	 * @param respawnTime the time in seconds until the respawn is executed
-	 * @param announceRespawn whether to show remaining time in the action bar or not
 	 */
-	public RespawnRunnable(DragonEggDrop plugin, Location portalLocation, int respawnTime, boolean announceRespawn) {
+	public RespawnRunnable(DragonEggDrop plugin, Location portalLocation, int respawnTime) {
 		this.plugin = plugin;
 		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(portalLocation.getWorld());
 		this.portalLocation = portalLocation;
@@ -85,7 +84,7 @@ public class RespawnRunnable extends BukkitRunnable {
 		this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream()
 				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
 				.collect(Collectors.toList());
-		this.announceRespawn = announceRespawn && (announceMessages.size() > 0);
+		this.announceRespawn = announceMessages.size() > 0;
 		
 		this.crystalLocations = new Location[] {
 			portalLocation.clone().add(3, -3, 0),

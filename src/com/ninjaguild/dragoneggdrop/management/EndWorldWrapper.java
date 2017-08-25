@@ -93,7 +93,7 @@ public class EndWorldWrapper {
         FileConfiguration config = plugin.getConfig();
 		int respawnDelay = (type == RespawnType.JOIN ? config.getInt("join-respawn-delay", 60) : config.getInt("death-respawn-delay", 300));
 		
-		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay, plugin.getConfig().getBoolean("announce-respawn", true));
+		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;
 	}
@@ -105,7 +105,7 @@ public class EndWorldWrapper {
 	 * @param respawnDelay the time until the dragon respawns
 	 * @param announceRespawn whether to show the time remaining in the action bar
 	 */
-	public void startRespawn(int respawnDelay, boolean announceRespawn) {
+	public void startRespawn(int respawnDelay) {
 		if (respawnDelay < 0) respawnDelay = 0;
 		
 		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
@@ -115,7 +115,7 @@ public class EndWorldWrapper {
 		DragonBattle battle = nmsAbstract.getEnderDragonBattleFromWorld(getWorld());
 		Location portalLocation = battle.getEndPortalLocation();
 		
-		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay, announceRespawn);
+		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;
 	}

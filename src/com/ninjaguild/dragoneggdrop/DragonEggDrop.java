@@ -288,7 +288,7 @@ public class DragonEggDrop extends JavaPlugin {
 				if (element.has("respawnTime")) {
 					if (wrapper.isRespawnInProgress()) wrapper.stopRespawn();
 					
-					wrapper.startRespawn(element.get("respawnTime").getAsInt(), getConfig().getBoolean("announce-respawn", true));
+					wrapper.startRespawn(element.get("respawnTime").getAsInt());
 				}
 				
 				Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
