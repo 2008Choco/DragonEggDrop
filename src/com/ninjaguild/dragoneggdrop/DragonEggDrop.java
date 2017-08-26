@@ -81,7 +81,7 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	
-	/* TODO for version (or 1.4.0)
+	/* TODO for version (1.5.0)
 	 * - Aesthetic oriented update
 	 * - The portal should display a broken fire sphere-like effect surrounding it
 	 * - Configuration option, "eerie-end", which covers the central end island with purple particles and smoke
