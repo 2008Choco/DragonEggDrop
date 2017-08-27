@@ -55,6 +55,9 @@ join-respawn-delay: 60
 respawn-on-death: true
 death-respawn-delay: 300
 
+# Whether summoning the dragon with crystals is possible or not. If false, crystals will merely drop as items when the process attempts to start
+allow-crystal-respawns: true
+
 # Announcement message animation
 announce-messages:
 - '&6Dragon respawning in &e%formatted-time%'
