@@ -25,12 +25,9 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -86,14 +83,10 @@ public class EndWorldWrapper {
 		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return;
 		
-        NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-        DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(this.getWorld());
-        Location portalLocation = dragonBattle.getEndPortalLocation();
-        
         FileConfiguration config = plugin.getConfig();
 		int respawnDelay = (type == RespawnType.JOIN ? config.getInt("join-respawn-delay", 60) : config.getInt("death-respawn-delay", 300));
 		
-		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay);
+		this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;
 	}
@@ -110,11 +103,7 @@ public class EndWorldWrapper {
 		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return;
 		
-		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-		DragonBattle battle = nmsAbstract.getEnderDragonBattleFromWorld(getWorld());
-		Location portalLocation = battle.getEndPortalLocation();
-		
-		this.respawnTask = new RespawnRunnable(plugin, portalLocation, respawnDelay);
+		this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;
 	}

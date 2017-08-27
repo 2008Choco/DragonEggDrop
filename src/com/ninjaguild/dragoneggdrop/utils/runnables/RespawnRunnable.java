@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
+import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
@@ -38,8 +39,6 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -50,7 +49,6 @@ public class RespawnRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	private final EndWorldWrapper worldWrapper;
-	private final Location portalLocation;
 	private final NMSAbstract nmsAbstract;
 	
 	private final DragonBattle dragonBattle;
@@ -59,8 +57,6 @@ public class RespawnRunnable extends BukkitRunnable {
 	private final boolean announceRespawn;
 	private final List<String> announceMessages;
 	
-	private final Location[] crystalLocations;
-	
 	private int currentCrystal = 0, currentMessage = 0;
 	private int secondsUntilRespawn;
 	
@@ -68,30 +64,22 @@ public class RespawnRunnable extends BukkitRunnable {
 	 * Construct a new RespawnRunnable object
 	 * 
 	 * @param plugin an instance of the DragonEggDrop plugin
-	 * @param portalLocation the location in which the egg is located
+	 * @param world the world to execute a respawn
 	 * @param respawnTime the time in seconds until the respawn is executed
 	 */
-	public RespawnRunnable(DragonEggDrop plugin, Location portalLocation, int respawnTime) {
+	public RespawnRunnable(DragonEggDrop plugin, World world, int respawnTime) {
 		this.plugin = plugin;
-		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(portalLocation.getWorld());
-		this.portalLocation = portalLocation;
+		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
 		this.secondsUntilRespawn = respawnTime;
 		this.nmsAbstract = plugin.getNMSAbstract();
 		
-		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(portalLocation.getWorld());
+		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
 		this.dragon = dragonBattle.getEnderDragon();
 		
 		this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream()
 				.map(s -> ChatColor.translateAlternateColorCodes('&', s))
 				.collect(Collectors.toList());
 		this.announceRespawn = announceMessages.size() > 0;
-		
-		this.crystalLocations = new Location[] {
-			portalLocation.clone().add(3, -3, 0),
-			portalLocation.clone().add(0, -3, 3),
-			portalLocation.clone().add(-3, -3, 0),
-			portalLocation.clone().add(0, -3, -3)
-		};
 		
 		// Event call
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_DEAD, BattleState.CRYSTALS_SPAWNING);
@@ -120,21 +108,19 @@ public class RespawnRunnable extends BukkitRunnable {
 		if (world.getPlayers().size() <= 0) return;
 		
 		// Start respawn process
-		Location crystalLocation = this.crystalLocations[currentCrystal++];
+		PortalCrystal crystalPos = PortalCrystal.values()[currentCrystal++];
+		Location crystalLocation = crystalPos.getRelativeToPortal(world);
 		World crystalWorld = crystalLocation.getWorld();
-		Chunk crystalChunk = crystalWorld.getChunkAt(crystalLocation);
 		
+		Chunk crystalChunk = crystalWorld.getChunkAt(crystalLocation);
 		if (!crystalChunk.isLoaded()) 
 			crystalChunk.load();
 		
-		// Kill any existing entities at this location
-		for (Entity entity : crystalWorld.getNearbyEntities(crystalLocation, 1, 1, 1))
-			entity.remove();
+		// Remove any existing crystal
+		EnderCrystal existingCrystal = crystalPos.get(world);
+		if (existingCrystal != null) existingCrystal.remove();
 		
-		EnderCrystal crystal = (EnderCrystal) crystalWorld.spawnEntity(crystalLocation, EntityType.ENDER_CRYSTAL);
-		crystal.setShowingBottom(false);
-		crystal.setInvulnerable(true);
-
+		crystalPos.spawn(world);
 		crystalWorld.createExplosion(crystalLocation.getX(), crystalLocation.getY(), crystalLocation.getZ(), 0F, false, false);
 		crystalWorld.spawnParticle(Particle.EXPLOSION_HUGE, crystalLocation, 0);
 		
@@ -147,14 +133,13 @@ public class RespawnRunnable extends BukkitRunnable {
 				this.nmsAbstract.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
 				
 				// Destroy all crystals
-				for (Location location : this.crystalLocations) {
-					Entity crystalToRemove = crystalWorld.getNearbyEntities(location, 1, 1, 1).stream()
-							.filter(e -> e instanceof EnderCrystal)
-							.collect(Collectors.toList()).get(0);
+				for (PortalCrystal portalCrystal : PortalCrystal.values()) {
+					Location location = portalCrystal.getRelativeToPortal(world);
 					
-					crystalWorld.getPlayers().forEach(p -> p.playSound(portalLocation, Sound.BLOCK_FIRE_EXTINGUISH, 1000, 1));
+					portalCrystal.get(world).remove();
+					
+					crystalWorld.getPlayers().forEach(p -> p.playSound(location, Sound.BLOCK_FIRE_EXTINGUISH, 1000, 1));
 					crystalWorld.createExplosion(location.getX(), location.getY(), location.getZ(), 0F, false, false);
-					crystalToRemove.remove();
 				}
 				
 				this.cancel();

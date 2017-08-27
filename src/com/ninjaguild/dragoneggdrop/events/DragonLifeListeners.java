@@ -19,14 +19,12 @@
 
 package com.ninjaguild.dragoneggdrop.events;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
+import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
@@ -34,13 +32,10 @@ import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -119,7 +114,7 @@ public class DragonLifeListeners implements Listener {
 		World world = player.getWorld();
 		EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
 		if (worldWrapper.isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
-			Set<EnderCrystal> crystals = this.getPortalCrystals(world);
+			Set<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
 			
 			// Check for 3 crystals because PlayerInteractEvent is fired first
 			if (crystals.size() < 3) return;
@@ -133,30 +128,4 @@ public class DragonLifeListeners implements Listener {
 		}
 	}
 	
-	private Set<EnderCrystal> getPortalCrystals(World world) {
-		Set<EnderCrystal> crystals = new HashSet<>();
-		
-		if (world.getEnvironment() == Environment.THE_END) {
-			Location portalLoc = plugin.getNMSAbstract().getEnderDragonBattleFromWorld(world).getEndPortalLocation();
-			
-			Location[] crystalLocs = {
-				portalLoc.add(3, -3, 0),
-				portalLoc.add(-3, -3, 0),
-				portalLoc.add(0, -3, 3),
-				portalLoc.add(0, -3, -3)
-			};
-			
-			for (Location location : crystalLocs) {
-				Collection<Entity> entities = world.getNearbyEntities(location, 0.5, 0.5, 0.5);
-				if (entities.size() == 0) continue;
-				
-				Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal);
-				if (crystal == null) continue;
-				
-				crystals.add((EnderCrystal) crystal);
-			}
-		}
-		
-		return crystals;
-	}
 }
