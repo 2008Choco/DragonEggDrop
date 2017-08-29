@@ -135,7 +135,7 @@ public enum PortalCrystal {
 		
 		// Check for existing crystal
 		Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
-		Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal);
+		Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal, null);
 		if (crystal != null) return null;
 		
 		// Spawn crystal and optionally set it as invulnerable
@@ -168,7 +168,7 @@ public enum PortalCrystal {
 		Location location = getRelativeTo(battle.getEndPortalLocation());
 		
 		Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
-		Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal);
+		Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal, null);
 		
 		return (EnderCrystal) crystal;
 	}
@@ -185,7 +185,7 @@ public enum PortalCrystal {
 		
 		// Check for existing crystal
 		Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
-		Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal);
+		Entity crystal = Iterables.find(entities, e -> e instanceof EnderCrystal, null);
 		return (crystal != null);
 	}
 	
