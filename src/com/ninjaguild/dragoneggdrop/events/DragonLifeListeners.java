@@ -61,11 +61,16 @@ public class DragonLifeListeners implements Listener {
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
 		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		EndWorldWrapper world = plugin.getDEDManager().getWorldWrapper(dragon.getWorld());
+		
+		if (plugin.getConfig().getBoolean("strict-countdown") && world.isRespawnInProgress()) {
+			world.stopRespawn();
+		}
 		
 		DragonTemplate template = plugin.getDEDManager().getRandomTemplate();
 		if (template != null) {
 			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
-			plugin.getDEDManager().getWorldWrapper(dragon.getWorld()).setActiveBattle(template);
+			world.setActiveBattle(template);
 			
 			if (template.shouldAnnounceRespawn()) {
 				Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(

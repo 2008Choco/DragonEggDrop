@@ -81,11 +81,6 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	
-	/* TODO for version (or 1.4.0 release)
-	 * - New config option: "allow-crystal-respawns" - If false, drop crystals as items on ground when attempting to spawn a dragon with them
-	 * - New config option: "strict-countdown" - If the dragon is respawned, stop the countdown when this is set to true
-	 */
-	
 	/* TODO for version (1.5.0)
 	 * - Aesthetic oriented update
 	 * - The portal should display a broken fire sphere-like effect surrounding it
