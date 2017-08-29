@@ -112,11 +112,12 @@ public class EndWorldWrapper {
 	 * Halt the Dragon respawning process if any are currently running
 	 */
 	public void stopRespawn() {
-		if (respawnTask == null) return;
-		
-		this.respawnTask.cancel();
-		this.respawnTask = null;
 		this.respawnInProgress = false;
+		
+		if (respawnTask != null) {
+			this.respawnTask.cancel();
+			this.respawnTask = null;	
+		}
 	}
 	
 	/**
