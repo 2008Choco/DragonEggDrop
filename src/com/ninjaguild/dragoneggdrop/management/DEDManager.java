@@ -28,6 +28,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.World;
 
 /**
@@ -49,6 +50,24 @@ public class DEDManager {
 	public DEDManager(DragonEggDrop plugin) {
 		this.plugin = plugin;
 		this.reloadDragonTemplates();
+	}
+	
+	/**
+	 * Register a template to the DEDManager in order for it to be used when generating
+	 * dragons in the respawn process
+	 * 
+	 * @param template the template to register
+	 */
+	public void registerTemplate(DragonTemplate template) {
+		Validate.notNull(template, "Cannot register null templates");
+		
+		for (DragonTemplate registeredTemplate : dragonTemplates.values()) {
+			if (registeredTemplate.getIdentifier().equals(template.getIdentifier())) {
+				throw new UnsupportedOperationException("Cannot register two templates with the same identifier (" + template.getIdentifier() + ")");
+			}
+		}
+		
+		this.dragonTemplates.add(template.getSpawnWeight(), template);
 	}
 	
 	/**
