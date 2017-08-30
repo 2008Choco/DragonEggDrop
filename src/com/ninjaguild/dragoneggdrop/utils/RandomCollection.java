@@ -21,13 +21,12 @@ package com.ninjaguild.dragoneggdrop.utils;
 
 import java.util.Collection;
 import java.util.Map.Entry;
-
-import org.apache.commons.lang.Validate;
-
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * An implementation of a Collection based on a TreeMap. The goal of
@@ -98,6 +97,16 @@ public class RandomCollection<E> {
     private E get(Object key) {
 		return map.get(key);
 	}
+    
+    /**
+     * Check whether this collection contains a specific value
+     * 
+     * @param value whether the value to check for
+     * @return true if the collection contains the value. false otherwise
+     */
+    public boolean contains(Object value) {
+    	return map.containsValue(value);
+    }
 
     /**
      * Get a Set of all keys in the underlying TreeMap
