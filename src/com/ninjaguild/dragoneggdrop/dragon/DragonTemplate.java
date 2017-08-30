@@ -75,7 +75,7 @@ public class DragonTemplate {
 		
 		this.file = file;
 		this.configFile = YamlConfiguration.loadConfiguration(file);
-		this.identifier = file.getName().substring(file.getName().lastIndexOf('.'));
+		this.identifier = file.getName().substring(0, file.getName().lastIndexOf('.'));
 		
 		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
