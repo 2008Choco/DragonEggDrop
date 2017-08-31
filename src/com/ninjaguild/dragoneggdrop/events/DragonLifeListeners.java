@@ -125,10 +125,13 @@ public class DragonLifeListeners implements Listener {
 			if (crystals.size() < 3) return;
 			
 			for (EnderCrystal crystal : crystals) {
+				crystal.getLocation().getBlock().setType(Material.AIR); // Remove fire
 				world.dropItem(crystal.getLocation(), END_CRYSTAL_ITEM);
 				crystal.remove();
 			}
 			
+			plugin.getNMSAbstract().sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
+			player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
 			event.setCancelled(true);
 		}
 	}
