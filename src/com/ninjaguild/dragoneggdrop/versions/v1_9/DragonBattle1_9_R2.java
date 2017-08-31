@@ -87,16 +87,16 @@ public class DragonBattle1_9_R2 implements DragonBattle {
 			if (battleServer == null) return false;
 			
 			if (style != null) {
-				String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "SOLID";
-				if (!EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
-					return false;
+				String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS";
+				if (EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
+					battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
 				}
-				
-				battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
 			}
-			if (colour != null) battleServer.color = BossBattle.BarColor.valueOf(colour.name());
-			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
+			if (colour != null) {
+				battleServer.color = BossBattle.BarColor.valueOf(colour.name());
+			}
 			
+			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
 			fieldBossBattleServer.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
