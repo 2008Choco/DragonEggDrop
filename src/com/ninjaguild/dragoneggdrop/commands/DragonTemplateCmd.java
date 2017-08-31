@@ -62,10 +62,10 @@ public class DragonTemplateCmd implements CommandExecutor {
 			}
 			
 			String[] templateNames = templates.stream()
-					.map(DragonTemplate::getIdentifier)
+					.map(t -> ChatColor.GREEN + t.getIdentifier())
 					.toArray(String[]::new);
 			
-			this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", " + ChatColor.GREEN, templateNames));
+			this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
 			return true;
 		}
 		
