@@ -28,6 +28,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,7 +56,9 @@ public class RespawnListeners implements Listener {
 		
 		// Start the respawn countdown if joining an empty world
 		if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
-			if (world.getPlayers().size() > 1 || worldWrapper.isRespawnInProgress()) return;
+			if (world.getPlayers().size() > 1 || worldWrapper.isRespawnInProgress()
+					|| world.getEntitiesByClass(EnderDragon.class).size() == 0) 
+				return;
 			
 			manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 		}
@@ -92,7 +95,9 @@ public class RespawnListeners implements Listener {
 		
 		// Dragon respawn logic
 		if (!plugin.getConfig().getBoolean("respawn-on-join", false)) return;
-		if (!world.getPlayers().isEmpty() || manager.getWorldWrapper(world).isRespawnInProgress()) return;
+		if (!world.getPlayers().isEmpty() || manager.getWorldWrapper(world).isRespawnInProgress()
+				|| world.getEntitiesByClass(EnderDragon.class).size() == 0) 
+			return;
 		
 		manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
 	}
