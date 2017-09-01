@@ -14,6 +14,11 @@ max-loot: 6
 announce-respawn: false
 spawn-weight: 0.15
 
+attributes:
+  GENERIC_MAX_HEALTH: 500
+  GENERIC_ARMOR: 10
+  GENERIC_ATTACK_DAMAGE: 6
+
 loot:
   '1':
     weight: 1.0

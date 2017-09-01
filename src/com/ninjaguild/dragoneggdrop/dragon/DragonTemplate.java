@@ -22,8 +22,11 @@ package com.ninjaguild.dragoneggdrop.dragon;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
@@ -31,6 +34,7 @@ import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -61,6 +65,8 @@ public class DragonTemplate {
 	
 	private double spawnWeight;
 	private boolean announceRespawn;
+	
+	private final Map<Attribute, Double> attributes = new HashMap<>();
 	
 	/**
 	 * Construct a new DragonTemplate object
@@ -299,6 +305,113 @@ public class DragonTemplate {
 	}
 	
 	/**
+	 * Get an immutable Map of all attributes and their values according to
+	 * this template
+	 * 
+	 * @return the mapped attributes and values
+	 */
+	public Map<Attribute, Double> getAttributes() {
+		return ImmutableMap.copyOf(attributes);
+	}
+	
+	/**
+	 * Get the value to be applied for a specific attribute. If the provided
+	 * attribute value is not specified, -1 will be returned.
+	 * 
+	 * @param attribute the attribute to check
+	 * @return the value of the attribute, or -1 if non existent
+	 */
+	public double getAttributeValue(Attribute attribute) {
+		return attributes.getOrDefault(attribute, -1.0);
+	}
+	
+	/**
+	 * Check whether this template has specified an attribute's value
+	 * 
+	 * @param attribute the attribute to check
+	 * @return true if defined. false otherwise
+	 */
+	public boolean hasAttribute(Attribute attribute) {
+		return attributes.containsKey(attribute);
+	}
+	
+	/**
+	 * Add an attribute to this template
+	 * 
+	 * @param attribute the attribute to add
+	 * @param value the new value of the attribute
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void addAttribute(Attribute attribute, double value, boolean updateFile) {
+		Validate.notNull(attribute, "Cannot add a null attribute");
+		if (value < 0.0) value = 0.0;
+		
+		this.attributes.put(attribute, value);
+		
+		if (updateFile) {
+			this.updateConfig("attributes." + attribute.name(), value);
+		}
+	}
+	
+	/**
+	 * Add an attribute to this template and update the dragon file (if one 
+	 * exists)
+	 * 
+	 * @param attribute the attribute to add
+	 * @param value the new value of the attribute
+	 */
+	public void addAttribute(Attribute attribute, double value) {
+		this.addAttribute(attribute, value, true);
+	}
+	
+	/**
+	 * Remove an attribute from this template and set its value back to default
+	 * 
+	 * @param attribute the attribute to remove
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void removeAttribute(Attribute attribute, boolean updateFile) {
+		Validate.notNull(attribute, "Cannot remove a null attribute");
+		
+		this.attributes.remove(attribute);
+		
+		if (updateFile) {
+			this.updateConfig("attributes." + attribute.name(), null);
+		}
+	}
+	
+	/**
+	 * Remove an attribute from this template, set its value back to default and
+	 * update the dragon file (if one exists)
+	 * 
+	 * @param attribute the attribute to remove
+	 */
+	public void removeAttribute(Attribute attribute) {
+		this.removeAttribute(attribute, true);
+	}
+	
+	/**
+	 * Clear all loaded attribute mappings
+	 * 
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void clearAttributes(boolean updateFile) {
+		this.attributes.clear();
+		
+		if (updateFile) {
+			this.updateConfig("attributes", null);
+		}
+	}
+	
+	/**
+	 * Clear all loaded attribute mappings and update the dragon file (if one
+	 * exists)
+	 */
+	public void clearAttributes() {
+		this.clearAttributes(true);
+	}
+	
+	/**
 	 * Apply this templates data to an EnderDragonBattle object
 	 * 
 	 * @param nmsAbstract an instance of the NMSAbstract interface
@@ -314,7 +427,14 @@ public class DragonTemplate {
 			dragon.setCustomName(name);
 			battle.setBossBarTitle(name);
 		}
+		
 		battle.setBossBarStyle(barStyle, barColour);
+		attributes.forEach((a, v) -> dragon.getAttribute(a).setBaseValue(v));
+		
+		// Set health... max health attribute doesn't do that for me. -,-
+		if (attributes.containsKey(Attribute.GENERIC_MAX_HEALTH)) {
+			dragon.setHealth(attributes.get(Attribute.GENERIC_MAX_HEALTH));
+		}
 	}
 	
 	/**
@@ -356,6 +476,7 @@ public class DragonTemplate {
 			
 			FileConfiguration dragonFile = YamlConfiguration.loadConfiguration(file);
 			
+			// Load name, bar style & colour, weight and announcement status
 			String name = dragonFile.getString("dragon-name", "Ender Dragon");
 			BarStyle style = EnumUtils.getEnum(BarStyle.class, dragonFile.getString("bar-style", "SOLID").toUpperCase());
 			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color", "PINK").toUpperCase());
@@ -364,6 +485,26 @@ public class DragonTemplate {
 			template.spawnWeight = dragonFile.getDouble("spawn-weight", 1);
 			template.announceRespawn = dragonFile.getBoolean("announce-respawn", false);
 			
+			// Attribute modifier loading
+			if (dragonFile.contains("attributes")) {
+				for (String attributeKey : dragonFile.getConfigurationSection("attributes").getValues(false).keySet()) {
+					Attribute attribute = EnumUtils.getEnum(Attribute.class, attributeKey);
+					if (attribute == null) {
+						plugin.getLogger().warning("Unknown attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
+						continue;
+					}
+					
+					double value = dragonFile.getDouble("attributes." + attributeKey, -1);
+					if (value == -1) {
+						plugin.getLogger().warning("Invalid double value specified at attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
+						continue;
+					}
+					
+					template.attributes.put(attribute, value);
+				}
+			}
+			
+			// Checking for existing templates
 			if (templates.contains(template)) {
 				JavaPlugin.getPlugin(DragonEggDrop.class).getLogger().warning("Duplicate dragon template with file name " + file.getName() + ". Ignoring");
 				continue;
