@@ -5,9 +5,11 @@ author: 2008Choco
 
 commands:
   dragoneggdrop:
+    description: The main DragonEggDrop command
     usage: /<command> [help]
     aliases: [ded]
   dragontemplate:
+    description: A utility command to control dragon templates
     usage: /<command> <template> <view|edit>
     aliases: [dragontemplates, template, templates]
 

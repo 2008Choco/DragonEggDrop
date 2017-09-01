@@ -143,6 +143,7 @@ public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 					return true;
 				}
 				
+				plugin.sendMessage(sender, "This command is a work in progress. Bother Choco or something... I dunno");
 				// TODO set variables in configuration file
 			}
 		}
