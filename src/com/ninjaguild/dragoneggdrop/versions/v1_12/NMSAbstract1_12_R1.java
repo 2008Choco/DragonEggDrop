@@ -103,7 +103,7 @@ public class NMSAbstract1_12_R1 implements NMSAbstract {
 		try {
 			boolean entityStateExists = false;
 			try {
-				Class.forName("org.bukkit.craftbukkit.block.CraftBlockEntityState");
+				Class.forName("org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState");
 				entityStateExists = true;
 			} catch (ClassNotFoundException e) { /* ignore */ }
 			
