@@ -70,9 +70,7 @@ public class DragonTemplateCmd implements CommandExecutor {
 		}
 		
 		// Template was identified
-		DragonTemplate template = templates.stream()
-				.filter(t -> t.getName().equals(args[0]))
-				.findFirst().orElse(null);
+		DragonTemplate template = plugin.getDEDManager().getTemplate(args[0]);
 		
 		// No template found
 		if (template == null) {
