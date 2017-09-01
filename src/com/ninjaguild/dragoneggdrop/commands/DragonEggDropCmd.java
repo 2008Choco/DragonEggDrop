@@ -19,14 +19,18 @@
 
 package com.ninjaguild.dragoneggdrop.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
-public class DragonEggDropCmd implements CommandExecutor {
+public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 	
 	private final DragonEggDrop plugin;
 	
@@ -80,5 +84,17 @@ public class DragonEggDropCmd implements CommandExecutor {
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> options = new ArrayList<>();
+		
+		if (args.length == 1) {
+			options.add("help");
+			options.add("reload");
+		}
+		
+		return options;
 	}
 }

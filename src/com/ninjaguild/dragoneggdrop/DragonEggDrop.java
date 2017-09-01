@@ -62,7 +62,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -145,8 +148,8 @@ public class DragonEggDrop extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new PortalClickListener(this), this);
 
 		// Register commands
-		this.getCommand("dragoneggdrop").setExecutor(new DragonEggDropCmd(this));
-		this.getCommand("dragontemplate").setExecutor(new DragonTemplateCmd(this));
+		this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
+		this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
 		
 		// Update check
 		if (this.getConfig().getBoolean("perform-update-checks", true)) {
@@ -303,6 +306,21 @@ public class DragonEggDrop extends JavaPlugin {
 		} catch (IOException | JsonParseException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void registerCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
+		if (tabCompleter == null && !(executor instanceof TabCompleter))
+			throw new UnsupportedOperationException();
+		
+		PluginCommand commandObject = this.getCommand(command);
+		if (commandObject == null) return;
+		
+		commandObject.setExecutor(executor);
+		commandObject.setTabCompleter(tabCompleter != null ? tabCompleter : (TabCompleter) executor);
+	}
+	
+	private void registerCommand(String command, CommandExecutor executor) {
+		this.registerCommand(command, executor, null);
 	}
 	
 	private void doVersionCheck() {
