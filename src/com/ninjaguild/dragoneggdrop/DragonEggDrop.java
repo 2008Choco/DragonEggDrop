@@ -280,6 +280,7 @@ public class DragonEggDrop extends JavaPlugin {
 	private void readTempData(File file) {
 		try (FileReader reader = new FileReader(tempDataFile)) {
 			JsonObject root = GSON.fromJson(reader, JsonObject.class);
+			if (root == null) return;
 			
 			for (Entry<String, JsonElement> entry : root.entrySet()) {
 				World world = Bukkit.getWorld(entry.getKey());
