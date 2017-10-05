@@ -74,7 +74,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	 * @param worldWrapper the world in which the dragon death is taking place
 	 * @param dragon the dragon dying in this runnable
 	 */
-	public DragonDeathRunnable(final DragonEggDrop plugin, final EndWorldWrapper worldWrapper, EnderDragon dragon) {
+	public DragonDeathRunnable(DragonEggDrop plugin, EndWorldWrapper worldWrapper, EnderDragon dragon) {
 		this.plugin = plugin;
 		this.worldWrapper = worldWrapper;
 		this.world = worldWrapper.getWorld();

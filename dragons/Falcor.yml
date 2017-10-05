@@ -14,3 +14,6 @@ max-loot: 0
 
 announce-respawn: false
 spawn-weight: 2
+
+death-commands:
+  - "tellraw %player% {\"text\":\"Congratulations! You have killed",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"

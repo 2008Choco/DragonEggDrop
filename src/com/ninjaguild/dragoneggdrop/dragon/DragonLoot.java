@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
@@ -36,6 +37,7 @@ import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,6 +46,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -70,6 +73,8 @@ public class DragonLoot {
 	private double chestSpawnChance = 0.0;
 	private String chestName = "Loot Chest";
 	private int minLootGen = 3, maxLootGen = 6;
+	
+	private List<String> commands = new ArrayList<>();
 	
 	/**
 	 * Construct a new DragonLoot
@@ -409,6 +414,81 @@ public class DragonLoot {
 	}
 	
 	/**
+	 * Add a command to the list of commands to be executed upon the death
+	 * of the dragon
+	 * 
+	 * @param command the command to add
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void addCommand(String command, boolean updateFile) {
+		this.commands.add(command);
+		
+		if (updateFile) {
+			List<String> commands = template.configFile.getStringList("death-commands");
+			commands.add(command);
+			this.template.updateConfig("death-commands", commands);
+		}
+	}
+	
+	/**
+	 * Add a command to the list of commands to be executed upon the death
+	 * of the dragon and update the dragon file (if one exists)
+	 * 
+	 * @param command the command to add
+	 */
+	public void addCommand(String command) {
+		this.addCommand(command, true);
+	}
+	
+	/**
+	 * Remove a command from the list of commands to be executed upon the
+	 * death of the dragon
+	 * 
+	 * @param command the command to remove
+	 * @param updateFile whether to update the dragon file or not
+	 */
+	public void removeCommand(String command, boolean updateFile) {
+		this.commands.remove(command);
+		
+		if (updateFile) {
+			List<String> commands = template.configFile.getStringList("death-commands");
+			commands.remove(command);
+			this.template.updateConfig("death-commands", commands);
+		}
+	}
+	
+	/**
+	 * Remove a command from the list of commands to be executed upon the
+	 * death of the dragon and update the dragon file (if one exists)
+	 * 
+	 * @param command the command to remove
+	 */
+	public void removeCommand(String command) {
+		this.commands.remove(command);
+	}
+	
+	/**
+	 * Check whether the provided command will be executed after the dragon
+	 * has been killed
+	 * 
+	 * @param command the command to check
+	 * @return true if to be executed, false otherwise
+	 */
+	public boolean hasCommand(String command) {
+		return commands.contains(command);
+	}
+	
+	/**
+	 * Get an immutable list of all commands to be executed upon the death
+	 * of the dragon
+	 * 
+	 * @return all commands to be executed
+	 */
+	public List<String> getCommands() {
+		return ImmutableList.copyOf(commands);
+	}
+	
+	/**
 	 * Spawn loot for the specific dragon battle
 	 * 
 	 * @param battle the battle to spawn loot for
@@ -423,6 +503,7 @@ public class DragonLoot {
 		boolean spawnEgg = RANDOM.nextDouble() * 100 <= eggSpawnChance;
 		boolean spawnChest = RANDOM.nextDouble() * 100 <= chestSpawnChance;
 		
+		// Spawn a chest
 		if (spawnChest) {
 			location.getBlock().setType(Material.CHEST);
 			Chest chest = (Chest) location.getBlock().getState();
@@ -431,6 +512,7 @@ public class DragonLoot {
 			Inventory inventory = chest.getInventory();
 			inventory.clear();
 			
+			// Spawn an egg within the chest
 			if (spawnEgg) {
 				ItemStack eggItem = new ItemStack(Material.DRAGON_EGG);
 				ItemMeta eggMeta = eggItem.getItemMeta();
@@ -441,6 +523,7 @@ public class DragonLoot {
 				inventory.setItem(inventory.getSize() / 2, eggItem);
 			}
 			
+			// Generate loot within the chest
 			int itemGenCount = Math.max(RANDOM.nextInt(maxLootGen), minLootGen);
 			for (int i = 0; i < itemGenCount; i++) {
 				if (inventory.firstEmpty() == -1) break;
@@ -456,8 +539,24 @@ public class DragonLoot {
 			}
 		}
 		
+		// Spawn the egg
 		else if (spawnEgg) {
 			location.getBlock().setType(Material.DRAGON_EGG);
+		}
+		
+		// Execute commands
+		List<Player> playersInWorld = dragon.getWorld().getPlayers();
+		Player commandTarget = playersInWorld.size() > 0 ? playersInWorld.get(0) : null;
+		
+		for (String command : commands) {
+			if (command.contains("%player%") && commandTarget == null) continue;
+			
+			String commandToExecute = command.replace("%dragon%", dragon.getCustomName());
+			if (commandTarget != null) {
+				commandToExecute = commandToExecute.replace("%player%", commandTarget.getName());
+			}
+			
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandToExecute);
 		}
 	}
 	
@@ -478,6 +577,8 @@ public class DragonLoot {
 		this.chestName = dragonFile.getString("chest-name", "Loot Chest");
 		this.minLootGen = dragonFile.getInt("min-loot");
 		this.maxLootGen = dragonFile.getInt("max-loot");
+		
+		this.commands = dragonFile.getStringList("death-commands");
 		
 		// Parse loot items
 		ConfigurationSection lootSection = dragonFile.getConfigurationSection("loot");

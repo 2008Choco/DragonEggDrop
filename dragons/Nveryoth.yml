@@ -19,6 +19,9 @@ attributes:
   GENERIC_ARMOR: 15
   GENERIC_ATTACK_DAMAGE: 9
 
+death-commands:
+  - "tellraw %player% {\"text\":\"Congratulations! You have killed",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"
+
 loot:
   '1':
     weight: 1.0
