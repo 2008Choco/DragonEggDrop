@@ -35,6 +35,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -429,7 +430,12 @@ public class DragonTemplate {
 		}
 		
 		battle.setBossBarStyle(barStyle, barColour);
-		attributes.forEach((a, v) -> dragon.getAttribute(a).setBaseValue(v));
+		this.attributes.forEach((a, v) -> {
+			AttributeInstance attribute = dragon.getAttribute(a);
+			if (attribute != null) {
+				attribute.setBaseValue(v);
+			}
+		});
 		
 		// Set health... max health attribute doesn't do that for me. -,-
 		if (attributes.containsKey(Attribute.GENERIC_MAX_HEALTH)) {
