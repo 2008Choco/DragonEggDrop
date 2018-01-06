@@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
@@ -60,6 +61,8 @@ public class DragonLifeListeners implements Listener {
 		if (!(event.getEntity() instanceof EnderDragon)) return;
 		
 		EnderDragon dragon = (EnderDragon) event.getEntity();
+		if (dragon.getWorld().getEnvironment() != Environment.THE_END) return;
+		
 		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 		EndWorldWrapper world = plugin.getDEDManager().getWorldWrapper(dragon.getWorld());
 		
