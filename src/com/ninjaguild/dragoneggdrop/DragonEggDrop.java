@@ -131,7 +131,7 @@ public class DragonEggDrop extends JavaPlugin {
 		// Load temp data (reload support)
 		this.tempDataFile = new File(getDataFolder(), "tempData.json");
 		if (tempDataFile.exists()) {
-			this.readTempData(tempDataFile);
+			this.readTempData();
 			this.tempDataFile.delete();
 		}
 		
@@ -176,7 +176,7 @@ public class DragonEggDrop extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
-		this.writeTempData(tempDataFile);
+		this.writeTempData();
 		
 		this.dedManager.clearTemplates();
 		
@@ -250,7 +250,7 @@ public class DragonEggDrop extends JavaPlugin {
 		}
 	}
 	
-	private void writeTempData(File file) {
+	private void writeTempData() {
 		JsonObject root = new JsonObject();
 		
 		for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
@@ -271,7 +271,7 @@ public class DragonEggDrop extends JavaPlugin {
 		}
 	}
 	
-	private void readTempData(File file) {
+	private void readTempData() {
 		try (FileReader reader = new FileReader(tempDataFile)) {
 			JsonObject root = GSON.fromJson(reader, JsonObject.class);
 			if (root == null) return;

@@ -37,7 +37,7 @@ import org.apache.commons.lang.Validate;
  */
 public class RandomCollection<E> {
 	
-    private final NavigableMap<Double, E> map = new TreeMap<Double, E>();
+    private final NavigableMap<Double, E> map = new TreeMap<>();
     private final Random random;
     private double total = 0;
 
@@ -95,7 +95,7 @@ public class RandomCollection<E> {
      * 
      * @return the object, or null if not found
      */
-    private E get(Object key) {
+    private E get(double key) {
 		return map.get(key);
 	}
     
@@ -106,7 +106,7 @@ public class RandomCollection<E> {
      * 
      * @return true if the collection contains the value. false otherwise
      */
-    public boolean contains(Object value) {
+    public boolean contains(E value) {
     	return map.containsValue(value);
     }
 
@@ -189,7 +189,7 @@ public class RandomCollection<E> {
     public static <E> RandomCollection<E> copyOf(RandomCollection<E> toCopy) {
     	Validate.notNull(toCopy, "Cannot copy a null collection");
     	
-    	RandomCollection<E> result = new RandomCollection<E>(toCopy.random);
+    	RandomCollection<E> result = new RandomCollection<>(toCopy.random);
     	result.addAll(toCopy);
     	return result;
     }
