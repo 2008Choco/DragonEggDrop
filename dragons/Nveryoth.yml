@@ -20,7 +20,7 @@ attributes:
   GENERIC_ATTACK_DAMAGE: 9
 
 death-commands:
-  - "tellraw %player% {\"text\":\"Congratulations! You have killed",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"
+  - 'tellraw %player% {"text":"Congratulations! You have killed","color":"red","extra":[{"text":"%dragon%"}]}'
 
 loot:
   '1':
