@@ -1,9 +1,18 @@
-package com.ninjaguild.dragoneggdrop.versions.v1_9;
+package com.ninjaguild.dragoneggdrop.versions.v1_13_R2;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
 
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.BossBattle;
+import net.minecraft.server.v1_13_R2.BossBattleServer;
+import net.minecraft.server.v1_13_R2.ChatMessage;
+import net.minecraft.server.v1_13_R2.EnderDragonBattle;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.PacketPlayOutBoss;
+import net.minecraft.server.v1_13_R2.WorldServer;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Location;
@@ -12,30 +21,21 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
 
-import net.minecraft.server.v1_9_R1.BlockPosition;
-import net.minecraft.server.v1_9_R1.BossBattle;
-import net.minecraft.server.v1_9_R1.BossBattleServer;
-import net.minecraft.server.v1_9_R1.ChatMessage;
-import net.minecraft.server.v1_9_R1.EnderDragonBattle;
-import net.minecraft.server.v1_9_R1.Entity;
-import net.minecraft.server.v1_9_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_9_R1.WorldServer;
-
 /**
- * An abstract implementation for EnderDragonBattle of necessary 
- * net.minecraft.server and org.bukkit.craftbukkit methods that 
+ * An abstract implementation for EnderDragonBattle of necessary
+ * net.minecraft.server and org.bukkit.craftbukkit methods that
  * vary between versions causing version dependencies. Allows for
  * version independency through abstraction per Bukkit/Spigot release
  * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.9.0, 1.9.1, 1.9.2 and 1.9.3
+ * <b><i>Supported Minecraft Versions:</i></b> 1.12.0
  * 
  * @author Parker Hawke - 2008Choco
  */
-public class DragonBattle1_9_R1 implements DragonBattle {
+public class DragonBattle1_13_R2 implements DragonBattle {
 	
 	private final EnderDragonBattle battle;
 	
-	protected DragonBattle1_9_R1(EnderDragonBattle battle) {
+	protected DragonBattle1_13_R2(EnderDragonBattle battle) {
 		this.battle = battle;
 	}
 
@@ -100,7 +100,7 @@ public class DragonBattle1_9_R1 implements DragonBattle {
 			WorldServer world = (WorldServer) fieldWorldServer.get(battle);
 			UUID dragonUUID = (UUID) fieldDragonUUID.get(battle);
 			
-			if (world == null || dragonUUID == null) 
+			if (world == null || dragonUUID == null)
 				return null;
 			
 			Entity dragonEntity = world.getEntity(dragonUUID);
