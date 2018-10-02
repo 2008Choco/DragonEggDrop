@@ -84,12 +84,6 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	
-	/* TODO for version (1.5.0)
-	 * - Aesthetic oriented update
-	 * - The portal should display a broken fire sphere-like effect surrounding it
-	 * - Configuration option, "eerie-end", which covers the central end island with purple particles and smoke
-	 */
-	
 	private static final int RESOURCE_ID = 35570;
 	private static final String SPIGET_LINK = "https://api.spiget.org/v2/resources/" + RESOURCE_ID + "/versions/latest";
 	
@@ -192,7 +186,7 @@ public class DragonEggDrop extends JavaPlugin {
 	}
 	
 	/**
-	 * Send a message to a command sender with the DragonEggDrop chat prefix
+	 * Send a message to a command sender with the DragonEggDrop chat prefix.
 	 * 
 	 * @param sender the sender to send the message to
 	 * @param message the message to send
@@ -202,7 +196,7 @@ public class DragonEggDrop extends JavaPlugin {
 	}
 	
 	/**
-	 * Get the main DEDManager instance
+	 * Get the main DEDManager instance.
 	 * 
 	 * @return the DEDManager instance
 	 */
@@ -211,7 +205,7 @@ public class DragonEggDrop extends JavaPlugin {
 	}
 	
 	/**
-	 * Get the current implementation of the NMSAbstract interface
+	 * Get the current implementation of the NMSAbstract interface.
 	 * 
 	 * @return the NMSAbstract interface
 	 */
@@ -221,7 +215,7 @@ public class DragonEggDrop extends JavaPlugin {
 	
 	/**
 	 * Get whether there is a new version available and ready for
-	 * download or not
+	 * download or not.
 	 * 
 	 * @return true if available
 	 */

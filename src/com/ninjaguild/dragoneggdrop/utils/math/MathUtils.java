@@ -24,15 +24,15 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * A powerful utility class to assist in the parsing and evaluation 
+ * A powerful utility class to assist in the parsing and evaluation
  * of arithmetic functions with custom variables and operations through
- * a recursive algorithm
+ * a recursive algorithm.
  * 
  * @author Parker Hawke - 2008Choco
  */
 public class MathUtils {
 	
-	/* 
+	/*
 	 * This code is loosely based off of and modified from an original thread
 	 * on Stackoverflow's forums:
 	 * http://stackoverflow.com/questions/40975678/evaluating-a-math-expression-with-variables-java-8
@@ -68,7 +68,7 @@ public class MathUtils {
 	private MathUtils(){}
 	
 	/**
-	 * Evaluate a mathematical expression with given variables
+	 * Evaluate a mathematical expression with given variables.
 	 * 
 	 * @param expression the string to parse
 	 * @param variables the map containing necessary variables for this expression
@@ -83,7 +83,7 @@ public class MathUtils {
 	/**
 	 * Evaluate a basic mathematical expression. Variables are not permitted in
 	 * expressions parsed by this method. For variable-based functions, see
-	 * {@link #parseExpression(String, Map)}
+	 * {@link #parseExpression(String, Map)}.
 	 * 
 	 * @param expression the string to parse
 	 * @return The mathematical expression
@@ -93,7 +93,7 @@ public class MathUtils {
 	}
 	
 	/**
-	 * Inject a custom mathematical operation into the expression parser
+	 * Inject a custom mathematical operation into the expression parser.
 	 * 
 	 * @param functionName the name of the function to inject (i.e. "sqrt")
 	 * @param operator the operation to perform when parsing this function
@@ -108,7 +108,7 @@ public class MathUtils {
 	}
 	
 	/**
-	 * The logic behind the parsing of {@link MathExpression} objects
+	 * The logic behind the parsing of {@link MathExpression} objects.
 	 * 
 	 * @author Parker Hawke - 2008Choco
 	 */
@@ -137,7 +137,7 @@ public class MathUtils {
         
         /**
          * Attempt to find a given character at the next position in
-         * the expression (whilst ignoring whitespace characters)
+         * the expression (whilst ignoring whitespace characters).
          * 
          * @param charToEat the character to find
          * @return true if found. False otherwise
@@ -153,7 +153,7 @@ public class MathUtils {
         
         /**
          * Parse the provided function into a MathExpression using
-         * recursive functions
+         * recursive functions.
          * 
          * @return the parsed mathematical expression
          */
@@ -173,7 +173,7 @@ public class MathUtils {
         
         /**
          * Parse an entire sub-expression in the parent expression
-         * (including addition and subtraction)
+         * (including addition and subtraction).
          * 
          * @return the parsed expression
          */
@@ -194,7 +194,7 @@ public class MathUtils {
         
         /**
          * Parse a term in the parent expression (including
-         * multiplication and division)
+         * multiplication and division).
          * 
          * @return the parsed term
          */
@@ -216,7 +216,7 @@ public class MathUtils {
         /**
          * Parse a factor in the parent expression (including
          * addition, subtraction, parentheses and injected
-         * operation functions)
+         * operation functions).
          * 
          * @return the parsed factor
          */

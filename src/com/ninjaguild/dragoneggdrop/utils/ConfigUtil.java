@@ -34,14 +34,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Represents a YAML configuration file to allow for reload functions
- * whilst also keeping Bukkit comments
+ * whilst also keeping Bukkit comments.
  */
 public class ConfigUtil {
 
 	private final DragonEggDrop plugin;
 
 	/**
-	 * Constructs a new ConfigUtils object
+	 * Constructs a new ConfigUtils object.
 	 * 
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 */
@@ -50,7 +50,7 @@ public class ConfigUtil {
 	}
 
 	/**
-	 * Update the configuration file
+	 * Update the configuration file.
 	 * 
 	 * @param currentVersion the version of the configuration file
 	 */

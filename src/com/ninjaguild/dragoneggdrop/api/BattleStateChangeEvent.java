@@ -26,7 +26,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when the state of the EnderDragon battle changes
+ * Called when the state of the EnderDragon battle changes.
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -40,7 +40,7 @@ public class BattleStateChangeEvent extends Event {
 	private final BattleState previousState, newState;
 	
 	/**
-	 * Construct a new BattleStateChangeEvent
+	 * Construct a new BattleStateChangeEvent.
 	 * 
 	 * @param dragonBattle an instance of the EnderDragonBattle
 	 * @param dragon an instance of the dragon
@@ -55,8 +55,7 @@ public class BattleStateChangeEvent extends Event {
 	}
 	
 	/**
-	 * Get an instance of the EnderDragonBattle involved in 
-	 * this event
+	 * Get an instance of the EnderDragonBattle involved in this event.
 	 * 
 	 * @return the involved EnderDragonBattle. Can return null
 	 */
@@ -65,8 +64,7 @@ public class BattleStateChangeEvent extends Event {
 	}
 	
 	/**
-	 * Get an instance of the EnderDragon involved in this
-	 * event
+	 * Get an instance of the EnderDragon involved in this event.
 	 * 
 	 * @return the involved dragon. Can return null
 	 */
@@ -75,7 +73,7 @@ public class BattleStateChangeEvent extends Event {
 	}
 	
 	/**
-	 * Get the state that the battle was in prior to this change
+	 * Get the state that the battle was in prior to this change.
 	 * 
 	 * @return the previous battle state
 	 */
@@ -84,7 +82,7 @@ public class BattleStateChangeEvent extends Event {
 	}
 	
 	/**
-	 * Get the new state of the battle
+	 * Get the new state of the battle.
 	 * 
 	 * @return the new battle state
 	 */

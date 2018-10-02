@@ -33,7 +33,7 @@ import org.bukkit.World;
 /**
  * Represents a defined particle shape. Allows for easy shape-creation with two
  * expressions along the x and z axis, as well as an initial location to start
- * the shape
+ * the shape.
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -47,7 +47,7 @@ public class ParticleShapeDefinition {
 	
 	/**
 	 * Construct a new ParticleShapeDefinition with a given location, and mathmatical equations
-	 * for both the x and z axis
+	 * for both the x and z axis.
 	 * 
 	 * @param initialLocation the initial starting location
 	 * @param xExpression the expression for the x axis
@@ -70,7 +70,7 @@ public class ParticleShapeDefinition {
 	}
 	
 	/**
-	 * Update the variables with new values
+	 * Update the variables with new values.
 	 * 
 	 * @param x the new x value
 	 * @param z the new y value
@@ -86,7 +86,7 @@ public class ParticleShapeDefinition {
 	
 	/**
 	 * Execute the particle shape definition expressions with current values. To update values,
-	 * see {@link #updateVariables(double, double, double, double)}
+	 * see {@link #updateVariables(double, double, double, double)}.
 	 * 
 	 * @param particleType the type of particle to display
 	 * @param particleAmount the amount of particles to display

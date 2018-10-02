@@ -31,7 +31,7 @@ import org.apache.commons.lang.Validate;
 /**
  * An implementation of a Collection based on a TreeMap. The goal of
  * the RandomCollection is to simplify the process of retrieving a
- * random object based on its mapped weight
+ * random object based on its mapped weight.
  * 
  * @param <E> - The type of object to be stored in the Collection
  */
@@ -42,14 +42,14 @@ public class RandomCollection<E> {
     private double total = 0;
 
     /**
-     * Construct a new RandomCollection with a new Random object
+     * Construct a new RandomCollection with a new Random object.
      */
     public RandomCollection() {
         this(new Random());
     }
 
     /**
-     * Construct a new RandomCollection with a given Random object
+     * Construct a new RandomCollection with a given Random object.
      * 
      * @param random an instance of Random to use
      */
@@ -59,7 +59,7 @@ public class RandomCollection<E> {
     }
 
     /**
-     * Add a new object to the collection with a given weighted random
+     * Add a new object to the collection with a given weighted random.
      * 
      * @param weight the weight of the object
      * @param result the object to add
@@ -78,7 +78,7 @@ public class RandomCollection<E> {
     }
     
     /**
-     * Add all elements of another RandomCollection
+     * Add all elements of another RandomCollection.
      * 
      * @param collection the collection to add
      */
@@ -89,9 +89,10 @@ public class RandomCollection<E> {
     }
     
     /**
-     * Get an object based on its total weight upon injection
+     * Get an object based on its total weight upon injection.
      * 
      * @param key the total weight at the time of injection
+     * 
      * @return the object, or null if not found
      */
     private E get(Object key) {
@@ -99,9 +100,10 @@ public class RandomCollection<E> {
 	}
     
     /**
-     * Check whether this collection contains a specific value
+     * Check whether this collection contains a specific value.
      * 
      * @param value whether the value to check for
+     * 
      * @return true if the collection contains the value. false otherwise
      */
     public boolean contains(Object value) {
@@ -109,7 +111,7 @@ public class RandomCollection<E> {
     }
 
     /**
-     * Get a Set of all keys in the underlying TreeMap
+     * Get a Set of all keys in the underlying TreeMap.
      * 
      * @return all key values
      */
@@ -118,7 +120,7 @@ public class RandomCollection<E> {
     }
 	
 	/**
-	 * Get a Collection of all values in the underlying TreeMap
+	 * Get a Collection of all values in the underlying TreeMap.
 	 * 
 	 * @return get all values in the collection
 	 */
@@ -128,7 +130,7 @@ public class RandomCollection<E> {
 
 	/**
 	 * Retrieve the next object, being a random object in the collection
-	 * based on its weighted value
+	 * based on its weighted value.
 	 * 
 	 * @return a random weighted object
 	 */
@@ -140,7 +142,7 @@ public class RandomCollection<E> {
     }
     
     /**
-     * Clear all data from the random collection
+     * Clear all data from the random collection.
      */
     public void clear() {
     	this.map.clear();
@@ -148,7 +150,7 @@ public class RandomCollection<E> {
     }
     
     /**
-     * Check if this collection is completely empty and contains no entries
+     * Check if this collection is completely empty and contains no entries.
      * 
      * @return true if empty, false if elements exist
      */
@@ -157,7 +159,7 @@ public class RandomCollection<E> {
     }
     
     /**
-     * Get the size of the random collection
+     * Get the size of the random collection.
      * 
      * @return the collection size
      */
@@ -166,8 +168,8 @@ public class RandomCollection<E> {
     }
 	
 	/**
-	 * Get the values of this random collection as an iterable java.util.Collection 
-	 * object for easy manoeuvrability
+	 * Get the values of this random collection as an iterable java.util.Collection
+	 * object for easy manoeuvrability.
 	 * 
 	 * @return the resulting collection
 	 */
@@ -176,12 +178,13 @@ public class RandomCollection<E> {
 	}
     
     /**
-     * Copy a RandomCollection with identical elements and Random instance
+     * Copy a RandomCollection with identical elements and Random instance.
      * 
      * @param toCopy the collection to copy
-     * @return the collection copy
      * 
      * @param <E> - The type of object stored in the Collections
+     * 
+     * @return the collection copy
      */
     public static <E> RandomCollection<E> copyOf(RandomCollection<E> toCopy) {
     	Validate.notNull(toCopy, "Cannot copy a null collection");

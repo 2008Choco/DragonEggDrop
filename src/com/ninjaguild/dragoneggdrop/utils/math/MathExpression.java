@@ -20,7 +20,7 @@
 package com.ninjaguild.dragoneggdrop.utils.math;
 
 /**
- * Represents a mathematical expression capable of being evaluated
+ * Represents a mathematical expression capable of being evaluated.
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -28,7 +28,7 @@ package com.ninjaguild.dragoneggdrop.utils.math;
 public interface MathExpression {
 	
 	/**
-	 * Evaluate the mathematical expression
+	 * Evaluate the mathematical expression.
 	 * 
 	 * @return the evaluation result
 	 */

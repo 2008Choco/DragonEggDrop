@@ -53,8 +53,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Represents a dragon's loot information (similar to a loot table) which may 
- * randomly spawn after the dragon's death
+ * Represents a dragon's loot information (similar to a loot table) which may randomly
+ * spawn after the dragon's death.
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -76,18 +76,13 @@ public class DragonLoot {
 	
 	private List<String> commands = new ArrayList<>();
 	
-	/**
-	 * Construct a new DragonLoot
-	 * 
-	 * @param template the parent template for this loot
-	 */
 	protected DragonLoot(DragonTemplate template) {
 		this.template = template;
 		this.parseDragonLoot();
 	}
 	
 	/**
-	 * Get a copy of the loot to be generated in a chest
+	 * Get a copy of the loot to be generated in a chest.
 	 * 
 	 * @return the random loot collection
 	 */
@@ -96,7 +91,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Add a loot item to the random loot collection
+	 * Add a loot item to the random loot collection.
 	 * 
 	 * @param item the item to add
 	 * @param weight the generation weight of the item
@@ -141,7 +136,7 @@ public class DragonLoot {
 	
 	/**
 	 * Add a loot item to the random loot collection and update the dragon file
-	 * (if one exists)
+	 * (if one exists).
 	 * 
 	 * @param item the item to add
 	 * @param weight the generation weight of the item
@@ -151,7 +146,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Check whether a dragon's egg may be spawned or not
+	 * Check whether a dragon's egg may be spawned or not.
 	 * 
 	 * @return true if an egg may be spawned, false otherwise
 	 */
@@ -160,7 +155,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the chance that an egg will spawn
+	 * Set the chance that an egg will spawn.
 	 * 
 	 * @param eggSpawnChance the new egg spawn chance
 	 * @param updateFile whether to update the dragon file or not
@@ -178,7 +173,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the chance that an egg will spawn and update the dragon file (if one
-	 * exists)
+	 * exists).
 	 * 
 	 * @param eggSpawnChance the new egg spawn chance
 	 */
@@ -198,7 +193,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the name to be displayed on the dragon egg
+	 * Set the name to be displayed on the dragon egg.
 	 * 
 	 * @param eggName the new name
 	 * @param updateFile whether to update the dragon file or not
@@ -213,7 +208,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the name to be displayed on the dragon egg and update the dragon
-	 * file (if one exists)
+	 * file (if one exists).
 	 * 
 	 * @param eggName the new name
 	 */
@@ -222,7 +217,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Get the name to be displayed on the dragon egg
+	 * Get the name to be displayed on the dragon egg.
 	 * 
 	 * @return the name display
 	 */
@@ -231,7 +226,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the lore to be displayed on the dragon egg
+	 * Set the lore to be displayed on the dragon egg.
 	 * 
 	 * @param eggLore the new lore
 	 * @param updateFile whether to update the dragon file or not
@@ -246,7 +241,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the lore to be displayed on the dragon egg and update the dragon
-	 * file (if one exists)
+	 * file (if one exists).
 	 * 
 	 * @param eggLore the new lore
 	 */
@@ -255,7 +250,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Get the lore to be displayed on the dragon egg
+	 * Get the lore to be displayed on the dragon egg.
 	 * 
 	 * @return the lore to display
 	 */
@@ -264,7 +259,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the minimum amount of loot to generate in the chest
+	 * Set the minimum amount of loot to generate in the chest.
 	 * 
 	 * @param minLootGen the new minimum loot count
 	 * @param updateFile whether to update the dragon file or not
@@ -282,7 +277,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the minimum amount of loot to generate in the chest and update
-	 * the dragon file (if one exists)
+	 * the dragon file (if one exists).
 	 * 
 	 * @param minLootGen the new minimum loot gen count
 	 */
@@ -291,7 +286,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Get the minimum amount of loot to generate in the chest
+	 * Get the minimum amount of loot to generate in the chest.
 	 * 
 	 * @return the minimum loot count
 	 */
@@ -300,7 +295,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the maximum amount of loot to generate in the chest
+	 * Set the maximum amount of loot to generate in the chest.
 	 * 
 	 * @param maxLootGen the new maximum loot count
 	 * @param updateFile whether to update the dragon file or not
@@ -318,7 +313,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the maximum amount of loot to generate in the chest and update
-	 * the dragon file (if one exists)
+	 * the dragon file (if one exists).
 	 * 
 	 * @param maxLootGen the new maximum loot count
 	 */
@@ -327,7 +322,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Get the maximum amount of loot to generate in the chest
+	 * Get the maximum amount of loot to generate in the chest.
 	 * 
 	 * @return the maximum loot count
 	 */
@@ -336,7 +331,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the chance that a chest will spawn in place of an egg
+	 * Set the chance that a chest will spawn in place of an egg.
 	 * 
 	 * @param chestSpawnChance the new chest spawn chance
 	 * @param updateFile whether to update the dragon file or not
@@ -354,7 +349,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the chance that a chest will spawn in place of an egg and
-	 * update the dragon file (if one exists)
+	 * update the dragon file (if one exists).
 	 * 
 	 * @param chestSpawnChance the new chest spawn chance
 	 */
@@ -363,7 +358,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Get the chance that a chest will spawn in place of an egg
+	 * Get the chance that a chest will spawn in place of an egg.
 	 * 
 	 * @return the chest spawn chance
 	 */
@@ -372,7 +367,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Set the name that will be displayed within the Chest
+	 * Set the name that will be displayed within the Chest.
 	 * 
 	 * @param chestName the new chest name
 	 * @param updateFile whether to update the dragon file or not
@@ -387,7 +382,7 @@ public class DragonLoot {
 	
 	/**
 	 * Set the name that will be displayed within the Chest and update
-	 * the dragon file (if one exists)
+	 * the dragon file (if one exists).
 	 * 
 	 * @param chestName the new chest name
 	 */
@@ -396,7 +391,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Get the name that will be displayed within the Chest
+	 * Get the name that will be displayed within the Chest.
 	 * 
 	 * @return the chest's name
 	 */
@@ -405,7 +400,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Check whether a chest may be spawned or not
+	 * Check whether a chest may be spawned or not.
 	 * 
 	 * @return true if a chest may be spawned, false otherwise
 	 */
@@ -415,7 +410,7 @@ public class DragonLoot {
 	
 	/**
 	 * Add a command to the list of commands to be executed upon the death
-	 * of the dragon
+	 * of the dragon.
 	 * 
 	 * @param command the command to add
 	 * @param updateFile whether to update the dragon file or not
@@ -432,7 +427,7 @@ public class DragonLoot {
 	
 	/**
 	 * Add a command to the list of commands to be executed upon the death
-	 * of the dragon and update the dragon file (if one exists)
+	 * of the dragon and update the dragon file (if one exists).
 	 * 
 	 * @param command the command to add
 	 */
@@ -442,7 +437,7 @@ public class DragonLoot {
 	
 	/**
 	 * Remove a command from the list of commands to be executed upon the
-	 * death of the dragon
+	 * death of the dragon.
 	 * 
 	 * @param command the command to remove
 	 * @param updateFile whether to update the dragon file or not
@@ -459,7 +454,7 @@ public class DragonLoot {
 	
 	/**
 	 * Remove a command from the list of commands to be executed upon the
-	 * death of the dragon and update the dragon file (if one exists)
+	 * death of the dragon and update the dragon file (if one exists).
 	 * 
 	 * @param command the command to remove
 	 */
@@ -469,7 +464,7 @@ public class DragonLoot {
 	
 	/**
 	 * Check whether the provided command will be executed after the dragon
-	 * has been killed
+	 * has been killed.
 	 * 
 	 * @param command the command to check
 	 * @return true if to be executed, false otherwise
@@ -480,7 +475,7 @@ public class DragonLoot {
 	
 	/**
 	 * Get an immutable list of all commands to be executed upon the death
-	 * of the dragon
+	 * of the dragon.
 	 * 
 	 * @return all commands to be executed
 	 */
@@ -489,7 +484,7 @@ public class DragonLoot {
 	}
 	
 	/**
-	 * Spawn loot for the specific dragon battle
+	 * Spawn loot for the specific dragon battle.
 	 * 
 	 * @param battle the battle to spawn loot for
 	 * @param dragon the dragon whose egg should be spawned

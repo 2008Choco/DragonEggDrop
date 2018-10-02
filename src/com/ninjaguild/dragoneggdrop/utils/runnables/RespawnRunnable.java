@@ -42,8 +42,8 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Represents a BukkitRunnable that handles the respawning of the 
- * Ender Dragon after it has been slain
+ * Represents a BukkitRunnable that handles the respawning of the
+ * Ender Dragon after it has been slain.
  */
 public class RespawnRunnable extends BukkitRunnable {
 
@@ -61,7 +61,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	private int secondsUntilRespawn;
 	
 	/**
-	 * Construct a new RespawnRunnable object
+	 * Construct a new RespawnRunnable object.
 	 * 
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 * @param world the world to execute a respawn
@@ -113,7 +113,7 @@ public class RespawnRunnable extends BukkitRunnable {
 		World crystalWorld = crystalLocation.getWorld();
 		
 		Chunk crystalChunk = crystalWorld.getChunkAt(crystalLocation);
-		if (!crystalChunk.isLoaded()) 
+		if (!crystalChunk.isLoaded())
 			crystalChunk.load();
 		
 		// Remove any existing crystal
@@ -158,7 +158,7 @@ public class RespawnRunnable extends BukkitRunnable {
 	}
 
 	/**
-	 * Get the amount of time remaining (in seconds) until the dragon respawns
+	 * Get the amount of time remaining (in seconds) until the dragon respawns.
 	 * 
 	 * @return the remaining time
 	 */

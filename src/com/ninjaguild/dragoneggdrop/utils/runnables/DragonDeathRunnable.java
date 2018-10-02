@@ -39,7 +39,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Represents a BukkitRunnable that handles the generation and particle display
- * of the loot after the Ender Dragon's death
+ * of the loot after the Ender Dragon's death.
  */
 public class DragonDeathRunnable extends BukkitRunnable {
 	
@@ -68,7 +68,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	private double currentY;
 
 	/**
-	 * Construct a new DragonDeathRunnable object
+	 * Construct a new DragonDeathRunnable object.
 	 * 
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 * @param worldWrapper the world in which the dragon death is taking place

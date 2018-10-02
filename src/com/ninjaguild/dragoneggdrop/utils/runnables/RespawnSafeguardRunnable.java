@@ -32,7 +32,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * Represents a BukkitRunnable that ensures the respawn state of the
  * Ender Dragon due to issues in vanilla dragon respawning mechanics.
  * If a dragon has not respawned within 40 seconds (800 ticks), the
- * respawning process will restart
+ * respawning process will restart.
  */
 public class RespawnSafeguardRunnable extends BukkitRunnable {
 	
@@ -76,7 +76,7 @@ public class RespawnSafeguardRunnable extends BukkitRunnable {
 	}
 	
 	/**
-	 * Commence a new RespawnSafeguardRunnable. This should only be invoked in a RespawnRunnable
+	 * Commence a new RespawnSafeguardRunnable. This should only be invoked in a RespawnRunnable.
 	 * 
 	 * @param plugin the plugin instance
 	 * @param world the battle's world

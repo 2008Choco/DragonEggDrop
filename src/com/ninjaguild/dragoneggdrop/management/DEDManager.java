@@ -32,8 +32,8 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.World;
 
 /**
- * The central manager holding all information regarding world wrappers,
- * loaded dragon templates, and the currently active dragon battle
+ * The central manager holding all information regarding world wrappers, loaded dragon
+ * templates, and the currently active dragon battle.
  */
 public class DEDManager {
 
@@ -41,12 +41,6 @@ public class DEDManager {
 	private final Map<UUID, EndWorldWrapper> worldWrappers = new HashMap<>();
 	private final DragonEggDrop plugin;
 	
-	/**
-	 * Construct a new DEDManager object. This object should mainly be
-	 * managed by the {@link DragonEggDrop} class
-	 * 
-	 * @param plugin an instance of the DragonEggDrop plugin
-	 */
 	public DEDManager(DragonEggDrop plugin) {
 		this.plugin = plugin;
 		this.reloadDragonTemplates();
@@ -54,7 +48,7 @@ public class DEDManager {
 	
 	/**
 	 * Register a template to the DEDManager in order for it to be used when generating
-	 * dragons in the respawn process
+	 * dragons in the respawn process.
 	 * 
 	 * @param template the template to register
 	 */
@@ -71,7 +65,7 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get a collection of all loaded dragon templates
+	 * Get a collection of all loaded dragon templates.
 	 * 
 	 * @return all dragon templates
 	 */
@@ -80,7 +74,7 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get a weighted random dragon template pooled from all loaded templates. 
+	 * Get a weighted random dragon template pooled from all loaded templates.
 	 * 
 	 * @return a random dragon template. null if none
 	 * 
@@ -95,6 +89,7 @@ public class DEDManager {
 	 * This search is case-sensitive.
 	 * 
 	 * @param template the template's unique identifier
+	 * 
 	 * @return the resulting template, or null if none exists
 	 */
 	public DragonTemplate getTemplate(String template) {
@@ -104,7 +99,7 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Clear all loaded dragon templates
+	 * Clear all loaded dragon templates.
 	 */
 	public void clearTemplates() {
 		this.dragonTemplates.clear();
@@ -113,7 +108,7 @@ public class DEDManager {
 	/**
 	 * Load and parse all dragon template files from the "dragons" folder.
 	 * This method implicitly invokes {@link #clearTemplates()} before loading any
-	 * other templates
+	 * other templates.
 	 */
 	public void reloadDragonTemplates() {
 		this.dragonTemplates.clear();
@@ -123,7 +118,7 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get the world wrapper for the specified world
+	 * Get the world wrapper for the specified world.
 	 * 
 	 * @param world the world to get
 	 * @return the world's respective wrapper
@@ -138,7 +133,7 @@ public class DEDManager {
 	}
 	
 	/**
-	 * Get the map containing all world wrappers
+	 * Get the map containing all world wrappers.
 	 * 
 	 * @return all world wrappers
 	 */
@@ -148,26 +143,28 @@ public class DEDManager {
 	
 	/**
 	 * Clear all world wrapper data. This deletes all information to do with
-	 * active battles, as well as the state of a world according to DragonEggDrop
+	 * active battles, as well as the state of a world according to DragonEggDrop.
 	 */
 	public void clearWorldWrappers() {
 		this.worldWrappers.clear();
 	}
 	
+	
 	/**
-	 * The type of trigger that allowed an Ender Dragon to 
-	 * commence its respawning process
+	 * The type of trigger that allowed an Ender Dragon to  commence its respawning process.
 	 */
 	public enum RespawnType {
 		
-		/** 
+		/**
 		 * A player joined the world
 		 */
 		JOIN,
 		
-		/** 
+		/**
 		 * The ender dragon was killed
 		 */
-		DEATH
+		DEATH;
+		
 	}
+	
 }

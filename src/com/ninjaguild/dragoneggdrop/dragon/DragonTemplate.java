@@ -44,9 +44,8 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Represents a template for a custom dragon to be spawned containing
- * information about its name, the style of its boss bar, as well as
- * the loot it will drop after it is killed
+ * Represents a template for a custom dragon to be spawned containing information about
+ * its name, the style of its boss bar, as well as the loot it will drop after it is killed.
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -70,7 +69,7 @@ public class DragonTemplate {
 	private final Map<Attribute, Double> attributes = new HashMap<>();
 	
 	/**
-	 * Construct a new DragonTemplate object
+	 * Construct a new DragonTemplate object.
 	 * 
 	 * @param file the file holding this template data
 	 * @param name the name of the dragon. Can be null
@@ -91,7 +90,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Construct a new DragonTemplate object
+	 * Construct a new DragonTemplate object.
 	 * 
 	 * @param identifier the name to identify this template
 	 * @param name the name of the dragon. Can be null
@@ -124,7 +123,7 @@ public class DragonTemplate {
 	
 	/**
 	 * Get the file in the "dragons" folder that holds information for
-	 * this dragon template
+	 * this dragon template.
 	 * 
 	 * @return the dragon template file
 	 */
@@ -133,7 +132,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the name of the dragon
+	 * Set the name of the dragon.
 	 * 
 	 * @param name the dragon's new name
 	 * @param updateFile whether to update the dragon file or not
@@ -147,7 +146,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the name of the dragon and update the dragon file (if one exists)
+	 * Set the name of the dragon and update the dragon file (if one exists).
 	 * 
 	 * @param name the dragon's new name
 	 */
@@ -156,7 +155,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Get the name of the dragon
+	 * Get the name of the dragon.
 	 * 
 	 * @return the dragon's name
 	 */
@@ -165,7 +164,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the style of the boss bar
+	 * Set the style of the boss bar.
 	 * 
 	 * @param barStyle the new boss bar style
 	 * @param updateFile whether to update the dragon file or not
@@ -179,7 +178,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the style of the boss bar and update the dragon file (if one exists)
+	 * Set the style of the boss bar and update the dragon file (if one exists).
 	 * 
 	 * @param barStyle the new boss bar style
 	 */
@@ -188,7 +187,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Get the style of the boss bar
+	 * Get the style of the boss bar.
 	 * 
 	 * @return the boss bar style
 	 */
@@ -197,7 +196,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the colour of the boss bar
+	 * Set the colour of the boss bar.
 	 * 
 	 * @param barColour the new boss bar colour
 	 * @param updateFile whether to update the dragon file or not
@@ -211,7 +210,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the colour of the boss bar and update the dragon file (if one exists)
+	 * Set the colour of the boss bar and update the dragon file (if one exists).
 	 * 
 	 * @param barColour the new boss bar colour
 	 */
@@ -220,7 +219,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Get the colour of the boss bar
+	 * Get the colour of the boss bar.
 	 * 
 	 * @return the boss bar colour
 	 */
@@ -229,7 +228,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Get the loot to be dropped after the dragon is killed
+	 * Get the loot to be dropped after the dragon is killed.
 	 * 
 	 * @return the dragon loot
 	 */
@@ -238,7 +237,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set the weight of this dragon's spawn percentage
+	 * Set the weight of this dragon's spawn percentage.
 	 * 
 	 * @param spawnWeight the new spawn weight
 	 * @param updateFile whether to update the dragon file or not
@@ -255,7 +254,7 @@ public class DragonTemplate {
 	
 	/**
 	 * Set the weight of this dragon's spawn percentage and update the dragon file
-	 * (if one exists)
+	 * (if one exists).
 	 * 
 	 * @param spawnWeight the new spawn weight
 	 */
@@ -264,7 +263,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Get the weight of this dragon's spawn percentage
+	 * Get the weight of this dragon's spawn percentage.
 	 * 
 	 * @return the spawn weight
 	 */
@@ -273,7 +272,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Set whether this dragon's name should be announced as it respawns
+	 * Set whether this dragon's name should be announced as it respawns.
 	 * 
 	 * @param announceRespawn the new announcement state
 	 * @param updateFile whether to update the dragon file or not
@@ -288,7 +287,7 @@ public class DragonTemplate {
 	
 	/**
 	 * Set whether this dragon's name should be announced as it respawns and
-	 * update the dragon file (if one exists)
+	 * update the dragon file (if one exists).
 	 * 
 	 * @param announceRespawn the new announcement state
 	 */
@@ -297,7 +296,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Check whether this dragon's name should be announced as it respawns
+	 * Check whether this dragon's name should be announced as it respawns.
 	 * 
 	 * @return true if announce name, false otherwise
 	 */
@@ -307,7 +306,7 @@ public class DragonTemplate {
 	
 	/**
 	 * Get an immutable Map of all attributes and their values according to
-	 * this template
+	 * this template.
 	 * 
 	 * @return the mapped attributes and values
 	 */
@@ -320,6 +319,7 @@ public class DragonTemplate {
 	 * attribute value is not specified, -1 will be returned.
 	 * 
 	 * @param attribute the attribute to check
+	 * 
 	 * @return the value of the attribute, or -1 if non existent
 	 */
 	public double getAttributeValue(Attribute attribute) {
@@ -327,9 +327,10 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Check whether this template has specified an attribute's value
+	 * Check whether this template has specified an attribute's value.
 	 * 
 	 * @param attribute the attribute to check
+	 * 
 	 * @return true if defined. false otherwise
 	 */
 	public boolean hasAttribute(Attribute attribute) {
@@ -337,7 +338,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Add an attribute to this template
+	 * Add an attribute to this template.
 	 * 
 	 * @param attribute the attribute to add
 	 * @param value the new value of the attribute
@@ -355,8 +356,8 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Add an attribute to this template and update the dragon file (if one 
-	 * exists)
+	 * Add an attribute to this template and update the dragon file (if one
+	 * exists).
 	 * 
 	 * @param attribute the attribute to add
 	 * @param value the new value of the attribute
@@ -366,7 +367,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Remove an attribute from this template and set its value back to default
+	 * Remove an attribute from this template and set its value back to default.
 	 * 
 	 * @param attribute the attribute to remove
 	 * @param updateFile whether to update the dragon file or not
@@ -383,7 +384,7 @@ public class DragonTemplate {
 	
 	/**
 	 * Remove an attribute from this template, set its value back to default and
-	 * update the dragon file (if one exists)
+	 * update the dragon file (if one exists).
 	 * 
 	 * @param attribute the attribute to remove
 	 */
@@ -392,7 +393,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Clear all loaded attribute mappings
+	 * Clear all loaded attribute mappings.
 	 * 
 	 * @param updateFile whether to update the dragon file or not
 	 */
@@ -405,15 +406,14 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Clear all loaded attribute mappings and update the dragon file (if one
-	 * exists)
+	 * Clear all loaded attribute mappings and update the dragon file (if one exists).
 	 */
 	public void clearAttributes() {
 		this.clearAttributes(true);
 	}
 	
 	/**
-	 * Apply this templates data to an EnderDragonBattle object
+	 * Apply this templates data to an EnderDragonBattle object.
 	 * 
 	 * @param nmsAbstract an instance of the NMSAbstract interface
 	 * @param dragon the dragon to modify
@@ -444,9 +444,9 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Update a configuration value in this template's file (if one exists).
-	 * If the file for this dragon template does not exist (i.e. a synthetically
-	 * created template from an extension plugin), this method will fail silently
+	 * Update a configuration value in this template's file (if one exists). If the file
+	 * for this dragon template does not exist (i.e. a synthetically created template from
+	 * an extension plugin), this method will fail silently.
 	 * 
 	 * @param path the configuration path to update
 	 * @param value the value to set
@@ -463,7 +463,7 @@ public class DragonTemplate {
 	}
 	
 	/**
-	 * Load and parse all DragonTemplate objects from the dragons folder
+	 * Load and parse all DragonTemplate objects from the dragons folder.
 	 * 
 	 * @return all parsed DragonTemplate objects
 	 */

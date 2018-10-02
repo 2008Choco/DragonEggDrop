@@ -35,7 +35,7 @@ import org.bukkit.entity.EnderDragon;
 
 /**
  * Represents a wrapped {@link World} object with {@link Environment#THE_END} to separate
- * the runnables present in each independent world. Allows for separation of DED respawns
+ * the runnables present in each independent world. Allows for separation of DED respawns.
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -64,7 +64,7 @@ public class EndWorldWrapper {
 	}
 	
 	/**
-	 * Get the world represented by this wrapper
+	 * Get the world represented by this wrapper.
 	 * 
 	 * @return the represented world
 	 */
@@ -73,7 +73,7 @@ public class EndWorldWrapper {
 	}
 	
 	/**
-	 * Commence the Dragon's respawning processes in this world
+	 * Commence the Dragon's respawning processes in this world.
 	 * 
 	 * @param type the type that triggered this dragon respawn
 	 */
@@ -92,8 +92,8 @@ public class EndWorldWrapper {
 	}
 	
 	/**
-	 * Commence the Dragon's respawning processes in this world based 
-	 * on provided values rather than configured ones.
+	 * Commence the Dragon's respawning processes in this world based on provided
+	 * values rather than configured ones.
 	 * 
 	 * @param respawnDelay the time until the dragon respawns
 	 */
@@ -109,19 +109,19 @@ public class EndWorldWrapper {
 	}
 	
 	/**
-	 * Halt the Dragon respawning process if any are currently running
+	 * Halt the Dragon respawning process if any are currently running.
 	 */
 	public void stopRespawn() {
 		this.respawnInProgress = false;
 		
 		if (respawnTask != null) {
 			this.respawnTask.cancel();
-			this.respawnTask = null;	
+			this.respawnTask = null;
 		}
 	}
 	
 	/**
-	 * Check whether a respawn is currently in progress or not
+	 * Check whether a respawn is currently in progress or not.
 	 * 
 	 * @return true if actively respawning
 	 */
@@ -130,7 +130,7 @@ public class EndWorldWrapper {
 	}
 
 	/**
-	 * Get the amount of time remaining until the dragon respawns
+	 * Get the amount of time remaining until the dragon respawns.
 	 * 
 	 * @return the time remaining (in seconds), or -1 if no time remaining at all
 	 */
@@ -141,7 +141,7 @@ public class EndWorldWrapper {
 
 	/**
 	 * Set the battle that is active according to DragonEggDrop. This battle
-	 * instance will be used to generate names and lore for loot respectively
+	 * instance will be used to generate names and lore for loot respectively.
 	 * 
 	 * @param activeBattle the battle to set
 	 */
@@ -150,7 +150,7 @@ public class EndWorldWrapper {
 	}
 	
 	/**
-	 * Get the template represented in the active battle
+	 * Get the template represented in the active battle.
 	 * 
 	 * @return the current battle
 	 */
