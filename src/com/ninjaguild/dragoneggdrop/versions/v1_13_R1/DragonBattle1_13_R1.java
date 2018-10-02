@@ -1,4 +1,4 @@
-package com.ninjaguild.dragoneggdrop.versions.v1_10;
+package com.ninjaguild.dragoneggdrop.versions.v1_13_R1;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -12,14 +12,14 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
 
-import net.minecraft.server.v1_10_R1.BlockPosition;
-import net.minecraft.server.v1_10_R1.BossBattle;
-import net.minecraft.server.v1_10_R1.BossBattleServer;
-import net.minecraft.server.v1_10_R1.ChatMessage;
-import net.minecraft.server.v1_10_R1.EnderDragonBattle;
-import net.minecraft.server.v1_10_R1.Entity;
-import net.minecraft.server.v1_10_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_10_R1.WorldServer;
+import net.minecraft.server.v1_13_R1.BlockPosition;
+import net.minecraft.server.v1_13_R1.BossBattle;
+import net.minecraft.server.v1_13_R1.BossBattleServer;
+import net.minecraft.server.v1_13_R1.ChatMessage;
+import net.minecraft.server.v1_13_R1.EnderDragonBattle;
+import net.minecraft.server.v1_13_R1.Entity;
+import net.minecraft.server.v1_13_R1.PacketPlayOutBoss;
+import net.minecraft.server.v1_13_R1.WorldServer;
 
 /**
  * An abstract implementation for EnderDragonBattle of necessary 
@@ -27,15 +27,15 @@ import net.minecraft.server.v1_10_R1.WorldServer;
  * vary between versions causing version dependencies. Allows for
  * version independency through abstraction per Bukkit/Spigot release
  * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.10.0, 1.10.1 and 1.10.2
+ * <b><i>Supported Minecraft Versions:</i></b> 1.13.0
  * 
  * @author Parker Hawke - 2008Choco
  */
-public class DragonBattle1_10_R1 implements DragonBattle {
+public class DragonBattle1_13_R1 implements DragonBattle {
 	
 	private final EnderDragonBattle battle;
 	
-	protected DragonBattle1_10_R1(EnderDragonBattle battle) {
+	protected DragonBattle1_13_R1(EnderDragonBattle battle) {
 		this.battle = battle;
 	}
 

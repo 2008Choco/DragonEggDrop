@@ -56,7 +56,10 @@ public interface NMSAbstract {
 	 * 
 	 * @param chest the chest to set the name of
 	 * @param name the name to set the chest to
+	 * 
+	 * @deprecated replaced by Bukkit's {@link Chest#setCustomName(String)}
 	 */
+	@Deprecated
 	public void setChestName(Chest chest, String name);
 	
 	/**

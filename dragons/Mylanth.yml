@@ -24,8 +24,7 @@ death-commands:
 loot:
   '1':
     weight: 1.0
-    type: STICK
-    data: 0
+    type: stick
     damage: 1
     amount: 1
     display-name: '&bExample Item'
@@ -33,4 +32,4 @@ loot:
     - '&6Configure me'
     - '&6to any item'
     enchantments:
-      DURABILITY: 1
+      unbreaking: 1

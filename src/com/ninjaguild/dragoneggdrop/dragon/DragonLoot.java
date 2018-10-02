@@ -14,14 +14,13 @@ import com.google.common.collect.ImmutableList;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,6 +29,7 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,7 +42,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class DragonLoot {
 	
 	private static final Random RANDOM = new Random();
-	private static final NMSAbstract NMS_ABSTRACT = JavaPlugin.getPlugin(DragonEggDrop.class).getNMSAbstract();
 	
 	private final DragonTemplate template;
 	private final RandomCollection<ItemStack> loot = new RandomCollection<>();
@@ -78,7 +77,6 @@ public class DragonLoot {
 	 * @param weight the generation weight of the item
 	 * @param updateFile whether to update the dragon file or not
 	 */
-	@SuppressWarnings("deprecation")
 	public void addLootItem(ItemStack item, double weight, boolean updateFile) {
 		Validate.notNull(item, "Cannot add null ItemStack to loot");
 		if (weight < 0) weight = 0;
@@ -91,18 +89,17 @@ public class DragonLoot {
 			
 			config.set("loot." + itemID + ".weight", weight);
 			config.set("loot." + itemID + ".type", item.getType().name());
-			if (item.getData().getData() != 0) config.set("loot." + itemID + ".data", item.getData().getData());
-			if (item.getDurability() != 0) config.set("loot." + itemID + ".damage", item.getDurability());
 			config.set("loot." + itemID + ".amount", item.getAmount());
 			
 			if (item.hasItemMeta()) {
 				ItemMeta meta = item.getItemMeta();
 				
+				if (((Damageable) meta).getDamage() != 0) config.set("loot." + itemID + ".damage", ((Damageable) meta).getDamage());
 				if (meta.hasDisplayName()) config.set("loot." + itemID + ".display-name", meta.getDisplayName());
 				if (meta.hasLore()) config.set("loot." + itemID + ".lore", meta.getLore());
 				if (meta.hasEnchants()) {
 					for (Enchantment enchant : meta.getEnchants().keySet()) {
-						config.set("loot." + itemID + ".enchantments." + enchant.getName(), meta.getEnchantLevel(enchant));
+						config.set("loot." + itemID + ".enchantments." + enchant.getKey().getKey(), meta.getEnchantLevel(enchant));
 					}
 				}
 			}
@@ -483,7 +480,7 @@ public class DragonLoot {
 		if (spawnChest) {
 			location.getBlock().setType(Material.CHEST);
 			Chest chest = (Chest) location.getBlock().getState();
-			NMS_ABSTRACT.setChestName(chest, chestName);
+			chest.setCustomName(chestName);
 			
 			Inventory inventory = chest.getInventory();
 			inventory.clear();
@@ -564,8 +561,7 @@ public class DragonLoot {
 			// Parse root values (type, damage, amount and weight)
 			double weight = lootSection.getDouble(itemKey + ".weight");
 			
-			Material type = EnumUtils.getEnum(Material.class, lootSection.getString(itemKey + ".type").toUpperCase());
-			byte data = (byte) lootSection.getInt(itemKey + ".data");
+			Material type = Material.matchMaterial(lootSection.getString(itemKey + ".type", "minecraft:stone"));
 			short damage = (short) lootSection.getInt(itemKey + ".damage");
 			int amount = lootSection.getInt(itemKey + ".amount");
 			
@@ -575,9 +571,7 @@ public class DragonLoot {
 			}
 			
 			// Create new item stack with passed values
-			@SuppressWarnings("deprecation")
-			ItemStack item = new ItemStack(type, 1, damage, data);
-			item.setAmount(amount);
+			ItemStack item = new ItemStack(type, amount);
 			
 			// Parse meta
 			String displayName = lootSection.getString(itemKey + ".display-name");
@@ -587,7 +581,8 @@ public class DragonLoot {
 			// Enchantment parsing
 			if (lootSection.contains(itemKey + ".enchantments")) {
 				for (String enchant : lootSection.getConfigurationSection(itemKey + ".enchantments").getKeys(false)) {
-					Enchantment enchantment = Enchantment.getByName(enchant);
+					enchant = enchant.toLowerCase();
+					Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchant.startsWith("minecraft:") ? enchant.substring(10) : enchant));
 					int level = lootSection.getInt(itemKey + ".enchantments." + enchant);
 					
 					if (enchantment == null || level == 0) {
@@ -601,6 +596,7 @@ public class DragonLoot {
 			
 			// Meta updating
 			ItemMeta meta = item.getItemMeta();
+			((Damageable) meta).setDamage(damage);
 			if (displayName != null) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
 			if (!lore.isEmpty()) meta.setLore(lore.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
 			enchantments.forEach((e, level) -> meta.addEnchant(e, level, true));
