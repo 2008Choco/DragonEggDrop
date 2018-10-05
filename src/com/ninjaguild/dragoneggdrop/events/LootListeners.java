@@ -38,6 +38,8 @@ public class LootListeners implements Listener {
 				|| stack.hasItemMeta()) return;
 		
 		DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getActiveBattle();
+		if (dragon == null) return;
+		
 		DragonLoot loot = dragon.getLoot();
 		
 		String eggName = loot.getEggName().replace("%dragon%", dragon.getName());
