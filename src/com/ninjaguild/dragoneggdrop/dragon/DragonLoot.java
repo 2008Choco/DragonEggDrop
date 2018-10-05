@@ -26,12 +26,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * Represents a dragon's loot information (similar to a loot table) which may randomly
@@ -518,8 +523,20 @@ public class DragonLoot {
 		}
 		
 		// Execute commands
-		List<Player> playersInWorld = dragon.getWorld().getPlayers();
-		Player commandTarget = playersInWorld.size() > 0 ? playersInWorld.get(0) : null;
+		Player commandTarget = null;
+		EntityDamageEvent lastDamageCause = dragon.getLastDamageCause();
+		if (lastDamageCause instanceof EntityDamageByEntityEvent) {
+			Entity damager = ((EntityDamageByEntityEvent) lastDamageCause).getDamager();
+			
+			if (damager instanceof Player) {
+				commandTarget = (Player) damager;
+			} else if (damager instanceof Projectile) {
+				ProjectileSource projectileSource = ((Projectile) damager).getShooter();
+				if (!(projectileSource instanceof Player)) return; // Give up
+				
+				commandTarget = (Player) projectileSource;
+			}
+		}
 		
 		for (String command : commands) {
 			if (command.contains("%player%") && commandTarget == null) continue;
