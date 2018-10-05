@@ -83,7 +83,7 @@ public class ParticleShapeDefinition {
 		double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
 		
 		this.initialLocation.add(x, 0, z);
-		this.world.spawnParticle(particleType, this.initialLocation, particleAmount, xOffset, yOffset, zOffset, particleExtra, null);
+		this.world.spawnParticle(particleType, this.initialLocation, particleAmount, xOffset, yOffset, zOffset, particleExtra, null, true);
 		this.initialLocation.subtract(x, 0, z);
 	}
 }
