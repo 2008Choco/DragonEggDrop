@@ -5,11 +5,11 @@ import java.util.Map;
 
 import com.ninjaguild.dragoneggdrop.utils.math.MathExpression;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 
 /**
  * Represents a defined particle shape. Allows for easy shape-creation with two
@@ -22,19 +22,21 @@ public class ParticleShapeDefinition {
 	
 	private final Map<String, Double> variables = new HashMap<>();
 	
+	private final NMSAbstract nmsAbstract;
 	private final Location initialLocation;
-	private final World world;
 	private final MathExpression xExpression, zExpression;
 	
 	/**
 	 * Construct a new ParticleShapeDefinition with a given location, and mathmatical equations
 	 * for both the x and z axis.
 	 * 
+	 * @param nmsAbstract the abstract implementation of NMS for DragonEggDrop
 	 * @param initialLocation the initial starting location
 	 * @param xExpression the expression for the x axis
 	 * @param zExpression the expression for the y axis
 	 */
-	public ParticleShapeDefinition(Location initialLocation, String xExpression, String zExpression) {
+	public ParticleShapeDefinition(NMSAbstract nmsAbstract, Location initialLocation, String xExpression, String zExpression) {
+		Validate.notNull(nmsAbstract, "NMS abstract must not be null");
 		Validate.notNull(initialLocation, "Null initial locations are not supported");
 		Validate.notEmpty(xExpression, "The x axis expression cannot be null or empty");
 		Validate.notEmpty(zExpression, "The z axis expression cannot be null or empty");
@@ -44,8 +46,8 @@ public class ParticleShapeDefinition {
 		this.variables.put("t", 0.0);
 		this.variables.put("theta", 0.0);
 		
+		this.nmsAbstract = nmsAbstract;
 		this.initialLocation = initialLocation;
-		this.world = initialLocation.getWorld();
 		this.xExpression = MathUtils.parseExpression(xExpression, variables);
 		this.zExpression = MathUtils.parseExpression(zExpression, variables);
 	}
@@ -83,7 +85,7 @@ public class ParticleShapeDefinition {
 		double x = this.xExpression.evaluate(), z = this.zExpression.evaluate();
 		
 		this.initialLocation.add(x, 0, z);
-		this.world.spawnParticle(particleType, this.initialLocation, particleAmount, xOffset, yOffset, zOffset, particleExtra, null, true);
+		this.nmsAbstract.spawnParticle(particleType, initialLocation, particleAmount, xOffset, yOffset, zOffset, particleExtra);
 		this.initialLocation.subtract(x, 0, z);
 	}
 }

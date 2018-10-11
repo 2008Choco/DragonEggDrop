@@ -8,6 +8,7 @@ import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
@@ -75,7 +76,8 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.lightningAmount = config.getInt("lightning-amount");
 		
 		// Portal location
-		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
+		DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromDragon(dragon);
 		Location portalLocation = dragonBattle.getEndPortalLocation();
 		this.currentY = config.getDouble("Particles.egg-start-y");
 		this.location = new Location(world, portalLocation.getX(), this.currentY, portalLocation.getZ());
@@ -86,16 +88,16 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
 		
 		if (shape.equalsIgnoreCase("BALL")) {
-			this.particleShape = new ParticleShapeDefinition(location, "x", "z");
+			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "x", "z");
 		}
 		else if (shape.equalsIgnoreCase("HELIX")) {
-			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2");
+			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "cos(theta) * 1.2", "sin(theta) * 1.2");
 		}
 		else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
-			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
+			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
 		}
 		else { // CUSTOM or default
-			this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
+			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, xCoordExpressionString, zCoordExpressionString);
 		}
 
 		this.respawnDragon = config.getBoolean("respawn-on-death", false);

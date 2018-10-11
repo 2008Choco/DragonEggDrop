@@ -1,5 +1,7 @@
 package com.ninjaguild.dragoneggdrop.versions;
 
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.EnderDragon;
@@ -77,5 +79,21 @@ public interface NMSAbstract {
 	 * @param world the world to broadcast the message to
 	 */
 	public void broadcastActionBar(String message, World world);
+	
+	/**
+	 * Spawn particles in the world for all players. This method exists primarily to support a
+	 * non-existent method in Spigot 1.13.0
+	 * 
+	 * @param particle the particle to spawn
+	 * @param location the location at which to spawn the particle
+	 * @param count the amount of particles to spawn
+	 * @param xOffset the x offset to apply
+	 * @param yOffset the y offset to apply
+	 * @param zOffset the z offset to apply
+	 * @param speed the particle's speed
+	 * 
+	 * @see World#spawnParticle(Particle, Location, int, double, double, double, double)
+	 */
+	public void spawnParticle(Particle particle, Location location, int count, double xOffset, double yOffset, double zOffset, double speed);
 	
 }
