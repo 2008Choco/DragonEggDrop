@@ -12,7 +12,6 @@ import java.util.Enumeration;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
@@ -38,7 +37,6 @@ import com.ninjaguild.dragoneggdrop.versions.v1_13_R2.NMSAbstract1_13_R2;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -87,15 +85,6 @@ public class DragonEggDrop extends JavaPlugin {
 		if (!this.setupNMSAbstract()) {
 			this.getLogger().severe("THE CURRENT SERVER VERSION IS NOT SUPPORTED. BOTHER THE MAINTAINER");
 			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		try {
-			Particle.valueOf(getConfig().getString("Particles.type", "FLAME").toUpperCase());
-		} catch (IllegalArgumentException ex) {
-			this.getLogger().log(Level.WARNING, "INVALID PARTICLE TYPE SPECIFIED! DISABLING...");
-			this.getLogger().log(Level.INFO, "PLUGIN DISABLED");
-			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 		

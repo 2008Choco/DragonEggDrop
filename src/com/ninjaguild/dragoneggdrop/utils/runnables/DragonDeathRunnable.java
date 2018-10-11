@@ -9,6 +9,7 @@ import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,7 +63,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.dragon = dragon;
 		
 		FileConfiguration config = plugin.getConfig();
-		this.particleType = Particle.valueOf(config.getString("Particles.type", "FLAME").toUpperCase());
+		this.particleType = EnumUtils.getEnum(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase());
 		this.particleAmount = config.getInt("Particles.amount", 4);
 		this.particleExtra = config.getDouble("Particles.extra", 0.0D);
 		this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
