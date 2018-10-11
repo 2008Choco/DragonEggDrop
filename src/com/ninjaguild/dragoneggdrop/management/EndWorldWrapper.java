@@ -85,7 +85,7 @@ public class EndWorldWrapper {
 	 * @param respawnDelay the time until the dragon respawns
 	 */
 	public void startRespawn(int respawnDelay) {
-		if (respawnDelay < 0) respawnDelay = 0;
+		respawnDelay = Math.max(respawnDelay, 0);
 		
 		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return;
@@ -122,7 +122,7 @@ public class EndWorldWrapper {
 	 * @return the time remaining (in seconds), or -1 if no time remaining at all
 	 */
 	public int getTimeUntilRespawn() {
-		return (this.respawnTask != null ? this.respawnTask.getSecondsUntilRespawn() : -1);
+		return (respawnTask != null ? respawnTask.getSecondsUntilRespawn() : -1);
 	}
 	
 

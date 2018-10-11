@@ -39,9 +39,9 @@ public class RespawnSafeguardRunnable extends BukkitRunnable {
 			this.plugin.getLogger().warning("Something went wrong! Had to forcibly reset dragon battle...");
 			
 			this.battle.resetBattleState();
-			this.removeCrystals();
+			this.world.getEntitiesByClass(EnderCrystal.class).forEach(Entity::remove); // Remove pre-existing crystals
 			
-			plugin.getDEDManager().getWorldWrapper(world).startRespawn(0);
+			this.plugin.getDEDManager().getWorldWrapper(world).startRespawn(0);
 			return;
 		}
 		
@@ -50,10 +50,6 @@ public class RespawnSafeguardRunnable extends BukkitRunnable {
 			c.setInvulnerable(false);
 			c.setBeamTarget(null);
 		});
-	}
-	
-	private void removeCrystals() {
-		this.world.getEntitiesByClass(EnderCrystal.class).forEach(Entity::remove);
 	}
 	
 	/**

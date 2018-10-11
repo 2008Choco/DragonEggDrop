@@ -44,6 +44,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -103,10 +104,11 @@ public class DragonEggDrop extends JavaPlugin {
 		}
 		
 		// Register events
-		Bukkit.getPluginManager().registerEvents(new DragonLifeListeners(this), this);
-		Bukkit.getPluginManager().registerEvents(new LootListeners(this), this);
-		Bukkit.getPluginManager().registerEvents(new RespawnListeners(this), this);
-		Bukkit.getPluginManager().registerEvents(new PortalClickListener(this), this);
+		PluginManager manager = Bukkit.getPluginManager();
+		manager.registerEvents(new DragonLifeListeners(this), this);
+		manager.registerEvents(new LootListeners(this), this);
+		manager.registerEvents(new RespawnListeners(this), this);
+		manager.registerEvents(new PortalClickListener(this), this);
 
 		// Register commands
 		this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
@@ -133,8 +135,9 @@ public class DragonEggDrop extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		if (this.updateTask != null)
+		if (this.updateTask != null) {
 			this.updateTask.cancel();
+		}
 		
 		if (!tempDataFile.exists()) {
 			try {
@@ -143,8 +146,8 @@ public class DragonEggDrop extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
-		this.writeTempData();
 		
+		this.writeTempData();
 		this.dedManager.clearTemplates();
 		
 		// Clear the world wrappers
@@ -251,7 +254,9 @@ public class DragonEggDrop extends JavaPlugin {
 				JsonObject element = entry.getValue().getAsJsonObject();
 				
 				if (element.has("respawnTime")) {
-					if (wrapper.isRespawnInProgress()) wrapper.stopRespawn();
+					if (wrapper.isRespawnInProgress()) {
+						wrapper.stopRespawn();
+					}
 					
 					wrapper.startRespawn(element.get("respawnTime").getAsInt());
 				}
@@ -314,6 +319,6 @@ public class DragonEggDrop extends JavaPlugin {
 			case "v1_13_R2": nmsAbstract = new NMSAbstract1_13_R2(); break; // 1.13.1
 		}
         
-        return this.nmsAbstract != null;
+        return nmsAbstract != null;
 	}
 }
