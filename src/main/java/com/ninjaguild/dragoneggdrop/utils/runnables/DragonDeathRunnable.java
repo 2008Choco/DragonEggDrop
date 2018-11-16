@@ -88,13 +88,13 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
 
 		if (shape.equalsIgnoreCase("BALL")) {
-			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "x", "z");
+			this.particleShape = new ParticleShapeDefinition(location, "x", "z");
 		} else if (shape.equalsIgnoreCase("HELIX")) {
-			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "cos(theta) * 1.2", "sin(theta) * 1.2");
+			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2");
 		} else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
-			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
+			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
 		} else { // CUSTOM or default
-			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, xCoordExpressionString, zCoordExpressionString);
+			this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
 		}
 
 		this.respawnDragon = config.getBoolean("respawn-on-death", false);

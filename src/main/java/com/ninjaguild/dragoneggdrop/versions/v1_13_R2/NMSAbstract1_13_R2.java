@@ -13,8 +13,6 @@ import net.minecraft.server.v1_13_R2.PacketPlayOutChat;
 import net.minecraft.server.v1_13_R2.WorldProvider;
 import net.minecraft.server.v1_13_R2.WorldProviderTheEnd;
 
-import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEnderDragon;
@@ -79,11 +77,6 @@ public class NMSAbstract1_13_R2 implements NMSAbstract {
 	public void broadcastActionBar(String message, World world) {
 		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
 		world.getPlayers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
-	}
-
-	@Override
-	public void spawnParticle(Particle particle, Location location, int count, double xOffset, double yOffset, double zOffset, double speed) {
-		location.getWorld().spawnParticle(particle, location, count, xOffset, yOffset, zOffset, speed, null, true);
 	}
 
 }
