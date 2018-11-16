@@ -27,7 +27,7 @@ import org.bukkit.entity.EnderDragon;
  * vary between versions causing version dependencies. Allows for
  * version independency through abstraction per Bukkit/Spigot release
  * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.12.0
+ * <b><i>Supported Minecraft Versions:</i></b> 1.13.2
  * 
  * @author Parker Hawke - 2008Choco
  */
@@ -43,47 +43,29 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 	public void setBossBarTitle(String title) {
 		if (title == null) return;
 		
-		try {
-			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
-			fieldBossBattleServer.setAccessible(true);
-			
-			BossBattleServer battleServer = (BossBattleServer) fieldBossBattleServer.get(battle);
-			if (battleServer == null) return;
-			battleServer.title = new ChatMessage(title);
-			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
-			
-			fieldBossBattleServer.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
+		if (battleServer == null) return;
+		
+		battleServer.title = new ChatMessage(title);
+		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
 	}
 
 	@Override
 	public boolean setBossBarStyle(BarStyle style, BarColor colour) {
-		try {
-			Field fieldBossBattleServer = EnderDragonBattle.class.getDeclaredField("c");
-			fieldBossBattleServer.setAccessible(true);
-			
-			BossBattleServer battleServer = (BossBattleServer) fieldBossBattleServer.get(battle);
-			if (battleServer == null) return false;
-			
-			if (style != null) {
-				String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS";
-				if (EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
-					battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
-				}
+		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
+		if (battleServer == null) return false;
+		
+		if (style != null) {
+			String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS";
+			if (EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
+				battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
 			}
-			if (colour != null) {
-				battleServer.color = BossBattle.BarColor.valueOf(colour.name());
-			}
-			
-			battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
-			fieldBossBattleServer.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-			return false;
+		}
+		if (colour != null) {
+			battleServer.color = BossBattle.BarColor.valueOf(colour.name());
 		}
 		
+		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
 		return true;
 	}
 
