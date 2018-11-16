@@ -16,7 +16,6 @@ import net.minecraft.server.v1_13_R2.WorldProviderTheEnd;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEnderDragon;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
@@ -57,7 +56,7 @@ public class NMSAbstract1_13_R2 implements NMSAbstract {
 	@Override
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
 		if (dragon == null) return false;
-		
+
 		EnderDragonBattle battle = ((DragonBattle1_13_R2) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
 		return battle.d();
 	}
@@ -68,12 +67,6 @@ public class NMSAbstract1_13_R2 implements NMSAbstract {
 
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bO;
-	}
-
-	@Override
-	@Deprecated
-	public void setChestName(Chest chest, String name) {
-		chest.setCustomName(name);
 	}
 
 	@Override

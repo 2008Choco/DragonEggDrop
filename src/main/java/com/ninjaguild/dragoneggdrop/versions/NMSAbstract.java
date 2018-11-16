@@ -3,7 +3,6 @@ package com.ninjaguild.dragoneggdrop.versions;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
@@ -12,7 +11,7 @@ import org.bukkit.entity.Player;
  * org.bukkit.craftbukkit methods that vary between versions causing
  * version dependencies. Allows for version independency through
  * abstraction per Bukkit/Spigot release.
- * 
+ *
  * @author Parker Hawke - 2008Choco
  */
 public interface NMSAbstract {
@@ -52,17 +51,6 @@ public interface NMSAbstract {
 	 * @return the animation time
 	 */
 	public int getEnderDragonDeathAnimationTime(EnderDragon dragon);
-
-	/**
-	 * Set the custom name of a chest tile entity
-	 *
-	 * @param chest the chest to set the name of
-	 * @param name the name to set the chest to
-	 *
-	 * @deprecated replaced by Bukkit's {@link Chest#setCustomName(String)}
-	 */
-	@Deprecated
-	public void setChestName(Chest chest, String name);
 
 	/**
 	 * Send an action bar to a list of given players.
