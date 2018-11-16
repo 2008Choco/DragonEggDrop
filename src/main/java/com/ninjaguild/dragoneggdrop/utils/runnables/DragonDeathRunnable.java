@@ -25,14 +25,14 @@ import org.bukkit.scheduler.BukkitRunnable;
  * of the loot after the Ender Dragon's death.
  */
 public class DragonDeathRunnable extends BukkitRunnable {
-	
+
 	private final DragonEggDrop plugin;
-	
+
 	private ParticleShapeDefinition particleShape;
-	
+
 	private final World world;
 	private final EndWorldWrapper worldWrapper;
-	
+
 	private Particle particleType = null;
 	private int particleAmount = 0;
 	private double particleExtra = 0D;
@@ -44,7 +44,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
 	private EnderDragon dragon;
 	private boolean respawnDragon = false;
-	
+
 	private Location location;
 	private double animationTime = 0;
 	private double theta = 0;
@@ -52,7 +52,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
 	/**
 	 * Construct a new DragonDeathRunnable object.
-	 * 
+	 *
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 * @param worldWrapper the world in which the dragon death is taking place
 	 * @param dragon the dragon dying in this runnable
@@ -62,7 +62,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.worldWrapper = worldWrapper;
 		this.world = worldWrapper.getWorld();
 		this.dragon = dragon;
-		
+
 		FileConfiguration config = plugin.getConfig();
 		this.particleType = EnumUtils.getEnum(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase());
 		this.particleAmount = config.getInt("Particles.amount", 4);
@@ -74,35 +74,32 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.zOffset = config.getDouble("Particles.zOffset");
 		this.particleInterval = config.getLong("Particles.interval", 1L);
 		this.lightningAmount = config.getInt("lightning-amount");
-		
+
 		// Portal location
 		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
 		DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromDragon(dragon);
 		Location portalLocation = dragonBattle.getEndPortalLocation();
 		this.currentY = config.getDouble("Particles.egg-start-y");
 		this.location = new Location(world, portalLocation.getX(), this.currentY, portalLocation.getZ());
-		
+
 		// Expression parsing
 		String shape = config.getString("Particles.Advanced.preset-shape");
 		String xCoordExpressionString = config.getString("Particles.Advanced.x-coord-expression");
 		String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
-		
+
 		if (shape.equalsIgnoreCase("BALL")) {
 			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "x", "z");
-		}
-		else if (shape.equalsIgnoreCase("HELIX")) {
+		} else if (shape.equalsIgnoreCase("HELIX")) {
 			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "cos(theta) * 1.2", "sin(theta) * 1.2");
-		}
-		else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
+		} else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
 			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
-		}
-		else { // CUSTOM or default
+		} else { // CUSTOM or default
 			this.particleShape = new ParticleShapeDefinition(nmsAbstract, location, xCoordExpressionString, zCoordExpressionString);
 		}
 
 		this.respawnDragon = config.getBoolean("respawn-on-death", false);
 		this.runTaskTimer(plugin, 0, this.particleInterval);
-		
+
 		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
 		Bukkit.getPluginManager().callEvent(bscEventCrystals);
 	}
@@ -111,8 +108,8 @@ public class DragonDeathRunnable extends BukkitRunnable {
 	public void run() {
 		this.animationTime++;
 		this.theta += 5;
-		
-		location.subtract(0, 1 / particleMultiplier, 0);
+
+		this.location.subtract(0, 1 / particleMultiplier, 0);
 		if (this.particleStreamInterval < 360) {
 			for (int i = 0; i < 360; i += this.particleStreamInterval){
 				this.theta += particleStreamInterval;
@@ -123,18 +120,19 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
 			this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
 		}
-		
+
 		// Particles finished, place reward
 		if (this.location.getBlock().getType() == Material.BEDROCK) {
 			this.location.add(0, 1, 0);
-			
+
 			// Summon Zeus!
-			for (int i = 0; i < this.lightningAmount; i++)
+			for (int i = 0; i < this.lightningAmount; i++) {
 				this.worldWrapper.getWorld().strikeLightning(location);
-			
+			}
+
 			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
 			DragonTemplate currentBattle = worldWrapper.getActiveBattle();
-			
+
 			if (currentBattle != null) {
 				currentBattle.getLoot().spawnLootFor(dragonBattle, dragon);
 			}
@@ -142,10 +140,9 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
 				this.worldWrapper.startRespawn(RespawnType.DEATH);
 			}
-			
+
 			BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
 			Bukkit.getPluginManager().callEvent(bscEventCrystals);
-			
 			this.cancel();
 		}
 	}

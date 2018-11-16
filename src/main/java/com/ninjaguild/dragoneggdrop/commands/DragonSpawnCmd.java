@@ -3,6 +3,7 @@ package com.ninjaguild.dragoneggdrop.commands;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -13,15 +14,15 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
 public class DragonSpawnCmd implements CommandExecutor {
+
 	private final DragonEggDrop plugin;
 
-	public DragonSpawnCmd(final DragonEggDrop plugin) {
+	public DragonSpawnCmd(DragonEggDrop plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
 		if (!plugin.getConfig().getBoolean("respawn-on-command", false)) {
 			this.plugin.sendMessage(sender, ChatColor.RED + "This feature is disabled!");
 			return true;
@@ -37,8 +38,7 @@ public class DragonSpawnCmd implements CommandExecutor {
 			return true;
 		}
 
-		final Player player = (Player) sender;
-
+		Player player = (Player) sender;
 		World world = player.getWorld();
 
 		if (world.getEnvironment() != World.Environment.THE_END) {
@@ -57,11 +57,13 @@ public class DragonSpawnCmd implements CommandExecutor {
 		}
 
 		// Dragon respawn logic
-		if (plugin.getDEDManager().getWorldWrapper(world).isRespawnInProgress()
-				|| !world.getEntitiesByClass(EnderDragon.class).isEmpty())
+		if (plugin.getDEDManager().getWorldWrapper(world).isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
+			this.plugin.sendMessage(sender, ChatColor.RED + "A respawn could not be forced because either a respawn is already in progress or a dragon exists already in the world");
 			return true;
+		}
 
-		plugin.getDEDManager().getWorldWrapper(world).startRespawn(DEDManager.RespawnType.COMMAND);
+		this.plugin.getDEDManager().getWorldWrapper(world).startRespawn(DEDManager.RespawnType.COMMAND);
 		return true;
 	}
+
 }

@@ -43,4 +43,3 @@ permissions:
     default: op
     children:
       dragoneggdrop.template.edit.addloot: true
-      dragoneggdrop.template.edit.set: true

@@ -28,13 +28,13 @@ import org.bukkit.entity.EnderDragon;
  * version independency through abstraction per Bukkit/Spigot release
  * <p>
  * <b><i>Supported Minecraft Versions:</i></b> 1.13.2
- * 
+ *
  * @author Parker Hawke - 2008Choco
  */
 public class DragonBattle1_13_R2 implements DragonBattle {
-	
+
 	private final EnderDragonBattle battle;
-	
+
 	protected DragonBattle1_13_R2(EnderDragonBattle battle) {
 		this.battle = battle;
 	}
@@ -42,10 +42,10 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 	@Override
 	public void setBossBarTitle(String title) {
 		if (title == null) return;
-		
+	
 		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
 		if (battleServer == null) return;
-		
+	
 		battleServer.title = new ChatMessage(title);
 		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
 	}
@@ -54,7 +54,7 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 	public boolean setBossBarStyle(BarStyle style, BarColor colour) {
 		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
 		if (battleServer == null) return false;
-		
+
 		if (style != null) {
 			String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS";
 			if (EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
@@ -64,7 +64,7 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 		if (colour != null) {
 			battleServer.color = BossBattle.BarColor.valueOf(colour.name());
 		}
-		
+
 		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
 		return true;
 	}
@@ -72,29 +72,29 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 	@Override
 	public EnderDragon getEnderDragon() {
 		EnderDragon dragon = null;
-		
+
 		try {
 			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
 			Field fieldDragonUUID = EnderDragonBattle.class.getDeclaredField("m");
 			fieldWorldServer.setAccessible(true);
 			fieldDragonUUID.setAccessible(true);
-			
+
 			WorldServer world = (WorldServer) fieldWorldServer.get(battle);
 			UUID dragonUUID = (UUID) fieldDragonUUID.get(battle);
-			
+
 			if (world == null || dragonUUID == null)
 				return null;
-			
+
 			Entity dragonEntity = world.getEntity(dragonUUID);
 			if (dragonEntity == null) return null;
 			dragon = (EnderDragon) dragonEntity.getBukkitEntity();
-			
+
 			fieldWorldServer.setAccessible(false);
 			fieldDragonUUID.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		return dragon;
 	}
 
@@ -106,29 +106,29 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 	@Override
 	public Location getEndPortalLocation() {
 		Location portalLocation = null;
-		
+
 		try {
 			Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
 			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
 			fieldExitPortalLocation.setAccessible(true);
 			fieldWorldServer.setAccessible(true);
-			
+
 			WorldServer worldServer = (WorldServer) fieldWorldServer.get(battle);
 			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(battle);
 			if (worldServer != null && position != null) {
 				World world = worldServer.getWorld();
 				portalLocation = new Location(world, Math.floor(position.getX()) + 0.5, position.getY() + 4, Math.floor(position.getZ()) + 0.5);
 			}
-			
+
 			fieldWorldServer.setAccessible(false);
 			fieldExitPortalLocation.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		return portalLocation;
 	}
-	
+
 	@Override
 	public void resetBattleState() {
 		try {
@@ -136,10 +136,10 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 			Field fieldDragonKilled = EnderDragonBattle.class.getDeclaredField("k");
 			fieldDragonBattleState.setAccessible(true);
 			fieldDragonKilled.setAccessible(true);
-			
+
 			fieldDragonBattleState.set(battle, null);
 			fieldDragonKilled.set(battle, true);
-			
+
 			fieldDragonBattleState.setAccessible(false);
 			fieldDragonKilled.setAccessible(false);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
@@ -148,10 +148,10 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 		
 		this.battle.f();
 	}
-	
+
 	/**
 	 * Get the net.minecraft.server implementation of DragonBattle
-	 * 
+	 *
 	 * @return the wrapped battle
 	 */
 	public EnderDragonBattle getHandle() {

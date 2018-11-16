@@ -30,18 +30,18 @@ import org.bukkit.entity.Player;
  * abstraction per Bukkit/Spigot release
  * <p>
  * <b><i>Supported Minecraft Versions:</i></b> 1.12.0
- * 
+ *
  * @author Parker Hawke - 2008Choco
  */
 public class NMSAbstract1_13_R2 implements NMSAbstract {
-	
+
 	@Override
 	public DragonBattle getEnderDragonBattleFromWorld(World world) {
 		if (world == null) return null;
-		
+
 		CraftWorld craftWorld = (CraftWorld) world;
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
-		
+
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
 		return new DragonBattle1_13_R2(((WorldProviderTheEnd) worldProvider).r());
 	}
@@ -49,11 +49,11 @@ public class NMSAbstract1_13_R2 implements NMSAbstract {
 	@Override
 	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		if (dragon == null) return null;
-		
+
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return new DragonBattle1_13_R2(nmsDragon.ds());
 	}
-	
+
 	@Override
 	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
 		if (dragon == null) return false;
@@ -61,11 +61,11 @@ public class NMSAbstract1_13_R2 implements NMSAbstract {
 		EnderDragonBattle battle = ((DragonBattle1_13_R2) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
 		return battle.d();
 	}
-	
+
 	@Override
 	public int getEnderDragonDeathAnimationTime(EnderDragon dragon) {
 		if (dragon == null) return -1;
-		
+
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bO;
 	}
@@ -87,9 +87,10 @@ public class NMSAbstract1_13_R2 implements NMSAbstract {
 		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
 		world.getPlayers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}
-	
+
 	@Override
 	public void spawnParticle(Particle particle, Location location, int count, double xOffset, double yOffset, double zOffset, double speed) {
 		location.getWorld().spawnParticle(particle, location, count, xOffset, yOffset, zOffset, speed, null, true);
 	}
+
 }

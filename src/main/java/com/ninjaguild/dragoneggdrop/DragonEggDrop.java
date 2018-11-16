@@ -319,6 +319,7 @@ public class DragonEggDrop extends JavaPlugin {
 			case "v1_13_R2": nmsAbstract = new NMSAbstract1_13_R2(); break; // 1.13.1 and 1.13.2
 		}
 
-        return nmsAbstract != null;
+		return nmsAbstract != null;
 	}
+
 }

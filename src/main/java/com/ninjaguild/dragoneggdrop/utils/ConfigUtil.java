@@ -21,7 +21,7 @@ public class ConfigUtil {
 
 	/**
 	 * Constructs a new ConfigUtils object.
-	 * 
+	 *
 	 * @param plugin an instance of the DragonEggDrop plugin
 	 */
 	public ConfigUtil(final DragonEggDrop plugin) {
@@ -30,30 +30,31 @@ public class ConfigUtil {
 
 	/**
 	 * Update the configuration file.
-	 * 
+	 *
 	 * @param currentVersion the version of the configuration file
 	 */
 	public void updateConfig(int currentVersion) {
 		InputStream in = plugin.getResource("config.yml");
 		try (InputStreamReader inReader = new InputStreamReader(in)) {
 			FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
-			
+
 			if (defaultConfig.getInt("version") == currentVersion) {
 				return;
 			}
-			
+
 			Set<String> newKeys = defaultConfig.getKeys(false);
 			for (String key : plugin.getConfig().getKeys(false)) {
-				if (key.equalsIgnoreCase("version")) {
-					continue;
-				}
+				if (key.equalsIgnoreCase("version")) continue;
+				
 				if (newKeys.contains(key)) {
 					defaultConfig.set(key, plugin.getConfig().get(key));
 				}
 			}
-			
-			defaultConfig.save(new File(plugin.getDataFolder() + "/config.yml"));
-		} catch (IOException e) { e.printStackTrace(); }
+
+			defaultConfig.save(new File(plugin.getDataFolder(), "/config.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
