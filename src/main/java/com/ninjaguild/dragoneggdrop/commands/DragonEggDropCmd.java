@@ -1,6 +1,7 @@
 package com.ninjaguild.dragoneggdrop.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
@@ -10,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.util.StringUtil;
 
 public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 
@@ -74,8 +76,7 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 		List<String> options = new ArrayList<>();
 
 		if (args.length == 1) {
-			options.add("help");
-			options.add("reload");
+			StringUtil.copyPartialMatches(args[0], Arrays.asList("help", "reload"), options);
 		}
 
 		return options;

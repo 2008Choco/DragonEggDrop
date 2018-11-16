@@ -1,8 +1,10 @@
 package com.ninjaguild.dragoneggdrop.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
@@ -16,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.StringUtil;
 
 public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 
@@ -128,21 +131,20 @@ public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 
 		// Before completion: "/dragontemplate "
 		if (args.length == 1) {
-			options.add("list");
-			plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getIdentifier).forEach(options::add);
+			List<String> possibleOptions = plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getIdentifier).collect(Collectors.toList());
+			possibleOptions.add("list");
+			StringUtil.copyPartialMatches(args[0], possibleOptions, options);
 		}
 
 		// Before completion: "/dragontemplate <template> "
 		else if (args.length == 2) {
-			options.add("view");
-			options.add("edit");
+			StringUtil.copyPartialMatches(args[1], Arrays.asList("view", "edit"), options);
 		}
 
 		else if (args.length == 3) {
 			// Before completion: "/dragontemplate <template> edit "
 			if (args[1].equalsIgnoreCase("edit")) {
-				options.add("addloot");
-				options.add("set");
+				StringUtil.copyPartialMatches(args[2], Arrays.asList("addloot"), options);
 			}
 		}
 
