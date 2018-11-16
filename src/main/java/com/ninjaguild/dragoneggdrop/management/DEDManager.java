@@ -144,8 +144,11 @@ public class DEDManager {
 		/**
 		 * The ender dragon was killed
 		 */
-		DEATH;
-		
+		DEATH,
+
+		/**
+		 * The ender dragon was forced to respawn via command
+		 */
+		COMMAND
 	}
-	
 }

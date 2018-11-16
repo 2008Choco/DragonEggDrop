@@ -71,8 +71,22 @@ public class EndWorldWrapper {
 		if (dragonExists || respawnInProgress || respawnTask != null) return;
 		
         FileConfiguration config = plugin.getConfig();
-		int respawnDelay = parseRespawnSeconds(type == RespawnType.JOIN ? config.getString("join-respawn-delay", "1m") : config.getString("death-respawn-delay", "5m"));
-		
+        
+        int respawnDelay = 0;
+        
+        switch (type)
+        {
+            case JOIN:
+                respawnDelay = parseRespawnSeconds(config.getString("join-respawn-delay", "1m"));
+                break;
+            case DEATH:
+                respawnDelay = parseRespawnSeconds(config.getString("death-respawn-delay", "5m"));
+                break;
+            case COMMAND:
+                respawnDelay = parseRespawnSeconds(config.getString("command-respawn-delay", "1m"));
+                break;
+        }
+        
 		this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;

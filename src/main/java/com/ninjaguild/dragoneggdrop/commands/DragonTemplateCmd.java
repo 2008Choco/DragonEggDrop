@@ -1,14 +1,9 @@
 package com.ninjaguild.dragoneggdrop.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
-
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 	
@@ -135,11 +134,11 @@ public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		List<String> options = new ArrayList<>();
-		
+
 		// Before completion: "/dragontemplate "
 		if (args.length == 1) {
 			options.add("list");
-			plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getIdentifier).forEach(t -> options.add(t));
+			plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getIdentifier).forEach(options::add);
 		}
 		
 		// Before completion: "/dragontemplate <template> "
