@@ -1,19 +1,27 @@
 package com.ninjaguild.dragoneggdrop.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-public class DragonSpawnCmd implements CommandExecutor {
+public class DragonSpawnCmd implements CommandExecutor, TabCompleter {
 
 	private final DragonEggDrop plugin;
 
@@ -33,16 +41,21 @@ public class DragonSpawnCmd implements CommandExecutor {
 			return true;
 		}
 
-		if (!(sender instanceof Player)) {
-			this.plugin.sendMessage(sender, ChatColor.RED + "You must be a player to spawn a dragon!");
+		World world = (sender instanceof Player) ? ((Player) sender).getWorld() : null;
+		if (args.length >= 1) {
+			world = Bukkit.getWorld(args[0]);
+		} else if (!(sender instanceof Player)) {
+			this.plugin.sendMessage(sender, "You must specify a world when executing this command from the console");
 			return true;
 		}
 
-		Player player = (Player) sender;
-		World world = player.getWorld();
+		if (world == null) {
+			this.plugin.sendMessage(sender, "A world with the name " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + " does not exist");
+			return true;
+		}
 
 		if (world.getEnvironment() != World.Environment.THE_END) {
-			this.plugin.sendMessage(sender, ChatColor.RED + "You must be a in an end world to spawn a dragon!");
+			this.plugin.sendMessage(sender, ChatColor.RED + "Dragons can only be spawned in the end!");
 			return true;
 		}
 
@@ -57,13 +70,20 @@ public class DragonSpawnCmd implements CommandExecutor {
 		}
 
 		// Dragon respawn logic
-		if (plugin.getDEDManager().getWorldWrapper(world).isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
+		if (worldWrapper.isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
 			this.plugin.sendMessage(sender, ChatColor.RED + "A respawn could not be forced because either a respawn is already in progress or a dragon exists already in the world");
 			return true;
 		}
 
-		this.plugin.getDEDManager().getWorldWrapper(world).startRespawn(DEDManager.RespawnType.COMMAND);
+		worldWrapper.startRespawn(DEDManager.RespawnType.COMMAND);
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+		return (args.length != 1) ? null : StringUtil.copyPartialMatches(args[0], Bukkit.getWorlds().stream()
+				.filter(w -> w.getEnvironment() == Environment.THE_END)
+				.map(World::getName).collect(Collectors.toList()), new ArrayList<>());
 	}
 
 }
