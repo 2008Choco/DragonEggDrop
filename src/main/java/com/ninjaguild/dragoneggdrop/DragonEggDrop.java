@@ -77,7 +77,7 @@ public class DragonEggDrop extends JavaPlugin {
 		cu.updateConfig(this.getConfig().getInt("version"));
 
 		// Setup version abstraction
-		if (!this.setupNMSAbstract()) {
+		if (!setupNMSAbstract()) {
 			this.getLogger().severe("THE CURRENT SERVER VERSION IS NOT SUPPORTED. BOTHER THE MAINTAINER");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
@@ -110,7 +110,7 @@ public class DragonEggDrop extends JavaPlugin {
 		this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
 
 		// Update check
-		if (this.getConfig().getBoolean("perform-update-checks", true)) {
+		if (getConfig().getBoolean("perform-update-checks", true)) {
 			UpdateChecker.init(this, 35570);
 			this.updateTask = new BukkitRunnable() {
 				@Override
@@ -144,7 +144,7 @@ public class DragonEggDrop extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (this.updateTask != null) {
+		if (updateTask != null) {
 			this.updateTask.cancel();
 		}
 
@@ -283,7 +283,9 @@ public class DragonEggDrop extends JavaPlugin {
 		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
 		switch (version) {
-			case "v1_13_R2": nmsAbstract = new NMSAbstract1_13_R2(); break; // 1.13.1 and 1.13.2
+			case "v1_13_R2": // 1.13.2
+				this.nmsAbstract = new NMSAbstract1_13_R2();
+				break;
 		}
 
 		return nmsAbstract != null;
