@@ -1,12 +1,9 @@
 package com.ninjaguild.dragoneggdrop;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map.Entry;
@@ -32,6 +29,9 @@ import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
+import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
+import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
+import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
 import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 import com.ninjaguild.dragoneggdrop.versions.v1_13_R2.NMSAbstract1_13_R2;
 
@@ -60,12 +60,6 @@ public class DragonEggDrop extends JavaPlugin {
 
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-	private static final int RESOURCE_ID = 35570;
-	private static final String SPIGET_LINK = "https://api.spiget.org/v2/resources/" + RESOURCE_ID + "/versions/latest";
-
-	private boolean newVersionAvailable = false;
-	private String newVersion;
 
 	private DEDManager dedManager;
 	private NMSAbstract nmsAbstract;
@@ -117,18 +111,32 @@ public class DragonEggDrop extends JavaPlugin {
 
 		// Update check
 		if (this.getConfig().getBoolean("perform-update-checks", true)) {
+			UpdateChecker.init(this, 35570);
 			this.updateTask = new BukkitRunnable() {
 				@Override
 				public void run() {
-					boolean previousState = newVersionAvailable;
-					doVersionCheck();
+					UpdateChecker checker = UpdateChecker.get();
 
-					// New version found
-					if (previousState != newVersionAvailable) {
-						Bukkit.getOnlinePlayers().stream()
-							.filter(Player::isOp)
-							.forEach(p -> sendMessage(p, ChatColor.GRAY + "A new version is available for download (Version " + newVersion + "). "));
-					}
+					UpdateResult lastResult = checker.getLastResult();
+					if (lastResult != null && lastResult.requiresUpdate()) return;
+
+					checker.requestUpdateCheck().whenComplete((result, exception) -> {
+						if (result.requiresUpdate()) {
+							getLogger().info(String.format("An update is available! DragonEggDrop %s may be downloaded on SpigotMC", result.getNewestVersion()));
+							Bukkit.getOnlinePlayers().stream().filter(Player::isOp)
+								.forEach(p -> sendMessage(p, "A new version is available for download (Version " + result.getNewestVersion() + ")"));
+							return;
+						}
+
+						UpdateReason reason = result.getReason();
+						if (reason == UpdateReason.UP_TO_DATE) {
+							getLogger().info(String.format("Your version of DragonEggDrop (%s) is up to date!", result.getNewestVersion()));
+						} else if (reason == UpdateReason.UNRELEASED_VERSION) {
+							getLogger().info(String.format("Your version of DragonEggDrop (%s) is more recent than the one publicly available. Are you on a development build?", result.getNewestVersion()));
+						} else {
+							getLogger().warning("Could not check for a new version of DragonEggDrop. Reason: " + reason);
+						}
+					});
 				}
 			}.runTaskTimerAsynchronously(this, 0, 36000);
 		}
@@ -182,26 +190,6 @@ public class DragonEggDrop extends JavaPlugin {
 	 */
 	public NMSAbstract getNMSAbstract() {
 		return nmsAbstract;
-	}
-
-	/**
-	 * Get whether there is a new version available and ready for
-	 * download or not.
-	 *
-	 * @return true if available
-	 */
-	public boolean isNewVersionAvailable() {
-		return newVersionAvailable;
-	}
-
-	/**
-	 * Get the version of the available update (if one exists).
-	 *
-	 * @see #isNewVersionAvailable()
-	 * @return the new version
-	 */
-	public String getNewVersion() {
-		return newVersion;
 	}
 
 	private void saveDefaultTemplates() {
@@ -289,27 +277,6 @@ public class DragonEggDrop extends JavaPlugin {
 
 	private void registerCommand(String command, CommandExecutor executor) {
 		this.registerCommand(command, executor, null);
-	}
-
-	private void doVersionCheck() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(SPIGET_LINK).openStream()))){
-					JsonObject object = GSON.fromJson(reader, JsonObject.class);
-					String currentVersion = getDescription().getVersion();
-					String recentVersion = object.get("name").getAsString();
-
-					if (!currentVersion.equals(recentVersion)) {
-						getLogger().info("New version available. Your Version = " + currentVersion + ". New Version = " + recentVersion);
-						newVersionAvailable = true;
-						newVersion = recentVersion;
-					}
-				} catch (IOException e) {
-					getLogger().info("Could not check for a new version. Perhaps the website is down?");
-				}
-			}
-		}.runTaskAsynchronously(this);
 	}
 
 	private final boolean setupNMSAbstract(){

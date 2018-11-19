@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
+import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -30,9 +32,12 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.GOLD + "Original Author: PixelStix");
 			sender.sendMessage(ChatColor.GOLD + "Maintainer: 2008Choco");
 			sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescription().getVersion());
-			if (sender.isOp() && plugin.isNewVersionAvailable()) {
-				sender.sendMessage(ChatColor.AQUA + "New version available: " + plugin.getNewVersion());
+
+			UpdateResult result = UpdateChecker.get().getLastResult();
+			if (sender.isOp() && result.requiresUpdate()) {
+				sender.sendMessage(ChatColor.AQUA + "New version available: " + result.getNewestVersion());
 			}
+
 			sender.sendMessage(ChatColor.YELLOW + "/dragoneggdrop help");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------");
 
@@ -70,7 +75,7 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 
 		return true;
 	}
-	
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		List<String> options = new ArrayList<>();

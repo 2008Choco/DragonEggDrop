@@ -5,20 +5,16 @@ import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class RespawnListeners implements Listener {
-
-	private static final String RESOURCE_PAGE = "https://www.spigotmc.org/resources/dragoneggdrop-revival.35570/";
 
 	private final DragonEggDrop plugin;
 	private final DEDManager manager;
@@ -55,13 +51,7 @@ public class RespawnListeners implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		// Version notification
-		Player player = event.getPlayer();
-		if (player.isOp() && plugin.isNewVersionAvailable()) {
-			this.plugin.sendMessage(player, ChatColor.GRAY + "A new version is available for download (Version " + this.plugin.getNewVersion() + "). " + RESOURCE_PAGE);
-		}
-
-		World world = player.getWorld();
+		World world = event.getPlayer().getWorld();
 		if (world.getEnvironment() != Environment.THE_END) return;
 
 		EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
