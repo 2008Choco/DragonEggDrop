@@ -78,7 +78,7 @@ public class DragonEggDrop extends JavaPlugin {
 
 		// Setup version abstraction
 		if (!setupNMSAbstract()) {
-			this.getLogger().severe("THE CURRENT SERVER VERSION IS NOT SUPPORTED. BOTHER THE MAINTAINER");
+			this.getLogger().severe("Your server version is not supported by DragonEggDrop... disabling");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
