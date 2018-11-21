@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 
@@ -59,6 +60,17 @@ public class DragonSpawnCmd implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
+		DragonTemplate template = plugin.getDEDManager().getRandomTemplate();
+		if (args.length >= 2) {
+			DragonTemplate templateArgument = plugin.getDEDManager().getTemplate(args[1]);
+			if (templateArgument == null) {
+				this.plugin.sendMessage(sender, "A dragon with the template " + args[1] + " could not be found... did you spell it correctly?");
+				return true;
+			}
+
+			template = templateArgument;
+		}
+
 		EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
 
 		// Reset end crystal states just in case something went awry
@@ -75,15 +87,22 @@ public class DragonSpawnCmd implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
-		worldWrapper.startRespawn(DEDManager.RespawnType.COMMAND);
+		worldWrapper.startRespawn(DEDManager.RespawnType.COMMAND, template);
+		this.plugin.sendMessage(sender, "Respawning a dragon in world " + ChatColor.GREEN + world.getName() + ChatColor.GRAY + " with template ID " + ChatColor.YELLOW + template.getIdentifier());
 		return true;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		return (args.length != 1) ? null : StringUtil.copyPartialMatches(args[0], Bukkit.getWorlds().stream()
-				.filter(w -> w.getEnvironment() == Environment.THE_END)
-				.map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+		if (args.length == 1) {
+			return StringUtil.copyPartialMatches(args[0], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+					.map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+		} else if (args.length == 2) {
+			return StringUtil.copyPartialMatches(args[0], plugin.getDEDManager().getDragonTemplates().stream()
+					.map(DragonTemplate::getIdentifier).collect(Collectors.toList()), new ArrayList<>());
+		}
+
+		return null;
 	}
 
 }

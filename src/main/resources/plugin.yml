@@ -11,7 +11,7 @@ commands:
     aliases: [ded]
   dragonspawn:
     description: A command to force respawning a dragon
-    usage: /<command>
+    usage: /<command> [world] [template]
   dragontemplate:
     description: A utility command to control dragon templates
     usage: /<command> <template> <view|edit>
