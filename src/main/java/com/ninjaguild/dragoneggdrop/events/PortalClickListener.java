@@ -2,8 +2,8 @@ package com.ninjaguild.dragoneggdrop.events;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -35,8 +35,7 @@ public class PortalClickListener implements Listener {
 				|| clickedBlock.getType() != Material.BEDROCK || event.getHand() != EquipmentSlot.HAND
 				|| (player.getInventory().getItemInMainHand() != null || player.getInventory().getItemInOffHand() != null)) return;
 
-		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-		DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
+		DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
 		Location portalLocation = dragonBattle.getEndPortalLocation();
 
 		if (event.getClickedBlock().getLocation().distanceSquared(portalLocation) > 36) return; // 5 blocks

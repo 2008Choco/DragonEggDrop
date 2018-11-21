@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -427,7 +427,7 @@ public class DragonLoot {
 	 */
 	public void removeCommand(String command, boolean updateFile) {
 		this.commands.remove(command);
-	
+
 		if (updateFile) {
 			List<String> commands = template.configFile.getStringList("death-commands");
 			commands.remove(command);
@@ -438,7 +438,7 @@ public class DragonLoot {
 	/**
 	 * Remove a command from the list of commands to be executed upon the
 	 * death of the dragon and update the dragon file (if one exists).
-	 * 
+	 *
 	 * @param command the command to remove
 	 */
 	public void removeCommand(String command) {
@@ -480,7 +480,7 @@ public class DragonLoot {
 
 		boolean spawnEgg = RANDOM.nextDouble() * 100 <= eggSpawnChance;
 		boolean spawnChest = RANDOM.nextDouble() * 100 <= chestSpawnChance;
-	
+
 		// Spawn a chest
 		if (spawnChest) {
 			location.getBlock().setType(Material.CHEST);

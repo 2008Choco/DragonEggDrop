@@ -1,9 +1,7 @@
-package com.ninjaguild.dragoneggdrop.versions.v1_13_R2;
+package com.ninjaguild.dragoneggdrop.nms;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
-
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.BossBattle;
@@ -21,36 +19,24 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.EnderDragon;
 
-/**
- * An abstract implementation for EnderDragonBattle of necessary
- * net.minecraft.server and org.bukkit.craftbukkit methods that
- * vary between versions causing version dependencies. Allows for
- * version independency through abstraction per Bukkit/Spigot release
- * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.13.2
- *
- * @author Parker Hawke - 2008Choco
- */
-public class DragonBattle1_13_R2 implements DragonBattle {
+public class DragonBattle {
 
 	private final EnderDragonBattle battle;
 
-	protected DragonBattle1_13_R2(EnderDragonBattle battle) {
+	protected DragonBattle(EnderDragonBattle battle) {
 		this.battle = battle;
 	}
 
-	@Override
 	public void setBossBarTitle(String title) {
 		if (title == null) return;
-	
+
 		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
 		if (battleServer == null) return;
-	
+
 		battleServer.title = new ChatMessage(title);
 		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
 	}
 
-	@Override
 	public boolean setBossBarStyle(BarStyle style, BarColor colour) {
 		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
 		if (battleServer == null) return false;
@@ -69,7 +55,6 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 		return true;
 	}
 
-	@Override
 	public EnderDragon getEnderDragon() {
 		EnderDragon dragon = null;
 
@@ -98,12 +83,10 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 		return dragon;
 	}
 
-	@Override
 	public void respawnEnderDragon() {
 		this.battle.e();
 	}
 
-	@Override
 	public Location getEndPortalLocation() {
 		Location portalLocation = null;
 
@@ -129,7 +112,6 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 		return portalLocation;
 	}
 
-	@Override
 	public void resetBattleState() {
 		try {
 			Field fieldDragonBattleState = EnderDragonBattle.class.getDeclaredField("p");
@@ -145,7 +127,7 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		this.battle.f();
 	}
 
@@ -155,7 +137,7 @@ public class DragonBattle1_13_R2 implements DragonBattle {
 	 * @return the wrapped battle
 	 */
 	public EnderDragonBattle getHandle() {
-		return this.battle;
+		return battle;
 	}
 
 }

@@ -9,8 +9,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
@@ -346,7 +345,7 @@ public class DragonTemplate {
 	public void addAttribute(Attribute attribute, double value) {
 		this.addAttribute(attribute, value, true);
 	}
-	
+
 	/**
 	 * Remove an attribute from this template and set its value back to default.
 	 *
@@ -396,12 +395,10 @@ public class DragonTemplate {
 	/**
 	 * Apply this templates data to an EnderDragonBattle object.
 	 *
-	 * @param nmsAbstract an instance of the NMSAbstract interface
 	 * @param dragon the dragon to modify
 	 * @param battle the battle to modify
 	 */
-	public void applyToBattle(NMSAbstract nmsAbstract, EnderDragon dragon, DragonBattle battle) {
-		Validate.notNull(nmsAbstract, "Instance of NMSAbstract cannot be null. See DragonEggDrop#getNMSAbstract()");
+	public void applyToBattle(EnderDragon dragon, DragonBattle battle) {
 		Validate.notNull(dragon, "Ender Dragon cannot be null");
 		Validate.notNull(battle, "Instance of DragonBattle cannot be null");
 

@@ -28,12 +28,11 @@ import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
-import com.ninjaguild.dragoneggdrop.versions.v1_13_R2.NMSAbstract1_13_R2;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -61,11 +60,11 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+	private static final String SUPPORTED_VERSION = "1_13_R2";
+
 	private DEDManager dedManager;
-	private NMSAbstract nmsAbstract;
 
 	private BukkitTask updateTask;
-
 	private File tempDataFile;
 
 	@Override
@@ -77,7 +76,7 @@ public class DragonEggDrop extends JavaPlugin {
 		cu.updateConfig(this.getConfig().getInt("version"));
 
 		// Setup version abstraction
-		if (!setupNMSAbstract()) {
+		if (!SUPPORTED_VERSION.equals(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3])) {
 			this.getLogger().severe("Your server version is not supported by DragonEggDrop... disabling");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
@@ -183,15 +182,6 @@ public class DragonEggDrop extends JavaPlugin {
 		return dedManager;
 	}
 
-	/**
-	 * Get the current implementation of the NMSAbstract interface.
-	 *
-	 * @return the NMSAbstract interface
-	 */
-	public NMSAbstract getNMSAbstract() {
-		return nmsAbstract;
-	}
-
 	private void saveDefaultTemplates() {
 		try (JarFile jar = new JarFile(getFile())){
 			Enumeration<JarEntry> entries = jar.entries();
@@ -256,7 +246,7 @@ public class DragonEggDrop extends JavaPlugin {
 					if (template == null) return;
 
 					wrapper.setActiveBattle(template);
-					template.applyToBattle(nmsAbstract, Iterables.get(dragons, 0), nmsAbstract.getEnderDragonBattleFromWorld(world));
+					template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
 				}
 			}
 		} catch (IOException | JsonParseException e) {
@@ -277,18 +267,6 @@ public class DragonEggDrop extends JavaPlugin {
 
 	private void registerCommand(String command, CommandExecutor executor) {
 		this.registerCommand(command, executor, null);
-	}
-
-	private final boolean setupNMSAbstract(){
-		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-
-		switch (version) {
-			case "v1_13_R2": // 1.13.2
-				this.nmsAbstract = new NMSAbstract1_13_R2();
-				break;
-		}
-
-		return nmsAbstract != null;
 	}
 
 }

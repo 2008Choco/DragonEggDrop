@@ -3,6 +3,7 @@ main: com.ninjaguild.dragoneggdrop.DragonEggDrop
 version: ${project.version}
 description: ${project.description}
 author: 2008Choco
+api-version: 1.13
 
 commands:
   dragoneggdrop:

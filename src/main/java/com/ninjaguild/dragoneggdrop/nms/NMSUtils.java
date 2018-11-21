@@ -1,9 +1,6 @@
-package com.ninjaguild.dragoneggdrop.versions.v1_13_R2;
+package com.ninjaguild.dragoneggdrop.nms;
 
 import java.util.Arrays;
-
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import net.minecraft.server.v1_13_R2.ChatMessageType;
 import net.minecraft.server.v1_13_R2.EnderDragonBattle;
@@ -20,61 +17,47 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
-/**
- * An abstract implementation of necessary net.minecraft.server and
- * org.bukkit.craftbukkit methods that vary between versions causing
- * version dependencies. Allows for version independency through
- * abstraction per Bukkit/Spigot release
- * <p>
- * <b><i>Supported Minecraft Versions:</i></b> 1.12.0
- *
- * @author Parker Hawke - 2008Choco
- */
-public class NMSAbstract1_13_R2 implements NMSAbstract {
+public final class NMSUtils {
 
-	@Override
-	public DragonBattle getEnderDragonBattleFromWorld(World world) {
+	private NMSUtils() { }
+
+	public static DragonBattle getEnderDragonBattleFromWorld(World world) {
 		if (world == null) return null;
 
 		CraftWorld craftWorld = (CraftWorld) world;
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return new DragonBattle1_13_R2(((WorldProviderTheEnd) worldProvider).r());
+		return new DragonBattle(((WorldProviderTheEnd) worldProvider).r());
 	}
 
-	@Override
-	public DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
+	public static DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
 		if (dragon == null) return null;
 
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return new DragonBattle1_13_R2(nmsDragon.ds());
+		return new DragonBattle(nmsDragon.ds());
 	}
 
-	@Override
-	public boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
+	public static boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
 		if (dragon == null) return false;
 
-		EnderDragonBattle battle = ((DragonBattle1_13_R2) this.getEnderDragonBattleFromDragon(dragon)).getHandle();
+		EnderDragonBattle battle = getEnderDragonBattleFromDragon(dragon).getHandle();
 		return battle.d();
 	}
 
-	@Override
-	public int getEnderDragonDeathAnimationTime(EnderDragon dragon) {
+	public static int getEnderDragonDeathAnimationTime(EnderDragon dragon) {
 		if (dragon == null) return -1;
 
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
 		return nmsDragon.bO;
 	}
 
-	@Override
-	public void sendActionBar(String message, Player... players) {
+	public static void sendActionBar(String message, Player... players) {
 		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
 		Arrays.stream(players).forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}
 
-	@Override
-	public void broadcastActionBar(String message, World world) {
+	public static void broadcastActionBar(String message, World world) {
 		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
 		world.getPlayers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}

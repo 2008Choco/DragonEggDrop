@@ -8,8 +8,9 @@ import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,7 +45,7 @@ public class DragonLifeListeners implements Listener {
 		EnderDragon dragon = (EnderDragon) event.getEntity();
 		if (dragon.getWorld().getEnvironment() != Environment.THE_END) return;
 
-		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
 		EndWorldWrapper world = plugin.getDEDManager().getWorldWrapper(dragon.getWorld());
 
 		if (plugin.getConfig().getBoolean("strict-countdown") && world.isRespawnInProgress()) {
@@ -53,7 +54,7 @@ public class DragonLifeListeners implements Listener {
 
 		DragonTemplate template = world.getActiveBattle();
 		if (template != null) {
-			template.applyToBattle(plugin.getNMSAbstract(), dragon, dragonBattle);
+			template.applyToBattle(dragon, dragonBattle);
 
 			if (template.shouldAnnounceRespawn()) {
 				Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
@@ -72,7 +73,7 @@ public class DragonLifeListeners implements Listener {
 		if (!(event.getEntity() instanceof EnderDragon)) return;
 
 		EnderDragon dragon = (EnderDragon) event.getEntity();
-		DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+		DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
 
 		World world = event.getEntity().getWorld();
 		EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
@@ -83,7 +84,7 @@ public class DragonLifeListeners implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if (plugin.getNMSAbstract().getEnderDragonDeathAnimationTime(dragon) >= 185) { // Dragon is dead at 200
+				if (NMSUtils.getEnderDragonDeathAnimationTime(dragon) >= 185) { // Dragon is dead at 200
 					new DragonDeathRunnable(plugin, worldWrapper, dragon);
 					this.cancel();
 				}
@@ -113,7 +114,7 @@ public class DragonLifeListeners implements Listener {
 				crystal.remove();
 			}
 
-			this.plugin.getNMSAbstract().sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
+			NMSUtils.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
 			player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
 			event.setCancelled(true);
 		}

@@ -1,7 +1,7 @@
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;

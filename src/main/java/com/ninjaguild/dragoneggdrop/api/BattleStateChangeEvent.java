@@ -1,6 +1,6 @@
 package com.ninjaguild.dragoneggdrop.api;
 
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.Event;

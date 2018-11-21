@@ -6,9 +6,9 @@ import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
@@ -76,8 +76,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.lightningAmount = config.getInt("lightning-amount");
 
 		// Portal location
-		NMSAbstract nmsAbstract = plugin.getNMSAbstract();
-		DragonBattle dragonBattle = nmsAbstract.getEnderDragonBattleFromDragon(dragon);
+		DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
 		Location portalLocation = dragonBattle.getEndPortalLocation();
 		this.currentY = config.getDouble("Particles.egg-start-y");
 		this.location = new Location(world, portalLocation.getX(), this.currentY, portalLocation.getZ());
@@ -130,7 +129,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 				this.worldWrapper.getWorld().strikeLightning(location);
 			}
 
-			DragonBattle dragonBattle = plugin.getNMSAbstract().getEnderDragonBattleFromDragon(dragon);
+			DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
 			DragonTemplate currentBattle = worldWrapper.getActiveBattle();
 
 			if (currentBattle != null) {

@@ -8,8 +8,8 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
-import com.ninjaguild.dragoneggdrop.versions.DragonBattle;
-import com.ninjaguild.dragoneggdrop.versions.NMSAbstract;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,7 +30,6 @@ public class RespawnRunnable extends BukkitRunnable {
 
 	private final DragonEggDrop plugin;
 	private final EndWorldWrapper worldWrapper;
-	private final NMSAbstract nmsAbstract;
 
 	private final DragonBattle dragonBattle;
 	private final EnderDragon dragon;
@@ -52,9 +51,8 @@ public class RespawnRunnable extends BukkitRunnable {
 		this.plugin = plugin;
 		this.worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
 		this.secondsUntilRespawn = respawnTime;
-		this.nmsAbstract = plugin.getNMSAbstract();
 
-		this.dragonBattle = nmsAbstract.getEnderDragonBattleFromWorld(world);
+		this.dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
 		this.dragon = dragonBattle.getEnderDragon();
 
 		this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream()
@@ -77,7 +75,7 @@ public class RespawnRunnable extends BukkitRunnable {
 				String message = announceMessages.get(currentMessage++)
 						.replace("%time%", String.valueOf(secondsUntilRespawn))
 						.replace("%formatted-time%", this.getFormattedTime(secondsUntilRespawn));
-				plugin.getNMSAbstract().broadcastActionBar(message, worldWrapper.getWorld());
+				NMSUtils.broadcastActionBar(message, worldWrapper.getWorld());
 			}
 
 			this.secondsUntilRespawn--;
@@ -110,7 +108,7 @@ public class RespawnRunnable extends BukkitRunnable {
 			// If dragon already exists, cancel the respawn process
 			if (crystalWorld.getEntitiesByClass(EnderDragon.class).size() >= 1) {
 				this.plugin.getLogger().warning("An EnderDragon is already present in world " + crystalWorld.getName() + ". Dragon respawn cancelled");
-				this.nmsAbstract.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
+				NMSUtils.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
 
 				// Destroy all crystals
 				for (PortalCrystal portalCrystal : PortalCrystal.values()) {
