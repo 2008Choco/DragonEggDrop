@@ -38,7 +38,7 @@ public class LootListeners implements Listener {
 			return;
 		}
 
-		DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getActiveBattle();
+		DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getLastBattle();
 		if (dragon == null) return;
 
 		DragonLoot loot = dragon.getLoot();

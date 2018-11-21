@@ -30,7 +30,7 @@ public class EndWorldWrapper {
 	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)([wdhms])");
 
 	private boolean respawnInProgress = false;
-	private DragonTemplate activeBattle;
+	private DragonTemplate activeBattle, lastBattle;
 	private RespawnRunnable respawnTask;
 
 	private final DragonEggDrop plugin;
@@ -91,7 +91,10 @@ public class EndWorldWrapper {
 				break;
 		}
 
+		// Update templates
+		this.lastBattle = activeBattle;
 		this.activeBattle = template;
+
 		this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;
@@ -177,6 +180,15 @@ public class EndWorldWrapper {
 	 */
 	public DragonTemplate getActiveBattle() {
 		return activeBattle;
+	}
+
+	/**
+	 * Get the template represented in the last successful battle.
+	 *
+	 * @return the last battle
+	 */
+	public DragonTemplate getLastBattle() {
+		return lastBattle;
 	}
 
 	private int parseRespawnSeconds(String value) {
