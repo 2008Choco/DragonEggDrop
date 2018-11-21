@@ -57,17 +57,23 @@ public class EndWorldWrapper {
 	public World getWorld() {
 		return Bukkit.getWorld(world);
 	}
-	
+
 	/**
-	 * Commence the Dragon's respawning processes in this world.
+	 * Commence the Dragon's respawning processes in this world with a specific
+	 * dragon template. This respawn may or may not fail depending on whether or
+	 * not a dragon already exists or a respawn is already in progress.
 	 *
 	 * @param type the type that triggered this dragon respawn
+	 * @param template the dragon template to spawn. If null, a regular dragon will
+	 * be respawned
+	 *
+	 * @return the result of the respawn. true if successful, false otherwise
 	 */
-	public void startRespawn(RespawnType type) {
+	public boolean startRespawn(RespawnType type, DragonTemplate template) {
 		Validate.notNull(type, "Cannot respawn a dragon under a null respawn type");
 
 		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-		if (dragonExists || respawnInProgress || respawnTask != null) return;
+		if (dragonExists || respawnInProgress || respawnTask != null) return false;
 
 		FileConfiguration config = plugin.getConfig();
 
@@ -85,9 +91,26 @@ public class EndWorldWrapper {
 				break;
 		}
 
+		this.activeBattle = template;
 		this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
 		this.respawnTask.runTaskTimer(plugin, 0, 20);
 		this.respawnInProgress = true;
+		return true;
+	}
+
+	/**
+	 * Commence the Dragon's respawning processes in this world with a randomly
+	 * selected dragon template. This respawn may or may not fail depending on
+	 * whether or not a dragon already exists or a respawn is already in progress.
+	 *
+	 * @param type the type that triggered this dragon respawn
+	 *
+	 * @return the result of the respawn. true if successful, false otherwise
+	 *
+	 * @see #startRespawn(RespawnType, DragonTemplate)
+	 */
+	public boolean startRespawn(RespawnType type) {
+		return startRespawn(type, plugin.getDEDManager().getRandomTemplate());
 	}
 
 	/**
@@ -118,7 +141,7 @@ public class EndWorldWrapper {
 			this.respawnTask = null;
 		}
 	}
-	
+
 	/**
 	 * Check whether a respawn is currently in progress or not.
 	 *
