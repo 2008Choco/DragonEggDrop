@@ -2,9 +2,7 @@ package com.ninjaguild.dragoneggdrop.dragon;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -13,6 +11,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.utils.ItemBuilder;
+import com.ninjaguild.dragoneggdrop.utils.ItemBuilder.WrappedItemStackResult;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
 import org.apache.commons.lang.Validate;
@@ -20,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -578,48 +577,13 @@ public class DragonLoot {
 			// Parse root values (type, damage, amount and weight)
 			double weight = lootSection.getDouble(itemKey + ".weight");
 
-			Material type = Material.matchMaterial(lootSection.getString(itemKey + ".type", "minecraft:stone"));
-			short damage = (short) lootSection.getInt(itemKey + ".damage");
-			int amount = lootSection.getInt(itemKey + ".amount");
-
-			if (type == null) {
-				logger.warning("Invalid material type \"" + lootSection.getString(itemKey + ".type") + "\". Ignoring loot value...");
+			WrappedItemStackResult result = ItemBuilder.fromConfig(lootSection.getConfigurationSection(itemKey));
+			if (result.isError()) {
+				logger.warning("Could not create item for template " + template.getIdentifier() + " for reason: " + result.getResult() + ". Error: " + result.getErrorMessage());
 				continue;
 			}
 
-			// Create new item stack with passed values
-			ItemStack item = new ItemStack(type, amount);
-
-			// Parse meta
-			String displayName = lootSection.getString(itemKey + ".display-name");
-			List<String> lore = lootSection.getStringList(itemKey + ".lore");
-			Map<Enchantment, Integer> enchantments = new HashMap<>();
-
-			// Enchantment parsing
-			if (lootSection.contains(itemKey + ".enchantments")) {
-				for (String enchant : lootSection.getConfigurationSection(itemKey + ".enchantments").getKeys(false)) {
-					enchant = enchant.toLowerCase();
-					Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchant.startsWith("minecraft:") ? enchant.substring(10) : enchant));
-					int level = lootSection.getInt(itemKey + ".enchantments." + enchant);
-
-					if (enchantment == null || level == 0) {
-						logger.warning("Invalid enchantment \"" + enchant + "\" with level " + level);
-						continue;
-					}
-
-					enchantments.put(enchantment, level);
-				}
-			}
-
-			// Meta updating
-			ItemMeta meta = item.getItemMeta();
-			((Damageable) meta).setDamage(damage);
-			if (displayName != null) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
-			if (!lore.isEmpty()) meta.setLore(lore.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
-			enchantments.forEach((e, level) -> meta.addEnchant(e, level, true));
-			item.setItemMeta(meta);
-
-			this.loot.add(weight, item);
+			this.loot.add(weight, result.getItem());
 		}
 	}
 
