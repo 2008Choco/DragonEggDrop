@@ -98,7 +98,7 @@ public class DragonSpawnCmd implements CommandExecutor, TabCompleter {
 			return StringUtil.copyPartialMatches(args[0], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
 					.map(World::getName).collect(Collectors.toList()), new ArrayList<>());
 		} else if (args.length == 2) {
-			return StringUtil.copyPartialMatches(args[0], plugin.getDEDManager().getDragonTemplates().stream()
+			return StringUtil.copyPartialMatches(args[1], plugin.getDEDManager().getDragonTemplates().stream()
 					.map(DragonTemplate::getIdentifier).collect(Collectors.toList()), new ArrayList<>());
 		}
 
