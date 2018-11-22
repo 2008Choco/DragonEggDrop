@@ -60,7 +60,7 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private static final String SUPPORTED_VERSION = "1_13_R2";
+	private static final String SUPPORTED_VERSION = "v1_13_R2";
 
 	private DEDManager dedManager;
 
