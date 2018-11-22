@@ -3,7 +3,7 @@ package com.ninjaguild.dragoneggdrop.dragon;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class DragonTemplate {
 	private double spawnWeight;
 	private boolean announceRespawn;
 
-	private final Map<Attribute, Double> attributes = new HashMap<>();
+	private final Map<Attribute, Double> attributes = new EnumMap<>(Attribute.class);
 
 	/**
 	 * Construct a new DragonTemplate object.
