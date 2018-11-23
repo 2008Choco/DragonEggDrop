@@ -10,9 +10,10 @@ commands:
     description: The main DragonEggDrop command
     usage: /<command> [help]
     aliases: [ded]
-  dragonspawn:
+  dragonrespawn:
     description: A command to force respawning a dragon
-    usage: /<command> [world] [template]
+    usage: /<command> <stop|start|template>
+    aliases: [respawndragon, dragonspawn, spawndragon]
   dragontemplate:
     description: A utility command to control dragon templates
     usage: /<command> <template> <view|edit>
@@ -25,12 +26,16 @@ permissions:
     children:
       dragoneggdrop.help: true
       dragoneggdrop.reload: true
-      dragoneggdrop.spawn: true
+      dragoneggdrop.respawn.*: true
       dragoneggdrop.template.*: true
 
-  dragoneggdrop.spawn:
-    description: Allow access to the ender dragon spawn command
+  dragoneggdrop.respawn.*:
+    description: Allow access to all /dragonrespawn subcommands
     default: op
+    children:
+      dragoneggdrop.respawn.stop: true
+      dragoneggdrop.respawn.start: true
+      dragoneggdrop.respawn.template: true
 
   dragoneggdrop.template.*:
     description: Allow access to the details of all loaded dragon templates

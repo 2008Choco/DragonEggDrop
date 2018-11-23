@@ -55,10 +55,6 @@ join-respawn-delay: 1m
 respawn-on-death: true
 death-respawn-delay: 5m
 
-# Respawn dragon on command? Time unit suffixes are supported (i.e. 2w3d12h10m15s = 2 weeks, 3 days, 12 hours, 10 minutes and 15 seconds)
-respawn-on-command: false
-command-respawn-delay: 5m
-
 # Whether summoning the dragon with crystals is possible or not. If false, crystals will merely drop as items when the process attempts to start
 allow-crystal-respawns: true
 

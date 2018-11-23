@@ -2,7 +2,12 @@ package com.ninjaguild.dragoneggdrop.utils.math;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleUnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * A powerful utility class to assist in the parsing and evaluation
@@ -24,6 +29,7 @@ public class MathUtils {
 	 *   - Java 8 functionality & Object-Oriented format
 	 */
 
+	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)([wdhms])");
 	private static final Map<String, DoubleUnaryOperator> OPERATORS = new HashMap<>();
 
 	static {
@@ -86,6 +92,41 @@ public class MathUtils {
 
 		OPERATORS.put(functionName, operator);
 		return true;
+	}
+
+	public static int parseRespawnSeconds(String value) {
+		// Handle legacy (i.e. no timestamps... for example, just "600")
+		int legacyTime = NumberUtils.toInt(value, -1);
+		if (legacyTime != -1) {
+			return legacyTime;
+		}
+
+		int seconds = 0;
+
+		Matcher matcher = TIME_PATTERN.matcher(value);
+		while (matcher.find()) {
+			int amount = NumberUtils.toInt(matcher.group(1));
+
+			switch (matcher.group(2)) {
+				case "w":
+					seconds += TimeUnit.DAYS.toSeconds(amount * 7);
+					break;
+				case "d":
+					seconds += TimeUnit.DAYS.toSeconds(amount);
+					break;
+				case "h":
+					seconds += TimeUnit.HOURS.toSeconds(amount);
+					break;
+				case "m":
+					seconds += TimeUnit.MINUTES.toSeconds(amount);
+					break;
+				case "s":
+					seconds += amount;
+					break;
+			}
+		}
+
+		return seconds;
 	}
 
 	/**
@@ -157,7 +198,7 @@ public class MathUtils {
 		 * factor = + factor | - factor | ( expression )
 		 *		| number | functionName factor | factor ^ factor
 		 */
-		
+
 		/**
 		 * Parse an entire sub-expression in the parent expression
 		 * (including addition and subtraction).

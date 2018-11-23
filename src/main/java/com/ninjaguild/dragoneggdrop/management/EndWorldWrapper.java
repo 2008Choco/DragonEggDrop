@@ -1,18 +1,15 @@
 package com.ninjaguild.dragoneggdrop.management;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -26,8 +23,6 @@ import org.bukkit.entity.EnderDragon;
  * @author Parker Hawke - 2008Choco
  */
 public class EndWorldWrapper {
-
-	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)([wdhms])");
 
 	private boolean respawnInProgress = false;
 	private DragonTemplate activeBattle, lastBattle;
@@ -60,36 +55,20 @@ public class EndWorldWrapper {
 
 	/**
 	 * Commence the Dragon's respawning processes in this world with a specific
-	 * dragon template. This respawn may or may not fail depending on whether or
-	 * not a dragon already exists or a respawn is already in progress.
+	 * dragon template and respawn delay. This respawn may or may not fail depending
+	 * on whether or not a dragon already exists or a respawn is already in progress.
 	 *
-	 * @param type the type that triggered this dragon respawn
+	 * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
 	 * @param template the dragon template to spawn. If null, a regular dragon will
 	 * be respawned
 	 *
 	 * @return the result of the respawn. true if successful, false otherwise
 	 */
-	public boolean startRespawn(RespawnType type, DragonTemplate template) {
-		Validate.notNull(type, "Cannot respawn a dragon under a null respawn type");
+	public boolean startRespawn(int respawnDelay, DragonTemplate template) {
+		Preconditions.checkArgument(respawnDelay >= 0, "Respawn delays must be greater than or equal to 0");
 
 		boolean dragonExists = !this.getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
 		if (dragonExists || respawnInProgress || respawnTask != null) return false;
-
-		FileConfiguration config = plugin.getConfig();
-
-		int respawnDelay = 0;
-
-		switch (type) {
-			case JOIN:
-				respawnDelay = parseRespawnSeconds(config.getString("join-respawn-delay", "1m"));
-				break;
-			case DEATH:
-				respawnDelay = parseRespawnSeconds(config.getString("death-respawn-delay", "5m"));
-				break;
-			case COMMAND:
-				respawnDelay = parseRespawnSeconds(config.getString("command-respawn-delay", "1m"));
-				break;
-		}
 
 		// Update templates
 		this.lastBattle = activeBattle;
@@ -102,6 +81,51 @@ public class EndWorldWrapper {
 	}
 
 	/**
+	 * Commence the Dragon's respawning processes in this world with a specific
+	 * dragon template. This respawn may or may not fail depending on whether or
+	 * not a dragon already exists or a respawn is already in progress.
+	 *
+	 * @param type the type that triggered this dragon respawn
+	 * @param template the dragon template to spawn. If null, a regular dragon will
+	 * be respawned
+	 *
+	 * @return the result of the respawn. true if successful, false otherwise
+	 */
+	public boolean startRespawn(RespawnType type, DragonTemplate template) {
+		Validate.notNull(type, "Cannot respawn a dragon under a null respawn type");
+
+		int respawnDelay = 0;
+		FileConfiguration config = plugin.getConfig();
+
+		switch (type) {
+			case JOIN:
+				respawnDelay = MathUtils.parseRespawnSeconds(config.getString("join-respawn-delay", "1m"));
+				break;
+			case DEATH:
+				respawnDelay = MathUtils.parseRespawnSeconds(config.getString("death-respawn-delay", "5m"));
+				break;
+		}
+
+		return startRespawn(respawnDelay, template);
+	}
+
+	/**
+	 * Commence the Dragon's respawning process in this world with a randomly
+	 * selected dragon template and a set respawn delay. This respawn may or
+	 * may not fail depending on whether or not a dragon already exists or a
+	 * respawn is already in progress.
+	 *
+	 * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
+	 *
+	 * @return the result of the respawn. true if successful, false otherwise
+	 *
+	 * @see #startRespawn(int, DragonTemplate)
+	 */
+	public boolean startRespawn(int respawnDelay) {
+		return startRespawn(respawnDelay, plugin.getDEDManager().getRandomTemplate());
+	}
+
+	/**
 	 * Commence the Dragon's respawning processes in this world with a randomly
 	 * selected dragon template. This respawn may or may not fail depending on
 	 * whether or not a dragon already exists or a respawn is already in progress.
@@ -111,26 +135,10 @@ public class EndWorldWrapper {
 	 * @return the result of the respawn. true if successful, false otherwise
 	 *
 	 * @see #startRespawn(RespawnType, DragonTemplate)
+	 * @see #startRespawn(int)
 	 */
 	public boolean startRespawn(RespawnType type) {
 		return startRespawn(type, plugin.getDEDManager().getRandomTemplate());
-	}
-
-	/**
-	 * Commence the Dragon's respawning processes in this world based on provided
-	 * values rather than configured ones.
-	 *
-	 * @param respawnDelay the time until the dragon respawns
-	 */
-	public void startRespawn(int respawnDelay) {
-		respawnDelay = Math.max(respawnDelay, 0);
-
-		boolean dragonExists = !this.getWorld().getEntitiesByClass(EnderDragon.class).isEmpty();
-		if (dragonExists || respawnInProgress || respawnTask != null) return;
-
-		this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
-		this.respawnTask.runTaskTimer(plugin, 0, 20);
-		this.respawnInProgress = true;
 	}
 
 	/**
@@ -189,41 +197,6 @@ public class EndWorldWrapper {
 	 */
 	public DragonTemplate getLastBattle() {
 		return lastBattle;
-	}
-
-	private int parseRespawnSeconds(String value) {
-		// Handle legacy (i.e. no timestamps... for example, just "600")
-		int legacyTime = NumberUtils.toInt(value, -1);
-		if (legacyTime != -1) {
-			return legacyTime;
-		}
-
-		int seconds = 0;
-
-		Matcher matcher = TIME_PATTERN.matcher(value);
-		while (matcher.find()) {
-			int amount = NumberUtils.toInt(matcher.group(1));
-
-			switch (matcher.group(2)) {
-				case "w":
-					seconds += TimeUnit.DAYS.toSeconds(amount * 7);
-					break;
-				case "d":
-					seconds += TimeUnit.DAYS.toSeconds(amount);
-					break;
-				case "h":
-					seconds += TimeUnit.HOURS.toSeconds(amount);
-					break;
-				case "m":
-					seconds += TimeUnit.MINUTES.toSeconds(amount);
-					break;
-				case "s":
-					seconds += amount;
-					break;
-			}
-		}
-
-		return seconds;
 	}
 
 }
