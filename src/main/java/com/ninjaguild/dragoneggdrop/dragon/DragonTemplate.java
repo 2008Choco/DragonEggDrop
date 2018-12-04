@@ -63,7 +63,7 @@ public class DragonTemplate {
 
 		this.file = file;
 		this.configFile = YamlConfiguration.loadConfiguration(file);
-		this.identifier = file.getName().substring(0, file.getName().lastIndexOf('.'));
+		this.identifier = file.getName().substring(0, file.getName().lastIndexOf('.')).replace(' ', '_');
 
 		this.name = ChatColor.translateAlternateColorCodes('&', name);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
@@ -81,6 +81,7 @@ public class DragonTemplate {
 	 */
 	public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour) {
 		Validate.notEmpty(identifier, "Idenfitier must not be empty or null");
+		Preconditions.checkArgument(identifier.contains(" "), "Template identifiers must not have any spaces");
 		Preconditions.checkArgument(name != null, "Cannot create a template with a null name");
 
 		this.file = null;
