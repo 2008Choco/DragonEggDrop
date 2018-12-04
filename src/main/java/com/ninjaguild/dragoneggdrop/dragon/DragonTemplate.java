@@ -7,6 +7,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
@@ -57,13 +58,14 @@ public class DragonTemplate {
 	 * @param barColour the colour of the bar. Can be null
 	 */
 	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour) {
-		Validate.notNull(file, "File cannot be null. See DragonTemplate(String, String, BarStyle, BarColor) for null files");
+		Preconditions.checkArgument(file != null, "File cannot be null. See DragonTemplate(String, String, BarStyle, BarColor) for null files");
+		Preconditions.checkArgument(name != null, "Cannot create a template with a null name");
 
 		this.file = file;
 		this.configFile = YamlConfiguration.loadConfiguration(file);
 		this.identifier = file.getName().substring(0, file.getName().lastIndexOf('.'));
 
-		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
+		this.name = ChatColor.translateAlternateColorCodes('&', name);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
 		this.barColour = (barColour != null ? barColour : BarColor.PINK);
 		this.loot = new DragonLoot(this);
@@ -79,12 +81,13 @@ public class DragonTemplate {
 	 */
 	public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour) {
 		Validate.notEmpty(identifier, "Idenfitier must not be empty or null");
+		Preconditions.checkArgument(name != null, "Cannot create a template with a null name");
 
 		this.file = null;
 		this.configFile = null;
 		this.identifier = identifier;
 
-		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
+		this.name = ChatColor.translateAlternateColorCodes('&', name);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
 		this.barColour = (barColour != null ? barColour : BarColor.PINK);
 		this.loot = new DragonLoot(this);
