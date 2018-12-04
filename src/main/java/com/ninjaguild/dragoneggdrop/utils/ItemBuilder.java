@@ -377,39 +377,41 @@ public final class ItemBuilder {
 
 		// Yes, I know, duplicate code. It's difficult given the results
 		// Enchantments (default enchantments)
-		if (!item.isSupportedMeta(EnchantmentStorageMeta.class)) {
-			ConfigurationSection configEnchantments = config.getConfigurationSection("enchantments");
-			for (String enchantmentName : configEnchantments.getKeys(false)) {
-				NamespacedKey key = NamespacedKey.minecraft(enchantmentName.toLowerCase());
-				Enchantment enchantment = Enchantment.getByKey(key);
-				if (enchantment == null) {
-					return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "An enchantment with the ID " + key + " could not be found. These must match in-game IDs (with the exclusion of minecraft:");
-				}
+		if (config.contains("enchantments")) {
+			if (!item.isSupportedMeta(EnchantmentStorageMeta.class)) {
+				ConfigurationSection configEnchantments = config.getConfigurationSection("enchantments");
+				for (String enchantmentName : configEnchantments.getKeys(false)) {
+					NamespacedKey key = NamespacedKey.minecraft(enchantmentName.toLowerCase());
+					Enchantment enchantment = Enchantment.getByKey(key);
+					if (enchantment == null) {
+						return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "An enchantment with the ID " + key + " could not be found. These must match in-game IDs (with the exclusion of minecraft:");
+					}
 
-				int level = configEnchantments.getInt(enchantmentName);
-				if (level <= 0) {
-					return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "Invalid enchantment level specified, " + level + ", for enchantment with ID " + key);
-				}
+					int level = configEnchantments.getInt(enchantmentName);
+					if (level <= 0) {
+						return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "Invalid enchantment level specified, " + level + ", for enchantment with ID " + key);
+					}
 
-				item.enchantment(enchantment, level);
+					item.enchantment(enchantment, level);
+				}
 			}
-		}
-		// Enchantment storage meta (for enchanted books)
-		else {
-			ConfigurationSection configEnchantments = config.getConfigurationSection("enchantments");
-			for (String enchantmentName : configEnchantments.getKeys(false)) {
-				NamespacedKey key = NamespacedKey.minecraft(enchantmentName.toLowerCase());
-				Enchantment enchantment = Enchantment.getByKey(key);
-				if (enchantment == null) {
-					return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "An enchantment with the ID " + key + " could not be found. These must match in-game IDs (with the exclusion of minecraft:");
-				}
+			// Enchantment storage meta (for enchanted books)
+			else {
+				ConfigurationSection configEnchantments = config.getConfigurationSection("enchantments");
+				for (String enchantmentName : configEnchantments.getKeys(false)) {
+					NamespacedKey key = NamespacedKey.minecraft(enchantmentName.toLowerCase());
+					Enchantment enchantment = Enchantment.getByKey(key);
+					if (enchantment == null) {
+						return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "An enchantment with the ID " + key + " could not be found. These must match in-game IDs (with the exclusion of minecraft:");
+					}
 
-				int level = configEnchantments.getInt(enchantmentName);
-				if (level <= 0) {
-					return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "Invalid enchantment level specified, " + level + ", for enchantment with ID " + key);
-				}
+					int level = configEnchantments.getInt(enchantmentName);
+					if (level <= 0) {
+						return new WrappedItemStackResult(Result.INVALID_ENCHANTMENT, "Invalid enchantment level specified, " + level + ", for enchantment with ID " + key);
+					}
 
-				item.specific(EnchantmentStorageMeta.class, m -> m.addStoredEnchant(enchantment, level, true));
+					item.specific(EnchantmentStorageMeta.class, m -> m.addStoredEnchant(enchantment, level, true));
+				}
 			}
 		}
 
