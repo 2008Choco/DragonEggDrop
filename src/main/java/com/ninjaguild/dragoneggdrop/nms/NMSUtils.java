@@ -35,7 +35,7 @@ public final class NMSUtils {
 		if (dragon == null) return null;
 
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return new DragonBattle(nmsDragon.ds());
+		return new DragonBattle(nmsDragon.getEnderDragonBattle());
 	}
 
 	public static boolean hasBeenPreviouslyKilled(EnderDragon dragon) {

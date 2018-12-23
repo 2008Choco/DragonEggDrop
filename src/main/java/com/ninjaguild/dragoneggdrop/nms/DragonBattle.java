@@ -30,7 +30,7 @@ public class DragonBattle {
 	public void setBossBarTitle(String title) {
 		if (title == null) return;
 
-		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
+		BossBattleServer battleServer = battle.bossBattle;
 		if (battleServer == null) return;
 
 		battleServer.title = new ChatMessage(title);
@@ -38,7 +38,7 @@ public class DragonBattle {
 	}
 
 	public boolean setBossBarStyle(BarStyle style, BarColor colour) {
-		BossBattleServer battleServer = battle.c; // Note: Field will be renamed in 1.14
+		BossBattleServer battleServer = battle.bossBattle;
 		if (battleServer == null) return false;
 
 		if (style != null) {
