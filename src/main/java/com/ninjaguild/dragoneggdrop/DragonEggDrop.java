@@ -109,8 +109,8 @@ public class DragonEggDrop extends JavaPlugin {
 		this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
 
 		// Update check
+		UpdateChecker.init(this, 35570);
 		if (getConfig().getBoolean("perform-update-checks", true)) {
-			UpdateChecker.init(this, 35570);
 			this.updateTask = new BukkitRunnable() {
 				@Override
 				public void run() {
