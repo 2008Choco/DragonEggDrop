@@ -33,6 +33,9 @@ import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
+import com.ninjaguild.dragoneggdrop.utils.VersionCompatDefinition;
+import com.ninjaguild.dragoneggdrop.utils.VersionCompatDefinition.MajorVersion;
+import com.ninjaguild.dragoneggdrop.utils.VersionCompatDefinition.ServerVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,7 +63,7 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private static final String SUPPORTED_VERSION = "v1_13_R2";
+	private static final VersionCompatDefinition SUPPORTED_VERSIONS = new VersionCompatDefinition(ServerVersion.of(MajorVersion.V1_13, 2));
 
 	private DEDManager dedManager;
 
@@ -76,7 +79,7 @@ public class DragonEggDrop extends JavaPlugin {
 		cu.updateConfig(this.getConfig().getInt("version"));
 
 		// Setup version abstraction
-		if (!SUPPORTED_VERSION.equals(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3])) {
+		if (SUPPORTED_VERSIONS.isServerSupported()) {
 			this.getLogger().severe("Your server version is not supported by DragonEggDrop... disabling");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
