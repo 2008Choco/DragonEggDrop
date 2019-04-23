@@ -33,9 +33,6 @@ import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
-import com.ninjaguild.dragoneggdrop.utils.VersionCompatDefinition;
-import com.ninjaguild.dragoneggdrop.utils.VersionCompatDefinition.MajorVersion;
-import com.ninjaguild.dragoneggdrop.utils.VersionCompatDefinition.ServerVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,8 +60,6 @@ public class DragonEggDrop extends JavaPlugin {
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private static final VersionCompatDefinition SUPPORTED_VERSIONS = new VersionCompatDefinition(ServerVersion.of(MajorVersion.V1_13, 2));
-
 	private DEDManager dedManager;
 
 	private BukkitTask updateTask;
@@ -77,13 +72,6 @@ public class DragonEggDrop extends JavaPlugin {
 		// Update configuration version
 		ConfigUtil cu = new ConfigUtil(this);
 		cu.updateConfig(this.getConfig().getInt("version"));
-
-		// Setup version abstraction
-		if (SUPPORTED_VERSIONS.isServerSupported()) {
-			this.getLogger().severe("Your server version is not supported by DragonEggDrop... disabling");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		}
 
 		// Load default templates
 		if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {

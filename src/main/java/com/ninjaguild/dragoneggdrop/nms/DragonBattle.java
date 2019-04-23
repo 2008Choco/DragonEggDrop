@@ -3,16 +3,18 @@ package com.ninjaguild.dragoneggdrop.nms;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
-import net.minecraft.server.v1_13_R2.BlockPosition;
-import net.minecraft.server.v1_13_R2.BossBattle;
-import net.minecraft.server.v1_13_R2.BossBattleServer;
-import net.minecraft.server.v1_13_R2.ChatMessage;
-import net.minecraft.server.v1_13_R2.EnderDragonBattle;
-import net.minecraft.server.v1_13_R2.Entity;
-import net.minecraft.server.v1_13_R2.PacketPlayOutBoss;
-import net.minecraft.server.v1_13_R2.WorldServer;
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 
-import org.apache.commons.lang3.EnumUtils;
+import net.minecraft.server.v1_14_R1.BlockPosition;
+import net.minecraft.server.v1_14_R1.BossBattle;
+import net.minecraft.server.v1_14_R1.BossBattleServer;
+import net.minecraft.server.v1_14_R1.ChatMessage;
+import net.minecraft.server.v1_14_R1.EnderDragonBattle;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.PacketPlayOutBoss;
+import net.minecraft.server.v1_14_R1.WorldServer;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
@@ -42,9 +44,9 @@ public class DragonBattle {
 		if (battleServer == null) return false;
 
 		if (style != null) {
-			String nmsStyle = style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS";
-			if (EnumUtils.isValidEnum(BossBattle.BarStyle.class, nmsStyle)) {
-				battleServer.style = BossBattle.BarStyle.valueOf(nmsStyle);
+			Optional<BossBattle.BarStyle> nmsStyle = Enums.getIfPresent(BossBattle.BarStyle.class, style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS");
+			if (nmsStyle.isPresent()) {
+				battleServer.style = nmsStyle.get();
 			}
 		}
 		if (colour != null) {
@@ -76,7 +78,7 @@ public class DragonBattle {
 
 			fieldWorldServer.setAccessible(false);
 			fieldDragonUUID.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
 
@@ -105,7 +107,7 @@ public class DragonBattle {
 
 			fieldWorldServer.setAccessible(false);
 			fieldExitPortalLocation.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
 
@@ -124,7 +126,7 @@ public class DragonBattle {
 
 			fieldDragonBattleState.setAccessible(false);
 			fieldDragonKilled.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
 

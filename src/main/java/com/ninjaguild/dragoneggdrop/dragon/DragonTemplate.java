@@ -7,13 +7,13 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -466,8 +466,8 @@ public class DragonTemplate {
 
 			// Load name, bar style & colour, weight and announcement status
 			String name = dragonFile.getString("dragon-name", "Ender Dragon");
-			BarStyle style = EnumUtils.getEnum(BarStyle.class, dragonFile.getString("bar-style", "SOLID").toUpperCase());
-			BarColor color = EnumUtils.getEnum(BarColor.class, dragonFile.getString("bar-color", "PINK").toUpperCase());
+			BarStyle style = Enums.getIfPresent(BarStyle.class, dragonFile.getString("bar-style", "SOLID").toUpperCase()).orNull();
+			BarColor color = Enums.getIfPresent(BarColor.class, dragonFile.getString("bar-color", "PINK").toUpperCase()).orNull();
 
 			DragonTemplate template = new DragonTemplate(file, name, style, color);
 			template.spawnWeight = dragonFile.getDouble("spawn-weight", 1);
@@ -476,7 +476,7 @@ public class DragonTemplate {
 			// Attribute modifier loading
 			if (dragonFile.contains("attributes")) {
 				for (String attributeKey : dragonFile.getConfigurationSection("attributes").getValues(false).keySet()) {
-					Attribute attribute = EnumUtils.getEnum(Attribute.class, attributeKey);
+					Attribute attribute = Enums.getIfPresent(Attribute.class, attributeKey.toUpperCase()).orNull();
 					if (attribute == null) {
 						plugin.getLogger().warning("Unknown attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
 						continue;

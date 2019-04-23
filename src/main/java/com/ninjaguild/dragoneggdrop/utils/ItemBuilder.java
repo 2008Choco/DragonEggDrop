@@ -8,10 +8,10 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.utils.ItemBuilder.WrappedItemStackResult.Result;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -23,6 +23,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -326,13 +327,13 @@ public final class ItemBuilder {
 
 			for (String patternId : configBanner.getKeys(false)) {
 				boolean useIdentifier = patternId.length() <= 3;
-				PatternType pattern = (useIdentifier) ? PatternType.getByIdentifier(patternId.toLowerCase()) : EnumUtils.getEnum(PatternType.class, patternId.toUpperCase());
+				PatternType pattern = (useIdentifier) ? PatternType.getByIdentifier(patternId.toLowerCase()) : Enums.getIfPresent(PatternType.class, patternId.toUpperCase()).orNull();
 				if (pattern == null) {
 					return new WrappedItemStackResult(Result.INVALID_BANNER_PATTERN, "A banner with the " + (useIdentifier ? "identifier" : "name") + " does not exist");
 				}
 
 				String colourName = configBanner.getString(patternId);
-				DyeColor colour = EnumUtils.getEnum(DyeColor.class, colourName.toUpperCase());
+				DyeColor colour = Enums.getIfPresent(DyeColor.class, colourName.toUpperCase()).orNull();
 				if (colour == null) {
 					return new WrappedItemStackResult(Result.INVALID_BANNER_PATTERN, "The banner colour " + colourName + " could not be found");
 				}
@@ -354,7 +355,7 @@ public final class ItemBuilder {
 			String title = configBook.getString("title");
 
 			String generationName = configBook.getString("generation", "original").toUpperCase();
-			Generation generation = EnumUtils.getEnum(Generation.class, generationName.toUpperCase());
+			Generation generation = Enums.getIfPresent(Generation.class, generationName.toUpperCase()).orNull();
 			if (generation == null) {
 				return new WrappedItemStackResult(Result.INVALID_BOOK_GENERATION, "A book generation with the ID " + generationName + " does not exist");
 			}
@@ -471,7 +472,7 @@ public final class ItemBuilder {
 
 			if (configPotion.contains("base")) {
 				ConfigurationSection baseSection = config.getConfigurationSection("base");
-				PotionType potionType = EnumUtils.getEnum(PotionType.class, baseSection.getString("potion-type", "").toUpperCase());
+				PotionType potionType = Enums.getIfPresent(PotionType.class, baseSection.getString("potion-type", "").toUpperCase()).orNull();
 				if (potionType == null) {
 					return new WrappedItemStackResult(Result.INVALID_POTION_TYPE, "A potion type with the name " + baseSection.getString("potion-type") + " was not found");
 				}
@@ -524,13 +525,13 @@ public final class ItemBuilder {
 			}
 
 			ConfigurationSection configFishBucket = config.getConfigurationSection("fish-bucket-data");
-			org.bukkit.entity.TropicalFish.Pattern pattern = EnumUtils.getEnum(org.bukkit.entity.TropicalFish.Pattern.class, configFishBucket.getString("pattern", "").toUpperCase());
+			TropicalFish.Pattern pattern = Enums.getIfPresent(TropicalFish.Pattern.class, configFishBucket.getString("pattern", "").toUpperCase()).orNull();
 			if (pattern == null) {
 				return new WrappedItemStackResult(Result.INVALID_FISH_PATTERN, "A fish pattern with the name " + config.getString("pattern") + " could not be found");
 			}
 
-			DyeColor patternColour = EnumUtils.getEnum(DyeColor.class, configFishBucket.getString("pattern-color", "white").toUpperCase());
-			DyeColor bodyColour = EnumUtils.getEnum(DyeColor.class, configFishBucket.getString("body-color", "white").toUpperCase());
+			DyeColor patternColour = Enums.getIfPresent(DyeColor.class, configFishBucket.getString("pattern-color", "white").toUpperCase()).or(DyeColor.WHITE);
+			DyeColor bodyColour = Enums.getIfPresent(DyeColor.class, configFishBucket.getString("body-color", "white").toUpperCase()).or(DyeColor.WHITE);
 
 			item.specific(TropicalFishBucketMeta.class, m -> {
 				m.setPattern(pattern);

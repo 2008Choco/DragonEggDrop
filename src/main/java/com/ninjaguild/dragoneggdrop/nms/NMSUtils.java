@@ -1,19 +1,21 @@
 package com.ninjaguild.dragoneggdrop.nms;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
-import net.minecraft.server.v1_13_R2.ChatMessageType;
-import net.minecraft.server.v1_13_R2.EnderDragonBattle;
-import net.minecraft.server.v1_13_R2.EntityEnderDragon;
-import net.minecraft.server.v1_13_R2.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_13_R2.PacketPlayOutChat;
-import net.minecraft.server.v1_13_R2.WorldProvider;
-import net.minecraft.server.v1_13_R2.WorldProviderTheEnd;
+import net.minecraft.server.v1_14_R1.ChatMessageType;
+import net.minecraft.server.v1_14_R1.EnderDragonBattle;
+import net.minecraft.server.v1_14_R1.EntityEnderDragon;
+import net.minecraft.server.v1_14_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_14_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_14_R1.WorldProvider;
+import net.minecraft.server.v1_14_R1.WorldProviderTheEnd;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
@@ -28,7 +30,7 @@ public final class NMSUtils {
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return new DragonBattle(((WorldProviderTheEnd) worldProvider).r());
+		return new DragonBattle(((WorldProviderTheEnd) worldProvider).q());
 	}
 
 	public static DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
@@ -49,17 +51,24 @@ public final class NMSUtils {
 		if (dragon == null) return -1;
 
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.bO;
+		return nmsDragon.bL;
 	}
 
 	public static void sendActionBar(String message, Player... players) {
+		if (players.length == 0) return;
+
 		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
-		Arrays.stream(players).forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
+		Arrays.stream(players).filter(Objects::nonNull).forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}
 
 	public static void broadcastActionBar(String message, World world) {
+		if (world == null) return;
+
+		List<Player> players = world.getPlayers();
+		if (players.isEmpty()) return;
+
 		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
-		world.getPlayers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
+		players.forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
 	}
 
 }

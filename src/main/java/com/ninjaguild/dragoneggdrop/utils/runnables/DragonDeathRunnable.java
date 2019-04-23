@@ -1,5 +1,6 @@
 package com.ninjaguild.dragoneggdrop.utils.runnables;
 
+import com.google.common.base.Enums;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
@@ -10,7 +11,6 @@ import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,7 +64,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 		this.dragon = dragon;
 
 		FileConfiguration config = plugin.getConfig();
-		this.particleType = EnumUtils.getEnum(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase());
+		this.particleType = Enums.getIfPresent(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase()).or(Particle.FLAME);
 		this.particleAmount = config.getInt("Particles.amount", 4);
 		this.particleExtra = config.getDouble("Particles.extra", 0.0D);
 		this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
