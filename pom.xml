@@ -5,7 +5,7 @@
 
   <groupId>com.ninjaguild</groupId>
   <artifactId>DragonEggDrop</artifactId>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
   <name>DragonEggDrop</name>
   <description>Reward your players with a dragon egg and/or loot chest after every Ender Dragon battle in a grand fashion</description>
 
