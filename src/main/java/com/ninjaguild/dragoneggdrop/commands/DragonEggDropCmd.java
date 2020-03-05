@@ -34,7 +34,7 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescription().getVersion());
 
 			UpdateResult result = UpdateChecker.get().getLastResult();
-			if (sender.isOp() && result.requiresUpdate()) {
+			if (sender.isOp() && result != null && result.requiresUpdate()) {
 				sender.sendMessage(ChatColor.AQUA + "New version available: " + result.getNewestVersion());
 			}
 
