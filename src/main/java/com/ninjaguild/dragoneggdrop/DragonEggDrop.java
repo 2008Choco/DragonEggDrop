@@ -128,7 +128,7 @@ public class DragonEggDrop extends JavaPlugin {
 						}
 					});
 				}
-			}.runTaskTimerAsynchronously(this, 0, 36000);
+			}.runTaskTimerAsynchronously(this, 0, 432000); // 6 hours
 		}
 	}
 
