@@ -6,14 +6,14 @@ import java.util.UUID;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
-import net.minecraft.server.v1_14_R1.BlockPosition;
-import net.minecraft.server.v1_14_R1.BossBattle;
-import net.minecraft.server.v1_14_R1.BossBattleServer;
-import net.minecraft.server.v1_14_R1.ChatMessage;
-import net.minecraft.server.v1_14_R1.EnderDragonBattle;
-import net.minecraft.server.v1_14_R1.Entity;
-import net.minecraft.server.v1_14_R1.PacketPlayOutBoss;
-import net.minecraft.server.v1_14_R1.WorldServer;
+import net.minecraft.server.v1_15_R1.BlockPosition;
+import net.minecraft.server.v1_15_R1.BossBattle;
+import net.minecraft.server.v1_15_R1.BossBattleServer;
+import net.minecraft.server.v1_15_R1.ChatMessage;
+import net.minecraft.server.v1_15_R1.EnderDragonBattle;
+import net.minecraft.server.v1_15_R1.Entity;
+import net.minecraft.server.v1_15_R1.PacketPlayOutBoss;
+import net.minecraft.server.v1_15_R1.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.World;

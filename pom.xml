@@ -29,12 +29,11 @@
       </resource>
     </resources>
   </build>
-
   <dependencies>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
-      <version>1.14-R0.1-SNAPSHOT</version>
+      <version>1.15.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

@@ -4,18 +4,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import net.minecraft.server.v1_14_R1.ChatMessageType;
-import net.minecraft.server.v1_14_R1.EnderDragonBattle;
-import net.minecraft.server.v1_14_R1.EntityEnderDragon;
-import net.minecraft.server.v1_14_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_14_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_14_R1.WorldProvider;
-import net.minecraft.server.v1_14_R1.WorldProviderTheEnd;
+import net.minecraft.server.v1_15_R1.ChatMessageType;
+import net.minecraft.server.v1_15_R1.EnderDragonBattle;
+import net.minecraft.server.v1_15_R1.EntityEnderDragon;
+import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_15_R1.WorldProvider;
+import net.minecraft.server.v1_15_R1.WorldProviderTheEnd;
 
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
@@ -30,7 +30,7 @@ public final class NMSUtils {
 		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 
 		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return new DragonBattle(((WorldProviderTheEnd) worldProvider).q());
+		return new DragonBattle(((WorldProviderTheEnd) worldProvider).o());
 	}
 
 	public static DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
@@ -51,7 +51,7 @@ public final class NMSUtils {
 		if (dragon == null) return -1;
 
 		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.bL;
+		return nmsDragon.bA;
 	}
 
 	public static void sendActionBar(String message, Player... players) {
