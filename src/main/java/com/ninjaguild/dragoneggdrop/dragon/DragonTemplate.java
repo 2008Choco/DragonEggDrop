@@ -11,6 +11,7 @@ import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 
 import org.apache.commons.lang.Validate;
@@ -32,12 +33,15 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class DragonTemplate {
 
-	public static final File DRAGONS_FOLDER = new File(JavaPlugin.getPlugin(DragonEggDrop.class).getDataFolder(), "dragons/");
+    // NOTE: Test this system using "Kelarth" and "Mylanth" as these two use the uncommon_dragon loot table, the only one properly completed
+
+    public static final File DRAGONS_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "dragons/");
+    public static final File LOOT_TABLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "loot_tables/");
 
 	protected final File file;
 	protected final FileConfiguration configFile;
 
-	private final DragonLoot loot;
+	private final DragonLootTable lootTable;
 	private final String identifier;
 
 	private String name;
@@ -53,22 +57,18 @@ public class DragonTemplate {
 	 * Construct a new DragonTemplate object.
 	 *
 	 * @param file the file holding this template data
-	 * @param name the name of the dragon. Can be null
-	 * @param barStyle the style of the bar. Can be null
-	 * @param barColour the colour of the bar. Can be null
 	 */
-	public DragonTemplate(File file, String name, BarStyle barStyle, BarColor barColour) {
+	public DragonTemplate(File file) {
 		Preconditions.checkArgument(file != null, "File cannot be null. See DragonTemplate(String, String, BarStyle, BarColor) for null files");
-		Preconditions.checkArgument(name != null, "Cannot create a template with a null name");
 
 		this.file = file;
 		this.configFile = YamlConfiguration.loadConfiguration(file);
 		this.identifier = file.getName().substring(0, file.getName().lastIndexOf('.')).replace(' ', '_');
 
-		this.name = ChatColor.translateAlternateColorCodes('&', name);
-		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
-		this.barColour = (barColour != null ? barColour : BarColor.PINK);
-		this.loot = new DragonLoot(this);
+		this.name = (configFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', configFile.getString("dragon-name")) : null);
+		this.barStyle = Enums.getIfPresent(BarStyle.class, configFile.getString("bar-style", "SOLID").toUpperCase()).or(BarStyle.SOLID);
+		this.barColour = Enums.getIfPresent(BarColor.class, configFile.getString("bar-colour", "PINK").toUpperCase()).or(BarColor.PINK);
+        this.lootTable = DragonEggDrop.getInstance().getLootTableRegistry().getLootTable(configFile.getString("loot"));
 	}
 
 	/**
@@ -78,20 +78,20 @@ public class DragonTemplate {
 	 * @param name the name of the dragon. Can be null
 	 * @param barStyle the style of the bar. Can be null
 	 * @param barColour the colour of the bar. Can be null
+	 * @param lootTable the dragon's loot table. Can be null
 	 */
-	public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour) {
+	public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour, DragonLootTable lootTable) {
 		Validate.notEmpty(identifier, "Idenfitier must not be empty or null");
 		Preconditions.checkArgument(identifier.contains(" "), "Template identifiers must not have any spaces");
-		Preconditions.checkArgument(name != null, "Cannot create a template with a null name");
 
 		this.file = null;
 		this.configFile = null;
 		this.identifier = identifier;
 
-		this.name = ChatColor.translateAlternateColorCodes('&', name);
+		this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
 		this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
 		this.barColour = (barColour != null ? barColour : BarColor.PINK);
-		this.loot = new DragonLoot(this);
+        this.lootTable = lootTable;
 	}
 
 	/**
@@ -212,12 +212,12 @@ public class DragonTemplate {
 	}
 
 	/**
-	 * Get the loot to be dropped after the dragon is killed.
+	 * Get the loot table used to generate the loot for this dragon once killed.
 	 *
-	 * @return the dragon loot
+	 * @return the dragon loot table
 	 */
-	public DragonLoot getLoot() {
-		return loot;
+	public DragonLootTable getLootTable() {
+		return lootTable;
 	}
 
 	/**
@@ -227,7 +227,9 @@ public class DragonTemplate {
 	 * @param updateFile whether to update the dragon file or not
 	 */
 	public void setSpawnWeight(double spawnWeight, boolean updateFile) {
-		if (spawnWeight < 0) spawnWeight = 0;
+		if (spawnWeight < 0) {
+		    spawnWeight = 0;
+		}
 
 		this.spawnWeight = spawnWeight;
 
@@ -434,7 +436,9 @@ public class DragonTemplate {
 	 * @param value the value to set
 	 */
 	protected void updateConfig(String path, Object value) {
-		if (configFile == null) return;
+		if (configFile == null) {
+		    return;
+		}
 
 		this.configFile.set(path, value);
 		try {
@@ -462,27 +466,20 @@ public class DragonTemplate {
 				continue;
 			}
 
-			FileConfiguration dragonFile = YamlConfiguration.loadConfiguration(file);
-
-			// Load name, bar style & colour, weight and announcement status
-			String name = dragonFile.getString("dragon-name", "Ender Dragon");
-			BarStyle style = Enums.getIfPresent(BarStyle.class, dragonFile.getString("bar-style", "SOLID").toUpperCase()).orNull();
-			BarColor color = Enums.getIfPresent(BarColor.class, dragonFile.getString("bar-color", "PINK").toUpperCase()).orNull();
-
-			DragonTemplate template = new DragonTemplate(file, name, style, color);
-			template.spawnWeight = dragonFile.getDouble("spawn-weight", 1);
-			template.announceRespawn = dragonFile.getBoolean("announce-respawn", false);
+			DragonTemplate template = new DragonTemplate(file);
+			template.spawnWeight = template.configFile.getDouble("spawn-weight", 1);
+			template.announceRespawn = template.configFile.getBoolean("announce-respawn", false);
 
 			// Attribute modifier loading
-			if (dragonFile.contains("attributes")) {
-				for (String attributeKey : dragonFile.getConfigurationSection("attributes").getValues(false).keySet()) {
+			if (template.configFile.contains("attributes")) {
+				for (String attributeKey : template.configFile.getConfigurationSection("attributes").getValues(false).keySet()) {
 					Attribute attribute = Enums.getIfPresent(Attribute.class, attributeKey.toUpperCase()).orNull();
 					if (attribute == null) {
 						plugin.getLogger().warning("Unknown attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
 						continue;
 					}
 
-					double value = dragonFile.getDouble("attributes." + attributeKey, -1);
+					double value = template.configFile.getDouble("attributes." + attributeKey, -1);
 					if (value == -1) {
 						plugin.getLogger().warning("Invalid double value specified at attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
 						continue;
@@ -503,5 +500,39 @@ public class DragonTemplate {
 
 		return templates;
 	}
+
+	/**
+     * Load and parse all DragonTemplate objects from the dragons folder.
+     *
+     * @return all parsed DragonTemplate objects
+     */
+    public static List<DragonLootTable> loadLootTables() {
+        DragonEggDrop plugin = DragonEggDrop.getInstance();
+        List<DragonLootTable> lootTables = new ArrayList<>();
+
+        // Return empty list if the folder was just created
+        if (LOOT_TABLES_FOLDER.mkdir()) {
+            return lootTables;
+        }
+
+        for (File file : LOOT_TABLES_FOLDER.listFiles((file, name) -> name.endsWith(".json"))) {
+            if (file.getName().contains(" ")) {
+                plugin.getLogger().warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
+                continue;
+            }
+
+            DragonLootTable lootTable = DragonLootTable.fromJsonFile(file);
+
+            // Checking for existing templates
+            if (lootTables.stream().anyMatch(t -> t.getId().matches(lootTable.getId()))) {
+                plugin.getLogger().warning("Duplicate dragon loot table with file name " + file.getName() + ". Ignoring...");
+                continue;
+            }
+
+            lootTables.add(lootTable);
+        }
+
+        return lootTables;
+    }
 
 }

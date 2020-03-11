@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.dragon.DragonLoot;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -41,10 +41,9 @@ public class LootListeners implements Listener {
 		DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getLastBattle();
 		if (dragon == null) return;
 
-		DragonLoot loot = dragon.getLoot();
-
-		String eggName = loot.getEggName().replace("%dragon%", dragon.getName());
-		List<String> eggLore = loot.getEggLore().stream()
+		DragonLootElementEgg egg = dragon.getLootTable().getEgg();
+		String eggName = egg.getName().replace("%dragon%", dragon.getName());
+		List<String> eggLore = egg.getLore().stream()
 				.map(s -> s.replace("%dragon%", dragon.getName()))
 				.collect(Collectors.toList());
 

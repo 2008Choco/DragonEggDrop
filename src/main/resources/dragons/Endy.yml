@@ -2,19 +2,7 @@ dragon-name: "&aEndy"
 bar-style: SOLID
 bar-color: PINK
 
-egg-spawn-chance: 100.0
-egg-name: "%dragon%'s Egg"
-egg-lore:
-  - "I guess you could say you..."
-  - "Endy'd... him..."
-
-chest-spawn-chance: 0.0
-chest-name: "Loot Chest"
-min-loot: 0
-max-loot: 0
-
 announce-respawn: false
 spawn-weight: 2
 
-death-commands:
-  - 'tellraw %player% {"text":"Congratulations! You have killed ","color":"red","extra":[{"text":"%dragon%"}]}'
+loot: "common_dragon"

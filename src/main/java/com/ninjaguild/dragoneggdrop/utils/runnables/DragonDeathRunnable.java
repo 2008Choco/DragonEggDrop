@@ -5,6 +5,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
@@ -133,7 +134,12 @@ public class DragonDeathRunnable extends BukkitRunnable {
 			DragonTemplate currentBattle = worldWrapper.getActiveBattle();
 
 			if (currentBattle != null) {
-				currentBattle.getLoot().spawnLootFor(dragonBattle, dragon);
+			    DragonLootTable lootTable = currentBattle.getLootTable();
+			    if (lootTable != null) {
+			        currentBattle.getLootTable().generate(dragonBattle, dragon);
+			    } else {
+			        this.plugin.getLogger().warning("Could not generate loot for template " + currentBattle.getIdentifier() + ". Invalid loot table. Is \"loot\" defined in the template?");
+			    }
 			}
 
 			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {

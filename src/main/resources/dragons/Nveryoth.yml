@@ -2,15 +2,6 @@ dragon-name: '&5Nveryoth, Lord of Light'
 bar-style: SEGMENTED_20
 bar-color: YELLOW
 
-egg-spawn-chance: 25.0
-egg-name: '%dragon%''s Egg'
-egg-lore: []
-
-chest-spawn-chance: 100.0
-chest-name: Loot Chest
-min-loot: 5
-max-loot: 10
-
 announce-respawn: true
 spawn-weight: 0.05
 
@@ -19,18 +10,4 @@ attributes:
   GENERIC_ARMOR: 15
   GENERIC_ATTACK_DAMAGE: 9
 
-death-commands:
-  - 'tellraw %player% {"text":"Congratulations! You have killed ","color":"red","extra":[{"text":"%dragon%"}]}'
-
-loot:
-  '1':
-    weight: 1.0
-    type: stick
-    damage: 1
-    amount: 1
-    display-name: '&bExample Item'
-    lore:
-    - '&6Configure me'
-    - '&6to any item'
-    enchantments:
-      unbreaking: 1
+loot: "legendary_dragon"

@@ -1,0 +1,219 @@
+{
+    "egg": {
+        "chance": 100.0,
+        "name": "%dragon%'s Egg",
+        "lore": [
+            "The egg of %dragon%",
+            "A valiant opponent"
+        ]
+    },
+    "command_pools": [
+        {
+            "rolls": 1,
+            "chance": 100.0,
+            "commands": [
+                {
+                    "weight": 1.0,
+                    "command": "tellraw %player% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"
+                }
+            ]
+        }
+    ],
+    "chest": {
+        "chance": 15.0,
+        "name": "Loot Chest",
+        "pools": [
+            {
+                "name": "equipment",
+                "rolls": {
+                    "min": 1,
+                    "max": 2
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_helmet"
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_chestplate",
+                        "enchantments": {
+                            "minecraft:protection": 2
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_leggings"
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_boots"
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:shield"
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_sword",
+                        "name": "&7Dagger of Honour",
+                        "enchantments": {
+                            "minecraft:unbreaking": 1,
+                            "minecraft:sharpness": 2
+                        }
+                    },
+                    {
+                        "weight": 0.05,
+                        "type": "minecraft:diamond_sword",
+                        "enchantments": {
+                            "minecraft:sharpness": 3,
+                            "minecraft:fire_aspect": 1
+                        }
+                    },
+                    {
+                        "weight": 0.05,
+                        "type": "minecraft:diamond_helmet"
+                    },
+                    {
+                        "weight": 0.05,
+                        "type": "minecraft:diamond_boots",
+                        "enchantments": {
+                            "minecraft:feather_falling": 1
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "gems",
+                "rolls": {
+                    "min": 0,
+                    "max": 4
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_ingot",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:gold_ingot",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 0.1,
+                        "type": "minecraft:emerald",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "food",
+                "rolls": {
+                    "min": 1,
+                    "max": 2
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:apple",
+                        "amount": {
+                            "min": 8,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:baked_potato",
+                        "amount": {
+                            "min": 4,
+                            "max": 8
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "cooked_food",
+                "rolls": {
+                    "min": 2,
+                    "max": 3
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_beef",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_chicken",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_porkchop",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_mutton",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_rabbit",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_cod",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_salmon",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

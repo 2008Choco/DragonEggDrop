@@ -70,6 +70,7 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 
 			this.plugin.reloadConfig();
 			this.plugin.getDEDManager().reloadDragonTemplates();
+			this.plugin.getLootTableRegistry().reloadDragonLootTables();
 			this.plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
 		}
 

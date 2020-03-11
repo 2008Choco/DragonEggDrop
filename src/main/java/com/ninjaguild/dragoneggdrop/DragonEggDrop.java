@@ -22,6 +22,7 @@ import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonRespawnCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
@@ -57,28 +58,40 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public class DragonEggDrop extends JavaPlugin {
 
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
 	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+	private static DragonEggDrop instance;
 
 	private DEDManager dedManager;
+	private DragonLootTableRegistry lootTableRegistry;
 
 	private BukkitTask updateTask;
 	private File tempDataFile;
 
 	@Override
 	public void onEnable() {
+	    instance = this;
 		this.saveDefaultConfig();
 
 		// Update configuration version
 		ConfigUtil cu = new ConfigUtil(this);
 		cu.updateConfig(this.getConfig().getInt("version"));
 
-		// Load default templates
+		// Load default templates and loot tables
 		if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {
-			this.saveDefaultTemplates();
+			this.saveDefaultDirectory("dragons");
+		}
+		if (DragonTemplate.LOOT_TABLES_FOLDER.mkdirs()) {
+		    this.saveDefaultDirectory("loot_tables");
 		}
 
+		this.lootTableRegistry = new DragonLootTableRegistry();
+		this.lootTableRegistry.reloadDragonLootTables();
+
 		this.dedManager = new DEDManager(this);
+		this.dedManager.reloadDragonTemplates();
 
 		// Load temp data (reload support)
 		this.tempDataFile = new File(getDataFolder(), "tempData.json");
@@ -173,7 +186,25 @@ public class DragonEggDrop extends JavaPlugin {
 		return dedManager;
 	}
 
-	private void saveDefaultTemplates() {
+	/**
+	 * Get the loot table registry for all dragon loot tables.
+	 *
+	 * @return the loot table registry
+	 */
+	public DragonLootTableRegistry getLootTableRegistry() {
+        return lootTableRegistry;
+    }
+
+	/**
+	 * Get the DragonEggDrop instance.
+	 *
+	 * @return this instance
+	 */
+	public static DragonEggDrop getInstance() {
+        return instance;
+    }
+
+	private void saveDefaultDirectory(String directory) {
 		try (JarFile jar = new JarFile(getFile())){
 			Enumeration<JarEntry> entries = jar.entries();
 
@@ -181,7 +212,9 @@ public class DragonEggDrop extends JavaPlugin {
 				JarEntry entry = entries.nextElement();
 				String name = entry.getName();
 
-				if (!name.startsWith("dragons/")) continue;
+				if (!name.startsWith(directory + "/")) {
+				    continue;
+				}
 
 				this.saveResource(name, false);
 			}

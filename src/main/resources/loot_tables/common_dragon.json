@@ -1,0 +1,22 @@
+{
+    "egg": {
+        "chance": 100.0,
+        "name": "%dragon%'s Egg",
+        "lore": [
+            "The egg of %dragon%",
+            "A valiant opponent"
+        ]
+    },
+    "command_pools": [
+        {
+            "rolls": 1,
+            "chance": 100.0,
+            "commands": [
+                {
+                    "weight": 1.0,
+                    "command": "tellraw %player% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"
+                }
+            ]
+        }
+    ]
+}

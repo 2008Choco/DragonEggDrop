@@ -121,6 +121,21 @@ public class RandomCollection<E> {
 		return (entry != null ? entry.getValue() : null);
 	}
 
+    /**
+     * Retrieve the next object, being a random object in the collection
+     * based on its weighted value.
+     *
+     * @param random a random instance
+     *
+     * @return a random weighted object
+     */
+    public E next(Random random) {
+        double value = random.nextDouble() * total;
+        Entry<Double, E> entry = map.ceilingEntry(value);
+
+        return (entry != null ? entry.getValue() : null);
+    }
+
 	/**
 	 * Clear all data from the random collection.
 	 */

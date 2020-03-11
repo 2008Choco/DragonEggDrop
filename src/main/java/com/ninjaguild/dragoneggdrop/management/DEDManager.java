@@ -25,7 +25,6 @@ public class DEDManager {
 
 	public DEDManager(DragonEggDrop plugin) {
 		this.plugin = plugin;
-		this.reloadDragonTemplates();
 	}
 
 	/**

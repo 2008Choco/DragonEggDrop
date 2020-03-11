@@ -129,6 +129,10 @@ public class MathUtils {
 		return seconds;
 	}
 
+	public static double clamp(double value, double min, double max) {
+	    return (value < min ? min : (value > max ? max : value));
+	}
+
 	/**
 	 * The logic behind the parsing of {@link MathExpression} objects.
 	 *

@@ -10,14 +10,11 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
@@ -84,47 +81,9 @@ public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.GRAY + "Announce Respawn: " + (template.shouldAnnounceRespawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceRespawn());
 		}
 
-		else if (args[1].equalsIgnoreCase("edit")) {
-			if (args.length < 3) {
-				this.plugin.sendMessage(sender, cmd.getLabel() + " " + args[0] + " edit <addloot|set>");
-				return true;
-			}
-
-			// "addloot" and "set" params
-			if (args[2].equalsIgnoreCase("addloot")) {
-				if (!(sender instanceof Player)) {
-					this.plugin.sendMessage(sender, "You must be a player to add loot to a template. An item must be held in hand");
-					return true;
-				}
-
-				if (!sender.hasPermission("dragoneggdrop.template.edit.addloot")) {
-					this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
-					return true;
-				}
-
-				Player player = (Player) sender;
-				ItemStack item = player.getInventory().getItemInMainHand();
-				double weight = 1;
-
-				if (item == null) {
-					this.plugin.sendMessage(sender, "You must be holding an item in your main hand to add it to the dragon loot");
-					return true;
-				}
-
-				if (args.length >= 4) {
-					weight = NumberUtils.toDouble(args[3], 1.0);
-				}
-
-				template.getLoot().addLootItem(item, weight);
-				this.plugin.sendMessage(sender, "Added " + ChatColor.GREEN + item.getType() + ChatColor.GRAY + " with a weight of "
-						+ ChatColor.YELLOW + weight + ChatColor.GRAY + " to " + args[0] + "'s loot");
-				return true;
-			}
-		}
-
 		return true;
 	}
-	
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		List<String> options = new ArrayList<>();
