@@ -43,10 +43,3 @@ permissions:
     children:
       dragoneggdrop.template.list: true
       dragoneggdrop.template.info: true
-      dragoneggdrop.template.edit.*: true
-      
-  dragoneggdrop.template.edit.*:
-    description: Allow access to data modifications for dragon templates
-    default: op
-    children:
-      dragoneggdrop.template.edit.addloot: true

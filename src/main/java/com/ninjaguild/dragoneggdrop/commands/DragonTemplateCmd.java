@@ -97,14 +97,7 @@ public class DragonTemplateCmd implements CommandExecutor, TabCompleter {
 
 		// Before completion: "/dragontemplate <template> "
 		else if (args.length == 2) {
-			StringUtil.copyPartialMatches(args[1], Arrays.asList("view", "edit"), options);
-		}
-
-		else if (args.length == 3) {
-			// Before completion: "/dragontemplate <template> edit "
-			if (args[1].equalsIgnoreCase("edit")) {
-				StringUtil.copyPartialMatches(args[2], Arrays.asList("addloot"), options);
-			}
+			StringUtil.copyPartialMatches(args[1], Arrays.asList("view"), options);
 		}
 
 		return options;

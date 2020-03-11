@@ -58,7 +58,6 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.GOLD + "/dragonspawn");
 			sender.sendMessage(ChatColor.GOLD + "/dragontemplate list");
 			sender.sendMessage(ChatColor.GOLD + "/dragontemplate <template> (view/info)");
-			sender.sendMessage(ChatColor.GOLD + "/dragontemplate <template> edit addloot [weight]");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------");
 		}
 
