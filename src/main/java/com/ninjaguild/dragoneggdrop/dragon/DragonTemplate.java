@@ -1,7 +1,6 @@
 package com.ninjaguild.dragoneggdrop.dragon;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -37,7 +36,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class DragonTemplate {
 
     public static final File DRAGONS_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "dragons/");
-    public static final File LOOT_TABLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "loot_tables/");
 
     protected final File file;
     protected final FileConfiguration configFile;
@@ -117,29 +115,6 @@ public class DragonTemplate {
     }
 
     /**
-     * Set the name of the dragon.
-     *
-     * @param name the dragon's new name
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void setName(String name, boolean updateFile) {
-        this.name = name;
-
-        if (updateFile) {
-            this.updateConfig("dragon-name", name);
-        }
-    }
-
-    /**
-     * Set the name of the dragon and update the dragon file (if one exists).
-     *
-     * @param name the dragon's new name
-     */
-    public void setName(String name) {
-        this.setName(name, true);
-    }
-
-    /**
      * Get the name of the dragon.
      *
      * @return the dragon's name
@@ -149,58 +124,12 @@ public class DragonTemplate {
     }
 
     /**
-     * Set the style of the boss bar.
-     *
-     * @param barStyle the new boss bar style
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void setBarStyle(BarStyle barStyle, boolean updateFile) {
-        this.barStyle = barStyle;
-
-        if (updateFile) {
-            this.updateConfig("bar-style", barStyle);
-        }
-    }
-
-    /**
-     * Set the style of the boss bar and update the dragon file (if one exists).
-     *
-     * @param barStyle the new boss bar style
-     */
-    public void setBarStyle(BarStyle barStyle) {
-        this.setBarStyle(barStyle);
-    }
-
-    /**
      * Get the style of the boss bar.
      *
      * @return the boss bar style
      */
     public BarStyle getBarStyle() {
         return barStyle;
-    }
-
-    /**
-     * Set the colour of the boss bar.
-     *
-     * @param barColour the new boss bar colour
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void setBarColor(BarColor barColour, boolean updateFile) {
-        this.barColour = barColour;
-
-        if (updateFile) {
-            this.updateConfig("bar-color", barColour);
-        }
-    }
-
-    /**
-     * Set the colour of the boss bar and update the dragon file (if one exists).
-     *
-     * @param barColour the new boss bar colour
-     */
-    public void setBarColor(BarColor barColour) {
-        this.setBarColor(barColour, true);
     }
 
     /**
@@ -219,34 +148,6 @@ public class DragonTemplate {
      */
     public DragonLootTable getLootTable() {
         return lootTable;
-    }
-
-    /**
-     * Set the weight of this dragon's spawn percentage.
-     *
-     * @param spawnWeight the new spawn weight
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void setSpawnWeight(double spawnWeight, boolean updateFile) {
-        if (spawnWeight < 0) {
-            spawnWeight = 0;
-        }
-
-        this.spawnWeight = spawnWeight;
-
-        if (updateFile) {
-            this.updateConfig("spawn-weight", spawnWeight);
-        }
-    }
-
-    /**
-     * Set the weight of this dragon's spawn percentage and update the dragon file
-     * (if one exists).
-     *
-     * @param spawnWeight the new spawn weight
-     */
-    public void setSpawnWeight(double spawnWeight) {
-        this.setSpawnWeight(spawnWeight, true);
     }
 
     /**
@@ -294,7 +195,7 @@ public class DragonTemplate {
      *
      * @return the value of the attribute, or -1 if non existent
      */
-    public double getAttributeValue(Attribute attribute) {
+    public double getAttribute(Attribute attribute) {
         return attributes.getOrDefault(attribute, -1.0);
     }
 
@@ -307,83 +208,6 @@ public class DragonTemplate {
      */
     public boolean hasAttribute(Attribute attribute) {
         return attributes.containsKey(attribute);
-    }
-
-    /**
-     * Add an attribute to this template.
-     *
-     * @param attribute the attribute to add
-     * @param value the new value of the attribute
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void addAttribute(Attribute attribute, double value, boolean updateFile) {
-        Preconditions.checkArgument(attribute != null, "Cannot add a null attribute");
-        if (value < 0.0) {
-            value = 0.0;
-        }
-
-        this.attributes.put(attribute, value);
-
-        if (updateFile) {
-            this.updateConfig("attributes." + attribute.name(), value);
-        }
-    }
-
-    /**
-     * Add an attribute to this template and update the dragon file (if one
-     * exists).
-     *
-     * @param attribute the attribute to add
-     * @param value the new value of the attribute
-     */
-    public void addAttribute(Attribute attribute, double value) {
-        this.addAttribute(attribute, value, true);
-    }
-
-    /**
-     * Remove an attribute from this template and set its value back to default.
-     *
-     * @param attribute the attribute to remove
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void removeAttribute(Attribute attribute, boolean updateFile) {
-        Validate.notNull(attribute, "Cannot remove a null attribute");
-
-        this.attributes.remove(attribute);
-
-        if (updateFile) {
-            this.updateConfig("attributes." + attribute.name(), null);
-        }
-    }
-
-    /**
-     * Remove an attribute from this template, set its value back to default and
-     * update the dragon file (if one exists).
-     *
-     * @param attribute the attribute to remove
-     */
-    public void removeAttribute(Attribute attribute) {
-        this.removeAttribute(attribute, true);
-    }
-
-    /**
-     * Clear all loaded attribute mappings.
-     *
-     * @param updateFile whether to update the dragon file or not
-     */
-    public void clearAttributes(boolean updateFile) {
-        this.attributes.clear();
-
-        if (updateFile) {
-            this.updateConfig("attributes", null);
-        }
-    }
-
-    /**
-     * Clear all loaded attribute mappings and update the dragon file (if one exists).
-     */
-    public void clearAttributes() {
-        this.clearAttributes(true);
     }
 
     /**
@@ -412,27 +236,6 @@ public class DragonTemplate {
         // Set health... max health attribute doesn't do that for me. -,-
         if (attributes.containsKey(Attribute.GENERIC_MAX_HEALTH)) {
             dragon.setHealth(attributes.get(Attribute.GENERIC_MAX_HEALTH));
-        }
-    }
-
-    /**
-     * Update a configuration value in this template's file (if one exists). If the file
-     * for this dragon template does not exist (i.e. a synthetically created template from
-     * an extension plugin), this method will fail silently.
-     *
-     * @param path the configuration path to update
-     * @param value the value to set
-     */
-    protected void updateConfig(String path, Object value) {
-        if (configFile == null) {
-            return;
-        }
-
-        this.configFile.set(path, value);
-        try {
-            this.configFile.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -496,40 +299,6 @@ public class DragonTemplate {
         }
 
         return templates;
-    }
-
-    /**
-     * Load and parse all DragonTemplate objects from the dragons folder.
-     *
-     * @return all parsed DragonTemplate objects
-     */
-    public static List<DragonLootTable> loadLootTables() {
-        DragonEggDrop plugin = DragonEggDrop.getInstance();
-        List<DragonLootTable> lootTables = new ArrayList<>();
-
-        // Return empty list if the folder was just created
-        if (LOOT_TABLES_FOLDER.mkdir()) {
-            return lootTables;
-        }
-
-        for (File file : LOOT_TABLES_FOLDER.listFiles((file, name) -> name.endsWith(".json"))) {
-            if (file.getName().contains(" ")) {
-                plugin.getLogger().warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
-                continue;
-            }
-
-            DragonLootTable lootTable = DragonLootTable.fromJsonFile(file);
-
-            // Checking for existing templates
-            if (lootTables.stream().anyMatch(t -> t.getId().matches(lootTable.getId()))) {
-                plugin.getLogger().warning("Duplicate dragon loot table with file name " + file.getName() + ". Ignoring...");
-                continue;
-            }
-
-            lootTables.add(lootTable);
-        }
-
-        return lootTables;
     }
 
 }

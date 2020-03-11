@@ -22,6 +22,7 @@ import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonRespawnCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
@@ -77,7 +78,7 @@ public class DragonEggDrop extends JavaPlugin {
         if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {
             this.saveDefaultDirectory("dragons");
         }
-        if (DragonTemplate.LOOT_TABLES_FOLDER.mkdirs()) {
+        if (DragonLootTable.LOOT_TABLES_FOLDER.mkdirs()) {
             this.saveDefaultDirectory("loot_tables");
         }
 

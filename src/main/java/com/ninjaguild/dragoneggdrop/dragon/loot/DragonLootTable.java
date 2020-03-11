@@ -46,6 +46,8 @@ import org.bukkit.projectiles.ProjectileSource;
  */
 public class DragonLootTable {
 
+    public static final File LOOT_TABLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "loot_tables/");
+
     private double chestChance;
     private String chestName;
     private DragonLootElementEgg egg;
@@ -300,6 +302,40 @@ public class DragonLootTable {
         lootTable.chestName = chestName;
         lootTable.chestChance = chestChance;
         return lootTable;
+    }
+
+    /**
+     * Load and parse all DragonLootTable objects from the dragons folder.
+     *
+     * @return all parsed DragonLootTable objects
+     */
+    public static List<DragonLootTable> loadLootTables() {
+        DragonEggDrop plugin = DragonEggDrop.getInstance();
+        List<DragonLootTable> lootTables = new ArrayList<>();
+
+        // Return empty list if the folder was just created
+        if (LOOT_TABLES_FOLDER.mkdir()) {
+            return lootTables;
+        }
+
+        for (File file : LOOT_TABLES_FOLDER.listFiles((file, name) -> name.endsWith(".json"))) {
+            if (file.getName().contains(" ")) {
+                plugin.getLogger().warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
+                continue;
+            }
+
+            DragonLootTable lootTable = DragonLootTable.fromJsonFile(file);
+
+            // Checking for existing templates
+            if (lootTables.stream().anyMatch(t -> t.getId().matches(lootTable.getId()))) {
+                plugin.getLogger().warning("Duplicate dragon loot table with file name " + file.getName() + ". Ignoring...");
+                continue;
+            }
+
+            lootTables.add(lootTable);
+        }
+
+        return lootTables;
     }
 
 }

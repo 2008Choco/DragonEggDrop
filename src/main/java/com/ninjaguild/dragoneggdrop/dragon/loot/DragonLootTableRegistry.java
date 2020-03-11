@@ -73,7 +73,7 @@ public class DragonLootTableRegistry {
      */
     public void reloadDragonLootTables() {
         this.clear();
-        DragonTemplate.loadLootTables().forEach(this::register);
+        DragonLootTable.loadLootTables().forEach(this::register);
     }
 
 }
