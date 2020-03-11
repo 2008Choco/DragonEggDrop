@@ -2,6 +2,7 @@ package com.ninjaguild.dragoneggdrop.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.ninjaguild.dragoneggdrop.utils.math.MathExpression;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
@@ -82,6 +83,52 @@ public class ParticleShapeDefinition {
         this.initialLocation.add(x, 0, z);
         this.initialLocation.getWorld().spawnParticle(particleType, initialLocation, particleAmount, xOffset, yOffset, zOffset, particleExtra, null, true);
         this.initialLocation.subtract(x, 0, z);
+    }
+
+
+    /**
+     * Pre-fabricated particle shape definitions.
+     *
+     * @author Parker Hawke - Choco
+     */
+    public enum Prefab {
+
+        /**
+         * x = x
+         * z = z
+         */
+        BALL(location -> new ParticleShapeDefinition(location, "x", "z")),
+
+        /**
+         * x = cos(theta) * 1.2
+         * z = sin(theta) * 1.2
+         */
+        HELIX(location -> new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2")),
+
+        /**
+         * x = cos(theta) * (100 / t)
+         * z = sin(theta) * (100 / t)
+         */
+        OPEN_END_HELIX(location -> new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)"));
+
+
+        private final Function<Location, ParticleShapeDefinition> fabricator;
+
+        private Prefab(Function<Location, ParticleShapeDefinition> fabricator) {
+            this.fabricator = fabricator;
+        }
+
+        /**
+         * Create a new {@link ParticleShapeDefinition} from this prefab starting at the given location.
+         *
+         * @param location the location at which the shape definition should start
+         *
+         * @return the created prefab
+         */
+        public ParticleShapeDefinition create(Location location) {
+            return fabricator.apply(location);
+        }
+
     }
 
 }
