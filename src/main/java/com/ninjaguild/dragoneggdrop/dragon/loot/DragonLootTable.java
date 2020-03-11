@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -37,6 +38,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
+/**
+ * Represents a dragon's loot table. These tables are used to randomly generate unique loot for
+ * every dragon while being reusable for multiple dragons.
+ *
+ * @author Parker Hawke - Choco
+ */
 public class DragonLootTable {
 
     private double chestChance;
@@ -47,37 +54,87 @@ public class DragonLootTable {
     private final List<ILootPool<DragonLootElementCommand>> commandPools;
     private final List<ILootPool<DragonLootElementItem>> chestPools;
 
+    /**
+     * Create a {@link DragonLootTable}.
+     *
+     * @param id the loot table's unique id
+     * @param egg the egg element. If null, no egg will be generated
+     * @param commandPools the command loot pools
+     * @param chestPools the chest loot pools
+     *
+     * @see ILootPool
+     * @see #fromJsonFile(File)
+     */
     public DragonLootTable(String id, DragonLootElementEgg egg, List<ILootPool<DragonLootElementCommand>> commandPools, List<ILootPool<DragonLootElementItem>> chestPools) {
         this.id = id;
         this.egg = (egg != null) ? egg : new DragonLootElementEgg(0.0);
-        this.commandPools = new ArrayList<>(commandPools);
-        this.chestPools = new ArrayList<>(chestPools);
+        this.commandPools = (commandPools != null) ? new ArrayList<>(commandPools) : Collections.EMPTY_LIST;
+        this.chestPools = (chestPools != null) ? new ArrayList<>(chestPools) : Collections.EMPTY_LIST;
     }
 
+    /**
+     * Get this loot table's unique id.
+     *
+     * @return the loot table id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Get the chance (0.0 - 100.0) that a chest will be generated and item loot pools
+     * will be rolled.
+     *
+     * @return the chest chance
+     */
     public double getChestChance() {
         return chestChance;
     }
 
+    /**
+     * Get the custom name of the generated chest.
+     *
+     * @return the chest's name
+     */
     public String getChestName() {
         return chestName;
     }
 
+    /**
+     * Get the egg loot element.
+     *
+     * @return the egg element
+     */
     public DragonLootElementEgg getEgg() {
         return egg;
     }
 
+    /**
+     * Get an immutable list of the command loot pools.
+     *
+     * @return an immutable command pool list
+     */
     public List<ILootPool<DragonLootElementCommand>> getCommandPools() {
         return ImmutableList.copyOf(commandPools);
     }
 
+    /**
+     * Get an immutable list of the chest loot pools.
+     *
+     * @return an immutable chest pool list
+     */
     public List<ILootPool<DragonLootElementItem>> getChestPools() {
         return ImmutableList.copyOf(chestPools);
     }
 
+    /**
+     * Generate loot for the given {@link DragonBattle} and {@link EnderDragon}. All loot pools will
+     * be rolled and generated. The egg will be generated first (and put in a chest if necessary),
+     * then the chest item pools, followed by the command pools.
+     *
+     * @param battle the battle for which to generate loot
+     * @param dragon the dragon for which to generate loot
+     */
     public void generate(DragonBattle battle, EnderDragon dragon) {
         Preconditions.checkArgument(battle != null, "Attempted to generate loot for null dragon battle");
         Preconditions.checkArgument(dragon != null, "Attempted to generate loot for null ender dragon");
@@ -111,6 +168,11 @@ public class DragonLootTable {
         this.generateLootPools(commandPools, plugin, battle, dragon, killer, random, chest);
     }
 
+    /**
+     * Write this loot table as a JsonObject.
+     *
+     * @return the JSON representation
+     */
     public JsonObject asJson() {
         return new JsonObject();
     }
@@ -161,6 +223,18 @@ public class DragonLootTable {
         }
     }
 
+    /**
+     * Parse a {@link DragonLootTable} instance from a JSON file. The file extension from the specified
+     * file is validated. If the file is not terminated by .json, an {@link IllegalArgumentException} will
+     * be thrown.
+     *
+     * @param file the file from which to parse the loot table
+     *
+     * @return the parsed loot table
+     *
+     * @throws IllegalArgumentException if the file is invalid
+     * @throws JsonParseException if the parsing at all fails
+     */
     public static DragonLootTable fromJsonFile(File file) {
         String fileName = file.getName();
         if (!fileName.endsWith(".json")) {

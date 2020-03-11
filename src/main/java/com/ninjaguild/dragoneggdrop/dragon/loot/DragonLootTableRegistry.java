@@ -4,23 +4,64 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.management.DEDManager;
 
+/**
+ * Represents a registry for all {@link DragonLootTable} instances. It is from here that
+ * {@link DragonTemplate}s will pull their loot tables.
+ *
+ * @author Parker Hawke - Choco
+ */
 public class DragonLootTableRegistry {
 
     private final Map<String, DragonLootTable> tables = new HashMap<>();
 
-    public void register(String id, DragonLootTable table) {
-        this.tables.put(id, table);
+    /**
+     * Register a loot table.
+     *
+     * @param table the table to register
+     */
+    public void register(DragonLootTable table) {
+        this.tables.put(table.getId(), table);
     }
 
+    /**
+     * Unregister a loot table with the given id.
+     *
+     * @param id the id to unregister
+     */
     public void unregister(String id) {
         this.tables.remove(id);
     }
 
+    /**
+     * Unregister the specified loot table.
+     *
+     * @param lootTable the loot table to unregister
+     */
+    public void unregister(DragonLootTable lootTable) {
+        if (lootTable == null) {
+            return;
+        }
+
+        this.tables.remove(lootTable.getId());
+    }
+
+    /**
+     * Get a loot table based on its (case-sensitive) id.
+     *
+     * @param id the loot table's id
+     *
+     * @return the loot table. null if none with the given id exists
+     */
     public DragonLootTable getLootTable(String id) {
         return tables.get(id);
     }
 
+    /**
+     * Clear all loot tables from the registry. This will not remove loot tables from any
+     * dragon templates that have already been loaded by the {@link DEDManager}.
+     */
     public void clear() {
         this.tables.clear();
     }
@@ -32,7 +73,7 @@ public class DragonLootTableRegistry {
      */
     public void reloadDragonLootTables() {
         this.clear();
-        DragonTemplate.loadLootTables().forEach(t -> tables.put(t.getId(), t));
+        DragonTemplate.loadLootTables().forEach(this::register);
     }
 
 }

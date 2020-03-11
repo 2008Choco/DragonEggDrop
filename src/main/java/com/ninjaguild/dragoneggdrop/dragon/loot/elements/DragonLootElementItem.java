@@ -24,17 +24,30 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * An implementation of {@link IDragonLootElement} to represent an item.
+ *
+ * @author Parker Hawke - Choco
+ */
 public class DragonLootElementItem implements IDragonLootElement {
 
     private final ItemStack item;
-    private final double weight;
     private final int min, max;
+    private final double weight;
 
-    public DragonLootElementItem(ItemStack item, double weight, int min, int max) {
+    /**
+     * Create a {@link DragonLootElementCommand}.
+     *
+     * @param item the item to generate
+     * @param min the minimum amount of this item to generate (inclusive)
+     * @param max the maximum amount of this item to generate (inclusive)
+     * @param weight this element's weight in the loot pool
+     */
+    public DragonLootElementItem(ItemStack item, int min, int max, double weight) {
         this.item = item;
-        this.weight = weight;
         this.min = min;
         this.max = max;
+        this.weight = weight;
     }
 
     @Override
@@ -63,6 +76,15 @@ public class DragonLootElementItem implements IDragonLootElement {
         inventory.setItem(slot, generated);
     }
 
+    /**
+     * Parse a {@link DragonLootElementItem} instance from a {@link JsonObject}.
+     *
+     * @param root the root element that represents this element
+     *
+     * @return the created instance
+     *
+     * @throws JsonParseException if parsing the object has failed
+     */
     public static DragonLootElementItem fromJson(JsonObject root) {
         double weight = root.has("weight") ? Math.max(root.get("weight").getAsDouble(), 0.0) : 1.0;
         String name = root.has("name") ? ChatColor.translateAlternateColorCodes('&', root.get("name").getAsString()) : null;
@@ -74,7 +96,7 @@ public class DragonLootElementItem implements IDragonLootElement {
 
         Material type = Material.matchMaterial(root.get("type").getAsString());
         if (type == null) {
-            throw new IllegalStateException("Could not create item of type \"" + root.get("type").getAsString() + "\" for item loot pool. Does it exist?");
+            throw new JsonParseException("Could not create item of type \"" + root.get("type").getAsString() + "\" for item loot pool. Does it exist?");
         }
 
         ItemStack item = new ItemStack(type);
@@ -117,7 +139,7 @@ public class DragonLootElementItem implements IDragonLootElement {
             for (Entry<String, JsonElement> enchantmentElement : enchantmentsRoot.entrySet()) {
                 Enchantment enchantment = Enchantment.getByKey(toNamespacedKey(enchantmentElement.getKey()));
                 if (enchantment == null) {
-                    throw new IllegalStateException("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?");
+                    throw new JsonParseException("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?");
                 }
 
                 int level = Math.max(enchantmentElement.getValue().getAsInt(), 0);
@@ -136,7 +158,7 @@ public class DragonLootElementItem implements IDragonLootElement {
         }
 
         item.setItemMeta(meta);
-        return new DragonLootElementItem(item, weight, minAmount, maxAmount);
+        return new DragonLootElementItem(item, minAmount, maxAmount, weight);
     }
 
     @SuppressWarnings("deprecation")
@@ -151,7 +173,7 @@ public class DragonLootElementItem implements IDragonLootElement {
 
         String[] parts = key.split(":", 2);
         if (parts.length != 2 || parts[1].contains(":")) {
-            throw new IllegalStateException("Malformed namespaced key: \"" + key + "\"");
+            throw new JsonParseException("Malformed namespaced key: \"" + key + "\"");
         }
 
         // This constructor really shouldn't be deprecated

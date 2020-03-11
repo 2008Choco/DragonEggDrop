@@ -159,6 +159,8 @@ public class DragonEggDrop extends JavaPlugin {
 			}
 		}
 
+		this.lootTableRegistry.clear();
+
 		this.writeTempData();
 		this.dedManager.clearTemplates();
 

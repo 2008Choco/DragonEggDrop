@@ -27,13 +27,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Represents a template for a custom dragon to be spawned containing information about
- * its name, the style of its boss bar, as well as the loot it will drop after it is killed.
+ * its name, the style of its boss bar, as well as the loot table used to generate its loot
+ * after it has been killed.
  *
  * @author Parker Hawke - 2008Choco
  */
 public class DragonTemplate {
-
-    // NOTE: Test this system using "Kelarth" and "Mylanth" as these two use the uncommon_dragon loot table, the only one properly completed
 
     public static final File DRAGONS_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "dragons/");
     public static final File LOOT_TABLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "loot_tables/");
