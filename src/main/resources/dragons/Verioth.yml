@@ -2,7 +2,6 @@ dragon-name: "&2Verioth the Chosen"
 bar-style: SEGMENTED_10
 bar-color: GREEN
 
-announce-respawn: false
 spawn-weight: 0.25
 
 attributes:

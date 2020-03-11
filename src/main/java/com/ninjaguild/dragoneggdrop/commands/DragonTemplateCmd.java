@@ -77,7 +77,7 @@ public final class DragonTemplateCmd implements TabExecutor {
             sender.sendMessage(ChatColor.GRAY + "Bar Style: " + ChatColor.GREEN + template.getBarStyle());
             sender.sendMessage(ChatColor.GRAY + "Bar Color: " + ChatColor.GREEN + template.getBarColor());
             sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.GREEN + template.getSpawnWeight());
-            sender.sendMessage(ChatColor.GRAY + "Announce Respawn: " + (template.shouldAnnounceRespawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceRespawn());
+            sender.sendMessage(ChatColor.GRAY + "Announce Spawn: " + (template.shouldAnnounceSpawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceSpawn());
         }
 
         return true;

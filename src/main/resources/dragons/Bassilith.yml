@@ -2,7 +2,6 @@ dragon-name: "&4Bassilith, Lord of Ice"
 bar-style: SEGMENTED_12
 bar-color: BLUE
 
-announce-respawn: false
 spawn-weight: 0.15
 
 attributes:

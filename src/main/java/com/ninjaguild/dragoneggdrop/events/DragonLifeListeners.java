@@ -60,11 +60,9 @@ public final class DragonLifeListeners implements Listener {
         if (template != null) {
             template.applyToBattle(dragon, dragonBattle);
 
-            if (template.shouldAnnounceRespawn()) {
-                Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
-                        ChatColor.DARK_GRAY + "[" + ChatColor.RED.toString() + ChatColor.BOLD + "!!!" + ChatColor.DARK_GRAY + "] "
-                        + template.getName() + ChatColor.DARK_GRAY + " has respawned in the end!")
-                );
+            if (template.shouldAnnounceSpawn()) {
+                // Cannot use p::sendMessage here. Compile-error with Maven. Compiler assumes the wrong method overload
+                Bukkit.getOnlinePlayers().forEach(p -> template.getSpawnAnnouncement().forEach(m -> p.sendMessage(m)));
             }
         }
 

@@ -3,9 +3,11 @@ package com.ninjaguild.dragoneggdrop.dragon;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
@@ -48,7 +50,7 @@ public class DragonTemplate {
     private BarColor barColour;
 
     private double spawnWeight;
-    private boolean announceRespawn;
+    private List<String> spawnAnnouncement;
 
     private final Map<Attribute, Double> attributes = new EnumMap<>(Attribute.class);
 
@@ -257,36 +259,21 @@ public class DragonTemplate {
     }
 
     /**
-     * Set whether this dragon's name should be announced as it respawns.
+     * Get the messages to be announced to all players when this template spawns.
      *
-     * @param announceRespawn the new announcement state
-     * @param updateFile whether to update the dragon file or not
+     * @return the spawn announcement
      */
-    public void setAnnounceRespawn(boolean announceRespawn, boolean updateFile) {
-        this.announceRespawn = announceRespawn;
-
-        if (updateFile) {
-            this.updateConfig("announce-respawn", announceRespawn);
-        }
+    public List<String> getSpawnAnnouncement() {
+        return (spawnAnnouncement != null) ? new ArrayList<>(spawnAnnouncement) : null;
     }
 
     /**
-     * Set whether this dragon's name should be announced as it respawns and
-     * update the dragon file (if one exists).
+     * Check whether this dragon's name should be announced as it spawns.
      *
-     * @param announceRespawn the new announcement state
+     * @return true if it should be announced, false otherwise
      */
-    public void setAnnounceRespawn(boolean announceRespawn) {
-        this.setAnnounceRespawn(announceRespawn, true);
-    }
-
-    /**
-     * Check whether this dragon's name should be announced as it respawns.
-     *
-     * @return true if announce name, false otherwise
-     */
-    public boolean shouldAnnounceRespawn() {
-        return announceRespawn;
+    public boolean shouldAnnounceSpawn() {
+        return spawnAnnouncement != null && !spawnAnnouncement.isEmpty();
     }
 
     /**
@@ -471,7 +458,14 @@ public class DragonTemplate {
 
             DragonTemplate template = new DragonTemplate(file);
             template.spawnWeight = template.configFile.getDouble("spawn-weight", 1);
-            template.announceRespawn = template.configFile.getBoolean("announce-respawn", false);
+
+            if (template.configFile.isList("spawn-announcement")) {
+                template.spawnAnnouncement = template.configFile.getStringList("spawn-announcement").stream()
+                        .map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", template.getName())))
+                        .collect(Collectors.toList());
+            } else if (template.configFile.isString("spawn-announcement")) {
+                template.spawnAnnouncement = Arrays.asList(ChatColor.translateAlternateColorCodes('&', template.configFile.getString("spawn-announcement").replace("%dragon%", template.getName())));
+            }
 
             // Attribute modifier loading
             if (template.configFile.contains("attributes")) {

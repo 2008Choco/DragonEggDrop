@@ -2,8 +2,10 @@ dragon-name: '&5Nveryoth, Lord of Light'
 bar-style: SEGMENTED_20
 bar-color: YELLOW
 
-announce-respawn: true
 spawn-weight: 0.05
+spawn-announcement:
+  - "&8[&c!!!&8] %dragon% has respawned in the end!"
+  - "&7Kill it before the others can reap its rewards!"
 
 attributes:
   GENERIC_MAX_HEALTH: 600

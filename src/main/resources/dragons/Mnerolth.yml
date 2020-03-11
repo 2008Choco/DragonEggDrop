@@ -2,7 +2,6 @@ dragon-name: "&1Mnerolth the Insane"
 bar-style: SEGMENTED_10
 bar-color: RED
 
-announce-respawn: false
 spawn-weight: 0.25
 
 attributes:

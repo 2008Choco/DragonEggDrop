@@ -2,7 +2,6 @@ dragon-name: "&5Inilth, Lord of Fire"
 bar-style: SEGMENTED_12
 bar-color: RED
 
-announce-respawn: true
 spawn-weight: 0.15
 
 attributes:

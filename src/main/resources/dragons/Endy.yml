@@ -2,7 +2,6 @@ dragon-name: "&aEndy"
 bar-style: SOLID
 bar-color: PINK
 
-announce-respawn: false
 spawn-weight: 2
 
 loot: "common_dragon"
