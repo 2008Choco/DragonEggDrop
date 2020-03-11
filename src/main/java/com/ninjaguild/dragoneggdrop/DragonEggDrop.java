@@ -30,7 +30,6 @@ import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
-import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 
@@ -73,7 +72,6 @@ public class DragonEggDrop extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
-        ConfigUtil.updateConfig(this, getConfig().getInt("version"));
 
         // Load default templates and loot tables
         if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {

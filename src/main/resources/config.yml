@@ -1,7 +1,3 @@
-# DO NOT REMOVE OR MODIFY #
-version: 2
-# ----------------------- #
-
 perform-update-checks: true
 
 # All data involving the particle effects displayed after the death of the Ender Dragon
