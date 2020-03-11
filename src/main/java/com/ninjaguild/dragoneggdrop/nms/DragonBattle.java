@@ -23,123 +23,131 @@ import org.bukkit.entity.EnderDragon;
 
 public class DragonBattle {
 
-	private final EnderDragonBattle battle;
+    private final EnderDragonBattle battle;
 
-	protected DragonBattle(EnderDragonBattle battle) {
-		this.battle = battle;
-	}
+    protected DragonBattle(EnderDragonBattle battle) {
+        this.battle = battle;
+    }
 
-	public void setBossBarTitle(String title) {
-		if (title == null) return;
+    public void setBossBarTitle(String title) {
+        if (title == null) {
+            return;
+        }
 
-		BossBattleServer battleServer = battle.bossBattle;
-		if (battleServer == null) return;
+        BossBattleServer battleServer = battle.bossBattle;
+        if (battleServer == null) {
+            return;
+        }
 
-		battleServer.title = new ChatMessage(title);
-		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
-	}
+        battleServer.title = new ChatMessage(title);
+        battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
+    }
 
-	public boolean setBossBarStyle(BarStyle style, BarColor colour) {
-		BossBattleServer battleServer = battle.bossBattle;
-		if (battleServer == null) return false;
+    public boolean setBossBarStyle(BarStyle style, BarColor colour) {
+        BossBattleServer battleServer = battle.bossBattle;
+        if (battleServer == null) {
+            return false;
+        }
 
-		if (style != null) {
-			Optional<BossBattle.BarStyle> nmsStyle = Enums.getIfPresent(BossBattle.BarStyle.class, style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS");
-			if (nmsStyle.isPresent()) {
-				battleServer.style = nmsStyle.get();
-			}
-		}
-		if (colour != null) {
-			battleServer.color = BossBattle.BarColor.valueOf(colour.name());
-		}
+        if (style != null) {
+            Optional<BossBattle.BarStyle> nmsStyle = Enums.getIfPresent(BossBattle.BarStyle.class, style.name().contains("SEGMENTED") ? style.name().replace("SEGMENTED", "NOTCHED") : "PROGRESS");
+            if (nmsStyle.isPresent()) {
+                battleServer.style = nmsStyle.get();
+            }
+        }
 
-		battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
-		return true;
-	}
+        if (colour != null) {
+            battleServer.color = BossBattle.BarColor.valueOf(colour.name());
+        }
 
-	public EnderDragon getEnderDragon() {
-		EnderDragon dragon = null;
+        battleServer.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
+        return true;
+    }
 
-		try {
-			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
-			Field fieldDragonUUID = EnderDragonBattle.class.getDeclaredField("m");
-			fieldWorldServer.setAccessible(true);
-			fieldDragonUUID.setAccessible(true);
+    public EnderDragon getEnderDragon() {
+        EnderDragon dragon = null;
 
-			WorldServer world = (WorldServer) fieldWorldServer.get(battle);
-			UUID dragonUUID = (UUID) fieldDragonUUID.get(battle);
+        try {
+            Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
+            Field fieldDragonUUID = EnderDragonBattle.class.getDeclaredField("m");
+            fieldWorldServer.setAccessible(true);
+            fieldDragonUUID.setAccessible(true);
 
-			if (world == null || dragonUUID == null)
-				return null;
+            WorldServer world = (WorldServer) fieldWorldServer.get(battle);
+            UUID dragonUUID = (UUID) fieldDragonUUID.get(battle);
 
-			Entity dragonEntity = world.getEntity(dragonUUID);
-			if (dragonEntity == null) return null;
-			dragon = (EnderDragon) dragonEntity.getBukkitEntity();
+            if (world == null || dragonUUID == null) {
+                return null;
+            }
 
-			fieldWorldServer.setAccessible(false);
-			fieldDragonUUID.setAccessible(false);
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
+            Entity dragonEntity = world.getEntity(dragonUUID);
+            if (dragonEntity == null) return null;
+            dragon = (EnderDragon) dragonEntity.getBukkitEntity();
 
-		return dragon;
-	}
+            fieldWorldServer.setAccessible(false);
+            fieldDragonUUID.setAccessible(false);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
 
-	public void respawnEnderDragon() {
-		this.battle.e();
-	}
+        return dragon;
+    }
 
-	public Location getEndPortalLocation() {
-		Location portalLocation = null;
+    public void respawnEnderDragon() {
+        this.battle.e();
+    }
 
-		try {
-			Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
-			Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
-			fieldExitPortalLocation.setAccessible(true);
-			fieldWorldServer.setAccessible(true);
+    public Location getEndPortalLocation() {
+        Location portalLocation = null;
 
-			WorldServer worldServer = (WorldServer) fieldWorldServer.get(battle);
-			BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(battle);
-			if (worldServer != null && position != null) {
-				World world = worldServer.getWorld();
-				portalLocation = new Location(world, Math.floor(position.getX()) + 0.5, position.getY() + 4, Math.floor(position.getZ()) + 0.5);
-			}
+        try {
+            Field fieldExitPortalLocation = EnderDragonBattle.class.getDeclaredField("o");
+            Field fieldWorldServer = EnderDragonBattle.class.getDeclaredField("d");
+            fieldExitPortalLocation.setAccessible(true);
+            fieldWorldServer.setAccessible(true);
 
-			fieldWorldServer.setAccessible(false);
-			fieldExitPortalLocation.setAccessible(false);
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
+            WorldServer worldServer = (WorldServer) fieldWorldServer.get(battle);
+            BlockPosition position = (BlockPosition) fieldExitPortalLocation.get(battle);
+            if (worldServer != null && position != null) {
+                World world = worldServer.getWorld();
+                portalLocation = new Location(world, Math.floor(position.getX()) + 0.5, position.getY() + 4, Math.floor(position.getZ()) + 0.5);
+            }
 
-		return portalLocation;
-	}
+            fieldWorldServer.setAccessible(false);
+            fieldExitPortalLocation.setAccessible(false);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
 
-	public void resetBattleState() {
-		try {
-			Field fieldDragonBattleState = EnderDragonBattle.class.getDeclaredField("p");
-			Field fieldDragonKilled = EnderDragonBattle.class.getDeclaredField("k");
-			fieldDragonBattleState.setAccessible(true);
-			fieldDragonKilled.setAccessible(true);
+        return portalLocation;
+    }
 
-			fieldDragonBattleState.set(battle, null);
-			fieldDragonKilled.set(battle, true);
+    public void resetBattleState() {
+        try {
+            Field fieldDragonBattleState = EnderDragonBattle.class.getDeclaredField("p");
+            Field fieldDragonKilled = EnderDragonBattle.class.getDeclaredField("k");
+            fieldDragonBattleState.setAccessible(true);
+            fieldDragonKilled.setAccessible(true);
 
-			fieldDragonBattleState.setAccessible(false);
-			fieldDragonKilled.setAccessible(false);
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
+            fieldDragonBattleState.set(battle, null);
+            fieldDragonKilled.set(battle, true);
 
-		this.battle.f();
-	}
+            fieldDragonBattleState.setAccessible(false);
+            fieldDragonKilled.setAccessible(false);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
 
-	/**
-	 * Get the net.minecraft.server implementation of DragonBattle
-	 *
-	 * @return the wrapped battle
-	 */
-	public EnderDragonBattle getHandle() {
-		return battle;
-	}
+        this.battle.f();
+    }
+
+    /**
+     * Get the net.minecraft.server implementation of DragonBattle
+     *
+     * @return the wrapped battle
+     */
+    public EnderDragonBattle getHandle() {
+        return battle;
+    }
 
 }

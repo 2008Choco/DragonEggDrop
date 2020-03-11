@@ -18,33 +18,39 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-public class PortalClickListener implements Listener {
+public final class PortalClickListener implements Listener {
 
-	private final DragonEggDrop plugin;
+    private final DragonEggDrop plugin;
 
-	public PortalClickListener(DragonEggDrop plugin) {
-		this.plugin = plugin;
-	}
+    public PortalClickListener(DragonEggDrop plugin) {
+        this.plugin = plugin;
+    }
 
-	@EventHandler
-	public void onClickEndPortalFrame(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		World world = player.getWorld();
-		Block clickedBlock = event.getClickedBlock();
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || world.getEnvironment() != Environment.THE_END
-				|| clickedBlock.getType() != Material.BEDROCK || event.getHand() != EquipmentSlot.HAND
-				|| (player.getInventory().getItemInMainHand() != null || player.getInventory().getItemInOffHand() != null)) return;
+    @EventHandler
+    public void onClickEndPortalFrame(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        World world = player.getWorld();
+        Block clickedBlock = event.getClickedBlock();
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || world.getEnvironment() != Environment.THE_END
+                || clickedBlock.getType() != Material.BEDROCK || event.getHand() != EquipmentSlot.HAND
+                || (player.getInventory().getItemInMainHand() != null || player.getInventory().getItemInOffHand() != null)) {
+            return;
+        }
 
-		DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
-		Location portalLocation = dragonBattle.getEndPortalLocation();
+        DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        Location portalLocation = dragonBattle.getEndPortalLocation();
 
-		if (event.getClickedBlock().getLocation().distanceSquared(portalLocation) > 36) return; // 5 blocks
+        if (event.getClickedBlock().getLocation().distanceSquared(portalLocation) > 36) { // 5 blocks
+            return;
+        }
 
-		EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
-		int secondsRemaining = endWorld.getTimeUntilRespawn();
-		if (secondsRemaining <= 0) return;
+        EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+        int secondsRemaining = endWorld.getTimeUntilRespawn();
+        if (secondsRemaining <= 0) {
+            return;
+        }
 
-		this.plugin.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + secondsRemaining);
-	}
+        this.plugin.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + secondsRemaining);
+    }
 
 }

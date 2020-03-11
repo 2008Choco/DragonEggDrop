@@ -21,54 +21,71 @@ import org.bukkit.entity.Player;
 
 public final class NMSUtils {
 
-	private NMSUtils() { }
+    private NMSUtils() { }
 
-	public static DragonBattle getEnderDragonBattleFromWorld(World world) {
-		if (world == null) return null;
+    public static DragonBattle getEnderDragonBattleFromWorld(World world) {
+        if (world == null) {
+            return null;
+        }
 
-		CraftWorld craftWorld = (CraftWorld) world;
-		WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
+        CraftWorld craftWorld = (CraftWorld) world;
+        WorldProvider worldProvider = craftWorld.getHandle().worldProvider;
 
-		if (!(worldProvider instanceof WorldProviderTheEnd)) return null;
-		return new DragonBattle(((WorldProviderTheEnd) worldProvider).o());
-	}
+        if (!(worldProvider instanceof WorldProviderTheEnd)) {
+            return null;
+        }
 
-	public static DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
-		if (dragon == null) return null;
+        return new DragonBattle(((WorldProviderTheEnd) worldProvider).o());
+    }
 
-		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return new DragonBattle(nmsDragon.getEnderDragonBattle());
-	}
+    public static DragonBattle getEnderDragonBattleFromDragon(EnderDragon dragon) {
+        if (dragon == null) {
+            return null;
+        }
 
-	public static boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
-		if (dragon == null) return false;
+        EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
+        return new DragonBattle(nmsDragon.getEnderDragonBattle());
+    }
 
-		EnderDragonBattle battle = getEnderDragonBattleFromDragon(dragon).getHandle();
-		return battle.d();
-	}
+    public static boolean hasBeenPreviouslyKilled(EnderDragon dragon) {
+        if (dragon == null) {
+            return false;
+        }
 
-	public static int getEnderDragonDeathAnimationTime(EnderDragon dragon) {
-		if (dragon == null) return -1;
+        EnderDragonBattle battle = getEnderDragonBattleFromDragon(dragon).getHandle();
+        return battle.d();
+    }
 
-		EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
-		return nmsDragon.bA;
-	}
+    public static int getEnderDragonDeathAnimationTime(EnderDragon dragon) {
+        if (dragon == null) {
+            return -1;
+        }
 
-	public static void sendActionBar(String message, Player... players) {
-		if (players.length == 0) return;
+        EntityEnderDragon nmsDragon = ((CraftEnderDragon) dragon).getHandle();
+        return nmsDragon.bA;
+    }
 
-		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
-		Arrays.stream(players).filter(Objects::nonNull).forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
-	}
+    public static void sendActionBar(String message, Player... players) {
+        if (players.length == 0) {
+            return;
+        }
 
-	public static void broadcastActionBar(String message, World world) {
-		if (world == null) return;
+        PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
+        Arrays.stream(players).filter(Objects::nonNull).forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
+    }
 
-		List<Player> players = world.getPlayers();
-		if (players.isEmpty()) return;
+    public static void broadcastActionBar(String message, World world) {
+        if (world == null) {
+            return;
+        }
 
-		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
-		players.forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
-	}
+        List<Player> players = world.getPlayers();
+        if (players.isEmpty()) {
+            return;
+        }
+
+        PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
+        players.forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
+    }
 
 }

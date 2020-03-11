@@ -8,11 +8,11 @@ package com.ninjaguild.dragoneggdrop.utils.math;
 @FunctionalInterface
 public interface MathExpression {
 
-	/**
-	 * Evaluate the mathematical expression.
-	 *
-	 * @return the evaluation result
-	 */
-	public double evaluate();
+    /**
+     * Evaluate the mathematical expression.
+     *
+     * @return the evaluation result
+     */
+    public double evaluate();
 
 }

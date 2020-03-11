@@ -27,129 +27,129 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class DragonDeathRunnable extends BukkitRunnable {
 
-	private final DragonEggDrop plugin;
+    private final DragonEggDrop plugin;
 
-	private ParticleShapeDefinition particleShape;
+    private ParticleShapeDefinition particleShape;
 
-	private final World world;
-	private final EndWorldWrapper worldWrapper;
+    private final World world;
+    private final EndWorldWrapper worldWrapper;
 
-	private Particle particleType = null;
-	private int particleAmount = 0;
-	private double particleExtra = 0D;
-	private double particleMultiplier = 1D;
-	private int particleStreamInterval = 360;
-	private double xOffset, yOffset, zOffset;
-	private long particleInterval = 0L;
-	private int lightningAmount;
+    private Particle particleType = null;
+    private int particleAmount = 0;
+    private double particleExtra = 0D;
+    private double particleMultiplier = 1D;
+    private int particleStreamInterval = 360;
+    private double xOffset, yOffset, zOffset;
+    private long particleInterval = 0L;
+    private int lightningAmount;
 
-	private EnderDragon dragon;
-	private boolean respawnDragon = false;
+    private EnderDragon dragon;
+    private boolean respawnDragon = false;
 
-	private Location location;
-	private double animationTime = 0;
-	private double theta = 0;
-	private double currentY;
+    private Location location;
+    private double animationTime = 0;
+    private double theta = 0;
+    private double currentY;
 
-	/**
-	 * Construct a new DragonDeathRunnable object.
-	 *
-	 * @param plugin an instance of the DragonEggDrop plugin
-	 * @param worldWrapper the world in which the dragon death is taking place
-	 * @param dragon the dragon dying in this runnable
-	 */
-	public DragonDeathRunnable(DragonEggDrop plugin, EndWorldWrapper worldWrapper, EnderDragon dragon) {
-		this.plugin = plugin;
-		this.worldWrapper = worldWrapper;
-		this.world = worldWrapper.getWorld();
-		this.dragon = dragon;
+    /**
+     * Construct a new DragonDeathRunnable object.
+     *
+     * @param plugin an instance of the DragonEggDrop plugin
+     * @param worldWrapper the world in which the dragon death is taking place
+     * @param dragon the dragon dying in this runnable
+     */
+    public DragonDeathRunnable(DragonEggDrop plugin, EndWorldWrapper worldWrapper, EnderDragon dragon) {
+        this.plugin = plugin;
+        this.worldWrapper = worldWrapper;
+        this.world = worldWrapper.getWorld();
+        this.dragon = dragon;
 
-		FileConfiguration config = plugin.getConfig();
-		this.particleType = Enums.getIfPresent(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase()).or(Particle.FLAME);
-		this.particleAmount = config.getInt("Particles.amount", 4);
-		this.particleExtra = config.getDouble("Particles.extra", 0.0D);
-		this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
-		this.particleStreamInterval = 360 / Math.max(1, config.getInt("Particles.stream-count"));
-		this.xOffset = config.getDouble("Particles.xOffset");
-		this.yOffset = config.getDouble("Particles.yOffset");
-		this.zOffset = config.getDouble("Particles.zOffset");
-		this.particleInterval = config.getLong("Particles.interval", 1L);
-		this.lightningAmount = config.getInt("lightning-amount");
+        FileConfiguration config = plugin.getConfig();
+        this.particleType = Enums.getIfPresent(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase()).or(Particle.FLAME);
+        this.particleAmount = config.getInt("Particles.amount", 4);
+        this.particleExtra = config.getDouble("Particles.extra", 0.0D);
+        this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
+        this.particleStreamInterval = 360 / Math.max(1, config.getInt("Particles.stream-count"));
+        this.xOffset = config.getDouble("Particles.xOffset");
+        this.yOffset = config.getDouble("Particles.yOffset");
+        this.zOffset = config.getDouble("Particles.zOffset");
+        this.particleInterval = config.getLong("Particles.interval", 1L);
+        this.lightningAmount = config.getInt("lightning-amount");
 
-		// Portal location
-		DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
-		Location portalLocation = dragonBattle.getEndPortalLocation();
-		this.currentY = config.getDouble("Particles.egg-start-y");
-		this.location = new Location(world, portalLocation.getX(), this.currentY, portalLocation.getZ());
+        // Portal location
+        DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
+        Location portalLocation = dragonBattle.getEndPortalLocation();
+        this.currentY = config.getDouble("Particles.egg-start-y");
+        this.location = new Location(world, portalLocation.getX(), currentY, portalLocation.getZ());
 
-		// Expression parsing
-		String shape = config.getString("Particles.Advanced.preset-shape");
-		String xCoordExpressionString = config.getString("Particles.Advanced.x-coord-expression");
-		String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
+        // Expression parsing
+        String shape = config.getString("Particles.Advanced.preset-shape");
+        String xCoordExpressionString = config.getString("Particles.Advanced.x-coord-expression");
+        String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
 
-		if (shape.equalsIgnoreCase("BALL")) {
-			this.particleShape = new ParticleShapeDefinition(location, "x", "z");
-		} else if (shape.equalsIgnoreCase("HELIX")) {
-			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2");
-		} else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
-			this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
-		} else { // CUSTOM or default
-			this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
-		}
+        if (shape.equalsIgnoreCase("BALL")) {
+            this.particleShape = new ParticleShapeDefinition(location, "x", "z");
+        } else if (shape.equalsIgnoreCase("HELIX")) {
+            this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2");
+        } else if (shape.equalsIgnoreCase("OPEN_END_HELIX")) {
+            this.particleShape = new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
+        } else { // CUSTOM or default
+            this.particleShape = new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString);
+        }
 
-		this.respawnDragon = config.getBoolean("respawn-on-death", false);
-		this.runTaskTimer(plugin, 0, this.particleInterval);
+        this.respawnDragon = config.getBoolean("respawn-on-death", false);
+        this.runTaskTimer(plugin, 0, particleInterval);
 
-		BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
-		Bukkit.getPluginManager().callEvent(bscEventCrystals);
-	}
+        BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
+        Bukkit.getPluginManager().callEvent(bscEventCrystals);
+    }
 
-	@Override
-	public void run() {
-		this.animationTime++;
-		this.theta += 5;
+    @Override
+    public void run() {
+        this.animationTime++;
+        this.theta += 5;
 
-		this.location.subtract(0, 1 / particleMultiplier, 0);
-		if (this.particleStreamInterval < 360) {
-			for (int i = 0; i < 360; i += this.particleStreamInterval){
-				this.theta += particleStreamInterval;
-				this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
-				this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
-			}
-		} else {
-			this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
-			this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
-		}
+        this.location.subtract(0, 1 / particleMultiplier, 0);
+        if (particleStreamInterval < 360) {
+            for (int i = 0; i < 360; i += particleStreamInterval){
+                this.theta += particleStreamInterval;
+                this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
+                this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
+            }
+        } else {
+            this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
+            this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
+        }
 
-		// Particles finished, place reward
-		if (this.location.getBlock().getType() == Material.BEDROCK) {
-			this.location.add(0, 1, 0);
+        // Particles finished, place reward
+        if (location.getBlock().getType() == Material.BEDROCK) {
+            this.location.add(0, 1, 0);
 
-			// Summon Zeus!
-			for (int i = 0; i < this.lightningAmount; i++) {
-				this.worldWrapper.getWorld().strikeLightning(location);
-			}
+            // Summon Zeus!
+            for (int i = 0; i < lightningAmount; i++) {
+                this.worldWrapper.getWorld().strikeLightning(location);
+            }
 
-			DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
-			DragonTemplate currentBattle = worldWrapper.getActiveBattle();
+            DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
+            DragonTemplate currentBattle = worldWrapper.getActiveBattle();
 
-			if (currentBattle != null) {
-			    DragonLootTable lootTable = currentBattle.getLootTable();
-			    if (lootTable != null) {
-			        currentBattle.getLootTable().generate(dragonBattle, dragon);
-			    } else {
-			        this.plugin.getLogger().warning("Could not generate loot for template " + currentBattle.getIdentifier() + ". Invalid loot table. Is \"loot\" defined in the template?");
-			    }
-			}
+            if (currentBattle != null) {
+                DragonLootTable lootTable = currentBattle.getLootTable();
+                if (lootTable != null) {
+                    currentBattle.getLootTable().generate(dragonBattle, dragon);
+                } else {
+                    this.plugin.getLogger().warning("Could not generate loot for template " + currentBattle.getIdentifier() + ". Invalid loot table. Is \"loot\" defined in the template?");
+                }
+            }
 
-			if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
-				this.worldWrapper.startRespawn(RespawnType.DEATH);
-			}
+            if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
+                this.worldWrapper.startRespawn(RespawnType.DEATH);
+            }
 
-			BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
-			Bukkit.getPluginManager().callEvent(bscEventCrystals);
-			this.cancel();
-		}
-	}
+            BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
+            Bukkit.getPluginManager().callEvent(bscEventCrystals);
+            this.cancel();
+        }
+    }
 
 }

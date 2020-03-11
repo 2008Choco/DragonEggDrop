@@ -33,7 +33,6 @@ import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.ConfigUtil;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
-import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,239 +59,245 @@ public class DragonEggDrop extends JavaPlugin {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
+    private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
 
-	private static DragonEggDrop instance;
+    private static DragonEggDrop instance;
 
-	private DEDManager dedManager;
-	private DragonLootTableRegistry lootTableRegistry;
+    private DEDManager dedManager;
+    private DragonLootTableRegistry lootTableRegistry;
 
-	private BukkitTask updateTask;
-	private File tempDataFile;
+    private BukkitTask updateTask;
+    private File tempDataFile;
 
-	@Override
-	public void onEnable() {
-	    instance = this;
-		this.saveDefaultConfig();
+    @Override
+    public void onEnable() {
+        instance = this;
+        this.saveDefaultConfig();
+        ConfigUtil.updateConfig(this, getConfig().getInt("version"));
 
-		// Update configuration version
-		ConfigUtil cu = new ConfigUtil(this);
-		cu.updateConfig(this.getConfig().getInt("version"));
+        // Load default templates and loot tables
+        if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {
+            this.saveDefaultDirectory("dragons");
+        }
+        if (DragonTemplate.LOOT_TABLES_FOLDER.mkdirs()) {
+            this.saveDefaultDirectory("loot_tables");
+        }
 
-		// Load default templates and loot tables
-		if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {
-			this.saveDefaultDirectory("dragons");
-		}
-		if (DragonTemplate.LOOT_TABLES_FOLDER.mkdirs()) {
-		    this.saveDefaultDirectory("loot_tables");
-		}
+        this.lootTableRegistry = new DragonLootTableRegistry();
+        this.lootTableRegistry.reloadDragonLootTables();
 
-		this.lootTableRegistry = new DragonLootTableRegistry();
-		this.lootTableRegistry.reloadDragonLootTables();
+        this.dedManager = new DEDManager(this);
+        this.dedManager.reloadDragonTemplates();
 
-		this.dedManager = new DEDManager(this);
-		this.dedManager.reloadDragonTemplates();
+        // Load temp data (reload support)
+        this.tempDataFile = new File(getDataFolder(), "tempData.json");
+        if (tempDataFile.exists()) {
+            this.readTempData();
+            this.tempDataFile.delete();
+        }
 
-		// Load temp data (reload support)
-		this.tempDataFile = new File(getDataFolder(), "tempData.json");
-		if (tempDataFile.exists()) {
-			this.readTempData();
-			this.tempDataFile.delete();
-		}
+        // Register events
+        PluginManager manager = Bukkit.getPluginManager();
+        manager.registerEvents(new DragonLifeListeners(this), this);
+        manager.registerEvents(new LootListeners(this), this);
+        manager.registerEvents(new RespawnListeners(this), this);
+        manager.registerEvents(new PortalClickListener(this), this);
 
-		// Register events
-		PluginManager manager = Bukkit.getPluginManager();
-		manager.registerEvents(new DragonLifeListeners(this), this);
-		manager.registerEvents(new LootListeners(this), this);
-		manager.registerEvents(new RespawnListeners(this), this);
-		manager.registerEvents(new PortalClickListener(this), this);
+        // Register commands
+        this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
+        this.registerCommand("dragonrespawn", new DragonRespawnCmd(this));
+        this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
 
-		// Register commands
-		this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
-		this.registerCommand("dragonrespawn", new DragonRespawnCmd(this));
-		this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
+        // Update check
+        UpdateChecker.init(this, 35570);
+        if (getConfig().getBoolean("perform-update-checks", true)) {
+            this.updateTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    UpdateChecker.get().requestUpdateCheck().whenComplete((result, exception) -> {
+                        if (result.requiresUpdate()) {
+                            getLogger().info(String.format("An update is available! DragonEggDrop %s may be downloaded on SpigotMC", result.getNewestVersion()));
+                            Bukkit.getOnlinePlayers().stream().filter(Player::isOp)
+                                .forEach(p -> sendMessage(p, "A new version is available for download (Version " + result.getNewestVersion() + ")"));
+                            return;
+                        }
 
-		// Update check
-		UpdateChecker.init(this, 35570);
-		if (getConfig().getBoolean("perform-update-checks", true)) {
-			this.updateTask = new BukkitRunnable() {
-				@Override
-				public void run() {
-					UpdateChecker checker = UpdateChecker.get();
+                        UpdateReason reason = result.getReason();
+                        if (reason == UpdateReason.UP_TO_DATE) {
+                            getLogger().info(String.format("Your version of DragonEggDrop (%s) is up to date!", result.getNewestVersion()));
+                        } else if (reason == UpdateReason.UNRELEASED_VERSION) {
+                            getLogger().info(String.format("Your version of DragonEggDrop (%s) is more recent than the one publicly available. Are you on a development build?", result.getNewestVersion()));
+                        } else {
+                            getLogger().warning("Could not check for a new version of DragonEggDrop. Reason: " + reason);
+                        }
+                    });
+                }
+            }.runTaskTimerAsynchronously(this, 0, 432000); // 6 hours
+        }
+    }
 
-					UpdateResult lastResult = checker.getLastResult();
-					if (lastResult != null && lastResult.requiresUpdate()) return;
+    @Override
+    public void onDisable() {
+        if (updateTask != null) {
+            this.updateTask.cancel();
+        }
 
-					checker.requestUpdateCheck().whenComplete((result, exception) -> {
-						if (result.requiresUpdate()) {
-							getLogger().info(String.format("An update is available! DragonEggDrop %s may be downloaded on SpigotMC", result.getNewestVersion()));
-							Bukkit.getOnlinePlayers().stream().filter(Player::isOp)
-								.forEach(p -> sendMessage(p, "A new version is available for download (Version " + result.getNewestVersion() + ")"));
-							return;
-						}
+        if (!tempDataFile.exists()) {
+            try {
+                this.tempDataFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-						UpdateReason reason = result.getReason();
-						if (reason == UpdateReason.UP_TO_DATE) {
-							getLogger().info(String.format("Your version of DragonEggDrop (%s) is up to date!", result.getNewestVersion()));
-						} else if (reason == UpdateReason.UNRELEASED_VERSION) {
-							getLogger().info(String.format("Your version of DragonEggDrop (%s) is more recent than the one publicly available. Are you on a development build?", result.getNewestVersion()));
-						} else {
-							getLogger().warning("Could not check for a new version of DragonEggDrop. Reason: " + reason);
-						}
-					});
-				}
-			}.runTaskTimerAsynchronously(this, 0, 432000); // 6 hours
-		}
-	}
+        this.lootTableRegistry.clear();
 
-	@Override
-	public void onDisable() {
-		if (updateTask != null) {
-			this.updateTask.cancel();
-		}
+        this.writeTempData();
+        this.dedManager.clearTemplates();
 
-		if (!tempDataFile.exists()) {
-			try {
-				this.tempDataFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+        // Clear the world wrappers
+        this.dedManager.getWorldWrappers().forEach(EndWorldWrapper::stopRespawn);
+        this.dedManager.clearWorldWrappers();
+    }
 
-		this.lootTableRegistry.clear();
+    /**
+     * Send a message to a command sender with the DragonEggDrop chat prefix.
+     *
+     * @param sender the sender to send the message to
+     * @param message the message to send
+     */
+    public void sendMessage(CommandSender sender, String message) {
+        sender.sendMessage(CHAT_PREFIX + message);
+    }
 
-		this.writeTempData();
-		this.dedManager.clearTemplates();
+    /**
+     * Get the main DEDManager instance.
+     *
+     * @return the DEDManager instance
+     */
+    public DEDManager getDEDManager() {
+        return dedManager;
+    }
 
-		// Clear the world wrappers
-		this.dedManager.getWorldWrappers().forEach(EndWorldWrapper::stopRespawn);
-		this.dedManager.clearWorldWrappers();
-	}
-
-	/**
-	 * Send a message to a command sender with the DragonEggDrop chat prefix.
-	 *
-	 * @param sender the sender to send the message to
-	 * @param message the message to send
-	 */
-	public void sendMessage(CommandSender sender, String message) {
-		sender.sendMessage(CHAT_PREFIX + message);
-	}
-
-	/**
-	 * Get the main DEDManager instance.
-	 *
-	 * @return the DEDManager instance
-	 */
-	public DEDManager getDEDManager() {
-		return dedManager;
-	}
-
-	/**
-	 * Get the loot table registry for all dragon loot tables.
-	 *
-	 * @return the loot table registry
-	 */
-	public DragonLootTableRegistry getLootTableRegistry() {
+    /**
+     * Get the loot table registry for all dragon loot tables.
+     *
+     * @return the loot table registry
+     */
+    public DragonLootTableRegistry getLootTableRegistry() {
         return lootTableRegistry;
     }
 
-	/**
-	 * Get the DragonEggDrop instance.
-	 *
-	 * @return this instance
-	 */
-	public static DragonEggDrop getInstance() {
+    /**
+     * Get the DragonEggDrop instance.
+     *
+     * @return this instance
+     */
+    public static DragonEggDrop getInstance() {
         return instance;
     }
 
-	private void saveDefaultDirectory(String directory) {
-		try (JarFile jar = new JarFile(getFile())){
-			Enumeration<JarEntry> entries = jar.entries();
+    private void saveDefaultDirectory(String directory) {
+        try (JarFile jar = new JarFile(getFile())){
+            Enumeration<JarEntry> entries = jar.entries();
 
-			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				String name = entry.getName();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
 
-				if (!name.startsWith(directory + "/")) {
-				    continue;
-				}
+                if (!name.startsWith(directory + "/")) {
+                    continue;
+                }
 
-				this.saveResource(name, false);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+                this.saveResource(name, false);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void writeTempData() {
-		JsonObject root = new JsonObject();
+    private void writeTempData() {
+        JsonObject root = new JsonObject();
 
-		for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
-			if (!world.isRespawnInProgress() && world.getActiveBattle() == null) return;
+        for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
+            if (!world.isRespawnInProgress() && world.getActiveBattle() == null) {
+                return;
+            }
 
-			JsonObject jsonWorld = new JsonObject();
+            JsonObject jsonWorld = new JsonObject();
+            if (world.isRespawnInProgress()) {
+                jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
+            }
+            if (world.getActiveBattle() != null) {
+                jsonWorld.addProperty("activeTemplate", world.getActiveBattle().getIdentifier());
+            }
 
-			if (world.isRespawnInProgress()) jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
-			if (world.getActiveBattle() != null) jsonWorld.addProperty("activeTemplate", world.getActiveBattle().getIdentifier());
+            root.add(world.getWorld().getName(), jsonWorld);
+        }
 
-			root.add(world.getWorld().getName(), jsonWorld);
-		}
+        try (PrintWriter writer = new PrintWriter(tempDataFile)) {
+            GSON.toJson(root, new JsonWriter(writer));
+        } catch (JsonIOException | IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-		try (PrintWriter writer = new PrintWriter(tempDataFile)) {
-			GSON.toJson(root, new JsonWriter(writer));
-		} catch (JsonIOException | IOException e) {
-			e.printStackTrace();
-		}
-	}
+    private void readTempData() {
+        try (FileReader reader = new FileReader(tempDataFile)) {
+            JsonObject root = GSON.fromJson(reader, JsonObject.class);
+            if (root == null) {
+                return;
+            }
 
-	private void readTempData() {
-		try (FileReader reader = new FileReader(tempDataFile)) {
-			JsonObject root = GSON.fromJson(reader, JsonObject.class);
-			if (root == null) return;
+            for (Entry<String, JsonElement> entry : root.entrySet()) {
+                World world = Bukkit.getWorld(entry.getKey());
+                if (world == null) {
+                    return;
+                }
 
-			for (Entry<String, JsonElement> entry : root.entrySet()) {
-				World world = Bukkit.getWorld(entry.getKey());
-				if (world == null) return;
+                EndWorldWrapper wrapper = dedManager.getWorldWrapper(world);
+                JsonObject element = entry.getValue().getAsJsonObject();
 
-				EndWorldWrapper wrapper = dedManager.getWorldWrapper(world);
-				JsonObject element = entry.getValue().getAsJsonObject();
+                if (element.has("respawnTime")) {
+                    if (wrapper.isRespawnInProgress()) {
+                        wrapper.stopRespawn();
+                    }
 
-				if (element.has("respawnTime")) {
-					if (wrapper.isRespawnInProgress()) {
-						wrapper.stopRespawn();
-					}
+                    wrapper.startRespawn(element.get("respawnTime").getAsInt());
+                }
 
-					wrapper.startRespawn(element.get("respawnTime").getAsInt());
-				}
+                Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
+                if (element.has("activeTemplate") && !dragons.isEmpty()) {
+                    DragonTemplate template = dedManager.getTemplate(element.get("activeTemplate").getAsString());
+                    if (template == null) {
+                        return;
+                    }
 
-				Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
-				if (element.has("activeTemplate") && !dragons.isEmpty()) {
-					DragonTemplate template = dedManager.getTemplate(element.get("activeTemplate").getAsString());
-					if (template == null) return;
+                    wrapper.setActiveBattle(template);
+                    template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
+                }
+            }
+        } catch (IOException | JsonParseException e) {
+            e.printStackTrace();
+        }
+    }
 
-					wrapper.setActiveBattle(template);
-					template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
-				}
-			}
-		} catch (IOException | JsonParseException e) {
-			e.printStackTrace();
-		}
-	}
+    private void registerCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
+        if (tabCompleter == null && !(executor instanceof TabCompleter)) {
+            throw new UnsupportedOperationException();
+        }
 
-	private void registerCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
-		if (tabCompleter == null && !(executor instanceof TabCompleter))
-			throw new UnsupportedOperationException();
+        PluginCommand commandObject = this.getCommand(command);
+        if (commandObject == null) {
+            return;
+        }
 
-		PluginCommand commandObject = this.getCommand(command);
-		if (commandObject == null) return;
+        commandObject.setExecutor(executor);
+        commandObject.setTabCompleter(tabCompleter != null ? tabCompleter : (TabCompleter) executor);
+    }
 
-		commandObject.setExecutor(executor);
-		commandObject.setTabCompleter(tabCompleter != null ? tabCompleter : (TabCompleter) executor);
-	}
-
-	private void registerCommand(String command, CommandExecutor executor) {
-		this.registerCommand(command, executor, null);
-	}
+    private void registerCommand(String command, CommandExecutor executor) {
+        this.registerCommand(command, executor, null);
+    }
 
 }

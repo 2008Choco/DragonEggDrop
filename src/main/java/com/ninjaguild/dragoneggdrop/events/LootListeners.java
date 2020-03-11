@@ -20,53 +20,55 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class LootListeners implements Listener {
+public final class LootListeners implements Listener {
 
-	private final DragonEggDrop plugin;
+    private final DragonEggDrop plugin;
 
-	public LootListeners(final DragonEggDrop plugin) {
-		this.plugin = plugin;
-	}
+    public LootListeners(final DragonEggDrop plugin) {
+        this.plugin = plugin;
+    }
 
-	@EventHandler
-	public void onItemSpawn(ItemSpawnEvent event) {
-		Item item = event.getEntity();
-		ItemStack stack = item.getItemStack();
-		World world = item.getWorld();
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event) {
+        Item item = event.getEntity();
+        ItemStack stack = item.getItemStack();
+        World world = item.getWorld();
 
-		if (world.getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG || stack.hasItemMeta()) {
-			return;
-		}
+        if (world.getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG || stack.hasItemMeta()) {
+            return;
+        }
 
-		DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getLastBattle();
-		if (dragon == null) return;
+        DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getLastBattle();
+        if (dragon == null) {
+            return;
+        }
 
-		DragonLootElementEgg egg = dragon.getLootTable().getEgg();
-		String eggName = egg.getName().replace("%dragon%", dragon.getName());
-		List<String> eggLore = egg.getLore().stream()
-				.map(s -> s.replace("%dragon%", dragon.getName()))
-				.collect(Collectors.toList());
+        DragonLootElementEgg egg = dragon.getLootTable().getEgg();
+        String eggName = egg.getName().replace("%dragon%", dragon.getName());
+        List<String> eggLore = egg.getLore().stream()
+                .map(s -> s.replace("%dragon%", dragon.getName()))
+                .collect(Collectors.toList());
 
-		ItemMeta eggMeta = stack.getItemMeta();
+        ItemMeta eggMeta = stack.getItemMeta();
 
-		if (eggName != null && !eggName.isEmpty()) {
-			eggMeta.setDisplayName(eggName);
-		}
-		if (eggLore != null && !eggLore.isEmpty()) {
-			eggMeta.setLore(eggLore);
-		}
+        if (eggName != null && !eggName.isEmpty()) {
+            eggMeta.setDisplayName(eggName);
+        }
+        if (eggLore != null && !eggLore.isEmpty()) {
+            eggMeta.setLore(eggLore);
+        }
 
-		stack.setItemMeta(eggMeta);
-	}
+        stack.setItemMeta(eggMeta);
+    }
 
-	@EventHandler
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		Entity entity = event.getEntity();
-		if (!(entity instanceof EnderCrystal) || event.getEntity().getWorld().getEnvironment() != Environment.THE_END || !entity.isInvulnerable()) {
-			return;
-		}
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof EnderCrystal) || event.getEntity().getWorld().getEnvironment() != Environment.THE_END || !entity.isInvulnerable()) {
+            return;
+        }
 
-		event.setCancelled(true);
-	}
+        event.setCancelled(true);
+    }
 
 }
