@@ -30,7 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * its name, the style of its boss bar, as well as the loot table used to generate its loot
  * after it has been killed.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public class DragonTemplate {
 

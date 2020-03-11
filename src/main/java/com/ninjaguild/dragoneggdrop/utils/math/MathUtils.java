@@ -14,7 +14,7 @@ import org.apache.commons.lang.math.NumberUtils;
  * of arithmetic functions with custom variables and operations through
  * a recursive algorithm.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public class MathUtils {
 
@@ -136,7 +136,7 @@ public class MathUtils {
 	/**
 	 * The logic behind the parsing of {@link MathExpression} objects.
 	 *
-	 * @author Parker Hawke - 2008Choco
+	 * @author Parker Hawke - Choco
 	 */
 	private static class ExpressionEvaluator {
 

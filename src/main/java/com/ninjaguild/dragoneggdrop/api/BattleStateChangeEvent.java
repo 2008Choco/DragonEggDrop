@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when the state of the EnderDragon battle changes.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public class BattleStateChangeEvent extends Event {
 

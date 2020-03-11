@@ -3,10 +3,10 @@ package com.ninjaguild.dragoneggdrop.api;
 /**
  * Various states capable of being processed during an Ender Dragon battle.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public enum BattleState {
-	
+
 	/**
 	 * The dragon is dead, awaiting to be respawned.
 	 */

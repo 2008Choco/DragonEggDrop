@@ -45,7 +45,7 @@ import org.bukkit.potion.PotionType;
 /**
  * A utility class to assist in the creation of ItemStacks in the confines of a single line.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public final class ItemBuilder {
 

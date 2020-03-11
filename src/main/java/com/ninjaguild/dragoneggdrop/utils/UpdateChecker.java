@@ -29,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * are inconsistent with what is published on SpigotMC, it may be due to SpiGet's cache.
  * Results will be updated in due time.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public final class UpdateChecker {
 

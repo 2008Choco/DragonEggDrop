@@ -54,7 +54,7 @@ import org.bukkit.scheduler.BukkitTask;
  * after every ender dragon battle, in grand fashion!
  *
  * @author NinjaStix
- * @author Parker Hawke - 2008Choco (Maintainer)
+ * @author Parker Hawke - Choco (Maintainer)
  */
 public class DragonEggDrop extends JavaPlugin {
 

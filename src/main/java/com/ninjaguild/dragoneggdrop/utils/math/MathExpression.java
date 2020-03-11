@@ -3,7 +3,7 @@ package com.ninjaguild.dragoneggdrop.utils.math;
 /**
  * Represents a mathematical expression capable of being evaluated.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 @FunctionalInterface
 public interface MathExpression {

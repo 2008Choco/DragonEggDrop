@@ -18,7 +18,7 @@ import org.bukkit.entity.Entity;
  * Represents all possible locations in which an end crystal may be spawned
  * in regards to the End Portal found in The End.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public enum PortalCrystal {
 

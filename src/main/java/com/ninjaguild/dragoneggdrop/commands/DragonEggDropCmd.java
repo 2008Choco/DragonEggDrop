@@ -30,7 +30,7 @@ public class DragonEggDropCmd implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP INFO --");
 			sender.sendMessage(ChatColor.GOLD + "-----------------------");
 			sender.sendMessage(ChatColor.GOLD + "Original Author: PixelStix");
-			sender.sendMessage(ChatColor.GOLD + "Maintainer: 2008Choco");
+			sender.sendMessage(ChatColor.GOLD + "Maintainer: Choco");
 			sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescription().getVersion());
 
 			UpdateResult result = UpdateChecker.get().getLastResult();

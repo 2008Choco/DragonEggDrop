@@ -20,7 +20,7 @@ import org.bukkit.entity.EnderDragon;
  * Represents a wrapped {@link World} object with {@link Environment#THE_END} to separate
  * the runnables present in each independent world. Allows for separation of DED respawns.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public class EndWorldWrapper {
 

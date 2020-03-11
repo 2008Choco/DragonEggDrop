@@ -2,7 +2,7 @@ name: DragonEggDrop
 main: com.ninjaguild.dragoneggdrop.DragonEggDrop
 version: ${project.version}
 description: ${project.description}
-author: 2008Choco
+author: Choco
 api-version: 1.15
 
 commands:

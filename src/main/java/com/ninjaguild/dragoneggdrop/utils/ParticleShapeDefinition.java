@@ -15,7 +15,7 @@ import org.bukkit.Particle;
  * expressions along the x and z axis, as well as an initial location to start
  * the shape.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Parker Hawke - Choco
  */
 public class ParticleShapeDefinition {
 
