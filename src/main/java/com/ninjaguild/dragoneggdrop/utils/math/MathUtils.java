@@ -152,6 +152,39 @@ public final class MathUtils {
     }
 
     /**
+     * Get a formatted time String from a time in seconds. Formatted time should be
+     * in the format, "x hours, y minutes, z seconds". Alternatively, if time is 0,
+     * "now", or "invalid seconds" otherwise.
+     *
+     * @param timeInSeconds the time in seconds
+     *
+     * @return the formatted time
+     */
+    public static String getFormattedTime(int timeInSeconds) {
+        if (timeInSeconds <= 0) {
+            return (timeInSeconds == 0) ? "now" : "invalid seconds";
+        }
+
+        StringBuilder resultTime = new StringBuilder();
+
+        if (timeInSeconds >= 3600) { // Hours
+            resultTime.append((int) Math.floor(timeInSeconds / 3600) + " hours, ");
+            timeInSeconds %= 3600;
+        }
+
+        if (timeInSeconds >= 60) { // Minutes
+            resultTime.append((int) Math.floor(timeInSeconds / 60) + " minutes, ");
+            timeInSeconds %= 60;
+        }
+
+        if (timeInSeconds > 0) { // Seconds
+            resultTime.append(timeInSeconds + " seconds, ");
+        }
+
+        return resultTime.substring(0, resultTime.length() - 2); // Remove the trailing ", "
+    }
+
+    /**
      * Clamp a value between a minimum and maximum value.
      *
      * @param value the value to clamp

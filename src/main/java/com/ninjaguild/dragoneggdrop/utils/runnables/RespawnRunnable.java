@@ -10,6 +10,7 @@ import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
+import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -74,7 +75,7 @@ public class RespawnRunnable extends BukkitRunnable {
                 // Show actionbar messages
                 String message = announceMessages.get(currentMessage++)
                         .replace("%time%", String.valueOf(secondsUntilRespawn))
-                        .replace("%formatted-time%", this.getFormattedTime(secondsUntilRespawn));
+                        .replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
                 NMSUtils.broadcastActionBar(message, worldWrapper.getWorld());
             }
 
@@ -147,28 +148,6 @@ public class RespawnRunnable extends BukkitRunnable {
      */
     public int getSecondsUntilRespawn() {
         return secondsUntilRespawn;
-    }
-
-    private String getFormattedTime(int timeInSeconds) {
-        StringBuilder resultTime = new StringBuilder();
-
-        if (timeInSeconds >= 3600) { // Hours
-            int hours = (int) (Math.floor(timeInSeconds / 3600));
-            resultTime.append(hours + " hours, ");
-            timeInSeconds -= hours * 3600;
-        }
-
-        if (timeInSeconds >= 60) { // Minutes
-            int minutes = (int) (Math.floor(timeInSeconds / 60));
-            resultTime.append(minutes + " minutes, ");
-            timeInSeconds -= minutes * 60;
-        }
-
-        if (timeInSeconds >= 1) {
-            resultTime.append(timeInSeconds + " seconds, ");
-        }
-
-        return resultTime.substring(0, resultTime.length() - (resultTime.length() < 2 ? 0 : 2));
     }
 
 }
