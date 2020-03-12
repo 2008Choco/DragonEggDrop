@@ -168,20 +168,30 @@ public final class MathUtils {
         StringBuilder resultTime = new StringBuilder();
 
         if (timeInSeconds >= 3600) { // Hours
-            resultTime.append((int) Math.floor(timeInSeconds / 3600) + " hours, ");
-            timeInSeconds %= 3600;
+            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 3600), "hour", timeInSeconds %= 3600);
         }
 
         if (timeInSeconds >= 60) { // Minutes
-            resultTime.append((int) Math.floor(timeInSeconds / 60) + " minutes, ");
-            timeInSeconds %= 60;
+            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 60), "minute", timeInSeconds %= 60);
         }
 
         if (timeInSeconds > 0) { // Seconds
-            resultTime.append(timeInSeconds + " seconds, ");
+            MathUtils.appendAndSeparate(resultTime, timeInSeconds, "second", 0);
         }
 
-        return resultTime.substring(0, resultTime.length() - 2); // Remove the trailing ", "
+        return resultTime.toString();
+    }
+
+    private static void appendAndSeparate(StringBuilder builder, int value, String toAppend, int seconds) {
+        builder.append(value).append(' ').append(toAppend);
+
+        if (value > 1) {
+            builder.append('s');
+        }
+
+        if (seconds > 0) {
+            builder.append(", ");
+        }
     }
 
     /**
