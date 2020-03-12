@@ -42,6 +42,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -294,21 +295,17 @@ public class DragonEggDrop extends JavaPlugin {
     }
 
     private void registerCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
-        if (tabCompleter == null && !(executor instanceof TabCompleter)) {
-            throw new UnsupportedOperationException();
-        }
-
         PluginCommand commandObject = this.getCommand(command);
         if (commandObject == null) {
             return;
         }
 
         commandObject.setExecutor(executor);
-        commandObject.setTabCompleter(tabCompleter != null ? tabCompleter : (TabCompleter) executor);
+        commandObject.setTabCompleter(tabCompleter);
     }
 
-    private void registerCommand(String command, CommandExecutor executor) {
-        this.registerCommand(command, executor, null);
+    private void registerCommand(String command, TabExecutor executor) {
+        this.registerCommand(command, executor, executor);
     }
 
 }
