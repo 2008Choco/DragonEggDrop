@@ -61,10 +61,14 @@ public class EndWorldWrapper {
      * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
      * @param template the dragon template to spawn. If null, a regular dragon will
      * be respawned
+     * @param lootTable the loot table to use on death. This overrides any already-set
+     * loot table from {@link #setLootTableOverride(DragonLootTable)}. If null, the override
+     * will not be set and any existing override will be used (or the template loot table if
+     * one was not set prior)
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(int respawnDelay, DragonTemplate template) {
+    public boolean startRespawn(int respawnDelay, DragonTemplate template, DragonLootTable lootTable) {
         Preconditions.checkArgument(respawnDelay >= 0, "Respawn delays must be greater than or equal to 0");
 
         boolean dragonExists = !getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
@@ -73,10 +77,30 @@ public class EndWorldWrapper {
         }
 
         this.setActiveBattle(template);
+
+        if (lootTable != null) { // Don't reset if it's null
+            this.setLootTableOverride(lootTable);
+        }
+
         this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
         this.respawnTask.runTaskTimer(plugin, 0, 20);
         this.respawnInProgress = true;
         return true;
+    }
+
+    /**
+     * Commence the Dragon's respawning processes in this world with a specific
+     * dragon template and respawn delay. This respawn may or may not fail depending
+     * on whether or not a dragon already exists or a respawn is already in progress.
+     *
+     * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
+     * @param template the dragon template to spawn. If null, a regular dragon will
+     * be respawned
+     *
+     * @return the result of the respawn. true if successful, false otherwise
+     */
+    public boolean startRespawn(int respawnDelay, DragonTemplate template) {
+        return startRespawn(respawnDelay, template, null);
     }
 
     /**

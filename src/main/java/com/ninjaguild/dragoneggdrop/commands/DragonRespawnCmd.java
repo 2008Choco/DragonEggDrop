@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
@@ -95,12 +96,24 @@ public final class DragonRespawnCmd implements TabExecutor {
                 template = templateArgument;
             }
 
-            if (!worldWrapper.startRespawn(respawnSeconds, template)) {
+            DragonLootTable lootTable = null;
+            if (args.length >= 5) {
+                DragonLootTable lootTableArgument = plugin.getLootTableRegistry().getLootTable(args[4]);
+                if (lootTableArgument == null) {
+                    this.plugin.sendMessage(sender, "A loot table with the id " + ChatColor.YELLOW + args[4] + ChatColor.GRAY + " does not exist");
+                    return true;
+                }
+
+                lootTable = lootTableArgument;
+            }
+
+            if (!worldWrapper.startRespawn(respawnSeconds, template, lootTable)) {
                 this.plugin.sendMessage(sender, "A respawn could not be started... does a dragon already exist in this world?");
                 return true;
             }
 
-            this.plugin.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getIdentifier());
+            this.plugin.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getIdentifier()
+                    + (worldWrapper.hasLootTableOverride() ? ChatColor.GRAY + " (loot table override: " + ChatColor.LIGHT_PURPLE + worldWrapper.getLootTableOverride().getId() + ChatColor.GRAY + ")" : ""));
         }
 
         else if (args[0].equalsIgnoreCase("template")) {
@@ -207,6 +220,13 @@ public final class DragonRespawnCmd implements TabExecutor {
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
                 return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
                         .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+            }
+        }
+
+        else if (args.length == 5) {
+            if (args[0].equalsIgnoreCase("start")) {
+                return StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().getLootTables().stream()
+                        .map(DragonLootTable::getId).collect(Collectors.toList()), new ArrayList<>());
             }
         }
 

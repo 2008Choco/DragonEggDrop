@@ -1,6 +1,8 @@
 package com.ninjaguild.dragoneggdrop.dragon.loot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
@@ -56,6 +58,15 @@ public class DragonLootTableRegistry {
      */
     public DragonLootTable getLootTable(String id) {
         return tables.get(id);
+    }
+
+    /**
+     * Get a copy of all registered DragonLootTables.
+     *
+     * @return all loot tables
+     */
+    public List<DragonLootTable> getLootTables() {
+        return new ArrayList<>(tables.values());
     }
 
     /**
