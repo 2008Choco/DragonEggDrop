@@ -1,8 +1,8 @@
 package com.ninjaguild.dragoneggdrop.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import com.google.common.collect.Iterables;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
@@ -174,8 +174,8 @@ public enum PortalCrystal {
      *
      * @return all spawned ender crystals
      */
-    public static Set<EnderCrystal> getAllSpawnedCrystals(World world) {
-        Set<EnderCrystal> crystals = new HashSet<>();
+    public static List<EnderCrystal> getAllSpawnedCrystals(World world) {
+        List<EnderCrystal> crystals = new ArrayList<>();
 
         for (PortalCrystal portalCrystal : values()) {
             EnderCrystal crystal = portalCrystal.get(world);

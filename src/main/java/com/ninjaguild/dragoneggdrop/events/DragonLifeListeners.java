@@ -1,6 +1,6 @@
 package com.ninjaguild.dragoneggdrop.events;
 
-import java.util.Set;
+import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
@@ -14,6 +14,7 @@ import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -108,7 +109,7 @@ public final class DragonLifeListeners implements Listener {
         World world = player.getWorld();
         EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
         if (worldWrapper.isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
-            Set<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
+            List<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
 
             // Check for 3 crystals because PlayerInteractEvent is fired first
             if (crystals.size() < 3) {
@@ -116,8 +117,9 @@ public final class DragonLifeListeners implements Listener {
             }
 
             for (EnderCrystal crystal : crystals) {
-                crystal.getLocation().getBlock().setType(Material.AIR); // Remove fire
-                world.dropItem(crystal.getLocation(), END_CRYSTAL_ITEM);
+                Location location = crystal.getLocation();
+                location.getBlock().setType(Material.AIR); // Remove fire
+                world.dropItem(location, END_CRYSTAL_ITEM);
                 crystal.remove();
             }
 
