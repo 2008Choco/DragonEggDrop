@@ -157,6 +157,7 @@ public class DragonLootTable {
             chest = (Chest) block.getState();
             if (chestName != null && !chestName.isEmpty()) {
                 chest.setCustomName(chestName);
+                chest.update();
             }
         }
 
