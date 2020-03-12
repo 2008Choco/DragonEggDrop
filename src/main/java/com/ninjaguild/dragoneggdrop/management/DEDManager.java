@@ -127,9 +127,9 @@ public class DEDManager {
 
 
     /**
-     * The type of trigger that allowed an Ender Dragon to  commence its respawning process.
+     * The trigger reason that allowed an Ender Dragon to start its respawning process.
      */
-    public enum RespawnType {
+    public enum RespawnReason {
 
         /**
          * A player joined the world
@@ -145,7 +145,7 @@ public class DEDManager {
         private final String configPath;
         private final int defaultSeconds;
 
-        private RespawnType(String configPath, int defaultSeconds) {
+        private RespawnReason(String configPath, int defaultSeconds) {
             this.configPath = configPath;
             this.defaultSeconds = defaultSeconds;
         }

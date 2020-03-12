@@ -6,7 +6,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
@@ -137,7 +137,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
             }
 
             if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
-                this.worldWrapper.startRespawn(RespawnType.DEATH);
+                this.worldWrapper.startRespawn(RespawnReason.DEATH);
             }
 
             BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);

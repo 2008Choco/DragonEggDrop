@@ -3,7 +3,7 @@ package com.ninjaguild.dragoneggdrop.events;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
-import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
@@ -50,7 +50,7 @@ public final class RespawnListeners implements Listener {
                 return;
             }
 
-            this.manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
+            this.manager.getWorldWrapper(world).startRespawn(RespawnReason.JOIN);
         }
 
         // Reset end crystal states just in case something went awry
@@ -88,7 +88,7 @@ public final class RespawnListeners implements Listener {
             return;
         }
 
-        this.manager.getWorldWrapper(world).startRespawn(RespawnType.JOIN);
+        this.manager.getWorldWrapper(world).startRespawn(RespawnReason.JOIN);
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
+import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 
 import org.bukkit.Bukkit;
@@ -87,7 +87,7 @@ public class EndWorldWrapper {
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(RespawnType type, DragonTemplate template) {
+    public boolean startRespawn(RespawnReason type, DragonTemplate template) {
         Preconditions.checkArgument(type != null, "Cannot respawn a dragon under a null respawn type");
         return startRespawn(type.getRespawnTime(plugin.getConfig()), template);
     }
@@ -117,10 +117,10 @@ public class EndWorldWrapper {
      *
      * @return the result of the respawn. true if successful, false otherwise
      *
-     * @see #startRespawn(RespawnType, DragonTemplate)
+     * @see #startRespawn(RespawnReason, DragonTemplate)
      * @see #startRespawn(int)
      */
-    public boolean startRespawn(RespawnType type) {
+    public boolean startRespawn(RespawnReason type) {
         return startRespawn(type, plugin.getDEDManager().getRandomTemplate());
     }
 
