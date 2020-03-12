@@ -145,17 +145,13 @@ public class DragonEggDrop extends JavaPlugin {
             this.updateTask.cancel();
         }
 
-        if (!tempDataFile.exists()) {
-            try {
-                this.tempDataFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            this.writeTempData();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         this.lootTableRegistry.clear();
-
-        this.writeTempData();
         this.dedManager.clearTemplates();
 
         // Clear the world wrappers
@@ -219,7 +215,11 @@ public class DragonEggDrop extends JavaPlugin {
         }
     }
 
-    private void writeTempData() {
+    private void writeTempData() throws IOException {
+        if (!tempDataFile.createNewFile()) {
+            return;
+        }
+
         JsonObject root = new JsonObject();
 
         for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
