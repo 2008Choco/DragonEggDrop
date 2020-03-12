@@ -6,13 +6,11 @@ import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
-import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderDragon;
 
 /**
@@ -94,20 +92,7 @@ public class EndWorldWrapper {
      */
     public boolean startRespawn(RespawnType type, DragonTemplate template) {
         Preconditions.checkArgument(type != null, "Cannot respawn a dragon under a null respawn type");
-
-        int respawnDelay = 0;
-        FileConfiguration config = plugin.getConfig();
-
-        switch (type) {
-            case JOIN:
-                respawnDelay = MathUtils.parseRespawnSeconds(config.getString("join-respawn-delay", "1m"));
-                break;
-            case DEATH:
-                respawnDelay = MathUtils.parseRespawnSeconds(config.getString("death-respawn-delay", "5m"));
-                break;
-        }
-
-        return startRespawn(respawnDelay, template);
+        return startRespawn(type.getRespawnTime(plugin.getConfig()), template);
     }
 
     /**

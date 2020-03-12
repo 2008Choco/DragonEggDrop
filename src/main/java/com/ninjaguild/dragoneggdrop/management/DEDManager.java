@@ -9,8 +9,10 @@ import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
+import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * The central manager holding all information regarding world wrappers, loaded dragon
@@ -132,12 +134,25 @@ public class DEDManager {
         /**
          * A player joined the world
          */
-        JOIN,
+        JOIN("join-respawn-delay", 60), // 60 second default
 
         /**
          * The ender dragon was killed
          */
-        DEATH,
+        DEATH("death-respawn-delay", 300); // 5 minute default
+
+
+        private final String configPath;
+        private final int defaultSeconds;
+
+        private RespawnType(String configPath, int defaultSeconds) {
+            this.configPath = configPath;
+            this.defaultSeconds = defaultSeconds;
+        }
+
+        public int getRespawnTime(FileConfiguration config) {
+            return MathUtils.parseRespawnSeconds(config.getString(configPath), defaultSeconds);
+        }
 
     }
 

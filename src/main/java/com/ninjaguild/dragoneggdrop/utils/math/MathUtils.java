@@ -101,6 +101,18 @@ public final class MathUtils {
      * Parse a timestamp value (i.e. 1w2d3h4m5s) and return its value in seconds.
      *
      * @param value the value to parse
+     * @param defaultSeconds the value to return if "value" is null (i.e. from a config)
+     *
+     * @return the amount of time in seconds represented by the supplied value
+     */
+    public static int parseRespawnSeconds(String value, int defaultSeconds) {
+        return (value != null) ? parseRespawnSeconds(value) : defaultSeconds;
+    }
+
+    /**
+     * Parse a timestamp value (i.e. 1w2d3h4m5s) and return its value in seconds.
+     *
+     * @param value the value to parse
      *
      * @return the amount of time in seconds represented by the supplied value
      */
