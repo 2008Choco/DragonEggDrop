@@ -69,10 +69,7 @@ public class EndWorldWrapper {
             return false;
         }
 
-        // Update templates
-        this.lastBattle = activeBattle;
-        this.activeBattle = template;
-
+        this.setActiveBattle(template);
         this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
         this.respawnTask.runTaskTimer(plugin, 0, 20);
         this.respawnInProgress = true;
@@ -160,10 +157,16 @@ public class EndWorldWrapper {
     /**
      * Set the battle that is active according to DragonEggDrop. This battle
      * instance will be used to generate names and lore for loot respectively.
+     * Additionally, the last battle will be set to the current active battle
+     * (unless null)
      *
      * @param activeBattle the battle to set
      */
     public void setActiveBattle(DragonTemplate activeBattle) {
+        if (this.activeBattle != null) {
+            this.lastBattle = this.activeBattle;
+        }
+
         this.activeBattle = activeBattle;
     }
 
