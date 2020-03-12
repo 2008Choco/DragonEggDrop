@@ -1,9 +1,12 @@
 package com.ninjaguild.dragoneggdrop.events;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnType;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -32,6 +35,14 @@ public final class RespawnListeners implements Listener {
         }
 
         EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+
+        // If there's a regular dragon but no active battle, try to template it
+        DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        DragonTemplate template = worldWrapper.getActiveBattle();
+        if (battle.getEnderDragon() != null && template == null) {
+            worldWrapper.setActiveBattle(template = manager.getRandomTemplate());
+            template.applyToBattle(battle.getEnderDragon(), battle);
+        }
 
         // Start the respawn countdown if joining an empty world
         if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
