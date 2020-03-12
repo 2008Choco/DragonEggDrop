@@ -234,6 +234,9 @@ public class DragonEggDrop extends JavaPlugin {
             if (world.getActiveBattle() != null) {
                 jsonWorld.addProperty("activeTemplate", world.getActiveBattle().getIdentifier());
             }
+            if (world.hasLootTableOverride()) {
+                jsonWorld.addProperty("lootTableOverride", world.getLootTableOverride().getId());
+            }
 
             root.add(world.getWorld().getName(), jsonWorld);
         }
@@ -272,12 +275,17 @@ public class DragonEggDrop extends JavaPlugin {
                 Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
                 if (element.has("activeTemplate") && !dragons.isEmpty()) {
                     DragonTemplate template = dedManager.getTemplate(element.get("activeTemplate").getAsString());
-                    if (template == null) {
-                        return;
+                    if (template != null) {
+                        wrapper.setActiveBattle(template);
+                        template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
                     }
+                }
 
-                    wrapper.setActiveBattle(template);
-                    template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
+                if (element.has("lootTableOverride")) {
+                    DragonLootTable lootTable = lootTableRegistry.getLootTable(element.get("lootTableOverride").getAsString());
+                    if (lootTable != null) {
+                        wrapper.setLootTableOverride(lootTable);
+                    }
                 }
             }
         } catch (IOException | JsonParseException e) {

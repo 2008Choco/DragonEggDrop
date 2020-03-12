@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
 import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
 
@@ -24,6 +25,8 @@ public class EndWorldWrapper {
     private boolean respawnInProgress = false;
     private DragonTemplate activeBattle, lastBattle;
     private RespawnRunnable respawnTask;
+
+    private DragonLootTable nextLootTable = null;
 
     private final DragonEggDrop plugin;
     private final UUID world;
@@ -186,6 +189,45 @@ public class EndWorldWrapper {
      */
     public DragonTemplate getLastBattle() {
         return lastBattle;
+    }
+
+    /**
+     * Set the next loot table from which to generate loot. This loot table will override that
+     * of the next dragon template.
+     *
+     * @param nextLootTable the next loot table to use
+     */
+    public void setLootTableOverride(DragonLootTable nextLootTable) {
+        this.nextLootTable = nextLootTable;
+    }
+
+    /**
+     * Get the next loot table from which to generate loot. If null, the next dragon template's
+     * loot table will be used.
+     *
+     * @return the next loot table
+     */
+    public DragonLootTable getLootTableOverride() {
+        return nextLootTable;
+    }
+
+    /**
+     * Check whether or not the next loot table will be overridden by this world's loot table.
+     *
+     * @return true if a loot table has been specified, false otherwise
+     */
+    public boolean hasLootTableOverride() {
+        return nextLootTable != null;
+    }
+
+    /**
+     * Use the dragon template's loot table to generate loot. This method effectively sets the
+     * next loot table to null
+     *
+     * @see #setLootTableOverride(DragonLootTable)
+     */
+    public void useTemplateLootTable() {
+        this.nextLootTable = null;
     }
 
 }

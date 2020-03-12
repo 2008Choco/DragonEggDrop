@@ -128,12 +128,14 @@ public class DragonDeathRunnable extends BukkitRunnable {
             DragonTemplate currentBattle = worldWrapper.getActiveBattle();
 
             if (currentBattle != null) {
-                DragonLootTable lootTable = currentBattle.getLootTable();
+                DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : currentBattle.getLootTable();
                 if (lootTable != null) {
-                    currentBattle.getLootTable().generate(dragonBattle, dragon);
+                    lootTable.generate(dragonBattle, dragon);
                 } else {
                     this.plugin.getLogger().warning("Could not generate loot for template " + currentBattle.getIdentifier() + ". Invalid loot table. Is \"loot\" defined in the template?");
                 }
+
+                this.worldWrapper.useTemplateLootTable(); // Reset the loot table override. Use the template's loot table next instead
             }
 
             if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
