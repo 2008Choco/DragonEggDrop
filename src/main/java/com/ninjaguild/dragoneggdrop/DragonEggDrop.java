@@ -21,9 +21,11 @@ import com.google.gson.stream.JsonWriter;
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonRespawnCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
+import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
+import com.ninjaguild.dragoneggdrop.events.DamageHistoryListener;
 import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.events.LootListeners;
 import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
@@ -103,6 +105,7 @@ public class DragonEggDrop extends JavaPlugin {
         manager.registerEvents(new LootListeners(this), this);
         manager.registerEvents(new RespawnListeners(this), this);
         manager.registerEvents(new PortalClickListener(this), this);
+        manager.registerEvents(new DamageHistoryListener(), this);
 
         // Register commands
         this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
@@ -154,6 +157,8 @@ public class DragonEggDrop extends JavaPlugin {
 
         this.lootTableRegistry.clear();
         this.dedManager.clearTemplates();
+
+        DamageHistory.clearGlobalDamageHistory();
 
         // Clear the world wrappers
         this.dedManager.getWorldWrappers().forEach(EndWorldWrapper::stopRespawn);
