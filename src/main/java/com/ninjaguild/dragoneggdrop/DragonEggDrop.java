@@ -49,6 +49,21 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public class DragonEggDrop extends JavaPlugin {
 
+    /**
+     * The DragonEggDrop prefix bit position. If set, the prefix will be appended to messages.
+     */
+    public static final int PREFIX = 0x01;
+
+    /**
+     * The colour bit position. If set, messages will have their chat colour codes translated.
+     */
+    public static final int COLOUR = 0x02;
+
+    /**
+     * The placeholders bit position. If set, placeholders will be injected into messages.
+     */
+    public static final int PLACEHOLDERS = 0x04;
+
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
@@ -154,13 +169,38 @@ public class DragonEggDrop extends JavaPlugin {
     }
 
     /**
+     * Send a message to a command sender with the supplied options
+     *
+     * @param sender the sender to which the message should be sent
+     * @param message the message to send
+     * @param options the options to use for this message
+     */
+    public void sendMessage(CommandSender sender, String message, int options) {
+        if ((options & PREFIX) != 0) {
+            message = CHAT_PREFIX + message;
+        }
+
+        if ((options & COLOUR) != 0) {
+            message = ChatColor.translateAlternateColorCodes('&', message);
+        }
+
+        if ((options & PLACEHOLDERS) != 0) {
+            message = DragonEggDropPlaceholders.inject((sender instanceof Player) ? (Player) sender : null, message);
+        }
+
+        sender.sendMessage(message);
+    }
+
+    /**
      * Send a message to a command sender with the DragonEggDrop chat prefix.
      *
-     * @param sender the sender to send the message to
+     * @param sender the sender to which the message should be sent
      * @param message the message to send
+     *
+     * @see #sendMessage(CommandSender, String, int)
      */
     public void sendMessage(CommandSender sender, String message) {
-        sender.sendMessage(CHAT_PREFIX + message);
+        this.sendMessage(sender, message, PREFIX);
     }
 
     /**
