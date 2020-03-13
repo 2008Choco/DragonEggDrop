@@ -37,6 +37,8 @@ public class RespawnRunnable extends BukkitRunnable {
 
     private final boolean announceRespawn;
     private final List<String> announceMessages;
+    private final boolean limitAnnounceToRadius;
+    private final int announceMessageRadiusSquared;
 
     private int currentCrystal = 0, currentMessage = 0;
     private int secondsUntilRespawn;
@@ -61,6 +63,10 @@ public class RespawnRunnable extends BukkitRunnable {
                 .collect(Collectors.toList());
         this.announceRespawn = announceMessages.size() > 0;
 
+        int announceMessageRadius = plugin.getConfig().getInt("announce-message-radius", -1);
+        this.limitAnnounceToRadius = (announceMessageRadius > 0);
+        this.announceMessageRadiusSquared = (int) Math.pow(announceMessageRadius, 2);
+
         // Event call
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_DEAD, BattleState.CRYSTALS_SPAWNING);
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
@@ -70,13 +76,20 @@ public class RespawnRunnable extends BukkitRunnable {
     public void run() {
         if (this.secondsUntilRespawn > 0) {
             if (announceRespawn) {
-                if (currentMessage >= announceMessages.size()) currentMessage = 0;
+                if (currentMessage >= announceMessages.size()) {
+                    this.currentMessage = 0;
+                }
 
                 // Show actionbar messages
                 String message = announceMessages.get(currentMessage++)
                         .replace("%time%", String.valueOf(secondsUntilRespawn))
                         .replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
-                NMSUtils.broadcastActionBar(message, worldWrapper.getWorld());
+
+                if (limitAnnounceToRadius) {
+                    NMSUtils.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
+                } else {
+                    NMSUtils.broadcastActionBar(message, worldWrapper.getWorld());
+                }
             }
 
             this.secondsUntilRespawn--;

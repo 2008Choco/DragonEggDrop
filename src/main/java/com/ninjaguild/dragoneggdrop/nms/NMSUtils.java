@@ -12,6 +12,7 @@ import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
 import net.minecraft.server.v1_15_R1.WorldProvider;
 import net.minecraft.server.v1_15_R1.WorldProviderTheEnd;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEnderDragon;
@@ -86,6 +87,27 @@ public final class NMSUtils {
 
         PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
         players.forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet));
+    }
+
+    public static void broadcastActionBar(String message, Location location, int radiusSquared) {
+        if (location == null || location.getWorld() == null || radiusSquared < 0) {
+            return;
+        }
+
+        List<Player> players = location.getWorld().getPlayers();
+        if (players.isEmpty()) {
+            return;
+        }
+
+        PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message + "\"}"), ChatMessageType.GAME_INFO);
+        for (Player player : players) {
+            if (player.getLocation().distanceSquared(location) > radiusSquared) {
+                continue;
+            }
+
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        }
+
     }
 
 }
