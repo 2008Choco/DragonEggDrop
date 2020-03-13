@@ -90,7 +90,7 @@ public class DamageHistory {
             return null;
         }
 
-        return totalDamage.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().map(DamageEntry::new).get();
+        return totalDamage.entrySet().stream().sorted(Map.Entry.comparingByValue((v1, v2) -> -v1.compareTo(v2))).findFirst().map(DamageEntry::new).get();
     }
 
     /**
@@ -114,7 +114,7 @@ public class DamageHistory {
         }
 
         List<Entry<UUID, Double>> entries = new ArrayList<>(totalDamage.entrySet());
-        entries.sort(Map.Entry.comparingByValue());
+        entries.sort(Map.Entry.comparingByValue((v1, v2) -> -v1.compareTo(v2)));
 
         for (int i = 0; i < amount; i++) {
             if (i >= entries.size()) {
