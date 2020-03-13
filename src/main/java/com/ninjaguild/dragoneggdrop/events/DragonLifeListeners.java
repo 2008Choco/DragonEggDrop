@@ -53,11 +53,15 @@ public final class DragonLifeListeners implements Listener {
         DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
         EndWorldWrapper world = plugin.getDEDManager().getWorldWrapper(dragon.getWorld());
 
+        DragonTemplate template = world.getRespawningTemplate();
+        System.out.println("Respawning template: " + (template != null ? template.getId() : "null"));
         if (plugin.getConfig().getBoolean("strict-countdown") && world.isRespawnInProgress()) {
             world.stopRespawn();
         }
 
-        DragonTemplate template = world.getActiveBattle();
+        world.setActiveTemplate(template);
+        world.setRespawningTemplate(null);
+
         if (template != null) {
             template.applyToBattle(dragon, dragonBattle);
 

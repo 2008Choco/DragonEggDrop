@@ -38,8 +38,8 @@ public class DEDManager {
         Preconditions.checkArgument(template != null, "Cannot register null templates");
 
         for (DragonTemplate registeredTemplate : dragonTemplates.values()) {
-            if (registeredTemplate.getIdentifier().equals(template.getIdentifier())) {
-                throw new UnsupportedOperationException("Cannot register two templates with the same identifier (" + template.getIdentifier() + ")");
+            if (registeredTemplate.getId().equals(template.getId())) {
+                throw new UnsupportedOperationException("Cannot register two templates with the same identifier (" + template.getId() + ")");
             }
         }
 
@@ -67,7 +67,7 @@ public class DEDManager {
     }
 
     /**
-     * Get a template based on its identifier (see {@link DragonTemplate#getIdentifier()}).
+     * Get a template based on its identifier (see {@link DragonTemplate#getId()}).
      * This search is case-sensitive.
      *
      * @param template the template's unique identifier
@@ -76,7 +76,7 @@ public class DEDManager {
      */
     public DragonTemplate getTemplate(String template) {
         return dragonTemplates.toCollection().stream()
-                .filter(t -> t.getIdentifier().equals(template))
+                .filter(t -> t.getId().equals(template))
                 .findFirst().orElse(null);
     }
 

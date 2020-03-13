@@ -45,7 +45,7 @@ public final class DragonTemplateCmd implements TabExecutor {
             }
 
             String[] templateNames = templates.stream()
-                    .map(t -> ChatColor.GREEN + t.getIdentifier())
+                    .map(t -> ChatColor.GREEN + t.getId())
                     .toArray(String[]::new);
 
             this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
@@ -89,7 +89,7 @@ public final class DragonTemplateCmd implements TabExecutor {
 
         // Before completion: "/dragontemplate "
         if (args.length == 1) {
-            List<String> possibleOptions = plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getIdentifier).collect(Collectors.toList());
+            List<String> possibleOptions = plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getId).collect(Collectors.toList());
             possibleOptions.add("list");
             StringUtil.copyPartialMatches(args[0], possibleOptions, options);
         }

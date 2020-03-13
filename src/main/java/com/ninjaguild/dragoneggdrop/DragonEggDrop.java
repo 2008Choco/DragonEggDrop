@@ -229,7 +229,7 @@ public class DragonEggDrop extends JavaPlugin {
         JsonObject root = new JsonObject();
 
         for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
-            if (!world.isRespawnInProgress() && world.getActiveBattle() == null) {
+            if (!world.isRespawnInProgress() && world.getActiveTemplate() == null) {
                 return;
             }
 
@@ -237,8 +237,11 @@ public class DragonEggDrop extends JavaPlugin {
             if (world.isRespawnInProgress()) {
                 jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
             }
-            if (world.getActiveBattle() != null) {
-                jsonWorld.addProperty("activeTemplate", world.getActiveBattle().getIdentifier());
+            if (world.getRespawningTemplate() != null) {
+                jsonWorld.addProperty("respawnTemplate", world.getRespawningTemplate().getId());
+            }
+            if (world.getActiveTemplate() != null) {
+                jsonWorld.addProperty("activeTemplate", world.getActiveTemplate().getId());
             }
             if (world.hasLootTableOverride()) {
                 jsonWorld.addProperty("lootTableOverride", world.getLootTableOverride().getId());
@@ -278,11 +281,18 @@ public class DragonEggDrop extends JavaPlugin {
                     wrapper.startRespawn(element.get("respawnTime").getAsInt());
                 }
 
+                if (element.has("respawnTemplate")) {
+                    DragonTemplate template = dedManager.getTemplate(element.get("respawnTemplate").getAsString());
+                    if (template != null) {
+                        wrapper.setRespawningTemplate(template);
+                    }
+                }
+
                 Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
                 if (element.has("activeTemplate") && !dragons.isEmpty()) {
                     DragonTemplate template = dedManager.getTemplate(element.get("activeTemplate").getAsString());
                     if (template != null) {
-                        wrapper.setActiveBattle(template);
+                        wrapper.setActiveTemplate(template);
                         template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
                     }
                 }

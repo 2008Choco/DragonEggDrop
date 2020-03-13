@@ -70,7 +70,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             }
 
             EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
-            DragonTemplate template = endWorld.getActiveBattle();
+            DragonTemplate template = endWorld.getActiveTemplate();
             return (template != null) ? template.getName() : null;
         }
 
@@ -81,7 +81,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             }
 
             EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
-            DragonTemplate template = endWorld.getActiveBattle();
+            DragonTemplate template = endWorld.getActiveTemplate();
             return (template != null) ? template.getName() : "no dragon";
         }
 
@@ -127,7 +127,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
 
             DamageHistory history = null;
             EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
-            if (endWorld.getActiveBattle() != null) {
+            if (endWorld.getActiveTemplate() != null) {
                 history = DamageHistory.forEntity(NMSUtils.getEnderDragonBattleFromWorld(world).getEnderDragon());
             }
 
@@ -159,7 +159,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
 
             DamageHistory history = null;
             EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
-            if (endWorld.getActiveBattle() != null) {
+            if (endWorld.getActiveTemplate() != null) {
                 history = DamageHistory.forEntity(NMSUtils.getEnderDragonBattleFromWorld(world).getEnderDragon());
             }
 

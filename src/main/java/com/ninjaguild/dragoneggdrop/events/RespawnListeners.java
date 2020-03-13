@@ -38,10 +38,10 @@ public final class RespawnListeners implements Listener {
 
         // If there's a regular dragon but no active battle, try to template it
         DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
-        DragonTemplate template = worldWrapper.getActiveBattle();
-        if (battle.getEnderDragon() != null && template == null) {
-            worldWrapper.setActiveBattle(template = manager.getRandomTemplate());
-            template.applyToBattle(battle.getEnderDragon(), battle);
+        DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
+        if (battle.getEnderDragon() != null && activeTemplate == null) {
+            worldWrapper.setActiveTemplate(activeTemplate = manager.getRandomTemplate());
+            activeTemplate.applyToBattle(battle.getEnderDragon(), battle);
         }
 
         // Start the respawn countdown if joining an empty world

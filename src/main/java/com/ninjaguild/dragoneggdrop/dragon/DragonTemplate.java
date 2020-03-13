@@ -41,7 +41,7 @@ public class DragonTemplate {
     protected final FileConfiguration configFile;
 
     private final DragonLootTable lootTable;
-    private final String identifier;
+    private final String id;
 
     private String name;
     private BarStyle barStyle;
@@ -62,7 +62,7 @@ public class DragonTemplate {
 
         this.file = file;
         this.configFile = YamlConfiguration.loadConfiguration(file);
-        this.identifier = file.getName().substring(0, file.getName().lastIndexOf('.')).replace(' ', '_');
+        this.id = file.getName().substring(0, file.getName().lastIndexOf('.')).replace(' ', '_');
 
         this.name = (configFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', configFile.getString("dragon-name")) : null);
         this.barStyle = Enums.getIfPresent(BarStyle.class, configFile.getString("bar-style", "SOLID").toUpperCase()).or(BarStyle.SOLID);
@@ -85,7 +85,7 @@ public class DragonTemplate {
 
         this.file = null;
         this.configFile = null;
-        this.identifier = identifier;
+        this.id = identifier;
 
         this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
         this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
@@ -100,8 +100,8 @@ public class DragonTemplate {
      *
      * @return the unique template identifier
      */
-    public String getIdentifier() {
-        return identifier;
+    public String getId() {
+        return id;
     }
 
     /**

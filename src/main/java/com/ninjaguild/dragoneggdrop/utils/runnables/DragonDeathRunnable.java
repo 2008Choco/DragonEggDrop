@@ -125,18 +125,20 @@ public class DragonDeathRunnable extends BukkitRunnable {
             }
 
             DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
-            DragonTemplate currentBattle = worldWrapper.getActiveBattle();
+            DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
 
-            if (currentBattle != null) {
-                DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : currentBattle.getLootTable();
+            if (activeTemplate != null) {
+                DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : activeTemplate.getLootTable();
                 if (lootTable != null) {
                     lootTable.generate(dragonBattle, dragon);
                 } else {
-                    this.plugin.getLogger().warning("Could not generate loot for template " + currentBattle.getIdentifier() + ". Invalid loot table. Is \"loot\" defined in the template?");
+                    this.plugin.getLogger().warning("Could not generate loot for template " + activeTemplate.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
                 }
 
-                this.worldWrapper.useTemplateLootTable(); // Reset the loot table override. Use the template's loot table next instead
+                this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
             }
+
+            this.worldWrapper.setActiveTemplate(null);
 
             if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
                 this.worldWrapper.startRespawn(RespawnReason.DEATH);

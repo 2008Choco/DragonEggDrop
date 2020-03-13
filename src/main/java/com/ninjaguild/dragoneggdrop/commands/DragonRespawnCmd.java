@@ -112,7 +112,7 @@ public final class DragonRespawnCmd implements TabExecutor {
                 return true;
             }
 
-            this.plugin.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getIdentifier()
+            this.plugin.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getId()
                     + (worldWrapper.hasLootTableOverride() ? ChatColor.GRAY + " (loot table override: " + ChatColor.LIGHT_PURPLE + worldWrapper.getLootTableOverride().getId() + ChatColor.GRAY + ")" : ""));
         }
 
@@ -150,8 +150,8 @@ public final class DragonRespawnCmd implements TabExecutor {
                     return true;
                 }
 
-                worldWrapper.setActiveBattle(template);
-                this.plugin.sendMessage(sender, "The dragon template " + ChatColor.YELLOW + template.getIdentifier() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+                worldWrapper.setRespawningTemplate(template);
+                this.plugin.sendMessage(sender, "The dragon template " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
             }
             else if (args[1].equalsIgnoreCase("get")) {
                 World world = getWorldFromContext(sender, args, 2);
@@ -160,12 +160,13 @@ public final class DragonRespawnCmd implements TabExecutor {
                 }
 
                 EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
-                if (!worldWrapper.isRespawnInProgress()) {
+                DragonTemplate template = worldWrapper.getRespawningTemplate();
+                if (template == null) {
                     this.plugin.sendMessage(sender, "No respawn is currently in progress, no template has yet been determined");
                     return true;
                 }
 
-                this.plugin.sendMessage(sender, "The template with ID " + ChatColor.YELLOW + worldWrapper.getActiveBattle().getIdentifier() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+                this.plugin.sendMessage(sender, "The template with ID " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
             }
             else {
                 this.plugin.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[1] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + " " + args[0] + " <set|get>");
@@ -208,14 +209,14 @@ public final class DragonRespawnCmd implements TabExecutor {
 
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
                 return StringUtil.copyPartialMatches(args[2], plugin.getDEDManager().getDragonTemplates().stream()
-                        .map(DragonTemplate::getIdentifier).collect(Collectors.toList()), new ArrayList<>());
+                        .map(DragonTemplate::getId).collect(Collectors.toList()), new ArrayList<>());
             }
         }
 
         else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("start")) {
                 return StringUtil.copyPartialMatches(args[3], plugin.getDEDManager().getDragonTemplates().stream()
-                        .map(DragonTemplate::getIdentifier).collect(Collectors.toList()), new ArrayList<>());
+                        .map(DragonTemplate::getId).collect(Collectors.toList()), new ArrayList<>());
             }
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
                 return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
