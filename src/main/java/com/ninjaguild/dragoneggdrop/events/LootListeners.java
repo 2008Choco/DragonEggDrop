@@ -10,12 +10,9 @@ import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -59,16 +56,6 @@ public final class LootListeners implements Listener {
         }
 
         stack.setItemMeta(eggMeta);
-    }
-
-    @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof EnderCrystal) || event.getEntity().getWorld().getEnvironment() != Environment.THE_END || !entity.isInvulnerable()) {
-            return;
-        }
-
-        event.setCancelled(true);
     }
 
 }
