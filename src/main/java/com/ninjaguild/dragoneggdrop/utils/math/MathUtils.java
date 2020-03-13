@@ -167,6 +167,14 @@ public final class MathUtils {
 
         StringBuilder resultTime = new StringBuilder();
 
+        if (timeInSeconds >= 604800) { // Weeks
+            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 604800), "week", timeInSeconds %= 604800);
+        }
+
+        if (timeInSeconds >= 86400) { // Days
+            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 86400), "day", timeInSeconds %= 86400);
+        }
+
         if (timeInSeconds >= 3600) { // Hours
             MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 3600), "hour", timeInSeconds %= 3600);
         }
