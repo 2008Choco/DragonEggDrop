@@ -94,6 +94,29 @@ public class DamageHistory {
     }
 
     /**
+     * Get the top damager at the given offset (from most amount of damage + offset). For example,
+     * if fetching at the offset of 1, the second top damager will be retrieved. If offset of 2,
+     * third most. So on and so forth. Offset 0 would be equivalent to {@link #getTopDamager()}.
+     *
+     * @param offset the damage entry offset. Must be < {@link #uniqueDamagers()}
+     *
+     * @return the top damager at the given offset
+     */
+    public DamageEntry getTopDamager(int offset) {
+        if (totalDamage.isEmpty()) {
+            return null;
+        }
+
+        if (offset >= totalDamage.size()) {
+            throw new IllegalArgumentException("Tried to get top damager at unavailable offset (damagers recorded = " + totalDamage.size() + ")");
+        }
+
+        List<Entry<UUID, Double>> entries = new ArrayList<>(totalDamage.entrySet());
+        entries.sort(Map.Entry.comparingByValue((v1, v2) -> -v1.compareTo(v2)));
+        return new DamageEntry(entries.get(offset));
+    }
+
+    /**
      * Get an array of entities that caused the most amount of damage to this entity in
      * order of most amount of damage (first index) to least amount of damage (last index).
      * This comes paired with the amount of total damage done by each entity.
@@ -188,6 +211,15 @@ public class DamageHistory {
      */
     public int size() {
         return damageHistory.size();
+    }
+
+    /**
+     * Get the amount of unique damagers recorded by this history.
+     *
+     * @return the amount of unique damagers
+     */
+    public int uniqueDamagers() {
+        return totalDamage.size();
     }
 
     /**

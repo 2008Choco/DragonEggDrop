@@ -2,7 +2,7 @@ name: DragonEggDrop
 main: com.ninjaguild.dragoneggdrop.DragonEggDrop
 version: ${project.version}
 description: ${project.description}
-soft-depend: [PlaceholderAPI, MVdWPlaceholderAPI]
+softdepend: [PlaceholderAPI]
 author: Choco
 api-version: 1.15
 

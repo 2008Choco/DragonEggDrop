@@ -1,23 +1,35 @@
 package com.ninjaguild.dragoneggdrop.placeholder;
 
+import java.util.regex.Pattern;
+
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
 
 public final class DragonEggDropPlaceholders {
 
+    protected static final Pattern PATTERN_TOP_DAMAGER = Pattern.compile("top_damager(?:_(\\d+))?(?:_([\\w\\d]+))?");
+    protected static final Pattern PATTERN_TOP_DAMAGE = Pattern.compile("top_damage(?:_(\\d+))?(?:_([\\w\\d]+))?");
+
     private DragonEggDropPlaceholders() { }
 
     public static void registerPlaceholders(DragonEggDrop plugin, PluginManager pluginManager) {
-        // Register placeholders to MVdWPlaceholderAPI if available
-        if (pluginManager.isPluginEnabled("MVdWPlaceholderAPI")) {
-            DragonEggDropMVdWPlaceholderAPI.registerPlaceholders(plugin);
-        }
-
         // Register the DragonEggDrop PlaceholderExpansion
         if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
             new DragonEggDropPlaceholderAPIExpansion(plugin).register();
         }
+    }
+
+    public static String inject(OfflinePlayer player, String string) {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+
+        if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
+            string = DragonEggDropPlaceholderAPIExpansion.inject(player, string);
+        }
+
+        return string;
     }
 
 }
