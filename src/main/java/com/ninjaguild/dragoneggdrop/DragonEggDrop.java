@@ -1,23 +1,13 @@
 package com.ninjaguild.dragoneggdrop;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.stream.JsonWriter;
 import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonRespawnCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
@@ -32,20 +22,18 @@ import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.management.DEDManager;
 import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -95,7 +83,7 @@ public class DragonEggDrop extends JavaPlugin {
         // Load temp data (reload support)
         this.tempDataFile = new File(getDataFolder(), "tempData.json");
         if (tempDataFile.exists()) {
-            this.readTempData();
+            TempDataUtils.readTempData(this, tempDataFile);
             this.tempDataFile.delete();
         }
 
@@ -150,7 +138,7 @@ public class DragonEggDrop extends JavaPlugin {
         }
 
         try {
-            this.writeTempData();
+            TempDataUtils.writeTempData(this, tempDataFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -217,94 +205,6 @@ public class DragonEggDrop extends JavaPlugin {
                 this.saveResource(name, false);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeTempData() throws IOException {
-        if (!tempDataFile.createNewFile()) {
-            return;
-        }
-
-        JsonObject root = new JsonObject();
-
-        for (EndWorldWrapper world : dedManager.getWorldWrappers()) {
-            if (!world.isRespawnInProgress() && world.getActiveTemplate() == null) {
-                return;
-            }
-
-            JsonObject jsonWorld = new JsonObject();
-            if (world.isRespawnInProgress()) {
-                jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
-            }
-            if (world.getRespawningTemplate() != null) {
-                jsonWorld.addProperty("respawnTemplate", world.getRespawningTemplate().getId());
-            }
-            if (world.getActiveTemplate() != null) {
-                jsonWorld.addProperty("activeTemplate", world.getActiveTemplate().getId());
-            }
-            if (world.hasLootTableOverride()) {
-                jsonWorld.addProperty("lootTableOverride", world.getLootTableOverride().getId());
-            }
-
-            root.add(world.getWorld().getName(), jsonWorld);
-        }
-
-        try (PrintWriter writer = new PrintWriter(tempDataFile)) {
-            GSON.toJson(root, new JsonWriter(writer));
-        } catch (JsonIOException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void readTempData() {
-        try (FileReader reader = new FileReader(tempDataFile)) {
-            JsonObject root = GSON.fromJson(reader, JsonObject.class);
-            if (root == null) {
-                return;
-            }
-
-            for (Entry<String, JsonElement> entry : root.entrySet()) {
-                World world = Bukkit.getWorld(entry.getKey());
-                if (world == null) {
-                    return;
-                }
-
-                EndWorldWrapper wrapper = dedManager.getWorldWrapper(world);
-                JsonObject element = entry.getValue().getAsJsonObject();
-
-                if (element.has("respawnTime")) {
-                    if (wrapper.isRespawnInProgress()) {
-                        wrapper.stopRespawn();
-                    }
-
-                    wrapper.startRespawn(element.get("respawnTime").getAsInt());
-                }
-
-                if (element.has("respawnTemplate")) {
-                    DragonTemplate template = dedManager.getTemplate(element.get("respawnTemplate").getAsString());
-                    if (template != null) {
-                        wrapper.setRespawningTemplate(template);
-                    }
-                }
-
-                Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
-                if (element.has("activeTemplate") && !dragons.isEmpty()) {
-                    DragonTemplate template = dedManager.getTemplate(element.get("activeTemplate").getAsString());
-                    if (template != null) {
-                        wrapper.setActiveTemplate(template);
-                        template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
-                    }
-                }
-
-                if (element.has("lootTableOverride")) {
-                    DragonLootTable lootTable = lootTableRegistry.getLootTable(element.get("lootTableOverride").getAsString());
-                    if (lootTable != null) {
-                        wrapper.setLootTableOverride(lootTable);
-                    }
-                }
-            }
-        } catch (IOException | JsonParseException e) {
             e.printStackTrace();
         }
     }
