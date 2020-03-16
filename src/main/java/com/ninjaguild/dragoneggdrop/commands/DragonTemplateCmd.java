@@ -82,7 +82,7 @@ public final class DragonTemplateCmd implements TabExecutor {
         // Before completion: "/dragontemplate "
         if (args.length == 1) {
             List<String> possibleOptions = DragonTemplate.getAll().stream().map(DragonTemplate::getId).collect(Collectors.toList());
-            possibleOptions.add("list");
+            possibleOptions.add(0, "list");
             StringUtil.copyPartialMatches(args[0], possibleOptions, options);
         }
 
