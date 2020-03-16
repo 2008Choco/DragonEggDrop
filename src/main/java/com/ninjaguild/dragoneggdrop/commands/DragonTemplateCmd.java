@@ -44,9 +44,7 @@ public final class DragonTemplateCmd implements TabExecutor {
                 return true;
             }
 
-            String[] templateNames = templates.stream()
-                    .map(t -> ChatColor.GREEN + t.getId())
-                    .toArray(String[]::new);
+            String[] templateNames = templates.stream().map(t -> ChatColor.GREEN + t.getId()).toArray(String[]::new);
 
             this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
             return true;

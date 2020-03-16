@@ -53,16 +53,16 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Commence the Dragon's respawning processes in this world with a specific
-     * dragon template and respawn delay. This respawn may or may not fail depending
-     * on whether or not a dragon already exists or a respawn is already in progress.
+     * Commence the Dragon's respawning processes in this world with a specific dragon
+     * template and respawn delay. This respawn may or may not fail depending on whether
+     * or not a dragon already exists or a respawn is already in progress.
      *
      * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
      * @param template the dragon template to spawn. Must not be null
      * @param lootTable the loot table to use on death. This overrides any already-set
-     * loot table from {@link #setLootTableOverride(DragonLootTable)}. If null, the override
-     * will not be set and any existing override will be used (or the template loot table if
-     * one was not set prior)
+     * loot table from {@link #setLootTableOverride(DragonLootTable)}. If null, the
+     * override will not be set and any existing override will be used (or the template
+     * loot table if one was not set prior)
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
@@ -86,13 +86,13 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Commence the Dragon's respawning processes in this world with a specific
-     * dragon template and respawn delay. This respawn may or may not fail depending
-     * on whether or not a dragon already exists or a respawn is already in progress.
+     * Commence the Dragon's respawning processes in this world with a specific dragon
+     * template and respawn delay. This respawn may or may not fail depending on whether
+     * or not a dragon already exists or a respawn is already in progress.
      *
      * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
-     * @param template the dragon template to spawn. If null, a regular dragon will
-     * be respawned
+     * @param template the dragon template to spawn. If null, a regular dragon will be
+     * respawned
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
@@ -101,13 +101,13 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Commence the Dragon's respawning processes in this world with a specific
-     * dragon template. This respawn may or may not fail depending on whether or
-     * not a dragon already exists or a respawn is already in progress.
+     * Commence the Dragon's respawning processes in this world with a specific dragon
+     * template. This respawn may or may not fail depending on whether or not a dragon
+     * already exists or a respawn is already in progress.
      *
      * @param reason the reason that triggered this dragon respawn
-     * @param template the dragon template to spawn. If null, a regular dragon will
-     * be respawned
+     * @param template the dragon template to spawn. If null, a regular dragon will be
+     * respawned
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
@@ -117,10 +117,9 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Commence the Dragon's respawning process in this world with a randomly
-     * selected dragon template and a set respawn delay. This respawn may or
-     * may not fail depending on whether or not a dragon already exists or a
-     * respawn is already in progress.
+     * Commence the Dragon's respawning process in this world with a randomly selected
+     * dragon template and a set respawn delay. This respawn may or may not fail depending
+     * on whether or not a dragon already exists or a respawn is already in progress.
      *
      * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
      *
@@ -133,9 +132,9 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Commence the Dragon's respawning processes in this world with a randomly
-     * selected dragon template. This respawn may or may not fail depending on
-     * whether or not a dragon already exists or a respawn is already in progress.
+     * Commence the Dragon's respawning processes in this world with a randomly selected
+     * dragon template. This respawn may or may not fail depending on whether or not a
+     * dragon already exists or a respawn is already in progress.
      *
      * @param reason the reason that triggered this dragon respawn
      *
@@ -178,10 +177,9 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Set the battle that is active according to DragonEggDrop. This battle
-     * instance will be used to generate names and lore for loot respectively.
-     * Additionally, the last battle will be set to the current active battle
-     * (unless null)
+     * Set the battle that is active according to DragonEggDrop. This battle instance will
+     * be used to generate names and lore for loot respectively. Additionally, the last
+     * battle will be set to the current active battle (unless null)
      *
      * @param template the battle to set
      * @param updatePreviousTemplate whether to set the previous template to the current
@@ -196,10 +194,9 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Set the battle that is active according to DragonEggDrop. This battle
-     * instance will be used to generate names and lore for loot respectively.
-     * Additionally, the last battle will be set to the current active battle
-     * (unless null)
+     * Set the battle that is active according to DragonEggDrop. This battle instance will
+     * be used to generate names and lore for loot respectively. Additionally, the last
+     * battle will be set to the current active battle (unless null)
      *
      * @param template the battle to set
      */
@@ -217,9 +214,10 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Set the template to respawn during the next process. If a respawn is not in process,
-     * this value will be overridden after a call to {@link #startRespawn(int, DragonTemplate, DragonLootTable)}
-     * (or any of its overrides).
+     * Set the template to respawn during the next process. If a respawn is not in
+     * process, this value will be overridden after a call to
+     * {@link #startRespawn(int, DragonTemplate, DragonLootTable)} (or any of its
+     * overrides).
      *
      * @param respawningTemplate the template to set
      */
@@ -246,8 +244,8 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Set the next loot table from which to generate loot. This loot table will override that
-     * of the next dragon template.
+     * Set the next loot table from which to generate loot. This loot table will override
+     * that of the next dragon template.
      *
      * @param nextLootTable the next loot table to use
      */
@@ -256,8 +254,8 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Get the next loot table from which to generate loot. If null, the next dragon template's
-     * loot table will be used.
+     * Get the next loot table from which to generate loot. If null, the next dragon
+     * template's loot table will be used.
      *
      * @return the next loot table
      */
@@ -266,7 +264,8 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Check whether or not the next loot table will be overridden by this world's loot table.
+     * Check whether or not the next loot table will be overridden by this world's loot
+     * table.
      *
      * @return true if a loot table has been specified, false otherwise
      */

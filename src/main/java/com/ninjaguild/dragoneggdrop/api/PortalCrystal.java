@@ -15,8 +15,8 @@ import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 
 /**
- * Represents all possible locations in which an end crystal may be spawned
- * in regards to the End Portal found in The End.
+ * Represents all possible locations in which an end crystal may be spawned in regards to
+ * the End Portal found in The End.
  *
  * @author Parker Hawke - Choco
  */
@@ -69,9 +69,9 @@ public enum PortalCrystal {
     }
 
     /**
-     * Get a {@link Location} representing the crystal's expected location relative
-     * to a given location. The passed location assumes the top of the portal (3 blocks
-     * above the base of the portal). See {@link DragonBattle#getEndPortalLocation()}.
+     * Get a {@link Location} representing the crystal's expected location relative to a
+     * given location. The passed location assumes the top of the portal (3 blocks above
+     * the base of the portal). See {@link DragonBattle#getEndPortalLocation()}.
      *
      * @param location the location starting point
      *
@@ -82,12 +82,13 @@ public enum PortalCrystal {
     }
 
     /**
-     * Get a {@link Location} representing the crystal's expected location relative
-     * to the provided world's portal.
+     * Get a {@link Location} representing the crystal's expected location relative to the
+     * provided world's portal.
      *
      * @param world the world containing the portal
      *
-     * @return the relative crystal location. null if world is not (@link Environment#THE_END)
+     * @return the relative crystal location. null if world is not (@link
+     * Environment#THE_END)
      */
     public Location getRelativeToPortal(World world) {
         if (world.getEnvironment() != Environment.THE_END) {
@@ -128,6 +129,7 @@ public enum PortalCrystal {
      * Spawn a crystal on the portal in the given world and set it as invulnerable.
      *
      * @param world the world to spawn the crystal in
+     *
      * @return the spawned crystal. null if unsuccessfully spawned
      *
      * @see #spawn(World, boolean)

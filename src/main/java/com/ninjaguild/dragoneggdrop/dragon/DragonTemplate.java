@@ -28,8 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Represents a template for a custom dragon to be spawned containing information about
- * its name, the style of its boss bar, as well as the loot table used to generate its loot
- * after it has been killed.
+ * its name, the style of its boss bar, as well as the loot table used to generate its
+ * loot after it has been killed.
  *
  * @author Parker Hawke - Choco
  */
@@ -94,9 +94,8 @@ public class DragonTemplate {
     }
 
     /**
-     * Get the string that identifies this template. If a file was passed
-     * as a parameter in the creation of this template, the file's name
-     * will be used as the identifier.
+     * Get the string that identifies this template. If a file was passed as a parameter
+     * in the creation of this template, the file's name will be used as the identifier.
      *
      * @return the unique template identifier
      */
@@ -105,8 +104,8 @@ public class DragonTemplate {
     }
 
     /**
-     * Get the file in the "dragons" folder that holds information for
-     * this dragon template.
+     * Get the file in the "dragons" folder that holds information for this dragon
+     * template.
      *
      * @return the dragon template file
      */
@@ -178,8 +177,7 @@ public class DragonTemplate {
     }
 
     /**
-     * Get an immutable Map of all attributes and their values according to
-     * this template.
+     * Get an immutable Map of all attributes and their values according to this template.
      *
      * @return the mapped attributes and values
      */
@@ -188,8 +186,8 @@ public class DragonTemplate {
     }
 
     /**
-     * Get the value to be applied for a specific attribute. If the provided
-     * attribute value is not specified, -1 will be returned.
+     * Get the value to be applied for a specific attribute. If the provided attribute
+     * value is not specified, -1 will be returned.
      *
      * @param attribute the attribute to check
      *
@@ -263,10 +261,9 @@ public class DragonTemplate {
             template.spawnWeight = template.configFile.getDouble("spawn-weight", 1);
 
             if (template.configFile.isList("spawn-announcement")) {
-                template.spawnAnnouncement = template.configFile.getStringList("spawn-announcement").stream()
-                        .map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", template.getName())))
-                        .collect(Collectors.toList());
-            } else if (template.configFile.isString("spawn-announcement")) {
+                template.spawnAnnouncement = template.configFile.getStringList("spawn-announcement").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", template.getName()))).collect(Collectors.toList());
+            }
+            else if (template.configFile.isString("spawn-announcement")) {
                 template.spawnAnnouncement = Arrays.asList(ChatColor.translateAlternateColorCodes('&', template.configFile.getString("spawn-announcement").replace("%dragon%", template.getName())));
             }
 

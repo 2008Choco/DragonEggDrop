@@ -67,17 +67,15 @@ public class DEDManager {
     }
 
     /**
-     * Get a template based on its identifier (see {@link DragonTemplate#getId()}).
-     * This search is case-sensitive.
+     * Get a template based on its identifier (see {@link DragonTemplate#getId()}). This
+     * search is case-sensitive.
      *
      * @param template the template's unique identifier
      *
      * @return the resulting template, or null if none exists
      */
     public DragonTemplate getTemplate(String template) {
-        return dragonTemplates.toCollection().stream()
-                .filter(t -> t.getId().equals(template))
-                .findFirst().orElse(null);
+        return dragonTemplates.toCollection().stream().filter(t -> t.getId().equals(template)).findFirst().orElse(null);
     }
 
     /**
@@ -88,9 +86,8 @@ public class DEDManager {
     }
 
     /**
-     * Load and parse all dragon template files from the "dragons" folder.
-     * This method implicitly invokes {@link #clearTemplates()} before loading any
-     * other templates.
+     * Load and parse all dragon template files from the "dragons" folder. This method
+     * implicitly invokes {@link #clearTemplates()} before loading any other templates.
      */
     public void reloadDragonTemplates() {
         this.dragonTemplates.clear();
@@ -101,6 +98,7 @@ public class DEDManager {
      * Get the world wrapper for the specified world.
      *
      * @param world the world to get
+     *
      * @return the world's respective wrapper
      */
     public EndWorldWrapper getWorldWrapper(World world) {
@@ -118,8 +116,8 @@ public class DEDManager {
     }
 
     /**
-     * Clear all world wrapper data. This deletes all information to do with
-     * active battles, as well as the state of a world according to DragonEggDrop.
+     * Clear all world wrapper data. This deletes all information to do with active
+     * battles, as well as the state of a world according to DragonEggDrop.
      */
     public void clearWorldWrappers() {
         this.worldWrappers.clear();

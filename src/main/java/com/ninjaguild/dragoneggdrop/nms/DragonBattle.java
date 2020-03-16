@@ -81,7 +81,10 @@ public class DragonBattle {
             }
 
             Entity dragonEntity = world.getEntity(dragonUUID);
-            if (dragonEntity == null) return null;
+            if (dragonEntity == null) {
+                return null;
+            }
+
             dragon = (EnderDragon) dragonEntity.getBukkitEntity();
 
             fieldWorldServer.setAccessible(false);

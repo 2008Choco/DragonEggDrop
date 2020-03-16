@@ -18,8 +18,8 @@ public enum BattleState {
     CRYSTALS_SPAWNING,
 
     /**
-     * The dragon has started its respawn process, including the spawning
-     * of the crystals on the pillars.
+     * The dragon has started its respawn process, including the spawning of the crystals
+     * on the pillars.
      */
     DRAGON_RESPAWNING,
 
@@ -29,14 +29,12 @@ public enum BattleState {
     BATTLE_COMMENCED,
 
     /**
-     * The battle has ended and the dragon has been slain. Its death
-     * animation is playing.
+     * The battle has ended and the dragon has been slain. Its death animation is playing.
      */
     BATTLE_END,
 
     /**
-     * The particles have started descending to drop the loot (if any
-     * at all).
+     * The particles have started descending to drop the loot (if any at all).
      */
     PARTICLES_START,
 

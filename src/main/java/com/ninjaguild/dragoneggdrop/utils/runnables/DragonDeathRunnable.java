@@ -22,8 +22,8 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Represents a BukkitRunnable that handles the generation and particle display
- * of the loot after the Ender Dragon's death.
+ * Represents a BukkitRunnable that handles the generation and particle display of the
+ * loot after the Ender Dragon's death.
  */
 public class DragonDeathRunnable extends BukkitRunnable {
 
@@ -105,12 +105,13 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         this.location.subtract(0, 1 / particleMultiplier, 0);
         if (particleStreamInterval < 360) {
-            for (int i = 0; i < 360; i += particleStreamInterval){
+            for (int i = 0; i < 360; i += particleStreamInterval) {
                 this.theta += particleStreamInterval;
                 this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
                 this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
             }
-        } else {
+        }
+        else {
             this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
             this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
         }
@@ -131,7 +132,8 @@ public class DragonDeathRunnable extends BukkitRunnable {
                 DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : activeTemplate.getLootTable();
                 if (lootTable != null) {
                     lootTable.generate(dragonBattle, dragon);
-                } else {
+                }
+                else {
                     this.plugin.getLogger().warning("Could not generate loot for template " + activeTemplate.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
                 }
 

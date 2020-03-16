@@ -13,8 +13,7 @@ import org.bukkit.Particle;
 
 /**
  * Represents a defined particle shape. Allows for easy shape-creation with two
- * expressions along the x and z axis, as well as an initial location to start
- * the shape.
+ * expressions along the x and z axis, as well as an initial location to start the shape.
  *
  * @author Parker Hawke - Choco
  */
@@ -26,8 +25,8 @@ public class ParticleShapeDefinition {
     private final MathExpression xExpression, zExpression;
 
     /**
-     * Construct a new ParticleShapeDefinition with a given location, and mathmatical equations
-     * for both the x and z axis.
+     * Construct a new ParticleShapeDefinition with a given location, and mathmatical
+     * equations for both the x and z axis.
      *
      * @param initialLocation the initial starting location
      * @param xExpression the expression for the x axis
@@ -64,16 +63,16 @@ public class ParticleShapeDefinition {
     }
 
     /**
-     * Execute the particle shape definition expressions with current values. To update values,
-     * see {@link #updateVariables(double, double, double, double)}.
+     * Execute the particle shape definition expressions with current values. To update
+     * values, see {@link #updateVariables(double, double, double, double)}.
      *
      * @param particleType the type of particle to display
      * @param particleAmount the amount of particles to display
      * @param xOffset the x offset for each particle
      * @param yOffset the y offset for each particle
      * @param zOffset the z offset for each particle
-     * @param particleExtra the extra value of the particle (generally speed, though this is
-     * dependent on the type of particle used)
+     * @param particleExtra the extra value of the particle (generally speed, though this
+     * is dependent on the type of particle used)
      */
     public void executeExpression(Particle particleType, int particleAmount, double xOffset, double yOffset, double zOffset, double particleExtra) {
         Validate.notNull(particleType, "Cannot spawn Particle of type null");
@@ -119,7 +118,8 @@ public class ParticleShapeDefinition {
         }
 
         /**
-         * Create a new {@link ParticleShapeDefinition} from this prefab starting at the given location.
+         * Create a new {@link ParticleShapeDefinition} from this prefab starting at the
+         * given location.
          *
          * @param location the location at which the shape definition should start
          *

@@ -26,7 +26,7 @@ import org.bukkit.entity.EnderDragon;
 
 public final class TempDataUtils {
 
-    private TempDataUtils() { }
+    private TempDataUtils() {}
 
     public static void writeTempData(DragonEggDrop plugin, File file) throws IOException {
         if (!file.createNewFile()) {

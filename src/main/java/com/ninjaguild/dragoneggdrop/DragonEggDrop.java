@@ -41,8 +41,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
- * DragonEggDrop, reward your players with a dragon egg/loot chest
- * after every ender dragon battle, in grand fashion!
+ * DragonEggDrop, reward your players with a dragon egg/loot chest after every ender
+ * dragon battle, in grand fashion!
  *
  * @author NinjaStix
  * @author Parker Hawke - Choco (Maintainer)
@@ -50,12 +50,14 @@ import org.bukkit.scheduler.BukkitTask;
 public class DragonEggDrop extends JavaPlugin {
 
     /**
-     * The DragonEggDrop prefix bit position. If set, the prefix will be appended to messages.
+     * The DragonEggDrop prefix bit position. If set, the prefix will be appended to
+     * messages.
      */
     public static final int PREFIX = 0x01;
 
     /**
-     * The colour bit position. If set, messages will have their chat colour codes translated.
+     * The colour bit position. If set, messages will have their chat colour codes
+     * translated.
      */
     public static final int COLOUR = 0x02;
 
@@ -127,17 +129,18 @@ public class DragonEggDrop extends JavaPlugin {
                     UpdateChecker.get().requestUpdateCheck().whenComplete((result, exception) -> {
                         if (result.requiresUpdate()) {
                             getLogger().info(String.format("An update is available! DragonEggDrop %s may be downloaded on SpigotMC", result.getNewestVersion()));
-                            Bukkit.getOnlinePlayers().stream().filter(Player::isOp)
-                                .forEach(p -> sendMessage(p, "A new version is available for download (Version " + result.getNewestVersion() + ")"));
+                            Bukkit.getOnlinePlayers().stream().filter(Player::isOp).forEach(p -> sendMessage(p, "A new version is available for download (Version " + result.getNewestVersion() + ")"));
                             return;
                         }
 
                         UpdateReason reason = result.getReason();
                         if (reason == UpdateReason.UP_TO_DATE) {
                             getLogger().info(String.format("Your version of DragonEggDrop (%s) is up to date!", result.getNewestVersion()));
-                        } else if (reason == UpdateReason.UNRELEASED_VERSION) {
+                        }
+                        else if (reason == UpdateReason.UNRELEASED_VERSION) {
                             getLogger().info(String.format("Your version of DragonEggDrop (%s) is more recent than the one publicly available. Are you on a development build?", result.getNewestVersion()));
-                        } else {
+                        }
+                        else {
                             getLogger().warning("Could not check for a new version of DragonEggDrop. Reason: " + reason);
                         }
                     });
@@ -231,7 +234,7 @@ public class DragonEggDrop extends JavaPlugin {
     }
 
     private void saveDefaultDirectory(String directory) {
-        try (JarFile jar = new JarFile(getFile())){
+        try (JarFile jar = new JarFile(getFile())) {
             Enumeration<JarEntry> entries = jar.entries();
 
             while (entries.hasMoreElements()) {

@@ -24,8 +24,8 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Represents a BukkitRunnable that handles the respawning of the Ender Dragon after
- * it has been slain.
+ * Represents a BukkitRunnable that handles the respawning of the Ender Dragon after it
+ * has been slain.
  */
 public class RespawnRunnable extends BukkitRunnable {
 
@@ -58,9 +58,7 @@ public class RespawnRunnable extends BukkitRunnable {
         this.dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
         this.dragon = dragonBattle.getEnderDragon();
 
-        this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream()
-                .map(s -> ChatColor.translateAlternateColorCodes('&', s))
-                .collect(Collectors.toList());
+        this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
         this.announceRespawn = announceMessages.size() > 0;
 
         int announceMessageRadius = plugin.getConfig().getInt("announce-message-radius", -1);
@@ -81,13 +79,12 @@ public class RespawnRunnable extends BukkitRunnable {
                 }
 
                 // Show actionbar messages
-                String message = announceMessages.get(currentMessage++)
-                        .replace("%time%", String.valueOf(secondsUntilRespawn))
-                        .replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
+                String message = announceMessages.get(currentMessage++).replace("%time%", String.valueOf(secondsUntilRespawn)).replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
 
                 if (limitAnnounceToRadius) {
                     NMSUtils.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
-                } else {
+                }
+                else {
                     NMSUtils.broadcastActionBar(message, worldWrapper.getWorld());
                 }
             }

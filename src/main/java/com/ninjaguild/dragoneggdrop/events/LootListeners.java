@@ -42,9 +42,7 @@ public final class LootListeners implements Listener {
 
         DragonLootElementEgg egg = dragon.getLootTable().getEgg();
         String eggName = egg.getName().replace("%dragon%", dragon.getName());
-        List<String> eggLore = egg.getLore().stream()
-                .map(s -> s.replace("%dragon%", dragon.getName()))
-                .collect(Collectors.toList());
+        List<String> eggLore = egg.getLore().stream().map(s -> s.replace("%dragon%", dragon.getName())).collect(Collectors.toList());
 
         ItemMeta eggMeta = stack.getItemMeta();
 

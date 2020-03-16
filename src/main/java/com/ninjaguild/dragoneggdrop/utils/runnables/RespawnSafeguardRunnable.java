@@ -56,7 +56,8 @@ class RespawnSafeguardRunnable extends BukkitRunnable {
     }
 
     /**
-     * Commence a new RespawnSafeguardRunnable. This should only be invoked in a RespawnRunnable.
+     * Commence a new RespawnSafeguardRunnable. This should only be invoked in a
+     * RespawnRunnable.
      *
      * @param plugin the plugin instance
      * @param world the battle's world

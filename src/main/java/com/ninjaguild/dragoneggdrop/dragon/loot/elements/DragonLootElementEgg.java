@@ -17,8 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * An implementation of {@link IDragonLootElement} to represent a dragon egg. This
- * element can be generated as either an item in an inventory or as a block in the world.
+ * An implementation of {@link IDragonLootElement} to represent a dragon egg. This element
+ * can be generated as either an item in an inventory or as a block in the world.
  *
  * @author Parker Hawke - Choco
  */
@@ -99,7 +99,8 @@ public class DragonLootElementEgg implements IDragonLootElement {
     }
 
     /**
-     * Check whether this element's item will be generated in the center slot of the chest.
+     * Check whether this element's item will be generated in the center slot of the
+     * chest.
      *
      * @return true if centered in the inventory, false otherwise
      */

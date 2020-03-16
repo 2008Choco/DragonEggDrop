@@ -39,8 +39,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 /**
- * Represents a dragon's loot table. These tables are used to randomly generate unique loot for
- * every dragon while being reusable for multiple dragons.
+ * Represents a dragon's loot table. These tables are used to randomly generate unique
+ * loot for every dragon while being reusable for multiple dragons.
  *
  * @author Parker Hawke - Choco
  */
@@ -130,9 +130,9 @@ public class DragonLootTable {
     }
 
     /**
-     * Generate loot for the given {@link DragonBattle} and {@link EnderDragon}. All loot pools will
-     * be rolled and generated. The egg will be generated first (and put in a chest if necessary),
-     * then the chest item pools, followed by the command pools.
+     * Generate loot for the given {@link DragonBattle} and {@link EnderDragon}. All loot
+     * pools will be rolled and generated. The egg will be generated first (and put in a
+     * chest if necessary), then the chest item pools, followed by the command pools.
      *
      * @param battle the battle for which to generate loot
      * @param dragon the dragon for which to generate loot
@@ -227,9 +227,9 @@ public class DragonLootTable {
     }
 
     /**
-     * Parse a {@link DragonLootTable} instance from a JSON file. The file extension from the specified
-     * file is validated. If the file is not terminated by .json, an {@link IllegalArgumentException} will
-     * be thrown.
+     * Parse a {@link DragonLootTable} instance from a JSON file. The file extension from
+     * the specified file is validated. If the file is not terminated by .json, an
+     * {@link IllegalArgumentException} will be thrown.
      *
      * @param file the file from which to parse the loot table
      *

@@ -10,23 +10,20 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
- * A powerful utility class to assist in the parsing and evaluation
- * of arithmetic functions with custom variables and operations through
- * a recursive algorithm.
+ * A powerful utility class to assist in the parsing and evaluation of arithmetic
+ * functions with custom variables and operations through a recursive algorithm.
  *
  * @author Parker Hawke - Choco
  */
 public final class MathUtils {
 
     /*
-     * This code is loosely based off of and modified from an original thread
-     * on Stackoverflow's forums:
-     * http://stackoverflow.com/questions/40975678/evaluating-a-math-expression-with-variables-java-8
-     *
-     * Modifications include:
-     *   - Allow for custom arithmetic functions
-     *   - Variables included in the function
-     *   - Java 8 functionality & Object-Oriented format
+     * This code is loosely based off of and modified from an original thread on
+     * Stackoverflow's forums:
+     * http://stackoverflow.com/questions/40975678/evaluating-a-math-expression-
+     * with-variables-java-8 Modifications include: - Allow for custom arithmetic
+     * functions - Variables included in the function - Java 8 functionality &
+     * Object-Oriented format
      */
 
     private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)([wdhms])");
@@ -52,14 +49,14 @@ public final class MathUtils {
         OPERATORS.put("deg", Math::toDegrees);
     }
 
-    private MathUtils() { }
+    private MathUtils() {}
 
     /**
      * Evaluate a mathematical expression with given variables.
      *
      * @param expression the string to parse
-     * @param variables the map containing necessary variables for this expression
-     * (To modify variables at any given time between evaluations, replace values in the map)
+     * @param variables the map containing necessary variables for this expression (To
+     * modify variables at any given time between evaluations, replace values in the map)
      *
      * @return The mathematical expression
      */
@@ -152,9 +149,9 @@ public final class MathUtils {
     }
 
     /**
-     * Get a formatted time String from a time in seconds. Formatted time should be
-     * in the format, "x hours, y minutes, z seconds". Alternatively, if time is 0,
-     * "now", or "invalid seconds" otherwise.
+     * Get a formatted time String from a time in seconds. Formatted time should be in the
+     * format, "x hours, y minutes, z seconds". Alternatively, if time is 0, "now", or
+     * "invalid seconds" otherwise.
      *
      * @param timeInSeconds the time in seconds
      *
@@ -244,10 +241,11 @@ public final class MathUtils {
         }
 
         /**
-         * Attempt to find a given character at the next position in
-         * the expression (whilst ignoring whitespace characters).
+         * Attempt to find a given character at the next position in the expression
+         * (whilst ignoring whitespace characters).
          *
          * @param charToEat the character to find
+         *
          * @return true if found. False otherwise
          */
         public boolean eat(int charToEat) {
@@ -264,8 +262,7 @@ public final class MathUtils {
         }
 
         /**
-         * Parse the provided function into a MathExpression using
-         * recursive functions.
+         * Parse the provided function into a MathExpression using recursive functions.
          *
          * @return the parsed mathematical expression
          */
@@ -274,7 +271,7 @@ public final class MathUtils {
 
             MathExpression x = this.parseExpression();
             if (pos < expression.length()) {
-                throw new RuntimeException("Unexpected: " + (char)ch);
+                throw new RuntimeException("Unexpected: " + (char) ch);
             }
 
             return x;
@@ -289,8 +286,8 @@ public final class MathUtils {
          */
 
         /**
-         * Parse an entire sub-expression in the parent expression
-         * (including addition and subtraction).
+         * Parse an entire sub-expression in the parent expression (including addition and
+         * subtraction).
          *
          * @return the parsed expression
          */
@@ -301,18 +298,19 @@ public final class MathUtils {
                 if (eat('+')) { // addition
                     MathExpression a = x, b = parseTerm();
                     x = (() -> a.evaluate() + b.evaluate());
-                } else if (eat('-')) { // subtraction
+                }
+                else if (eat('-')) { // subtraction
                     MathExpression a = x, b = parseTerm();
                     x = (() -> a.evaluate() - b.evaluate());
-                } else {
+                }
+                else {
                     return x;
                 }
             }
         }
 
         /**
-         * Parse a term in the parent expression (including
-         * multiplication and division).
+         * Parse a term in the parent expression (including multiplication and division).
          *
          * @return the parsed term
          */
@@ -320,22 +318,23 @@ public final class MathUtils {
             MathExpression x = parseFactor();
 
             while (true) {
-                if (eat('*')){ // multiplication
+                if (eat('*')) { // multiplication
                     MathExpression a = x, b = parseFactor();
                     x = (() -> a.evaluate() * b.evaluate());
-                } else if (eat('/')) { // division
+                }
+                else if (eat('/')) { // division
                     MathExpression a = x, b = parseFactor();
                     x = (() -> a.evaluate() / b.evaluate());
-                } else {
+                }
+                else {
                     return x;
                 }
             }
         }
 
         /**
-         * Parse a factor in the parent expression (including
-         * addition, subtraction, parentheses and injected
-         * operation functions).
+         * Parse a factor in the parent expression (including addition, subtraction,
+         * parentheses and injected operation functions).
          *
          * @return the parsed factor
          */
@@ -344,7 +343,7 @@ public final class MathUtils {
                 return parseFactor(); // unary plus
             }
 
-            if (eat('-')){
+            if (eat('-')) {
                 return () -> -parseFactor().evaluate(); // unary minus
             }
 
@@ -354,14 +353,16 @@ public final class MathUtils {
             if (eat('(')) { // parentheses
                 x = parseExpression();
                 this.eat(')');
-            } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
+            }
+            else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
                 while ((ch >= '0' && ch <= '9') || ch == '.') {
                     this.nextChar();
                 }
 
                 String value = expression.substring(startPos, this.pos);
                 x = (() -> Double.parseDouble(value));
-            } else if (ch >= 'a' && ch <= 'z') { // functions
+            }
+            else if (ch >= 'a' && ch <= 'z') { // functions
                 while (ch >= 'a' && ch <= 'z') {
                     this.nextChar();
                 }
@@ -372,10 +373,12 @@ public final class MathUtils {
                     DoubleUnaryOperator operand = OPERATORS.get(function);
                     MathExpression a = this.parseFactor();
                     x = (() -> operand.applyAsDouble(a.evaluate()));
-                } else {
+                }
+                else {
                     x = (() -> variables != null ? variables.getOrDefault(function, 0.0) : 0);
                 }
-            } else {
+            }
+            else {
                 throw new ArithmeticException("Unexpected: \"" + ch + "\"");
             }
 

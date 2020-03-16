@@ -78,9 +78,8 @@ public class DragonLootTableRegistry {
     }
 
     /**
-     * Load and parse all dragon loot table files from the "loot_tables" folder.
-     * This method implicitly invokes {@link #clear()} before loading any other
-     * loot tables.
+     * Load and parse all dragon loot table files from the "loot_tables" folder. This
+     * method implicitly invokes {@link #clear()} before loading any other loot tables.
      */
     public void reloadDragonLootTables() {
         this.clear();

@@ -11,9 +11,8 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang.Validate;
 
 /**
- * An implementation of a Collection based on a TreeMap. The goal of
- * the RandomCollection is to simplify the process of retrieving a
- * random object based on its mapped weight.
+ * An implementation of a Collection based on a TreeMap. The goal of the RandomCollection
+ * is to simplify the process of retrieving a random object based on its mapped weight.
  *
  * @param <E> - The type of object to be stored in the Collection
  */
@@ -89,8 +88,8 @@ public class RandomCollection<E> {
     }
 
     /**
-     * Retrieve the next object, being a random object in the collection
-     * based on its weighted value.
+     * Retrieve the next object, being a random object in the collection based on its
+     * weighted value.
      *
      * @return a random weighted object
      */
@@ -102,8 +101,8 @@ public class RandomCollection<E> {
     }
 
     /**
-     * Retrieve the next object, being a random object in the collection
-     * based on its weighted value.
+     * Retrieve the next object, being a random object in the collection based on its
+     * weighted value.
      *
      * @param random a random instance
      *
@@ -143,8 +142,8 @@ public class RandomCollection<E> {
     }
 
     /**
-     * Get the values of this random collection as an iterable java.util.Collection
-     * object for easy manoeuvrability.
+     * Get the values of this random collection as an iterable java.util.Collection object
+     * for easy manoeuvrability.
      *
      * @return the resulting collection
      */
@@ -156,7 +155,6 @@ public class RandomCollection<E> {
      * Copy a RandomCollection with identical elements and Random instance.
      *
      * @param toCopy the collection to copy
-     *
      * @param <E> - The type of object stored in the Collections
      *
      * @return the collection copy

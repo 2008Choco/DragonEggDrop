@@ -45,9 +45,9 @@ public class DamageHistory {
 
     /**
      * Get the Entity instance to which this damage history belongs. Note that internally
-     * this makes a call to {@link Bukkit#getEntity(UUID)} on {@link #getEntityUUID()}. Therefore
-     * this may return null! One should take caution in using the result of this method without
-     * first checking for nullability.
+     * this makes a call to {@link Bukkit#getEntity(UUID)} on {@link #getEntityUUID()}.
+     * Therefore this may return null! One should take caution in using the result of this
+     * method without first checking for nullability.
      *
      * @return the belonging entity
      *
@@ -80,8 +80,8 @@ public class DamageHistory {
     }
 
     /**
-     * Get the entity that caused the most amount of damage to this entity. This
-     * comes paired with the amount of total damage done.
+     * Get the entity that caused the most amount of damage to this entity. This comes
+     * paired with the amount of total damage done.
      *
      * @return the top damager
      */
@@ -94,9 +94,10 @@ public class DamageHistory {
     }
 
     /**
-     * Get the top damager at the given offset (from most amount of damage + offset). For example,
-     * if fetching at the offset of 1, the second top damager will be retrieved. If offset of 2,
-     * third most. So on and so forth. Offset 0 would be equivalent to {@link #getTopDamager()}.
+     * Get the top damager at the given offset (from most amount of damage + offset). For
+     * example, if fetching at the offset of 1, the second top damager will be retrieved.
+     * If offset of 2, third most. So on and so forth. Offset 0 would be equivalent to
+     * {@link #getTopDamager()}.
      *
      * @param offset the damage entry offset. Must be < {@link #uniqueDamagers()}
      *
@@ -118,11 +119,12 @@ public class DamageHistory {
 
     /**
      * Get an array of entities that caused the most amount of damage to this entity in
-     * order of most amount of damage (first index) to least amount of damage (last index).
-     * This comes paired with the amount of total damage done by each entity.
+     * order of most amount of damage (first index) to least amount of damage (last
+     * index). This comes paired with the amount of total damage done by each entity.
      * <p>
-     * If more damagers are queried than is available, the resulting array will fill as much
-     * as it can after which point null will be used to represent unrecorded or unavailable data.
+     * If more damagers are queried than is available, the resulting array will fill as
+     * much as it can after which point null will be used to represent unrecorded or
+     * unavailable data.
      *
      * @param amount the amount of damagers to retrieve. Must be greater than 0
      *
@@ -237,8 +239,8 @@ public class DamageHistory {
     }
 
     /**
-     * Clear all total damage and damage history from this history. This is equivalent to calling
-     * both {@link #clearTotalDamage()} and {@link #clearDamageHistory()}.
+     * Clear all total damage and damage history from this history. This is equivalent to
+     * calling both {@link #clearTotalDamage()} and {@link #clearDamageHistory()}.
      */
     public void clear() {
         this.clearTotalDamage();
@@ -246,8 +248,8 @@ public class DamageHistory {
     }
 
     /**
-     * Get the {@link DamageHistory} associated with the given entity. This method will never
-     * return null.
+     * Get the {@link DamageHistory} associated with the given entity. This method will
+     * never return null.
      *
      * @param entity the entity whose history to get
      *
@@ -297,10 +299,11 @@ public class DamageHistory {
         }
 
         /**
-         * Get the Entity instance to which this damage entry is attributed. Note that internally
-         * this makes a call to {@link Bukkit#getEntity(UUID)} on {@link #getEntityUUID()}. Therefore
-         * this may return null! One should take caution in using the result of this method without
-         * first checking for nullability.
+         * Get the Entity instance to which this damage entry is attributed. Note that
+         * internally this makes a call to {@link Bukkit#getEntity(UUID)} on
+         * {@link #getEntityUUID()}. Therefore this may return null! One should take
+         * caution in using the result of this method without first checking for
+         * nullability.
          *
          * @return the source entity
          *

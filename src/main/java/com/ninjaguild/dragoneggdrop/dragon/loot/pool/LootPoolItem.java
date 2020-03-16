@@ -23,8 +23,10 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      *
      * @param name this pool's name. Can be null
      * @param chance the chance that this loot pool will generate
-     * @param minRolls the minimum amount of times this loot pool should be rolled (inclusive).
-     * @param maxRolls the maximum amount of times this loot pool should be rolled (inclusive).
+     * @param minRolls the minimum amount of times this loot pool should be rolled
+     * (inclusive).
+     * @param maxRolls the maximum amount of times this loot pool should be rolled
+     * (inclusive).
      * @param itemElements the elements in this loot pool
      */
     public LootPoolItem(String name, double chance, int minRolls, int maxRolls, Collection<DragonLootElementItem> itemElements) {
@@ -47,8 +49,10 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      * Create an item loot pool.
      *
      * @param name this pool's name. Can be null
-     * @param minRolls the minimum amount of times this loot pool should be rolled (inclusive).
-     * @param maxRolls the maximum amount of times this loot pool should be rolled (inclusive).
+     * @param minRolls the minimum amount of times this loot pool should be rolled
+     * (inclusive).
+     * @param maxRolls the maximum amount of times this loot pool should be rolled
+     * (inclusive).
      * @param itemElements the elements in this loot pool
      */
     public LootPoolItem(String name, int minRolls, int maxRolls, Collection<DragonLootElementItem> itemElements) {

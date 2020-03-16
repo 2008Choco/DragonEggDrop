@@ -24,25 +24,29 @@ import org.bukkit.plugin.java.JavaPlugin;
  * preferrably in its {@link JavaPlugin#onEnable()} method, though that is not a
  * requirement.
  * <p>
- * This class performs asynchronous queries to <a href="https://spiget.org">SpiGet</a>,
- * an REST server which is updated periodically. If the results of {@link #requestUpdateCheck()}
- * are inconsistent with what is published on SpigotMC, it may be due to SpiGet's cache.
- * Results will be updated in due time.
+ * This class performs asynchronous queries to <a href="https://spiget.org">SpiGet</a>, an
+ * REST server which is updated periodically. If the results of
+ * {@link #requestUpdateCheck()} are inconsistent with what is published on SpigotMC, it
+ * may be due to SpiGet's cache. Results will be updated in due time.
  *
  * @author Parker Hawke - Choco
  */
 public final class UpdateChecker {
 
     public static final VersionScheme VERSION_SCHEME_DECIMAL = (first, second) -> {
-        String[] firstSplit = splitVersionInfo(first), secondSplit = splitVersionInfo(second);
-        if (firstSplit == null || secondSplit == null) return null;
+        String[] firstSplit = splitVersionInfo(first),
+                        secondSplit = splitVersionInfo(second);
+        if (firstSplit == null || secondSplit == null)
+            return null;
 
         for (int i = 0; i < Math.min(firstSplit.length, secondSplit.length); i++) {
-            int currentValue = NumberUtils.toInt(firstSplit[i]), newestValue = NumberUtils.toInt(secondSplit[i]);
+            int currentValue = NumberUtils.toInt(firstSplit[i]),
+                            newestValue = NumberUtils.toInt(secondSplit[i]);
 
             if (newestValue > currentValue) {
                 return second;
-            } else if (newestValue < currentValue) {
+            }
+            else if (newestValue < currentValue) {
                 return first;
             }
         }
@@ -69,8 +73,8 @@ public final class UpdateChecker {
     }
 
     /**
-     * Request an update check to SpiGet. This request is asynchronous and may not complete
-     * immediately as an HTTP GET request is published to the SpiGet API.
+     * Request an update check to SpiGet. This request is asynchronous and may not
+     * complete immediately as an HTTP GET request is published to the SpiGet API.
      *
      * @return a future update result
      */
@@ -93,14 +97,17 @@ public final class UpdateChecker {
                 reader.close();
 
                 JsonObject versionObject = element.getAsJsonArray().get(0).getAsJsonObject();
-                String current = plugin.getDescription().getVersion(), newest = versionObject.get("name").getAsString();
+                String current = plugin.getDescription().getVersion(),
+                                newest = versionObject.get("name").getAsString();
                 String latest = versionScheme.compareVersions(current, newest);
 
                 if (latest == null) {
                     return new UpdateResult(UpdateReason.UNSUPPORTED_VERSION_SCHEME);
-                } else if (latest.equals(current)) {
+                }
+                else if (latest.equals(current)) {
                     return new UpdateResult(current.equals(newest) ? UpdateReason.UP_TO_DATE : UpdateReason.UNRELEASED_VERSION);
-                } else if (latest.equals(newest)) {
+                }
+                else if (latest.equals(newest)) {
                     return new UpdateResult(UpdateReason.NEW_UPDATE, latest);
                 }
             } catch (IOException e) {
@@ -114,8 +121,9 @@ public final class UpdateChecker {
     }
 
     /**
-     * Get the last update result that was queried by {@link #requestUpdateCheck()}. If no update
-     * check was performed since this class' initialization, this method will return null.
+     * Get the last update result that was queried by {@link #requestUpdateCheck()}. If no
+     * update check was performed since this class' initialization, this method will
+     * return null.
      *
      * @return the last update check result. null if none.
      */
@@ -125,20 +133,21 @@ public final class UpdateChecker {
 
     private static String[] splitVersionInfo(String version) {
         Matcher matcher = DECIMAL_SCHEME_PATTERN.matcher(version);
-        if (!matcher.find()) return null;
+        if (!matcher.find())
+            return null;
 
         return matcher.group().split("\\.");
     }
 
     /**
-     * Initialize this update checker with the specified values and return its instance. If an instance
-     * of UpdateChecker has already been initialized, this method will act similarly to {@link #get()}
-     * (which is recommended after initialization).
+     * Initialize this update checker with the specified values and return its instance.
+     * If an instance of UpdateChecker has already been initialized, this method will act
+     * similarly to {@link #get()} (which is recommended after initialization).
      *
      * @param plugin the plugin for which to check updates. Cannot be null
-     * @param pluginID the ID of the plugin as identified in the SpigotMC resource link. For example,
-     * "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would expect "12038" as a value. The
-     * value must be greater than 0
+     * @param pluginID the ID of the plugin as identified in the SpigotMC resource link.
+     * For example, "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would
+     * expect "12038" as a value. The value must be greater than 0
      * @param versionScheme a custom version scheme parser. Cannot be null
      *
      * @return the UpdateChecker instance
@@ -152,14 +161,14 @@ public final class UpdateChecker {
     }
 
     /**
-     * Initialize this update checker with the specified values and return its instance. If an instance
-     * of UpdateChecker has already been initialized, this method will act similarly to {@link #get()}
-     * (which is recommended after initialization).
+     * Initialize this update checker with the specified values and return its instance.
+     * If an instance of UpdateChecker has already been initialized, this method will act
+     * similarly to {@link #get()} (which is recommended after initialization).
      *
      * @param plugin the plugin for which to check updates. Cannot be null
-     * @param pluginID the ID of the plugin as identified in the SpigotMC resource link. For example,
-     * "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would expect "12038" as a value. The
-     * value must be greater than 0
+     * @param pluginID the ID of the plugin as identified in the SpigotMC resource link.
+     * For example, "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would
+     * expect "12038" as a value. The value must be greater than 0
      *
      * @return the UpdateChecker instance
      */
@@ -168,8 +177,8 @@ public final class UpdateChecker {
     }
 
     /**
-     * Get the initialized instance of UpdateChecker. If {@link #init(JavaPlugin, int)} has not yet been
-     * invoked, this method will throw an exception.
+     * Get the initialized instance of UpdateChecker. If {@link #init(JavaPlugin, int)}
+     * has not yet been invoked, this method will throw an exception.
      *
      * @return the UpdateChecker instance
      */
@@ -179,8 +188,8 @@ public final class UpdateChecker {
     }
 
     /**
-     * Check whether the UpdateChecker has been initialized or not (if {@link #init(JavaPlugin, int)}
-     * has been invoked) and {@link #get()} is safe to use.
+     * Check whether the UpdateChecker has been initialized or not (if
+     * {@link #init(JavaPlugin, int)} has been invoked) and {@link #get()} is safe to use.
      *
      * @return true if initialized, false otherwise
      */
@@ -196,8 +205,9 @@ public final class UpdateChecker {
     public static interface VersionScheme {
 
         /**
-         * Compare two versions and return the higher of the two. If null is returned, it is assumed
-         * that at least one of the two versions are unsupported by this version scheme parser.
+         * Compare two versions and return the higher of the two. If null is returned, it
+         * is assumed that at least one of the two versions are unsupported by this
+         * version scheme parser.
          *
          * @param first the first version to check
          * @param second the second version to check
@@ -234,8 +244,8 @@ public final class UpdateChecker {
         UNAUTHORIZED_QUERY,
 
         /**
-         * The version of the plugin installed on the server is greater than the one uploaded
-         * to SpigotMC's resources section.
+         * The version of the plugin installed on the server is greater than the one
+         * uploaded to SpigotMC's resources section.
          */
         UNRELEASED_VERSION,
 
@@ -245,20 +255,22 @@ public final class UpdateChecker {
         UNKNOWN_ERROR,
 
         /**
-         * The plugin uses an unsupported version scheme, therefore a proper comparison between
-         * versions could not be made.
+         * The plugin uses an unsupported version scheme, therefore a proper comparison
+         * between versions could not be made.
          */
         UNSUPPORTED_VERSION_SCHEME,
 
         /**
-         * The plugin is up to date with the version released on SpigotMC's resources section.
+         * The plugin is up to date with the version released on SpigotMC's resources
+         * section.
          */
         UP_TO_DATE;
 
     }
 
     /**
-     * Represents a result for an update query performed by {@link UpdateChecker#requestUpdateCheck()}.
+     * Represents a result for an update query performed by
+     * {@link UpdateChecker#requestUpdateCheck()}.
      */
     public final class UpdateResult {
 
@@ -299,8 +311,8 @@ public final class UpdateChecker {
         }
 
         /**
-         * Get the latest version of the plugin. This may be the currently installed version, it
-         * may not be. This depends entirely on the result of the update.
+         * Get the latest version of the plugin. This may be the currently installed
+         * version, it may not be. This depends entirely on the result of the update.
          *
          * @return the newest version of the plugin
          */
