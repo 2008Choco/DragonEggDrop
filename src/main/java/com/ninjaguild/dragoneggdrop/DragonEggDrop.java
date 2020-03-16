@@ -15,17 +15,16 @@ import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
-import com.ninjaguild.dragoneggdrop.events.DamageHistoryListener;
-import com.ninjaguild.dragoneggdrop.events.DragonLifeListeners;
-import com.ninjaguild.dragoneggdrop.events.LootListeners;
-import com.ninjaguild.dragoneggdrop.events.PortalClickListener;
-import com.ninjaguild.dragoneggdrop.events.RespawnListeners;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.listeners.DamageHistoryListener;
+import com.ninjaguild.dragoneggdrop.listeners.DragonLifeListeners;
+import com.ninjaguild.dragoneggdrop.listeners.LootListeners;
+import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
+import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -72,7 +71,6 @@ public class DragonEggDrop extends JavaPlugin {
 
     private static DragonEggDrop instance;
 
-    private DEDManager dedManager;
     private DragonLootTableRegistry lootTableRegistry;
 
     private BukkitTask updateTask;
@@ -94,8 +92,7 @@ public class DragonEggDrop extends JavaPlugin {
         this.lootTableRegistry = new DragonLootTableRegistry();
         this.lootTableRegistry.reloadDragonLootTables();
 
-        this.dedManager = new DEDManager(this);
-        this.dedManager.reloadDragonTemplates();
+        DragonTemplate.reload();
 
         // Load temp data (reload support)
         this.tempDataFile = new File(getDataFolder(), "tempData.json");
@@ -107,7 +104,7 @@ public class DragonEggDrop extends JavaPlugin {
         // Register events
         PluginManager manager = Bukkit.getPluginManager();
         manager.registerEvents(new DragonLifeListeners(this), this);
-        manager.registerEvents(new LootListeners(this), this);
+        manager.registerEvents(new LootListeners(), this);
         manager.registerEvents(new RespawnListeners(this), this);
         manager.registerEvents(new PortalClickListener(this), this);
         manager.registerEvents(new DamageHistoryListener(), this);
@@ -156,19 +153,18 @@ public class DragonEggDrop extends JavaPlugin {
         }
 
         try {
-            TempDataUtils.writeTempData(this, tempDataFile);
+            TempDataUtils.writeTempData(tempDataFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         this.lootTableRegistry.clear();
-        this.dedManager.clearTemplates();
-
+        DragonTemplate.clear();
         DamageHistory.clearGlobalDamageHistory();
 
         // Clear the world wrappers
-        this.dedManager.getWorldWrappers().forEach(EndWorldWrapper::stopRespawn);
-        this.dedManager.clearWorldWrappers();
+        EndWorldWrapper.getAll().forEach(EndWorldWrapper::stopRespawn);
+        EndWorldWrapper.clear();
     }
 
     /**
@@ -204,15 +200,6 @@ public class DragonEggDrop extends JavaPlugin {
      */
     public void sendMessage(CommandSender sender, String message) {
         this.sendMessage(sender, message, PREFIX);
-    }
-
-    /**
-     * Get the main DEDManager instance.
-     *
-     * @return the DEDManager instance
-     */
-    public DEDManager getDEDManager() {
-        return dedManager;
     }
 
     /**

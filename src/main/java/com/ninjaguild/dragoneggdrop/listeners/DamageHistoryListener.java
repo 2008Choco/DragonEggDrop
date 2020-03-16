@@ -1,4 +1,4 @@
-package com.ninjaguild.dragoneggdrop.events;
+package com.ninjaguild.dragoneggdrop.listeners;
 
 import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 

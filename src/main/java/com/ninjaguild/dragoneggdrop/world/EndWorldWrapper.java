@@ -1,13 +1,16 @@
-package com.ninjaguild.dragoneggdrop.management;
+package com.ninjaguild.dragoneggdrop.world;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
-import com.ninjaguild.dragoneggdrop.utils.runnables.RespawnRunnable;
+import com.ninjaguild.dragoneggdrop.tasks.RespawnRunnable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -21,6 +24,8 @@ import org.bukkit.entity.EnderDragon;
  * @author Parker Hawke - Choco
  */
 public class EndWorldWrapper {
+
+    private static final Map<UUID, EndWorldWrapper> WRAPPERS = new HashMap<>();
 
     private DragonTemplate activeTemplate, respawningTemplate, previousTemplate;
     private DragonLootTable lootTableOverride = null;
@@ -36,10 +41,10 @@ public class EndWorldWrapper {
      * @param plugin the plugin instance
      * @param world the world to wrap
      */
-    protected EndWorldWrapper(DragonEggDrop plugin, World world) {
+    protected EndWorldWrapper(World world) {
         Preconditions.checkArgument(world.getEnvironment() == Environment.THE_END, "EndWorldWrapper worlds must be of environment \"THE_END\"");
 
-        this.plugin = plugin;
+        this.plugin = DragonEggDrop.getInstance();
         this.world = world.getUID();
     }
 
@@ -128,7 +133,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(int, DragonTemplate)
      */
     public boolean startRespawn(int respawnDelay) {
-        return startRespawn(respawnDelay, plugin.getDEDManager().getRandomTemplate(), null);
+        return startRespawn(respawnDelay, DragonTemplate.randomTemplate(), null);
     }
 
     /**
@@ -144,7 +149,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(int)
      */
     public boolean startRespawn(RespawnReason reason) {
-        return startRespawn(reason.getRespawnTime(plugin.getConfig()), plugin.getDEDManager().getRandomTemplate(), null);
+        return startRespawn(reason.getRespawnTime(plugin.getConfig()), DragonTemplate.randomTemplate(), null);
     }
 
     /**
@@ -271,6 +276,35 @@ public class EndWorldWrapper {
      */
     public boolean hasLootTableOverride() {
         return lootTableOverride != null;
+    }
+
+    /**
+     * Get the world wrapper for the specified world.
+     *
+     * @param world the world to get
+     *
+     * @return the world's respective wrapper
+     */
+    public static EndWorldWrapper of(World world) {
+        Preconditions.checkArgument(world != null, "Cannot get wrapper for non-existent (null) world");
+        return WRAPPERS.computeIfAbsent(world.getUID(), uuid -> new EndWorldWrapper(world));
+    }
+
+    /**
+     * Get an unmodifiable collection of all world wrappers.
+     *
+     * @return all world wrappers
+     */
+    public static Collection<EndWorldWrapper> getAll() {
+        return Collections.unmodifiableCollection(WRAPPERS.values());
+    }
+
+    /**
+     * Clear all world wrapper data. This deletes all information to do with active
+     * battles, as well as the state of a world according to DragonEggDrop.
+     */
+    public static void clear() {
+        WRAPPERS.clear();
     }
 
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
 
 /**
  * Represents a registry for all {@link DragonLootTable} instances. It is from here that
@@ -71,7 +70,7 @@ public class DragonLootTableRegistry {
 
     /**
      * Clear all loot tables from the registry. This will not remove loot tables from any
-     * dragon templates that have already been loaded by the {@link DEDManager}.
+     * dragon templates that have already been loaded and registered.
      */
     public void clear() {
         this.tables.clear();

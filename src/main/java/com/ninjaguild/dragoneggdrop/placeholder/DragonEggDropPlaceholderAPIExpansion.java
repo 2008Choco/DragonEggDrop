@@ -7,9 +7,9 @@ import java.util.regex.Matcher;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -69,7 +69,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
                 return "no dragon in this world";
             }
 
-            EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             DragonTemplate template = endWorld.getActiveTemplate();
             return (template != null) ? template.getName() : null;
         }
@@ -80,7 +80,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
                 return "no dragon in this world";
             }
 
-            EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             DragonTemplate template = endWorld.getActiveTemplate();
             return (template != null) ? template.getName() : "no dragon";
         }
@@ -95,7 +95,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
                 return "no respawn in this world";
             }
 
-            EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn()) : "no respawn in progress";
         }
 
@@ -105,7 +105,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
                 return "invalid world";
             }
 
-            EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn()) : null;
         }
 
@@ -126,7 +126,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             }
 
             DamageHistory history = null;
-            EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             if (endWorld.getActiveTemplate() != null) {
                 history = DamageHistory.forEntity(NMSUtils.getEnderDragonBattleFromWorld(world).getEnderDragon());
             }
@@ -158,7 +158,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             }
 
             DamageHistory history = null;
-            EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             if (endWorld.getActiveTemplate() != null) {
                 history = DamageHistory.forEntity(NMSUtils.getEnderDragonBattleFromWorld(world).getEnderDragon());
             }

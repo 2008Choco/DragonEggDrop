@@ -16,9 +16,8 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -28,14 +27,14 @@ public final class TempDataUtils {
 
     private TempDataUtils() {}
 
-    public static void writeTempData(DragonEggDrop plugin, File file) throws IOException {
+    public static void writeTempData(File file) throws IOException {
         if (!file.createNewFile()) {
             return;
         }
 
         JsonObject root = new JsonObject();
 
-        for (EndWorldWrapper world : plugin.getDEDManager().getWorldWrappers()) {
+        for (EndWorldWrapper world : EndWorldWrapper.getAll()) {
             if (!world.isRespawnInProgress() && world.getActiveTemplate() == null) {
                 return;
             }
@@ -76,7 +75,6 @@ public final class TempDataUtils {
             return;
         }
 
-        DEDManager manager = plugin.getDEDManager();
         DragonLootTableRegistry lootTableRegistry = plugin.getLootTableRegistry();
 
         for (Entry<String, JsonElement> entry : root.entrySet()) {
@@ -86,7 +84,7 @@ public final class TempDataUtils {
                 return;
             }
 
-            EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+            EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             JsonObject element = entry.getValue().getAsJsonObject();
 
             if (element.has("respawnTime")) {
@@ -98,7 +96,7 @@ public final class TempDataUtils {
             }
 
             if (element.has("respawnTemplate")) {
-                DragonTemplate template = manager.getTemplate(element.get("respawnTemplate").getAsString());
+                DragonTemplate template = DragonTemplate.getById(element.get("respawnTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setRespawningTemplate(template);
                 }
@@ -106,7 +104,7 @@ public final class TempDataUtils {
 
             Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
             if (element.has("activeTemplate") && !dragons.isEmpty()) {
-                DragonTemplate template = manager.getTemplate(element.get("activeTemplate").getAsString());
+                DragonTemplate template = DragonTemplate.getById(element.get("activeTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setActiveTemplate(template);
                     template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));

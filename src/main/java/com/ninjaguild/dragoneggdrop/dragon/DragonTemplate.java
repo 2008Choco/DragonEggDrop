@@ -3,7 +3,10 @@ package com.ninjaguild.dragoneggdrop.dragon;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,6 +17,7 @@ import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
@@ -36,6 +40,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class DragonTemplate {
 
     public static final File DRAGONS_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "dragons/");
+
+    private static final Map<String, DragonTemplate> REGISTRY_BY_ID = new HashMap<>();
+    private static final RandomCollection<DragonTemplate> REGISTRY_WEIGHTED = new RandomCollection<>();
 
     protected final File file;
     protected final FileConfiguration configFile;
@@ -235,6 +242,73 @@ public class DragonTemplate {
         if (attributes.containsKey(Attribute.GENERIC_MAX_HEALTH)) {
             dragon.setHealth(attributes.get(Attribute.GENERIC_MAX_HEALTH));
         }
+    }
+
+    /**
+     * Register a dragon template in order for it to be used when generating dragons in
+     * the respawn process.
+     *
+     * @param template the template to register
+     */
+    public static void register(DragonTemplate template) {
+        Preconditions.checkArgument(template != null, "Cannot register null templates");
+
+        String id = template.getId();
+        if (REGISTRY_BY_ID.containsKey(template.getId())) {
+            throw new UnsupportedOperationException("Cannot register two templates with the same identifier (" + template.getId() + ")");
+        }
+
+        REGISTRY_BY_ID.put(id, template);
+        REGISTRY_WEIGHTED.add(template.spawnWeight, template);
+    }
+
+    /**
+     * Get a template based on its id (see {@link DragonTemplate#getId()}). This search
+     * is case-sensitive.
+     *
+     * @param id the template's unique id
+     *
+     * @return the resulting template, or null if none exists
+     */
+    public static DragonTemplate getById(String id) {
+        return REGISTRY_BY_ID.get(id);
+    }
+
+    /**
+     * Get a weighted random dragon template pooled from all loaded templates.
+     *
+     * @return a random dragon template. null if none
+     *
+     * @see #getAll()
+     */
+    public static DragonTemplate randomTemplate() {
+        return REGISTRY_WEIGHTED.next();
+    }
+
+    /**
+     * Get an unmodifiable collection of all registered dragon templates.
+     *
+     * @return all dragon templates
+     */
+    public static Collection<DragonTemplate> getAll() {
+        return Collections.unmodifiableCollection(REGISTRY_WEIGHTED.values());
+    }
+
+    /**
+     * Clear all loaded dragon templates.
+     */
+    public static void clear() {
+        REGISTRY_BY_ID.clear();
+        REGISTRY_WEIGHTED.clear();
+    }
+
+    /**
+     * Load and parse all dragon template files from the "dragons" folder. This method
+     * implicitly invokes {@link #clear()} before loading any other templates.
+     */
+    public static void reload() {
+        DragonTemplate.clear();
+        DragonTemplate.loadTemplates().forEach(DragonTemplate::register);
     }
 
     /**

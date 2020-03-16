@@ -1,4 +1,4 @@
-package com.ninjaguild.dragoneggdrop.utils.runnables;
+package com.ninjaguild.dragoneggdrop.tasks;
 
 import com.google.common.base.Enums;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
@@ -6,11 +6,11 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
-import com.ninjaguild.dragoneggdrop.utils.ParticleShapeDefinition;
+import com.ninjaguild.dragoneggdrop.utils.math.ParticleShapeDefinition;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

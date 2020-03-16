@@ -1,4 +1,4 @@
-package com.ninjaguild.dragoneggdrop.events;
+package com.ninjaguild.dragoneggdrop.listeners;
 
 import java.util.List;
 
@@ -7,10 +7,10 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
-import com.ninjaguild.dragoneggdrop.utils.runnables.DragonDeathRunnable;
+import com.ninjaguild.dragoneggdrop.tasks.DragonDeathRunnable;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,7 +51,7 @@ public final class DragonLifeListeners implements Listener {
         }
 
         DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
-        EndWorldWrapper world = plugin.getDEDManager().getWorldWrapper(dragon.getWorld());
+        EndWorldWrapper world = EndWorldWrapper.of(dragon.getWorld());
 
         DragonTemplate template = world.getRespawningTemplate();
         System.out.println("Respawning template: " + (template != null ? template.getId() : "null"));
@@ -85,7 +85,7 @@ public final class DragonLifeListeners implements Listener {
         DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
 
         World world = event.getEntity().getWorld();
-        EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
+        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_COMMENCED, BattleState.BATTLE_END);
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
@@ -111,7 +111,7 @@ public final class DragonLifeListeners implements Listener {
         }
 
         World world = player.getWorld();
-        EndWorldWrapper worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
+        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
         if (worldWrapper.isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
             List<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
 

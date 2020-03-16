@@ -1,10 +1,10 @@
-package com.ninjaguild.dragoneggdrop.events;
+package com.ninjaguild.dragoneggdrop.listeners;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -47,7 +47,7 @@ public final class PortalClickListener implements Listener {
             return;
         }
 
-        EndWorldWrapper endWorld = plugin.getDEDManager().getWorldWrapper(world);
+        EndWorldWrapper endWorld = EndWorldWrapper.of(world);
         int secondsRemaining = endWorld.getTimeUntilRespawn();
         if (secondsRemaining <= 0) {
             return;

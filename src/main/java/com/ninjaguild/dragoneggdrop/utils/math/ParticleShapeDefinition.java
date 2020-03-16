@@ -1,11 +1,8 @@
-package com.ninjaguild.dragoneggdrop.utils;
+package com.ninjaguild.dragoneggdrop.utils.math;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.ninjaguild.dragoneggdrop.utils.math.MathExpression;
-import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;

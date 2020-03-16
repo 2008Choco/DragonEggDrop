@@ -1,11 +1,11 @@
-package com.ninjaguild.dragoneggdrop.events;
+package com.ninjaguild.dragoneggdrop.listeners;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,12 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public final class LootListeners implements Listener {
 
-    private final DragonEggDrop plugin;
-
-    public LootListeners(final DragonEggDrop plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent event) {
         Item item = event.getEntity();
@@ -35,7 +29,7 @@ public final class LootListeners implements Listener {
             return;
         }
 
-        DragonTemplate dragon = plugin.getDEDManager().getWorldWrapper(world).getPreviousTemplate();
+        DragonTemplate dragon = EndWorldWrapper.of(world).getPreviousTemplate();
         if (dragon == null) {
             return;
         }

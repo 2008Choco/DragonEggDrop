@@ -2,13 +2,11 @@ package com.ninjaguild.dragoneggdrop.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,11 +17,9 @@ import org.bukkit.util.StringUtil;
 public final class DragonTemplateCmd implements TabExecutor {
 
     private final DragonEggDrop plugin;
-    private final DEDManager manager;
 
     public DragonTemplateCmd(DragonEggDrop plugin) {
         this.plugin = plugin;
-        this.manager = plugin.getDEDManager();
     }
 
     // /template <list|"template"> <(view/info)|edit>
@@ -35,8 +31,6 @@ public final class DragonTemplateCmd implements TabExecutor {
             return true;
         }
 
-        Collection<DragonTemplate> templates = manager.getDragonTemplates();
-
         // List all existing templates
         if (args[0].equalsIgnoreCase("list")) {
             if (!sender.hasPermission("dragoneggdrop.template.list")) {
@@ -44,14 +38,14 @@ public final class DragonTemplateCmd implements TabExecutor {
                 return true;
             }
 
-            String[] templateNames = templates.stream().map(t -> ChatColor.GREEN + t.getId()).toArray(String[]::new);
+            String[] templateNames = DragonTemplate.getAll().stream().map(t -> ChatColor.GREEN + t.getId()).toArray(String[]::new);
 
             this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
             return true;
         }
 
         // Template was identified
-        DragonTemplate template = plugin.getDEDManager().getTemplate(args[0]);
+        DragonTemplate template = DragonTemplate.getById(args[0]);
 
         // No template found
         if (template == null) {
@@ -87,7 +81,7 @@ public final class DragonTemplateCmd implements TabExecutor {
 
         // Before completion: "/dragontemplate "
         if (args.length == 1) {
-            List<String> possibleOptions = plugin.getDEDManager().getDragonTemplates().stream().map(DragonTemplate::getId).collect(Collectors.toList());
+            List<String> possibleOptions = DragonTemplate.getAll().stream().map(DragonTemplate::getId).collect(Collectors.toList());
             possibleOptions.add("list");
             StringUtil.copyPartialMatches(args[0], possibleOptions, options);
         }

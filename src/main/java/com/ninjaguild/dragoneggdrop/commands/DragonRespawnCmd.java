@@ -8,9 +8,8 @@ import java.util.stream.Collectors;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +44,6 @@ public final class DragonRespawnCmd implements TabExecutor {
             return true;
         }
 
-        DEDManager manager = plugin.getDEDManager();
         if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel")) {
             if (!sender.hasPermission("dragoneggdrop.respawn.stop")) {
                 this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
@@ -57,7 +55,7 @@ public final class DragonRespawnCmd implements TabExecutor {
                 return true;
             }
 
-            EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+            EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             if (!worldWrapper.isRespawnInProgress()) {
                 this.plugin.sendMessage(sender, "No respawn is currently in progress");
                 return true;
@@ -78,16 +76,16 @@ public final class DragonRespawnCmd implements TabExecutor {
                 return true;
             }
 
-            EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+            EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             if (worldWrapper.isRespawnInProgress()) {
                 this.plugin.sendMessage(sender, "A respawn is already in progress. It must be stopped (" + ChatColor.YELLOW + "/" + label + " <stop>" + ChatColor.GRAY + ") before starting another");
                 return true;
             }
 
             int respawnSeconds = (args.length >= 2) ? MathUtils.parseRespawnSeconds(args[1]) : 300; // Default 5 minutes
-            DragonTemplate template = manager.getRandomTemplate();
+            DragonTemplate template = DragonTemplate.randomTemplate();
             if (args.length >= 4) {
-                DragonTemplate templateArgument = manager.getTemplate(args[3]);
+                DragonTemplate templateArgument = DragonTemplate.getById(args[3]);
                 if (templateArgument == null) {
                     this.plugin.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[2] + ChatColor.GRAY + " does not exist");
                     return true;
@@ -133,7 +131,7 @@ public final class DragonRespawnCmd implements TabExecutor {
                     return true;
                 }
 
-                EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+                EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
                 if (!worldWrapper.isRespawnInProgress()) {
                     this.plugin.sendMessage(sender, "No respawn is currently in progress, cannot set the template to spawn");
                     return true;
@@ -144,7 +142,7 @@ public final class DragonRespawnCmd implements TabExecutor {
                     return true;
                 }
 
-                DragonTemplate template = manager.getTemplate(args[2]);
+                DragonTemplate template = DragonTemplate.getById(args[2]);
                 if (template == null) {
                     this.plugin.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[2] + ChatColor.GRAY + " does not exist");
                     return true;
@@ -159,7 +157,7 @@ public final class DragonRespawnCmd implements TabExecutor {
                     return true;
                 }
 
-                EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+                EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
                 DragonTemplate template = worldWrapper.getRespawningTemplate();
                 if (template == null) {
                     this.plugin.sendMessage(sender, "No respawn is currently in progress, no template has yet been determined");
@@ -208,14 +206,14 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
-                return StringUtil.copyPartialMatches(args[2], plugin.getDEDManager().getDragonTemplates().stream()
+                return StringUtil.copyPartialMatches(args[2], DragonTemplate.getAll().stream()
                         .map(DragonTemplate::getId).collect(Collectors.toList()), new ArrayList<>());
             }
         }
 
         else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("start")) {
-                return StringUtil.copyPartialMatches(args[3], plugin.getDEDManager().getDragonTemplates().stream()
+                return StringUtil.copyPartialMatches(args[3], DragonTemplate.getAll().stream()
                         .map(DragonTemplate::getId).collect(Collectors.toList()), new ArrayList<>());
             }
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {

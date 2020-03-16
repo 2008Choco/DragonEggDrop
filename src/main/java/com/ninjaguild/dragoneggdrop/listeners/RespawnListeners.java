@@ -1,12 +1,11 @@
-package com.ninjaguild.dragoneggdrop.events;
+package com.ninjaguild.dragoneggdrop.listeners;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.management.DEDManager;
-import com.ninjaguild.dragoneggdrop.management.DEDManager.RespawnReason;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -20,11 +19,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public final class RespawnListeners implements Listener {
 
     private final DragonEggDrop plugin;
-    private final DEDManager manager;
 
     public RespawnListeners(DragonEggDrop plugin) {
         this.plugin = plugin;
-        this.manager = plugin.getDEDManager();
     }
 
     @EventHandler
@@ -34,13 +31,13 @@ public final class RespawnListeners implements Listener {
             return;
         }
 
-        EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
 
         // If there's a regular dragon but no active battle, try to template it
         DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
         DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
         if (battle.getEnderDragon() != null && activeTemplate == null) {
-            worldWrapper.setActiveTemplate(activeTemplate = manager.getRandomTemplate());
+            worldWrapper.setActiveTemplate(activeTemplate = DragonTemplate.randomTemplate());
             activeTemplate.applyToBattle(battle.getEnderDragon(), battle);
         }
 
@@ -50,7 +47,7 @@ public final class RespawnListeners implements Listener {
                 return;
             }
 
-            this.manager.getWorldWrapper(world).startRespawn(RespawnReason.JOIN);
+            EndWorldWrapper.of(world).startRespawn(RespawnReason.JOIN);
         }
 
         // Reset end crystal states just in case something went awry
@@ -69,7 +66,7 @@ public final class RespawnListeners implements Listener {
             return;
         }
 
-        EndWorldWrapper worldWrapper = manager.getWorldWrapper(world);
+        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
 
         // Reset end crystal states just in case something went awry
         if (!worldWrapper.isRespawnInProgress()) {
@@ -84,11 +81,11 @@ public final class RespawnListeners implements Listener {
             return;
         }
 
-        if (!world.getPlayers().isEmpty() || manager.getWorldWrapper(world).isRespawnInProgress() || world.getEntitiesByClass(EnderDragon.class).size() == 0) {
+        if (!world.getPlayers().isEmpty() || EndWorldWrapper.of(world).isRespawnInProgress() || world.getEntitiesByClass(EnderDragon.class).size() == 0) {
             return;
         }
 
-        this.manager.getWorldWrapper(world).startRespawn(RespawnReason.JOIN);
+        EndWorldWrapper.of(world).startRespawn(RespawnReason.JOIN);
     }
 
 }

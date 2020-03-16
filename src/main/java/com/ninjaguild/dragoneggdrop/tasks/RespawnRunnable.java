@@ -1,4 +1,4 @@
-package com.ninjaguild.dragoneggdrop.utils.runnables;
+package com.ninjaguild.dragoneggdrop.tasks;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,10 +7,10 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
-import com.ninjaguild.dragoneggdrop.management.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,7 +52,7 @@ public class RespawnRunnable extends BukkitRunnable {
      */
     public RespawnRunnable(DragonEggDrop plugin, World world, int respawnTime) {
         this.plugin = plugin;
-        this.worldWrapper = plugin.getDEDManager().getWorldWrapper(world);
+        this.worldWrapper = EndWorldWrapper.of(world);
         this.secondsUntilRespawn = respawnTime;
 
         this.dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);

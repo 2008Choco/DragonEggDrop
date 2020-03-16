@@ -1,9 +1,10 @@
-package com.ninjaguild.dragoneggdrop.utils.runnables;
+package com.ninjaguild.dragoneggdrop.tasks;
 
 import java.util.Collection;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
+import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.World;
 import org.bukkit.entity.EnderCrystal;
@@ -22,12 +23,12 @@ class RespawnSafeguardRunnable extends BukkitRunnable {
     private static final long TIMEOUT_PERIOD_TICKS = 700L;
 
     private final DragonEggDrop plugin;
-    private final World world;
+    private final EndWorldWrapper world;
     private final DragonBattle battle;
 
     private RespawnSafeguardRunnable(DragonEggDrop plugin, World world, DragonBattle battle) {
         this.plugin = plugin;
-        this.world = world;
+        this.world = EndWorldWrapper.of(world);
         this.battle = battle;
 
         this.runTaskLater(plugin, TIMEOUT_PERIOD_TICKS);
@@ -35,16 +36,17 @@ class RespawnSafeguardRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        Collection<EnderCrystal> crystals = world.getEntitiesByClass(EnderCrystal.class);
+        World bukkitWorld = world.getWorld();
+        Collection<EnderCrystal> crystals = bukkitWorld.getEntitiesByClass(EnderCrystal.class);
 
         // Ender dragon was not found. Forcibly respawn it
-        if (world.getEntitiesByClass(EnderDragon.class).size() == 0) {
+        if (bukkitWorld.getEntitiesByClass(EnderDragon.class).size() == 0) {
             this.plugin.getLogger().warning("Something went wrong! Had to forcibly reset dragon battle...");
 
             this.battle.resetBattleState();
             crystals.forEach(Entity::remove); // Remove pre-existing crystals
 
-            this.plugin.getDEDManager().getWorldWrapper(world).startRespawn(0);
+            this.world.startRespawn(0);
             return;
         }
 
