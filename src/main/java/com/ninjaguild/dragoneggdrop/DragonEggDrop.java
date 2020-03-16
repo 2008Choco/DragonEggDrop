@@ -238,7 +238,7 @@ public class DragonEggDrop extends JavaPlugin {
                 JarEntry entry = entries.nextElement();
                 String name = entry.getName();
 
-                if (!name.startsWith(directory + "/")) {
+                if (!name.startsWith(directory + "/") || entry.isDirectory()) {
                     continue;
                 }
 
