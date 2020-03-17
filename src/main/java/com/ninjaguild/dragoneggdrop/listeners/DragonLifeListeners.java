@@ -59,16 +59,15 @@ public final class DragonLifeListeners implements Listener {
             world.stopRespawn();
         }
 
-        world.setActiveTemplate(template);
+        world.setActiveTemplate((template != null) ? template : (template = DragonTemplate.randomTemplate()));
         world.setRespawningTemplate(null);
 
-        if (template != null) {
-            template.applyToBattle(dragon, dragonBattle);
+        template.applyToBattle(dragon, dragonBattle);
 
-            if (template.shouldAnnounceSpawn()) {
-                // Cannot use p::sendMessage here. Compile-error with Maven. Compiler assumes the wrong method overload
-                Bukkit.getOnlinePlayers().forEach(p -> template.getSpawnAnnouncement().forEach(m -> p.sendMessage(m)));
-            }
+        if (template.shouldAnnounceSpawn()) {
+            List<String> announcement = template.getSpawnAnnouncement();
+            // Cannot use p::sendMessage here. Compile-error with Maven. Compiler assumes the wrong method overload
+            Bukkit.getOnlinePlayers().forEach(p -> announcement.forEach(m -> p.sendMessage(m)));
         }
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);
