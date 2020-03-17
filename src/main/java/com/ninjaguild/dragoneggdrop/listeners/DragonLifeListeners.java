@@ -22,6 +22,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,6 +31,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 public final class DragonLifeListeners implements Listener {
 
@@ -119,10 +121,14 @@ public final class DragonLifeListeners implements Listener {
             return;
         }
 
+        Vector portalLocationVector = NMSUtils.getEnderDragonBattleFromWorld(world).getEndPortalLocation().toVector();
         for (EnderCrystal crystal : crystals) {
             Location location = crystal.getLocation();
             location.getBlock().setType(Material.AIR); // Remove fire
-            world.dropItem(location, END_CRYSTAL_ITEM);
+
+            Item droppedCrystal = world.dropItem(location, END_CRYSTAL_ITEM);
+            droppedCrystal.setVelocity(crystal.getLocation().toVector().subtract(portalLocationVector).normalize().multiply(0.15).setY(0.5));
+
             crystal.remove();
         }
 
