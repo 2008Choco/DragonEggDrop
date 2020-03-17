@@ -16,8 +16,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
@@ -54,7 +56,6 @@ public final class DragonLifeListeners implements Listener {
         EndWorldWrapper world = EndWorldWrapper.of(dragon.getWorld());
 
         DragonTemplate template = world.getRespawningTemplate();
-        System.out.println("Respawning template: " + (template != null ? template.getId() : "null"));
         if (plugin.getConfig().getBoolean("strict-countdown") && world.isRespawnInProgress()) {
             world.stopRespawn();
         }
@@ -103,33 +104,32 @@ public final class DragonLifeListeners implements Listener {
     @EventHandler
     public void onAttemptRespawn(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
         ItemStack item = event.getItem();
-
-        if (item == null || item.getType() != Material.END_CRYSTAL || plugin.getConfig().getBoolean("allow-crystal-respawns")) {
+        if (block == null || block.getType() != Material.BEDROCK || item == null || item.getType() != Material.END_CRYSTAL
+                || plugin.getConfig().getBoolean("allow-crystal-respawns")) {
             return;
         }
 
         World world = player.getWorld();
-        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
-        if (worldWrapper.isRespawnInProgress() || !world.getEntitiesByClass(EnderDragon.class).isEmpty()) {
-            List<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
+        List<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
 
-            // Check for 3 crystals because PlayerInteractEvent is fired first
-            if (crystals.size() < 3) {
-                return;
-            }
-
-            for (EnderCrystal crystal : crystals) {
-                Location location = crystal.getLocation();
-                location.getBlock().setType(Material.AIR); // Remove fire
-                world.dropItem(location, END_CRYSTAL_ITEM);
-                crystal.remove();
-            }
-
-            NMSUtils.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
-            player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
-            event.setCancelled(true);
+        // Check for 3 crystals because PlayerInteractEvent is fired first
+        if (crystals.size() < 3) {
+            return;
         }
+
+        for (EnderCrystal crystal : crystals) {
+            Location location = crystal.getLocation();
+            location.getBlock().setType(Material.AIR); // Remove fire
+            world.dropItem(location, END_CRYSTAL_ITEM);
+            crystal.remove();
+        }
+
+        NMSUtils.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
+        player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
+        player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.5F);
+        event.setCancelled(true);
     }
 
 }
