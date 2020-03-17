@@ -87,7 +87,7 @@ public final class DragonRespawnCmd implements TabExecutor {
             if (args.length >= 4) {
                 DragonTemplate templateArgument = DragonTemplate.getById(args[3]);
                 if (templateArgument == null) {
-                    this.plugin.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[2] + ChatColor.GRAY + " does not exist");
+                    this.plugin.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[3] + ChatColor.GRAY + " does not exist");
                     return true;
                 }
 
