@@ -7,8 +7,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
+import com.ninjaguild.dragoneggdrop.utils.ReflectionUtil;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
@@ -19,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,7 +55,7 @@ public class RespawnRunnable extends BukkitRunnable {
         this.worldWrapper = EndWorldWrapper.of(world);
         this.secondsUntilRespawn = respawnTime;
 
-        this.dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        this.dragonBattle = world.getEnderDragonBattle();
         this.dragon = dragonBattle.getEnderDragon();
 
         this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
@@ -82,10 +82,10 @@ public class RespawnRunnable extends BukkitRunnable {
                 String message = announceMessages.get(currentMessage++).replace("%time%", String.valueOf(secondsUntilRespawn)).replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
 
                 if (limitAnnounceToRadius) {
-                    NMSUtils.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
+                    ReflectionUtil.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
                 }
                 else {
-                    NMSUtils.broadcastActionBar(message, worldWrapper.getWorld());
+                    ReflectionUtil.broadcastActionBar(message, worldWrapper.getWorld());
                 }
             }
 
@@ -124,7 +124,8 @@ public class RespawnRunnable extends BukkitRunnable {
             // If dragon already exists, cancel the respawn process
             if (crystalWorld.getEntitiesByClass(EnderDragon.class).size() >= 1) {
                 this.plugin.getLogger().warning("An EnderDragon is already present in world " + crystalWorld.getName() + ". Dragon respawn cancelled");
-                NMSUtils.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
+
+                ReflectionUtil.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
 
                 // Destroy all crystals
                 for (PortalCrystal portalCrystal : PortalCrystal.values()) {
@@ -140,7 +141,7 @@ public class RespawnRunnable extends BukkitRunnable {
                 return;
             }
 
-            this.dragonBattle.respawnEnderDragon();
+            this.dragonBattle.initiateRespawn();
             RespawnSafeguardRunnable.newTimeout(plugin, worldWrapper.getWorld(), dragonBattle);
 
             BattleStateChangeEvent bscEventRespawning = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.CRYSTALS_SPAWNING, BattleState.DRAGON_RESPAWNING);

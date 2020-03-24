@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
@@ -128,7 +127,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             DamageHistory history = null;
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             if (endWorld.getActiveTemplate() != null) {
-                history = DamageHistory.forEntity(NMSUtils.getEnderDragonBattleFromWorld(world).getEnderDragon());
+                history = DamageHistory.forEntity(world.getEnderDragonBattle().getEnderDragon());
             }
 
             // TODO: Get history from most recent battle if active battle is null
@@ -160,7 +159,7 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             DamageHistory history = null;
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             if (endWorld.getActiveTemplate() != null) {
-                history = DamageHistory.forEntity(NMSUtils.getEnderDragonBattleFromWorld(world).getEnderDragon());
+                history = DamageHistory.forEntity(world.getEnderDragonBattle().getEnderDragon());
             }
 
             // TODO: Get history from most recent battle if active battle is null

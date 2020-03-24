@@ -16,7 +16,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
 import org.apache.commons.lang.Validate;
@@ -25,6 +24,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EnderDragon;
@@ -225,12 +226,14 @@ public class DragonTemplate {
         Preconditions.checkArgument(dragon != null, "Ender Dragon cannot be null");
         Preconditions.checkArgument(battle != null, "Instance of DragonBattle cannot be null");
 
+        BossBar bossBar = battle.getBossBar();
         if (name != null) {
             dragon.setCustomName(name);
-            battle.setBossBarTitle(name);
+            bossBar.setTitle(name);
         }
 
-        battle.setBossBarStyle(barStyle, barColour);
+        bossBar.setStyle(barStyle);
+        bossBar.setColor(barColour);
         this.attributes.forEach((a, v) -> {
             AttributeInstance attribute = dragon.getAttribute(a);
             if (attribute != null) {

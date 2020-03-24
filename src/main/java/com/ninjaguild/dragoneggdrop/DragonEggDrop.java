@@ -21,6 +21,7 @@ import com.ninjaguild.dragoneggdrop.listeners.LootListeners;
 import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import com.ninjaguild.dragoneggdrop.utils.ReflectionUtil;
 import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
@@ -80,6 +81,8 @@ public class DragonEggDrop extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
+
+        ReflectionUtil.init(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
 
         // Load default templates and loot tables
         if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {

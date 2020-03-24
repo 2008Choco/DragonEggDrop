@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
-
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -125,7 +124,7 @@ public class DragonLootElementEgg implements IDragonLootElement {
         }
 
         if (chest == null) { // If no chest is present, just set the egg on the portal
-            battle.getEndPortalLocation().getBlock().setType(Material.DRAGON_EGG);
+            battle.getEndPortalLocation().add(0, 4, 0).getBlock().setType(Material.DRAGON_EGG);
             return;
         }
 

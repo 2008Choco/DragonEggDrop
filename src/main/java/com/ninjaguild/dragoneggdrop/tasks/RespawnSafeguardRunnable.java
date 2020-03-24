@@ -3,10 +3,10 @@ package com.ninjaguild.dragoneggdrop.tasks;
 import java.util.Collection;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.World;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -43,7 +43,7 @@ class RespawnSafeguardRunnable extends BukkitRunnable {
         if (bukkitWorld.getEntitiesByClass(EnderDragon.class).size() == 0) {
             this.plugin.getLogger().warning("Something went wrong! Had to forcibly reset dragon battle...");
 
-            this.battle.resetBattleState();
+            this.battle.resetCrystals();
             crystals.forEach(Entity::remove); // Remove pre-existing crystals
 
             this.world.startRespawn(0);

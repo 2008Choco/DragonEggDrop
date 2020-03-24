@@ -1,8 +1,6 @@
 package com.ninjaguild.dragoneggdrop.listeners;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
@@ -12,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,8 +40,8 @@ public final class PortalClickListener implements Listener {
             return;
         }
 
-        DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromWorld(world);
-        Location portalLocation = dragonBattle.getEndPortalLocation();
+        DragonBattle dragonBattle = world.getEnderDragonBattle();
+        Location portalLocation = dragonBattle.getEndPortalLocation().add(0, 4, 0);
         if (clickedBlock.getLocation().distanceSquared(portalLocation) > 25) { // 5 blocks
             return;
         }

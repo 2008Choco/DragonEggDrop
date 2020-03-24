@@ -5,12 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 
@@ -70,15 +69,15 @@ public enum PortalCrystal {
 
     /**
      * Get a {@link Location} representing the crystal's expected location relative to a
-     * given location. The passed location assumes the top of the portal (3 blocks above
-     * the base of the portal). See {@link DragonBattle#getEndPortalLocation()}.
+     * given location. The passed location assumes the bottom of the portal (1 block below
+     * the base of the portal).
      *
      * @param location the location starting point
      *
      * @return the relative crystal location
      */
     public Location getRelativeTo(Location location) {
-        return location.add(xOffset, -3, zOffset);
+        return location.add(xOffset, 1, zOffset);
     }
 
     /**
@@ -95,7 +94,7 @@ public enum PortalCrystal {
             return null;
         }
 
-        Location portal = NMSUtils.getEnderDragonBattleFromWorld(world).getEndPortalLocation();
+        Location portal = world.getEnderDragonBattle().getEndPortalLocation();
         return getRelativeTo(portal);
     }
 
@@ -114,7 +113,7 @@ public enum PortalCrystal {
         }
 
         // (Cloned from #isPresent() only because "location" is required)
-        DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        DragonBattle battle = world.getEnderDragonBattle();
         Location location = getRelativeTo(battle.getEndPortalLocation());
 
         // Check for existing crystal
@@ -146,7 +145,7 @@ public enum PortalCrystal {
      * @return the crystal positioned at the crystal location. null if none
      */
     public EnderCrystal get(World world) {
-        DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        DragonBattle battle = world.getEnderDragonBattle();
         Location location = getRelativeTo(battle.getEndPortalLocation());
 
         Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
@@ -161,7 +160,7 @@ public enum PortalCrystal {
      * @return true if a crystal is spawned. false otherwise
      */
     public boolean isPresent(World world) {
-        DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        DragonBattle battle = world.getEnderDragonBattle();
         Location location = getRelativeTo(battle.getEndPortalLocation());
 
         // Check for existing crystal

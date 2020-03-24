@@ -7,9 +7,8 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.tasks.DragonDeathRunnable;
+import com.ninjaguild.dragoneggdrop.utils.ReflectionUtil;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
@@ -20,6 +19,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Item;
@@ -54,7 +54,7 @@ public final class DragonLifeListeners implements Listener {
             return;
         }
 
-        DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
+        DragonBattle dragonBattle = dragon.getDragonBattle();
         EndWorldWrapper world = EndWorldWrapper.of(dragon.getWorld());
 
         DragonTemplate template = world.getRespawningTemplate();
@@ -84,7 +84,7 @@ public final class DragonLifeListeners implements Listener {
         }
 
         EnderDragon dragon = (EnderDragon) event.getEntity();
-        DragonBattle dragonBattle = NMSUtils.getEnderDragonBattleFromDragon(dragon);
+        DragonBattle dragonBattle = dragon.getDragonBattle();
 
         World world = event.getEntity().getWorld();
         EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
@@ -95,7 +95,7 @@ public final class DragonLifeListeners implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (NMSUtils.getEnderDragonDeathAnimationTime(dragon) >= 185) { // Dragon is dead at 200
+                if (dragon.getDeathAnimationTicks() >= 185) { // Dragon is dead at 200
                     new DragonDeathRunnable(plugin, worldWrapper, dragon);
                     this.cancel();
                 }
@@ -121,7 +121,7 @@ public final class DragonLifeListeners implements Listener {
             return;
         }
 
-        Vector portalLocationVector = NMSUtils.getEnderDragonBattleFromWorld(world).getEndPortalLocation().toVector();
+        Vector portalLocationVector = world.getEnderDragonBattle().getEndPortalLocation().toVector();
         for (EnderCrystal crystal : crystals) {
             Location location = crystal.getLocation();
             location.getBlock().setType(Material.AIR); // Remove fire
@@ -132,7 +132,7 @@ public final class DragonLifeListeners implements Listener {
             crystal.remove();
         }
 
-        NMSUtils.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
+        ReflectionUtil.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
         player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
         player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.5F);
         event.setCancelled(true);

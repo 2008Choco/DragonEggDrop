@@ -4,10 +4,10 @@ import java.util.Random;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 

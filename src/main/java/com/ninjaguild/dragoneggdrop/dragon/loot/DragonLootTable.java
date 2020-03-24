@@ -23,13 +23,13 @@ import com.ninjaguild.dragoneggdrop.dragon.loot.elements.IDragonLootElement;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.ILootPool;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.LootPoolCommand;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.LootPoolItem;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -143,7 +143,7 @@ public class DragonLootTable {
 
         Chest chest = null;
         Player killer = findDragonKiller(dragon);
-        Location endPortalLocation = battle.getEndPortalLocation();
+        Location endPortalLocation = battle.getEndPortalLocation().add(0, 4, 0);
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DragonEggDrop plugin = DragonEggDrop.getInstance();

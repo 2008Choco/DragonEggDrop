@@ -16,7 +16,6 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
@@ -107,7 +106,7 @@ public final class TempDataUtils {
                 DragonTemplate template = DragonTemplate.getById(element.get("activeTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setActiveTemplate(template);
-                    template.applyToBattle(Iterables.get(dragons, 0), NMSUtils.getEnderDragonBattleFromWorld(world));
+                    template.applyToBattle(Iterables.get(dragons, 0), world.getEnderDragonBattle());
                 }
             }
 

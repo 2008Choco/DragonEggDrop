@@ -2,13 +2,12 @@ package com.ninjaguild.dragoneggdrop.listeners;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
-import com.ninjaguild.dragoneggdrop.nms.DragonBattle;
-import com.ninjaguild.dragoneggdrop.nms.NMSUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
@@ -34,7 +33,7 @@ public final class RespawnListeners implements Listener {
         EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
 
         // If there's a regular dragon but no active battle, try to template it
-        DragonBattle battle = NMSUtils.getEnderDragonBattleFromWorld(world);
+        DragonBattle battle = world.getEnderDragonBattle();
         DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
         if (battle.getEnderDragon() != null && activeTemplate == null) {
             worldWrapper.setActiveTemplate(activeTemplate = DragonTemplate.randomTemplate());
