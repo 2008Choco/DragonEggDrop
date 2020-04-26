@@ -7,7 +7,7 @@ import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
-import com.ninjaguild.dragoneggdrop.utils.ReflectionUtil;
+import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
@@ -82,10 +82,10 @@ public class RespawnRunnable extends BukkitRunnable {
                 String message = announceMessages.get(currentMessage++).replace("%time%", String.valueOf(secondsUntilRespawn)).replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
 
                 if (limitAnnounceToRadius) {
-                    ReflectionUtil.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
+                    ActionBarUtil.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
                 }
                 else {
-                    ReflectionUtil.broadcastActionBar(message, worldWrapper.getWorld());
+                    ActionBarUtil.broadcastActionBar(message, worldWrapper.getWorld());
                 }
             }
 
@@ -125,7 +125,7 @@ public class RespawnRunnable extends BukkitRunnable {
             if (crystalWorld.getEntitiesByClass(EnderDragon.class).size() >= 1) {
                 this.plugin.getLogger().warning("An EnderDragon is already present in world " + crystalWorld.getName() + ". Dragon respawn cancelled");
 
-                ReflectionUtil.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
+                ActionBarUtil.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
 
                 // Destroy all crystals
                 for (PortalCrystal portalCrystal : PortalCrystal.values()) {

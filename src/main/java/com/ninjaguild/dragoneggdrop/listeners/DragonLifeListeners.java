@@ -8,7 +8,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.tasks.DragonDeathRunnable;
-import com.ninjaguild.dragoneggdrop.utils.ReflectionUtil;
+import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
@@ -132,7 +132,7 @@ public final class DragonLifeListeners implements Listener {
             crystal.remove();
         }
 
-        ReflectionUtil.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
+        ActionBarUtil.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
         player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
         player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.5F);
         event.setCancelled(true);
