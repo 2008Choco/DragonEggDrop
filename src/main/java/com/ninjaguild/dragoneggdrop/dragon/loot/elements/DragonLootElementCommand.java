@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;
@@ -40,16 +41,11 @@ public class DragonLootElementCommand implements IDragonLootElement {
 
     @Override
     public void generate(DragonBattle battle, EnderDragon dragon, Player killer, Random random, Chest chest) {
-        if (command == null || (command.contains("%player%") && killer == null)) {
+        if (command == null) {
             return;
         }
 
-        String contextualCommand = command.replace("%dragon%", dragon.getCustomName());
-        if (killer != null) {
-            contextualCommand = contextualCommand.replace("%player%", killer.getName());
-        }
-
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), contextualCommand);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DragonEggDropPlaceholders.inject(null, command));
     }
 
     /**

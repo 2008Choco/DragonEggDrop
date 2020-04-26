@@ -8,7 +8,6 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
-import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
@@ -74,18 +73,18 @@ public class RespawnRunnable extends BukkitRunnable {
     public void run() {
         if (this.secondsUntilRespawn > 0) {
             if (announceRespawn) {
-                if (currentMessage >= announceMessages.size()) {
-                    this.currentMessage = 0;
-                }
-
                 // Show actionbar messages
-                String message = announceMessages.get(currentMessage++).replace("%time%", String.valueOf(secondsUntilRespawn)).replace("%formatted-time%", MathUtils.getFormattedTime(secondsUntilRespawn));
+                String message = announceMessages.get(currentMessage);
 
                 if (limitAnnounceToRadius) {
-                    ActionBarUtil.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared);
+                    ActionBarUtil.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared, true);
                 }
                 else {
-                    ActionBarUtil.broadcastActionBar(message, worldWrapper.getWorld());
+                    ActionBarUtil.broadcastActionBar(message, worldWrapper.getWorld(), true);
+                }
+
+                if (++currentMessage >= announceMessages.size()) {
+                    this.currentMessage = 0;
                 }
             }
 
@@ -125,7 +124,7 @@ public class RespawnRunnable extends BukkitRunnable {
             if (crystalWorld.getEntitiesByClass(EnderDragon.class).size() >= 1) {
                 this.plugin.getLogger().warning("An EnderDragon is already present in world " + crystalWorld.getName() + ". Dragon respawn cancelled");
 
-                ActionBarUtil.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld);
+                ActionBarUtil.broadcastActionBar(ChatColor.RED + "Dragon respawn abandonned! Dragon already exists! Slay it!", crystalWorld, false);
 
                 // Destroy all crystals
                 for (PortalCrystal portalCrystal : PortalCrystal.values()) {

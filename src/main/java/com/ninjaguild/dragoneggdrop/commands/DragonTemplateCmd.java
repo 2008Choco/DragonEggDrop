@@ -16,31 +16,25 @@ import org.bukkit.util.StringUtil;
 
 public final class DragonTemplateCmd implements TabExecutor {
 
-    private final DragonEggDrop plugin;
-
-    public DragonTemplateCmd(DragonEggDrop plugin) {
-        this.plugin = plugin;
-    }
-
     // /template <list|"template"> <(view/info)|edit>
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
-            this.plugin.sendMessage(sender, "Please specify the name of a template, or \"list\" to list all templates");
+            DragonEggDrop.sendMessage(sender, "Please specify the name of a template, or \"list\" to list all templates");
             return true;
         }
 
         // List all existing templates
         if (args[0].equalsIgnoreCase("list")) {
             if (!sender.hasPermission("dragoneggdrop.template.list")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
 
             String[] templateNames = DragonTemplate.getAll().stream().map(t -> ChatColor.GREEN + t.getId()).toArray(String[]::new);
 
-            this.plugin.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
+            DragonEggDrop.sendMessage(sender, ChatColor.GRAY + "Active Templates:\n" + String.join(ChatColor.GRAY + ", ", templateNames));
             return true;
         }
 
@@ -49,19 +43,19 @@ public final class DragonTemplateCmd implements TabExecutor {
 
         // No template found
         if (template == null) {
-            this.plugin.sendMessage(sender, "Could not find a template with the name \"" + args[0] + "\"");
+            DragonEggDrop.sendMessage(sender, "Could not find a template with the name \"" + args[0] + "\"");
             return true;
         }
 
         if (args.length < 2) {
-            this.plugin.sendMessage(sender, cmd.getLabel() + " " + args[0] + " <(view/info)|edit>");
+            DragonEggDrop.sendMessage(sender, cmd.getLabel() + " " + args[0] + " <(view/info)|edit>");
             return true;
         }
 
         // "view/info" and "edit" params
         if (args[1].equalsIgnoreCase("view") || args[1].equalsIgnoreCase("info")) {
             if (!sender.hasPermission("dragoneggdrop.template.info")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
 

@@ -21,12 +21,6 @@ import org.bukkit.inventory.PlayerInventory;
 
 public final class PortalClickListener implements Listener {
 
-    private final DragonEggDrop plugin;
-
-    public PortalClickListener(DragonEggDrop plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler
     public void onClickEndPortalFrame(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -52,7 +46,7 @@ public final class PortalClickListener implements Listener {
             return;
         }
 
-        this.plugin.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + MathUtils.getFormattedTime(secondsRemaining));
+        DragonEggDrop.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + MathUtils.getFormattedTime(secondsRemaining));
     }
 
 }

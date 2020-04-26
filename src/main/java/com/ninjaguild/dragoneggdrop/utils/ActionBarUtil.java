@@ -3,6 +3,7 @@ package com.ninjaguild.dragoneggdrop.utils;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
+import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,19 +16,23 @@ public final class ActionBarUtil {
 
 	private ActionBarUtil() { }
 
-	public static void sendActionBar(String message, Player player) {
+	public static void sendActionBar(String message, Player player, boolean injectPlaceholders) {
         Preconditions.checkArgument(message != null, "Message must not be null");
         Preconditions.checkArgument(player != null, "Player must not be null");
+
+        if (injectPlaceholders) {
+            message = DragonEggDropPlaceholders.inject(player, message);
+        }
 
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
 	}
 
-	public static void broadcastActionBar(String message, World world) {
+	public static void broadcastActionBar(String message, World world, boolean injectPlaceholders) {
 	    Preconditions.checkArgument(world != null, "World must not be null");
-		world.getPlayers().forEach(p -> ActionBarUtil.sendActionBar(message, p));
+		world.getPlayers().forEach(p -> ActionBarUtil.sendActionBar(message, p, injectPlaceholders));
 	}
 
-    public static void broadcastActionBar(String message, Location location, int radiusSquared) {
+    public static void broadcastActionBar(String message, Location location, int radiusSquared, boolean injectPlaceholders) {
         if (location == null || location.getWorld() == null || radiusSquared < 0) {
             return;
         }
@@ -42,7 +47,7 @@ public final class ActionBarUtil {
                 continue;
             }
 
-            ActionBarUtil.sendActionBar(message, player);
+            ActionBarUtil.sendActionBar(message, player, injectPlaceholders);
         }
 
     }

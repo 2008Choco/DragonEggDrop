@@ -40,13 +40,13 @@ public final class DragonRespawnCmd implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
-            this.plugin.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " <stop|start|template>");
+            DragonEggDrop.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " <stop|start|template>");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel")) {
             if (!sender.hasPermission("dragoneggdrop.respawn.stop")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
 
@@ -57,17 +57,17 @@ public final class DragonRespawnCmd implements TabExecutor {
 
             EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             if (!worldWrapper.isRespawnInProgress()) {
-                this.plugin.sendMessage(sender, "No respawn is currently in progress");
+                DragonEggDrop.sendMessage(sender, "No respawn is currently in progress");
                 return true;
             }
 
             worldWrapper.stopRespawn();
-            this.plugin.sendMessage(sender, "The respawn in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " has been stopped");
+            DragonEggDrop.sendMessage(sender, "The respawn in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " has been stopped");
         }
 
         else if (args[0].equalsIgnoreCase("start")) {
             if (!sender.hasPermission("dragoneggdrop.respawn.start")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
 
@@ -78,7 +78,7 @@ public final class DragonRespawnCmd implements TabExecutor {
 
             EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             if (worldWrapper.isRespawnInProgress()) {
-                this.plugin.sendMessage(sender, "A respawn is already in progress. It must be stopped (" + ChatColor.YELLOW + "/" + label + " <stop>" + ChatColor.GRAY + ") before starting another");
+                DragonEggDrop.sendMessage(sender, "A respawn is already in progress. It must be stopped (" + ChatColor.YELLOW + "/" + label + " <stop>" + ChatColor.GRAY + ") before starting another");
                 return true;
             }
 
@@ -87,7 +87,7 @@ public final class DragonRespawnCmd implements TabExecutor {
             if (args.length >= 4) {
                 DragonTemplate templateArgument = DragonTemplate.getById(args[3]);
                 if (templateArgument == null) {
-                    this.plugin.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[3] + ChatColor.GRAY + " does not exist");
+                    DragonEggDrop.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[3] + ChatColor.GRAY + " does not exist");
                     return true;
                 }
 
@@ -98,7 +98,7 @@ public final class DragonRespawnCmd implements TabExecutor {
             if (args.length >= 5) {
                 DragonLootTable lootTableArgument = plugin.getLootTableRegistry().getLootTable(args[4]);
                 if (lootTableArgument == null) {
-                    this.plugin.sendMessage(sender, "A loot table with the id " + ChatColor.YELLOW + args[4] + ChatColor.GRAY + " does not exist");
+                    DragonEggDrop.sendMessage(sender, "A loot table with the id " + ChatColor.YELLOW + args[4] + ChatColor.GRAY + " does not exist");
                     return true;
                 }
 
@@ -106,22 +106,22 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             if (!worldWrapper.startRespawn(respawnSeconds, template, lootTable)) {
-                this.plugin.sendMessage(sender, "A respawn could not be started... does a dragon already exist in this world?");
+                DragonEggDrop.sendMessage(sender, "A respawn could not be started... does a dragon already exist in this world?");
                 return true;
             }
 
-            this.plugin.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getId()
+            DragonEggDrop.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getId()
                     + (worldWrapper.hasLootTableOverride() ? ChatColor.GRAY + " (loot table override: " + ChatColor.LIGHT_PURPLE + worldWrapper.getLootTableOverride().getId() + ChatColor.GRAY + ")" : ""));
         }
 
         else if (args[0].equalsIgnoreCase("template")) {
             if (!sender.hasPermission("dragoneggdrop.respawn.template")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
 
             if (args.length < 2) {
-                this.plugin.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " " + args[0] + "<set|get>");
+                DragonEggDrop.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " " + args[0] + "<set|get>");
                 return true;
             }
 
@@ -133,23 +133,23 @@ public final class DragonRespawnCmd implements TabExecutor {
 
                 EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
                 if (!worldWrapper.isRespawnInProgress()) {
-                    this.plugin.sendMessage(sender, "No respawn is currently in progress, cannot set the template to spawn");
+                    DragonEggDrop.sendMessage(sender, "No respawn is currently in progress, cannot set the template to spawn");
                     return true;
                 }
 
                 if (args.length < 3) {
-                    this.plugin.sendMessage(sender, "Please specify the template you would like to set for this world");
+                    DragonEggDrop.sendMessage(sender, "Please specify the template you would like to set for this world");
                     return true;
                 }
 
                 DragonTemplate template = DragonTemplate.getById(args[2]);
                 if (template == null) {
-                    this.plugin.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[2] + ChatColor.GRAY + " does not exist");
+                    DragonEggDrop.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[2] + ChatColor.GRAY + " does not exist");
                     return true;
                 }
 
                 worldWrapper.setRespawningTemplate(template);
-                this.plugin.sendMessage(sender, "The dragon template " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+                DragonEggDrop.sendMessage(sender, "The dragon template " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
             }
             else if (args[1].equalsIgnoreCase("get")) {
                 World world = getWorldFromContext(sender, args, 2);
@@ -160,19 +160,19 @@ public final class DragonRespawnCmd implements TabExecutor {
                 EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
                 DragonTemplate template = worldWrapper.getRespawningTemplate();
                 if (template == null) {
-                    this.plugin.sendMessage(sender, "No respawn is currently in progress, no template has yet been determined");
+                    DragonEggDrop.sendMessage(sender, "No respawn is currently in progress, no template has yet been determined");
                     return true;
                 }
 
-                this.plugin.sendMessage(sender, "The template with ID " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+                DragonEggDrop.sendMessage(sender, "The template with ID " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
             }
             else {
-                this.plugin.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[1] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + " " + args[0] + " <set|get>");
+                DragonEggDrop.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[1] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + " " + args[0] + " <set|get>");
             }
         }
 
         else {
-            this.plugin.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + "<stop|start|template>");
+            DragonEggDrop.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + "<stop|start|template>");
         }
 
         return true;
@@ -236,12 +236,12 @@ public final class DragonRespawnCmd implements TabExecutor {
         if (args.length >= (argumentIndex + 1)) {
             World world = Bukkit.getWorld(args[argumentIndex]);
             if (world == null) {
-                this.plugin.sendMessage(sender, "Could not find a world with the name " + ChatColor.YELLOW + args[argumentIndex]);
+                DragonEggDrop.sendMessage(sender, "Could not find a world with the name " + ChatColor.YELLOW + args[argumentIndex]);
                 return null;
             }
 
             if (world.getEnvironment() != Environment.THE_END) {
-                this.plugin.sendMessage(sender, "The specified world (" + args[argumentIndex] + ") is not an end world");
+                DragonEggDrop.sendMessage(sender, "The specified world (" + args[argumentIndex] + ") is not an end world");
                 return null;
             }
 
@@ -249,13 +249,13 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         if (!(sender instanceof Player)) {
-            this.plugin.sendMessage(sender, "A world name must be specified when sending this command from the console");
+            DragonEggDrop.sendMessage(sender, "A world name must be specified when sending this command from the console");
             return null;
         }
 
         World world = ((Player) sender).getWorld();
         if (world.getEnvironment() != Environment.THE_END) {
-            this.plugin.sendMessage(sender, "The world in which you are executing this command is not an end world... please specify a world instead");
+            DragonEggDrop.sendMessage(sender, "The world in which you are executing this command is not an end world... please specify a world instead");
             return null;
         }
 

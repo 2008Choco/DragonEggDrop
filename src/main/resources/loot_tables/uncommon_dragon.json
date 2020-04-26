@@ -14,7 +14,7 @@
             "commands": [
                 {
                     "weight": 1.0,
-                    "command": "tellraw %player% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"
+                    "command": 'minecraft:tellraw %top_damager% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}'
                 }
             ]
         }

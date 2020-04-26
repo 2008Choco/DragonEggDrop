@@ -7,6 +7,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import com.ninjaguild.dragoneggdrop.tasks.DragonDeathRunnable;
 import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
@@ -44,7 +45,7 @@ public final class DragonLifeListeners implements Listener {
     }
 
     @EventHandler
-    public void onCreatureSpawn(CreatureSpawnEvent event) {
+    public void onDragonSpawn(CreatureSpawnEvent event) {
         if (!(event.getEntity() instanceof EnderDragon)) {
             return;
         }
@@ -70,7 +71,7 @@ public final class DragonLifeListeners implements Listener {
         if (template.shouldAnnounceSpawn()) {
             List<String> announcement = template.getSpawnAnnouncement();
             // Cannot use p::sendMessage here. Compile-error with Maven. Compiler assumes the wrong method overload
-            Bukkit.getOnlinePlayers().forEach(p -> announcement.forEach(m -> p.sendMessage(m)));
+            Bukkit.getOnlinePlayers().forEach(p -> announcement.forEach(m -> p.sendMessage(ChatColor.translateAlternateColorCodes('&', DragonEggDropPlaceholders.inject(p, m)))));
         }
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.DRAGON_RESPAWNING, BattleState.BATTLE_COMMENCED);
@@ -132,7 +133,7 @@ public final class DragonLifeListeners implements Listener {
             crystal.remove();
         }
 
-        ActionBarUtil.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player);
+        ActionBarUtil.sendActionBar(ChatColor.RED + "You cannot manually respawn a dragon!", player, false);
         player.sendMessage(ChatColor.RED + "You cannot manually respawn a dragon!");
         player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.5F);
         event.setCancelled(true);

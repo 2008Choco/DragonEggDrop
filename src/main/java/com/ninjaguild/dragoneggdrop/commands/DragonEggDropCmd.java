@@ -30,7 +30,7 @@ public final class DragonEggDropCmd implements TabExecutor {
             sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP INFO --");
             sender.sendMessage(ChatColor.GOLD + "-----------------------");
             sender.sendMessage(ChatColor.GOLD + "Original Author: PixelStix");
-            sender.sendMessage(ChatColor.GOLD + "Maintainer: Choco");
+            sender.sendMessage(ChatColor.GOLD + "Maintainer: " + plugin.getDescription().getAuthors().get(0));
             sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescription().getVersion());
 
             UpdateResult result = UpdateChecker.get().getLastResult();
@@ -47,7 +47,7 @@ public final class DragonEggDropCmd implements TabExecutor {
         // "help" and "reload" params
         if (args[0].equalsIgnoreCase("help")) {
             if (!sender.hasPermission("dragoneggdrop.help")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "Permission denied!");
                 return true;
             }
 
@@ -63,14 +63,14 @@ public final class DragonEggDropCmd implements TabExecutor {
 
         else if (args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("dragoneggdrop.reload")) {
-                this.plugin.sendMessage(sender, ChatColor.RED + "Permission denied!");
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "Permission denied!");
                 return true;
             }
 
             this.plugin.reloadConfig();
             DragonTemplate.reload();
             this.plugin.getLootTableRegistry().reloadDragonLootTables();
-            this.plugin.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
+            DragonEggDrop.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
         }
 
         return true;

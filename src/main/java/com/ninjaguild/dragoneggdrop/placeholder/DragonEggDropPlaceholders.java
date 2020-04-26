@@ -1,11 +1,14 @@
 package com.ninjaguild.dragoneggdrop.placeholder;
 
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 
 public final class DragonEggDropPlaceholders {
@@ -30,6 +33,20 @@ public final class DragonEggDropPlaceholders {
         }
 
         return string;
+    }
+
+    public static void inject(ItemStack item) {
+        // Placeholder injection
+        ItemMeta meta = item.getItemMeta();
+        if (meta.hasDisplayName()) {
+            meta.setDisplayName(DragonEggDropPlaceholders.inject(null, meta.getDisplayName()));
+        }
+
+        if (meta.hasLore()) {
+            meta.setLore(meta.getLore().stream().map(s -> DragonEggDropPlaceholders.inject(null, s)).collect(Collectors.toList()));
+        }
+
+        item.setItemMeta(meta);
     }
 
 }

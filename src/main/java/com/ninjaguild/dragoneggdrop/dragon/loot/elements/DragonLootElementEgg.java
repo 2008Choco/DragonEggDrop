@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
@@ -132,11 +134,11 @@ public class DragonLootElementEgg implements IDragonLootElement {
         ItemMeta eggMeta = egg.getItemMeta();
 
         if (name != null) {
-            eggMeta.setDisplayName(name.replace("%dragon%", dragon.getName()));
+            eggMeta.setDisplayName(DragonEggDropPlaceholders.inject(null, name));
         }
 
         if (lore != null && !lore.isEmpty()) {
-            List<String> contextualLore = lore.stream().map(s -> s.replace("%dragon%", dragon.getName())).collect(Collectors.toList());
+            List<String> contextualLore = lore.stream().map(s -> DragonEggDropPlaceholders.inject(null, s)).collect(Collectors.toList());
             eggMeta.setLore(contextualLore);
         }
 

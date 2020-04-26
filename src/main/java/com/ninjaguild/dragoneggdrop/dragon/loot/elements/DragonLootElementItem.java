@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -72,6 +73,7 @@ public class DragonLootElementItem implements IDragonLootElement {
         } while (inventory.getItem(slot) != null);
 
         ItemStack generated = item.clone();
+        DragonEggDropPlaceholders.inject(generated);
         generated.setAmount(Math.max(random.nextInt(max), min));
         inventory.setItem(slot, generated);
     }

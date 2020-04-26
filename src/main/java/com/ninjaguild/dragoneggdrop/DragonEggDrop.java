@@ -106,13 +106,13 @@ public class DragonEggDrop extends JavaPlugin {
         manager.registerEvents(new DragonLifeListeners(this), this);
         manager.registerEvents(new LootListeners(), this);
         manager.registerEvents(new RespawnListeners(this), this);
-        manager.registerEvents(new PortalClickListener(this), this);
+        manager.registerEvents(new PortalClickListener(), this);
         manager.registerEvents(new DamageHistoryListener(), this);
 
         // Register commands
         this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
         this.registerCommand("dragonrespawn", new DragonRespawnCmd(this));
-        this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
+        this.registerCommand("dragontemplate", new DragonTemplateCmd());
 
         // Register external placeholder functionality
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);
@@ -168,41 +168,6 @@ public class DragonEggDrop extends JavaPlugin {
     }
 
     /**
-     * Send a message to a command sender with the supplied options
-     *
-     * @param sender the sender to which the message should be sent
-     * @param message the message to send
-     * @param options the options to use for this message
-     */
-    public void sendMessage(CommandSender sender, String message, int options) {
-        if ((options & PREFIX) != 0) {
-            message = CHAT_PREFIX + message;
-        }
-
-        if ((options & COLOUR) != 0) {
-            message = ChatColor.translateAlternateColorCodes('&', message);
-        }
-
-        if ((options & PLACEHOLDERS) != 0) {
-            message = DragonEggDropPlaceholders.inject((sender instanceof Player) ? (Player) sender : null, message);
-        }
-
-        sender.sendMessage(message);
-    }
-
-    /**
-     * Send a message to a command sender with the DragonEggDrop chat prefix.
-     *
-     * @param sender the sender to which the message should be sent
-     * @param message the message to send
-     *
-     * @see #sendMessage(CommandSender, String, int)
-     */
-    public void sendMessage(CommandSender sender, String message) {
-        this.sendMessage(sender, message, PREFIX);
-    }
-
-    /**
      * Get the loot table registry for all dragon loot tables.
      *
      * @return the loot table registry
@@ -218,6 +183,16 @@ public class DragonEggDrop extends JavaPlugin {
      */
     public static DragonEggDrop getInstance() {
         return instance;
+    }
+
+    /**
+     * Send a message to a command sender with the DragonEggDrop chat prefix.
+     *
+     * @param sender the sender to which the message should be sent
+     * @param message the message to send
+     */
+    public static <T extends CommandSender> void sendMessage(T sender, String message) {
+        sender.sendMessage(CHAT_PREFIX + message);
     }
 
     private void saveDefaultDirectory(String directory) {
