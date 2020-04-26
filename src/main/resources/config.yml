@@ -59,8 +59,8 @@ strict-countdown: true
 
 # Announcement message animation in the action bar
 announce-messages:
-- '&6Dragon respawning in &e%formatted-time%'
-- '&eDragon respawning in &6%formatted-time%'
+- '&6Dragon respawning in &e%dragoneggdrop_respawn_time%'
+- '&eDragon respawning in &6%dragoneggdrop_respawn_time%'
 
 # The radius relative to the centre of the end portal. Anybody outside of the radius will not receive the action bar.
 # If set to -1, all players in the end will receive the action bar

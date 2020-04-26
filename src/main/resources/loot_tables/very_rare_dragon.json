@@ -1,9 +1,9 @@
 {
     "egg": {
         "chance": 100.0,
-        "name": "%dragon%'s Egg",
+        "name": "%dragoneggdrop_dragon%'s Egg",
         "lore": [
-            "The egg of %dragon%",
+            "The egg of %dragoneggdrop_dragon%",
             "A valiant opponent"
         ]
     },
@@ -14,7 +14,7 @@
             "commands": [
                 {
                     "weight": 1.0,
-                    "command": 'minecraft:tellraw %top_damager% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}'
+                    "command": 'minecraft:tellraw %dragoneggdrop_top_damager% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}'
                 }
             ]
         }
