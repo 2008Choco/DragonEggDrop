@@ -1,5 +1,7 @@
 package com.ninjaguild.dragoneggdrop.commands;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,8 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.util.StringUtil;
 
 public final class DragonTemplateCmd implements TabExecutor {
+
+    private static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     // /template <list|"template"> <(view/info)|edit>
 
@@ -59,10 +63,13 @@ public final class DragonTemplateCmd implements TabExecutor {
                 return true;
             }
 
+            double totalWeight = DragonTemplate.getAll().stream().mapToDouble(DragonTemplate::getSpawnWeight).sum();
+            double chanceToSpawn = (template.getSpawnWeight() / totalWeight) * 100;
+
             sender.sendMessage(ChatColor.GRAY + "Dragon Name: " + ChatColor.GREEN + template.getName());
             sender.sendMessage(ChatColor.GRAY + "Bar Style: " + ChatColor.GREEN + template.getBarStyle());
             sender.sendMessage(ChatColor.GRAY + "Bar Color: " + ChatColor.GREEN + template.getBarColor());
-            sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.GREEN + template.getSpawnWeight());
+            sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.GREEN + template.getSpawnWeight() + " (out of " + ChatColor.DARK_GREEN + totalWeight + ChatColor.GREEN + " - " + ChatColor.DARK_GREEN + DECIMAL_FORMAT.format(chanceToSpawn) + "% " + ChatColor.GREEN + "chance to spawn)");
             sender.sendMessage(ChatColor.GRAY + "Announce Spawn: " + (template.shouldAnnounceSpawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceSpawn());
         }
 
