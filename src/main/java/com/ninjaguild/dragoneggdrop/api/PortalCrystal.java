@@ -114,7 +114,7 @@ public enum PortalCrystal {
 
         // (Cloned from #isPresent() only because "location" is required)
         DragonBattle battle = world.getEnderDragonBattle();
-        Location location = getRelativeTo(battle.getEndPortalLocation());
+        Location location = getRelativeTo(battle.getEndPortalLocation()).add(0.5, 0, 0.5);
 
         // Check for existing crystal
         Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);

@@ -48,7 +48,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
     private Location location;
     private double animationTime = 0;
     private double theta = 0;
-    private double currentY;
 
     /**
      * Construct a new DragonDeathRunnable object.
@@ -77,9 +76,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         // Portal location
         DragonBattle dragonBattle = dragon.getDragonBattle();
-        Location portalLocation = dragonBattle.getEndPortalLocation().add(0, 4, 0);
-        this.currentY = config.getDouble("Particles.egg-start-y");
-        this.location = new Location(world, portalLocation.getX(), currentY, portalLocation.getZ());
+        this.location = dragonBattle.getEndPortalLocation().add(0.5, config.getDouble("Particles.egg-start-y", 128), 0.5);
 
         // Expression parsing
         String shape = config.getString("Particles.Advanced.preset-shape");
