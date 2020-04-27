@@ -22,6 +22,7 @@ public final class DragonEggDropPlaceholders {
         // Register the DragonEggDrop PlaceholderExpansion
         if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
             new DragonEggDropPlaceholderAPIExpansion(plugin).register();
+            plugin.getLogger().info("Hooked into PlaceholderAPI - Expansion registered");
         }
     }
 

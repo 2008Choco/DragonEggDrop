@@ -72,19 +72,25 @@ public class DragonEggDrop extends JavaPlugin {
             this.saveDefaultDirectory("loot_tables");
         }
 
+        this.getLogger().info("Loading loot tables...");
         this.lootTableRegistry = new DragonLootTableRegistry();
         this.lootTableRegistry.reloadDragonLootTables();
+        this.getLogger().info("Done! Successfully loaded " + lootTableRegistry.getLootTables().size() + " loot tables");
 
+        this.getLogger().info("Loading dragon templates...");
         DragonTemplate.reload();
+        this.getLogger().info("Done! Successfully loaded " + DragonTemplate.getAll().size() + " dragon templates");
 
         // Load temp data (reload support)
         this.tempDataFile = new File(getDataFolder(), "tempData.json");
         if (tempDataFile.exists()) {
+            this.getLogger().info("Reading temporary data from previous server session...");
             TempDataUtils.readTempData(this, tempDataFile);
             this.tempDataFile.delete();
         }
 
         // Register events
+        this.getLogger().info("Registering event listeners");
         PluginManager manager = Bukkit.getPluginManager();
         manager.registerEvents(new DragonLifeListeners(this), this);
         manager.registerEvents(new LootListeners(), this);
@@ -93,6 +99,7 @@ public class DragonEggDrop extends JavaPlugin {
         manager.registerEvents(new DamageHistoryListener(), this);
 
         // Register commands
+        this.getLogger().info("Registering command executors and tab completion");
         this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
         this.registerCommand("dragonrespawn", new DragonRespawnCmd(this));
         this.registerCommand("dragontemplate", new DragonTemplateCmd());
