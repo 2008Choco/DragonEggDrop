@@ -35,15 +35,15 @@ public final class DragonEggDropPlaceholders {
         return string;
     }
 
-    public static void inject(ItemStack item) {
+    public static void inject(OfflinePlayer player, ItemStack item) {
         // Placeholder injection
         ItemMeta meta = item.getItemMeta();
         if (meta.hasDisplayName()) {
-            meta.setDisplayName(DragonEggDropPlaceholders.inject(null, meta.getDisplayName()));
+            meta.setDisplayName(DragonEggDropPlaceholders.inject(player, meta.getDisplayName()));
         }
 
         if (meta.hasLore()) {
-            meta.setLore(meta.getLore().stream().map(s -> DragonEggDropPlaceholders.inject(null, s)).collect(Collectors.toList()));
+            meta.setLore(meta.getLore().stream().map(s -> DragonEggDropPlaceholders.inject(player, s)).collect(Collectors.toList()));
         }
 
         item.setItemMeta(meta);

@@ -2,6 +2,7 @@ package com.ninjaguild.dragoneggdrop.placeholder;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.UUID;
 import java.util.regex.Matcher;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
@@ -84,6 +85,32 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
             return (template != null) ? template.getName() : "no dragon";
         }
 
+        else if (placeholder.equalsIgnoreCase("slain_dragon")) { // %dragoneggdrop_slain_dragon%
+            if (player == null) {
+                return null;
+            }
+
+            World world = player.getWorld();
+            if (world.getEnvironment() != Environment.THE_END) {
+                return "no dragon in this world";
+            }
+
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
+            DragonTemplate template = endWorld.getPreviousTemplate();
+            return (template != null) ? template.getName() : null;
+        }
+
+        else if (placeholder.startsWith("slain_dragon_")) { // %dragoneggdrop_slain_dragon[_world]%
+            World world = Bukkit.getWorld(placeholder.substring("dragon_".length()));
+            if (world == null || world.getEnvironment() != Environment.THE_END) {
+                return "no dragon in this world";
+            }
+
+            EndWorldWrapper endWorld = EndWorldWrapper.of(world);
+            DragonTemplate template = endWorld.getPreviousTemplate();
+            return (template != null) ? template.getName() : "no dragon";
+        }
+
         else if (placeholder.equalsIgnoreCase("respawn_time")) { // %dragoneggdrop_respawn_time%
             if (player == null) {
                 return null;
@@ -126,11 +153,10 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
 
             DamageHistory history = null;
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            if (endWorld.getActiveTemplate() != null) {
-                history = DamageHistory.forEntity(world.getEnderDragonBattle().getEnderDragon());
+            UUID previousDragonUUID = endWorld.getPreviousDragonUUID();
+            if (previousDragonUUID != null) {
+                history = DamageHistory.forEntity(previousDragonUUID);
             }
-
-            // TODO: Get history from most recent battle if active battle is null
 
             if (history == null || offset >= history.uniqueDamagers()) {
                 return "None";
@@ -158,11 +184,10 @@ final class DragonEggDropPlaceholderAPIExpansion extends PlaceholderExpansion {
 
             DamageHistory history = null;
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            if (endWorld.getActiveTemplate() != null) {
-                history = DamageHistory.forEntity(world.getEnderDragonBattle().getEnderDragon());
+            UUID previousDragonUUID = endWorld.getPreviousDragonUUID();
+            if (previousDragonUUID != null) {
+                history = DamageHistory.forEntity(previousDragonUUID);
             }
-
-            // TODO: Get history from most recent battle if active battle is null
 
             return (history != null && offset < history.uniqueDamagers()) ? DECIMAL_FORMAT.format(history.getTopDamager(offset).getDamage()) : "0";
         }

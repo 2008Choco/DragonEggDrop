@@ -248,6 +248,19 @@ public class DamageHistory {
     }
 
     /**
+     * Get the {@link DamageHistory} associated with the given entity UUID. This method will
+     * never return null.
+     *
+     * @param uuid the entity whose history to get
+     *
+     * @return the entity's damage history
+     */
+    public static DamageHistory forEntity(UUID uuid) {
+        Preconditions.checkArgument(uuid != null, "Cannot get damage history for null UUID");
+        return ENTITY_DAMAGE_HISTORY.computeIfAbsent(uuid, DamageHistory::new);
+    }
+
+    /**
      * Get the {@link DamageHistory} associated with the given entity. This method will
      * never return null.
      *
@@ -257,7 +270,7 @@ public class DamageHistory {
      */
     public static DamageHistory forEntity(Entity entity) {
         Preconditions.checkArgument(entity != null, "Cannot get damage history for null entity");
-        return ENTITY_DAMAGE_HISTORY.computeIfAbsent(entity.getUniqueId(), DamageHistory::new);
+        return forEntity(entity.getUniqueId());
     }
 
     /**

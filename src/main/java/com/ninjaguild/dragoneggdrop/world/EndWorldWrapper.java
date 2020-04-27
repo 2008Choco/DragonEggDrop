@@ -30,6 +30,8 @@ public class EndWorldWrapper {
     private DragonTemplate activeTemplate, respawningTemplate, previousTemplate;
     private DragonLootTable lootTableOverride = null;
 
+    private UUID previousDragonUUID;
+
     private RespawnRunnable respawnTask;
 
     private final DragonEggDrop plugin;
@@ -246,6 +248,25 @@ public class EndWorldWrapper {
      */
     public DragonTemplate getPreviousTemplate() {
         return previousTemplate;
+    }
+
+    /**
+     * Set the UUID of the dragon that was most recently slain. This is mostly for
+     * internal use. Please avoid calling this.
+     *
+     * @param previousDragonUUID the UUID of the dragon that was slain
+     */
+    public void setPreviousDragonUUID(UUID previousDragonUUID) {
+        this.previousDragonUUID = previousDragonUUID;
+    }
+
+    /**
+     * Get the UUID of the dragon that was most recently slain.
+     *
+     * @return the UUID of the dragon that was slain
+     */
+    public UUID getPreviousDragonUUID() {
+        return previousDragonUUID;
     }
 
     /**

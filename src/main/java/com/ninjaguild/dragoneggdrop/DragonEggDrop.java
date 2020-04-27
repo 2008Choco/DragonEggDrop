@@ -48,23 +48,6 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public class DragonEggDrop extends JavaPlugin {
 
-    /**
-     * The DragonEggDrop prefix bit position. If set, the prefix will be appended to
-     * messages.
-     */
-    public static final int PREFIX = 0x01;
-
-    /**
-     * The colour bit position. If set, messages will have their chat colour codes
-     * translated.
-     */
-    public static final int COLOUR = 0x02;
-
-    /**
-     * The placeholders bit position. If set, placeholders will be injected into messages.
-     */
-    public static final int PLACEHOLDERS = 0x04;
-
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private static final String CHAT_PREFIX = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DED" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;

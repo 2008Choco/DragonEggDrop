@@ -134,11 +134,11 @@ public class DragonLootElementEgg implements IDragonLootElement {
         ItemMeta eggMeta = egg.getItemMeta();
 
         if (name != null) {
-            eggMeta.setDisplayName(DragonEggDropPlaceholders.inject(null, name));
+            eggMeta.setDisplayName(DragonEggDropPlaceholders.inject(killer, name));
         }
 
         if (lore != null && !lore.isEmpty()) {
-            List<String> contextualLore = lore.stream().map(s -> DragonEggDropPlaceholders.inject(null, s)).collect(Collectors.toList());
+            List<String> contextualLore = lore.stream().map(s -> DragonEggDropPlaceholders.inject(killer, s)).collect(Collectors.toList());
             eggMeta.setLore(contextualLore);
         }
 

@@ -1,16 +1,17 @@
 package com.ninjaguild.dragoneggdrop.listeners;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
+import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -35,19 +36,27 @@ public final class LootListeners implements Listener {
         }
 
         DragonLootElementEgg egg = dragon.getLootTable().getEgg();
-        String eggName = egg.getName().replace("%dragon%", dragon.getName());
-        List<String> eggLore = egg.getLore().stream().map(s -> s.replace("%dragon%", dragon.getName())).collect(Collectors.toList());
-
-        ItemMeta eggMeta = stack.getItemMeta();
-
-        if (eggName != null && !eggName.isEmpty()) {
-            eggMeta.setDisplayName(eggName);
-        }
-        if (eggLore != null && !eggLore.isEmpty()) {
-            eggMeta.setLore(eggLore);
+        if (egg == null) {
+            return;
         }
 
-        stack.setItemMeta(eggMeta);
+        ItemMeta meta = stack.getItemMeta();
+        String name = egg.getName();
+        if (name != null) {
+            meta.setDisplayName(name);
+        }
+
+        List<String> lore = egg.getLore();
+        if (lore != null && !lore.isEmpty()) {
+            meta.setLore(lore);
+        }
+
+        stack.setItemMeta(meta);
+
+        List<Player> players = world.getPlayers();
+        if (players.size() >= 1) { // Only need it for the world anyways
+            DragonEggDropPlaceholders.inject(players.get(0), stack);
+        }
     }
 
 }
