@@ -21,7 +21,329 @@
     ],
     "chest": {
         "chance": 100.0,
-        "name": "Loot Chest",
-        "pools": [ ]
+        "name": "&6Legendary Chest",
+        "pools": [
+            {
+                "name": "elytra",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:elytra"
+                    }
+                ]
+            },
+            {
+                "name": "equipment",
+                "rolls": {
+                    "min": 3,
+                    "max": 5
+                },
+                "items": [
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_helmet",
+                        "enchantments": {
+                            "minecraft:protection": 2
+                        }
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_chestplate",
+                        "enchantments": {
+                            "minecraft:thorns": 1
+                        }
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_leggings"
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_boots"
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_helmet"
+                    },
+                    {
+                        "weight": 0.3,
+                        "type": "minecraft:diamond_helmet",
+                        "enchantments": {
+                            "minecraft:protection": 4,
+                            "minecraft:unbreaking": 3,
+                            "minecraft:respiration": 2
+                        }
+                    },
+                    {
+                        "weight": 0.3,
+                        "type": "minecraft:diamond_helmet",
+                        "enchantments": {
+                            "minecraft:protection": 2,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:thorns": 3,
+                            "minecraft:frost_walker": 2
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_chestplate"
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:diamond_chestplate",
+                        "enchantments": {
+                            "minecraft:protection": 3,
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:diamond_chestplate",
+                        "enchantments": {
+                            "minecraft:protection": 4,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:thorns": 2
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:diamond_chestplate",
+                        "enchantments": {
+                            "minecraft:mending": 1,
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_leggings"
+                    },
+                    {
+                        "weight": 0.75,
+                        "type": "minecraft:diamond_leggings",
+                        "enchantments": {
+                            "minecraft:protection": 4,
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_boots"
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_boots",
+                        "enchantments": {
+                            "minecraft:protection": 4,
+                            "minecraft:thorns": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_boots",
+                        "enchantments": {
+                            "minecraft:protection": 4,
+                            "minecraft:feather_falling": 4,
+                            "minecraft:depth_strider": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:shield",
+                        "enchantments": {
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_sword",
+                        "name": "&6Excalibur",
+                        "lore": [
+                            "&7A sword only wielded by the worthy.",
+                            "You are the chosen one."
+                        ],
+                        "enchantments": {
+                            "minecraft:sharpness": 5,
+                            "minecraft:unbreaking": 3,
+                            "minecraft:smite": 4
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_sword",
+                        "name": "&6Excalibur",
+                        "lore": [
+                            "&7A sword only wielded by the worthy.",
+                            "You are the chosen one."
+                        ],
+                        "enchantments": {
+                            "minecraft:sharpness": 4,
+                            "minecraft:unbreaking": 3,
+                            "minecraft:fire_aspect": 1
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:bow",
+                        "name": "&cBow of Champions",
+                        "enchantments": {
+                            "minecraft:power": 4,
+                            "minecraft:unbreaking": 3,
+                            "minecraft:flame": 1
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:bow",
+                        "name": "&cBow of The Ancients",
+                        "enchantments": {
+                            "minecraft:power": 3,
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:bow",
+                        "name": "&cBow of Defenders",
+                        "enchantments": {
+                            "minecraft:power": 2,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:punch": 2
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "gems",
+                "rolls": {
+                    "min": 3,
+                    "max": 6
+                },
+                "items": [
+                    {
+                        "weight": 0.75,
+                        "type": "minecraft:iron_ingot",
+                        "amount": {
+                            "min": 16,
+                            "max": 48
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:gold_ingot",
+                        "amount": {
+                            "min": 16,
+                            "max": 48
+                        }
+                    },
+                    {
+                        "weight": 1.25,
+                        "type": "minecraft:diamond",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:emerald",
+                        "amount": {
+                            "min": 12,
+                            "max": 24
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "food",
+                "rolls": {
+                    "min": 1,
+                    "max": 3
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:apple",
+                        "amount": {
+                            "min": 8,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:baked_potato",
+                        "amount": {
+                            "min": 4,
+                            "max": 8
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "cooked_food",
+                "rolls": {
+                    "min": 1,
+                    "max": 3
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_beef",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_chicken",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_porkchop",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_mutton",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_rabbit",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_cod",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_salmon",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }

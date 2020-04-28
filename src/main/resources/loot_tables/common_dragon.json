@@ -18,5 +18,207 @@
                 }
             ]
         }
-    ]
+    ],
+    "chest": {
+        "chance": 50.0,
+        "name": "Common Chest",
+        "pools": [
+            {
+                "name": "elytra",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:elytra"
+                    },
+                    {
+                        "weight": 4.0,
+                        "type": "minecraft:air"
+                    }
+                ]
+            },
+            {
+                "name": "equipment",
+                "rolls": {
+                    "min": 1,
+                    "max": 2
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_helmet"
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_chestplate",
+                        "enchantments": {
+                            "minecraft:protection": 2
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_leggings"
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:leather_boots"
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:shield"
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_sword",
+                        "name": "&7Dagger of Honour",
+                        "enchantments": {
+                            "minecraft:unbreaking": 1,
+                            "minecraft:sharpness": 1
+                        }
+                    },
+                    {
+                        "weight": 0.05,
+                        "type": "minecraft:diamond_sword",
+                        "enchantments": {
+                            "minecraft:sharpness": 2
+                        }
+                    },
+                    {
+                        "weight": 0.05,
+                        "type": "minecraft:diamond_helmet",
+                        "enchantments": {
+                            "minecraft:aqua_affinity": 2
+                        }
+                    },
+                    {
+                        "weight": 0.05,
+                        "type": "minecraft:diamond_boots"
+                    }
+                ]
+            },
+            {
+                "name": "gems",
+                "rolls": {
+                    "min": 0,
+                    "max": 3
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:iron_ingot",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:gold_ingot",
+                        "amount": {
+                            "min": 4,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond",
+                        "amount": {
+                            "min": 2,
+                            "max": 6
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "food",
+                "rolls": {
+                    "min": 1,
+                    "max": 3
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:apple",
+                        "amount": {
+                            "min": 8,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:baked_potato",
+                        "amount": {
+                            "min": 4,
+                            "max": 8
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "cooked_food",
+                "rolls": {
+                    "min": 3,
+                    "max": 4
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_beef",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_chicken",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_porkchop",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_mutton",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_rabbit",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_cod",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_salmon",
+                        "amount": {
+                            "min": 2,
+                            "max": 8
+                        }
+                    }
+                ]
+            }
+        ]
+    }
 }

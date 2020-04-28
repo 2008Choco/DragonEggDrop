@@ -20,9 +20,23 @@
         }
     ],
     "chest": {
-        "chance": 15.0,
-        "name": "Loot Chest",
+        "chance": 60.0,
+        "name": "Uncommon Chest",
         "pools": [
+            {
+                "name": "elytra",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:elytra"
+                    },
+                    {
+                        "weight": 3.0,
+                        "type": "minecraft:air"
+                    }
+                ]
+            },
             {
                 "name": "equipment",
                 "rolls": {

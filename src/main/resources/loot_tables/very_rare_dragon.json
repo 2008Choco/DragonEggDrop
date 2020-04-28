@@ -20,8 +20,322 @@
         }
     ],
     "chest": {
-        "chance": 50.0,
-        "name": "Loot Chest",
-        "pools": [ ]
+        "chance": 85.0,
+        "name": "Rare Chest",
+        "pools": [
+            {
+                "name": "elytra",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:elytra"
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:air"
+                    }
+                ]
+            },
+            {
+                "name": "equipment",
+                "rolls": {
+                    "min": 3,
+                    "max": 4
+                },
+                "items": [
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_helmet",
+                        "enchantments": {
+                            "minecraft:protection": 1
+                        }
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_chestplate"
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_leggings"
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:iron_boots"
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_helmet"
+                    },
+                    {
+                        "weight": 0.3,
+                        "type": "minecraft:diamond_helmet",
+                        "enchantments": {
+                            "minecraft:protection": 3,
+                            "minecraft:unbreaking": 2
+                        }
+                    },
+                    {
+                        "weight": 0.3,
+                        "type": "minecraft:diamond_helmet",
+                        "enchantments": {
+                            "minecraft:protection": 2,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:thorns": 1
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_chestplate"
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:diamond_chestplate",
+                        "enchantments": {
+                            "minecraft:protection": 2,
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:diamond_chestplate",
+                        "enchantments": {
+                            "minecraft:protection": 4,
+                            "minecraft:unbreaking": 2
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:diamond_chestplate",
+                        "enchantments": {
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_leggings"
+                    },
+                    {
+                        "weight": 0.75,
+                        "type": "minecraft:diamond_leggings",
+                        "enchantments": {
+                            "minecraft:protection": 3,
+                            "minecraft:unbreaking": 2
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_boots"
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_boots",
+                        "enchantments": {
+                            "minecraft:protection": 3,
+                            "minecraft:thorns": 2
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:diamond_boots",
+                        "enchantments": {
+                            "minecraft:protection": 3,
+                            "minecraft:feather_falling": 2,
+                            "minecraft:depth_strider": 2
+                        }
+                    },
+                    {
+                        "weight": 0.4,
+                        "type": "minecraft:shield"
+                    },
+                    {
+                        "weight": 0.6,
+                        "type": "minecraft:shield",
+                        "enchantments": {
+                            "minecraft:unbreaking": 2
+                        }
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:diamond_sword",
+                        "enchantments": {
+                            "minecraft:sharpness": 3,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:smite": 2
+                        }
+                    },
+                    {
+                        "weight": 0.25,
+                        "type": "minecraft:diamond_sword",
+                        "enchantments": {
+                            "minecraft:sharpness": 3,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:fire_aspect": 1
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:bow",
+                        "enchantments": {
+                            "minecraft:power": 3,
+                            "minecraft:unbreaking": 2,
+                            "minecraft:flame": 1
+                        }
+                    },
+                    {
+                        "weight": 0.33,
+                        "type": "minecraft:bow",
+                        "enchantments": {
+                            "minecraft:power": 2,
+                            "minecraft:unbreaking": 3
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:bow",
+                        "enchantments": {
+                            "minecraft:power": 2,
+                            "minecraft:unbreaking": 1,
+                            "minecraft:punch": 1
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "gems",
+                "rolls": {
+                    "min": 3,
+                    "max": 5
+                },
+                "items": [
+                    {
+                        "weight": 0.75,
+                        "type": "minecraft:iron_ingot",
+                        "amount": {
+                            "min": 12,
+                            "max": 36
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:gold_ingot",
+                        "amount": {
+                            "min": 12,
+                            "max": 36
+                        }
+                    },
+                    {
+                        "weight": 1.25,
+                        "type": "minecraft:diamond",
+                        "amount": {
+                            "min": 8,
+                            "max": 24
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:emerald",
+                        "amount": {
+                            "min": 8,
+                            "max": 16
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "food",
+                "rolls": {
+                    "min": 1,
+                    "max": 2
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:apple",
+                        "amount": {
+                            "min": 8,
+                            "max": 16
+                        }
+                    },
+                    {
+                        "weight": 0.5,
+                        "type": "minecraft:baked_potato",
+                        "amount": {
+                            "min": 4,
+                            "max": 8
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:air"
+                    }
+                ]
+            },
+            {
+                "name": "cooked_food",
+                "rolls": {
+                    "min": 1,
+                    "max": 4
+                },
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_beef",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_chicken",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_porkchop",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_mutton",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:cooked_rabbit",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_cod",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    },
+                    {
+                        "weight": 2.0,
+                        "type": "minecraft:cooked_salmon",
+                        "amount": {
+                            "min": 8,
+                            "max": 32
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }
