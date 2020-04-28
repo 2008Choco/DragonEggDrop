@@ -25,6 +25,7 @@ import com.ninjaguild.dragoneggdrop.dragon.loot.pool.LootPoolCommand;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.LootPoolItem;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -284,7 +285,7 @@ public class DragonLootTable {
             }
 
             if (chestRoot.has("name")) {
-                chestName = chestRoot.get("name").getAsString();
+                chestName = ChatColor.translateAlternateColorCodes('&', chestRoot.get("name").getAsString());
             }
 
             if (chestRoot.has("pools") && chestRoot.get("pools").isJsonArray()) {
