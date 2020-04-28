@@ -37,8 +37,13 @@ public final class DragonEggDropPlaceholders {
     }
 
     public static void inject(OfflinePlayer player, ItemStack item) {
+        if (item == null || !item.hasItemMeta()) {
+            return;
+        }
+
         // Placeholder injection
         ItemMeta meta = item.getItemMeta();
+
         if (meta.hasDisplayName()) {
             meta.setDisplayName(DragonEggDropPlaceholders.inject(player, meta.getDisplayName()));
         }
