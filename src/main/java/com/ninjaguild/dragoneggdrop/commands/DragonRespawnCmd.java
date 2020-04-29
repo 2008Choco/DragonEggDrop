@@ -121,7 +121,7 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             if (args.length < 2) {
-                DragonEggDrop.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " " + args[0] + "<set|get>");
+                DragonEggDrop.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " " + args[0] + " <set|get>");
                 return true;
             }
 
@@ -172,7 +172,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         else {
-            DragonEggDrop.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + "<stop|start|template>");
+            DragonEggDrop.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + " <stop|start|template>");
         }
 
         return true;
@@ -241,7 +241,7 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             if (world.getEnvironment() != Environment.THE_END) {
-                DragonEggDrop.sendMessage(sender, "The specified world (" + args[argumentIndex] + ") is not an end world");
+                DragonEggDrop.sendMessage(sender, "The specified world (" + ChatColor.YELLOW + args[argumentIndex] + ChatColor.GRAY + ") is not an end world");
                 return null;
             }
 
