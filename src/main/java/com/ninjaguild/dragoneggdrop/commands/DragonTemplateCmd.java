@@ -38,20 +38,18 @@ public final class DragonTemplateCmd implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
+            if (label.endsWith("s")) {
+                this.listTemplates(sender);
+                return true;
+            }
+
             DragonEggDrop.sendMessage(sender, "Please specify the name of a template, or \"list\" to list all templates");
             return true;
         }
 
         // List all existing templates
         if (args[0].equalsIgnoreCase("list")) {
-            if (!sender.hasPermission("dragoneggdrop.template.list")) {
-                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
-                return true;
-            }
-
-            String templates = DragonTemplate.getAll().stream().map(t -> ChatColor.GREEN + t.getId()).collect(Collectors.joining(ChatColor.GRAY + ", "));
-            DragonEggDrop.sendMessage(sender, ChatColor.GRAY + "Loaded Templates:");
-            sender.sendMessage(templates);
+            this.listTemplates(sender);
             return true;
         }
 
@@ -107,6 +105,18 @@ public final class DragonTemplateCmd implements TabExecutor {
         }
 
         return options;
+    }
+
+    private void listTemplates(CommandSender sender) {
+        if (!sender.hasPermission("dragoneggdrop.template.list")) {
+            DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+            return;
+        }
+
+        String templates = DragonTemplate.getAll().stream().map(t -> ChatColor.GREEN + t.getId()).collect(Collectors.joining(ChatColor.GRAY + ", "));
+        DragonEggDrop.sendMessage(sender, ChatColor.GRAY + "Loaded Templates:");
+        sender.sendMessage(templates);
+        return;
     }
 
 }
