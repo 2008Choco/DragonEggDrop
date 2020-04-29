@@ -1,4 +1,4 @@
-name: DragonEggDrop
+name: ${project.name}
 main: com.ninjaguild.dragoneggdrop.DragonEggDrop
 version: ${project.version}
 description: ${project.description}
@@ -12,7 +12,7 @@ commands:
     usage: /<command> [help]
     aliases: [ded]
   dragonrespawn:
-    description: A command to force respawning a dragon
+    description: Functionality to manipulate the dragon respawn process
     usage: /<command> <stop|start|template>
     aliases: [respawndragon, dragonspawn, spawndragon]
   dragontemplate:
@@ -25,7 +25,6 @@ permissions:
     description: Allow access to all commands in dragoneggdrop
     default: op
     children:
-      dragoneggdrop.help: true
       dragoneggdrop.reload: true
       dragoneggdrop.respawn.*: true
       dragoneggdrop.template.*: true

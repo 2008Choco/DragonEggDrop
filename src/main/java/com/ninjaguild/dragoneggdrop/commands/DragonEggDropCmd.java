@@ -13,52 +13,38 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 
 public final class DragonEggDropCmd implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public DragonEggDropCmd(final DragonEggDrop plugin) {
+    public DragonEggDropCmd(DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.GOLD + "-----------------------");
-            sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP INFO --");
-            sender.sendMessage(ChatColor.GOLD + "-----------------------");
-            sender.sendMessage(ChatColor.GOLD + "Original Author: PixelStix");
-            sender.sendMessage(ChatColor.GOLD + "Maintainer: " + plugin.getDescription().getAuthors().get(0));
-            sender.sendMessage(ChatColor.GOLD + "Version: " + plugin.getDescription().getVersion());
+            PluginDescriptionFile description = plugin.getDescription();
+
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + ChatColor.STRIKETHROUGH + "--------------------------------------------");
+            sender.sendMessage("");
+            sender.sendMessage(ChatColor.GRAY + "Version: " + ChatColor.YELLOW + description.getVersion());
+            sender.sendMessage(ChatColor.GRAY + "Developer / Maintainer: " + ChatColor.YELLOW + description.getAuthors().get(0));
+            sender.sendMessage(ChatColor.GRAY + "Former author: " + ChatColor.YELLOW + "PixelStix");
+            sender.sendMessage(ChatColor.GRAY + "Plugin Page: " + ChatColor.YELLOW + "https://www.spigotmc.org/resources/35570/");
+            sender.sendMessage(ChatColor.GRAY + "Report bugs to: " + ChatColor.YELLOW + "https://github.com/2008Choco/DragonEggDrop/issues/");
 
             UpdateResult result = UpdateChecker.get().getLastResult();
             if (sender.isOp() && result != null && result.requiresUpdate()) {
                 sender.sendMessage(ChatColor.AQUA + "New version available: " + result.getNewestVersion());
             }
 
-            sender.sendMessage(ChatColor.YELLOW + "/dragoneggdrop help");
-            sender.sendMessage(ChatColor.GOLD + "-----------------------");
-
+            sender.sendMessage("");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + ChatColor.STRIKETHROUGH + "--------------------------------------------");
             return true;
-        }
-
-        // "help" and "reload" params
-        if (args[0].equalsIgnoreCase("help")) {
-            if (!sender.hasPermission("dragoneggdrop.help")) {
-                DragonEggDrop.sendMessage(sender, ChatColor.RED + "Permission denied!");
-                return true;
-            }
-
-            sender.sendMessage(ChatColor.GOLD + "-----------------------");
-            sender.sendMessage(ChatColor.GOLD + "-- DRAGONEGGDROP HELP --");
-            sender.sendMessage(ChatColor.GOLD + "-----------------------");
-            sender.sendMessage(ChatColor.GOLD + "/dragoneggdrop reload");
-            sender.sendMessage(ChatColor.GOLD + "/dragonspawn");
-            sender.sendMessage(ChatColor.GOLD + "/dragontemplate list");
-            sender.sendMessage(ChatColor.GOLD + "/dragontemplate <template> (view/info)");
-            sender.sendMessage(ChatColor.GOLD + "-----------------------");
         }
 
         else if (args[0].equalsIgnoreCase("reload")) {
@@ -81,7 +67,7 @@ public final class DragonEggDropCmd implements TabExecutor {
         List<String> options = new ArrayList<>();
 
         if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], Arrays.asList("help", "reload"), options);
+            StringUtil.copyPartialMatches(args[0], Arrays.asList("reload"), options);
         }
 
         return options;
