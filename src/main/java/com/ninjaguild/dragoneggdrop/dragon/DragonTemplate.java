@@ -74,7 +74,7 @@ public class DragonTemplate {
 
         this.name = (configFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', configFile.getString("dragon-name")) : null);
         this.barStyle = Enums.getIfPresent(BarStyle.class, configFile.getString("bar-style", "SOLID").toUpperCase()).or(BarStyle.SOLID);
-        this.barColour = Enums.getIfPresent(BarColor.class, configFile.getString("bar-colour", "PINK").toUpperCase()).or(BarColor.PINK);
+        this.barColour = Enums.getIfPresent(BarColor.class, configFile.getString("bar-color", "PINK").toUpperCase()).or(BarColor.PINK);
         this.lootTable = DragonEggDrop.getInstance().getLootTableRegistry().getLootTable(configFile.getString("loot"));
     }
 
