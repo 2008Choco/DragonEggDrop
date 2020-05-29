@@ -295,7 +295,11 @@ public class DragonLootTable {
                         throw new JsonParseException("Invalid item pool for dragon loot table " + fileName);
                     }
 
-                    chestPools.add(LootPoolItem.fromJson(element.getAsJsonObject()));
+                    try {
+                        chestPools.add(LootPoolItem.fromJson(element.getAsJsonObject()));
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

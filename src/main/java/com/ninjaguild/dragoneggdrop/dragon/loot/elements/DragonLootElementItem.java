@@ -6,24 +6,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.UUID;
 
+import com.google.common.base.Enums;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import com.ninjaguild.dragoneggdrop.utils.ObjectResultWrapper;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Chest;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TropicalFish;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.KnowledgeBookMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.SuspiciousStewMeta;
+import org.bukkit.inventory.meta.TropicalFishBucketMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 /**
  * An implementation of {@link IDragonLootElement} to represent an item.
@@ -87,23 +116,23 @@ public class DragonLootElementItem implements IDragonLootElement {
      *
      * @throws JsonParseException if parsing the object has failed
      */
-    public static DragonLootElementItem fromJson(JsonObject root) {
+    public static ObjectResultWrapper<DragonLootElementItem> fromJson(JsonObject root) {
         double weight = root.has("weight") ? Math.max(root.get("weight").getAsDouble(), 0.0) : 1.0;
-        String name = root.has("name") ? ChatColor.translateAlternateColorCodes('&', root.get("name").getAsString()) : null;
         int minAmount = 1, maxAmount = 1;
 
         if (!root.has("type")) {
-            throw new JsonParseException("Could not find \"type\" for item in loot pool");
+            return ObjectResultWrapper.failExceptionally("Could not find \"type\" for item in loot pool", JsonParseException::new);
         }
 
         Material type = Material.matchMaterial(root.get("type").getAsString());
         if (type == null) {
-            throw new JsonParseException("Could not create item of type \"" + root.get("type").getAsString() + "\" for item loot pool. Does it exist?");
+            return ObjectResultWrapper.failExceptionally("Could not create item of type \"" + root.get("type").getAsString() + "\" for item loot pool. Does it exist?", JsonParseException::new);
         }
 
         ItemStack item = new ItemStack(type);
         ItemMeta meta = item.getItemMeta();
 
+        // Base meta (ItemMeta)
         if (root.has("amount")) {
             JsonElement amount = root.get("amount");
             if (amount.isJsonPrimitive()) {
@@ -117,13 +146,17 @@ public class DragonLootElementItem implements IDragonLootElement {
             }
         }
 
+        if (root.has("name")) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', root.get("name").getAsString()));
+        }
+
         if (root.has("lore") && root.get("lore").isJsonArray()) {
             List<String> lore = new ArrayList<>();
 
             JsonArray loreObject = root.getAsJsonArray("lore");
             for (JsonElement element : loreObject) {
                 if (!element.isJsonPrimitive()) {
-                    throw new JsonParseException("Malformated lore in item loot pool. Expected String, got " + element.getClass().getSimpleName());
+                    return ObjectResultWrapper.failExceptionally("Malformated lore in item loot pool. Expected String, got " + element.getClass().getSimpleName(), JsonParseException::new);
                 }
 
                 lore.add(element.getAsString());
@@ -141,7 +174,7 @@ public class DragonLootElementItem implements IDragonLootElement {
             for (Entry<String, JsonElement> enchantmentElement : enchantmentsRoot.entrySet()) {
                 Enchantment enchantment = Enchantment.getByKey(toNamespacedKey(enchantmentElement.getKey()));
                 if (enchantment == null) {
-                    throw new JsonParseException("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?");
+                    return ObjectResultWrapper.failExceptionally("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?", JsonParseException::new);
                 }
 
                 int level = Math.max(enchantmentElement.getValue().getAsInt(), 0);
@@ -155,12 +188,418 @@ public class DragonLootElementItem implements IDragonLootElement {
             }
         }
 
-        if (name != null) {
-            meta.setDisplayName(name);
+        if (root.has("damage") && meta instanceof Damageable) {
+            ((Damageable) meta).setDamage(Math.max(root.get("damage").getAsInt(), 0));
+        }
+
+        if (root.has("unbreakable")) {
+            meta.setUnbreakable(root.get("unbreakable").getAsBoolean());
+        }
+
+        if (root.has("attribute_modifiers")) {
+            JsonElement modifiersElement = root.get("attribute_modifiers");
+            if (!modifiersElement.isJsonObject()) {
+                return ObjectResultWrapper.failExceptionally("Element \"attribute_modifiers\" is of unexpected type. Expected JsonObject, got " + modifiersElement.getClass().getSimpleName(), JsonParseException::new);
+            }
+
+            JsonObject modifiersRoot = modifiersElement.getAsJsonObject();
+            for (Entry<String, JsonElement> modifierEntry : modifiersRoot.entrySet()) {
+                Attribute attribute = Enums.getIfPresent(Attribute.class, modifierEntry.getKey().toUpperCase()).orNull();
+                if (attribute == null) {
+                    return ObjectResultWrapper.failExceptionally("Invalid attribute modifier specified, \"" + modifierEntry.getKey() + "\". Does it exist?", JsonParseException::new);
+                }
+
+                JsonElement modifierElement = modifierEntry.getValue();
+                if (!modifierElement.isJsonObject()) {
+                    return ObjectResultWrapper.failExceptionally("Element \"" + modifierEntry.getKey() + "\" is of unexpected type. Expected JsonObject, got " + modifiersElement.getClass().getSimpleName(), JsonParseException::new);
+                }
+
+                JsonObject modifierRoot = modifierElement.getAsJsonObject();
+                UUID uuid = modifierRoot.has("uuid") ? UUID.fromString(modifierRoot.get("uuid").getAsString()) : UUID.randomUUID();
+                EquipmentSlot slot = modifierRoot.has("slot") ? Enums.getIfPresent(EquipmentSlot.class, modifierRoot.get("slot").getAsString().toUpperCase()).orNull() : null;
+
+                if (!modifierRoot.has("name")) {
+                    return ObjectResultWrapper.failExceptionally("Attribute modifier missing element \"name\".", JsonParseException::new);
+                }
+                if (!modifierRoot.has("value")) {
+                    return ObjectResultWrapper.failExceptionally("Attribute modifier missing element \"value\".", JsonParseException::new);
+                }
+                if (!modifierRoot.has("operation")) {
+                    return ObjectResultWrapper.failExceptionally("Attribute modifier missing element \"operation\". Expected \"add_number\", \"add_scalar\" or \"multiply_scalar_1\"", JsonParseException::new);
+                }
+
+                String name = modifierRoot.get("name").getAsString();
+                double value = modifierRoot.get("value").getAsDouble();
+                AttributeModifier.Operation operation = Enums.getIfPresent(AttributeModifier.Operation.class, modifierRoot.get("operation").getAsString().toUpperCase()).orNull();
+                if (operation == null) {
+                    return ObjectResultWrapper.failExceptionally("Unknown operation for attribute modifier \"" + modifierEntry.getKey() + "\". Expected \"add_number\", \"add_scalar\" or \"multiply_scalar_1\"", JsonParseException::new);
+                }
+
+                AttributeModifier modifier = (slot != null) ? new AttributeModifier(uuid, name, value, operation, slot) : new AttributeModifier(uuid, name, value, operation);
+                meta.addAttributeModifier(attribute, modifier);
+            }
+        }
+
+        if (root.has("item_flags") && root.get("item_flags").isJsonArray()) {
+            JsonArray flagsArray = root.getAsJsonArray("item_flags");
+            flagsArray.forEach(e -> {
+                // Guava's Optionals don't have #ifPresent() >:[
+                ItemFlag flag = Enums.getIfPresent(ItemFlag.class, e.getAsString().toUpperCase()).orNull();
+                if (flag != null) {
+                    meta.addItemFlags(flag);
+                }
+            });
+        }
+
+        // Banner meta (BannerMeta)
+        if (meta instanceof BannerMeta) {
+            BannerMeta metaSpecific = (BannerMeta) meta;
+
+            if (root.has("patterns") && root.get("patterns").isJsonArray()) {
+                for (JsonElement patternElement : root.getAsJsonArray("patterns")) {
+                    if (!patternElement.isJsonObject()) {
+                        return ObjectResultWrapper.failExceptionally("Element \"patterns\" has an unexpected type. Expected JsonObject, got " + patternElement.getClass().getSimpleName(), JsonParseException::new);
+                    }
+
+                    JsonObject patternRoot = patternElement.getAsJsonObject();
+                    if (!patternRoot.has("color")) {
+                        return ObjectResultWrapper.failExceptionally("Pattern missing element \"color\".", JsonParseException::new);
+                    }
+                    if (!patternRoot.has("pattern")) {
+                        return ObjectResultWrapper.failExceptionally("Pattern missing element \"pattern\".", JsonParseException::new);
+                    }
+
+                    DyeColor colour = Enums.getIfPresent(DyeColor.class, patternRoot.get("color").getAsString().toUpperCase()).or(DyeColor.WHITE);
+                    PatternType pattern = Enums.getIfPresent(PatternType.class, patternRoot.get("pattern").getAsString().toUpperCase()).orNull();
+                    if (pattern == null) {
+                        return ObjectResultWrapper.failExceptionally("Unexpected value for \"pattern\". Given \"" + root.get("pattern").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/banner/PatternType.html", JsonParseException::new);
+                    }
+
+                    metaSpecific.addPattern(new Pattern(colour, pattern));
+                }
+            }
+        }
+
+        // Book meta (BookMeta)
+        if (meta instanceof BookMeta) {
+            BookMeta metaSpecific = (BookMeta) meta;
+
+            if (root.has("author")) {
+                metaSpecific.setAuthor(root.get("author").getAsString());
+            }
+
+            if (root.has("title")) {
+                metaSpecific.setTitle(root.get("title").getAsString());
+            }
+
+            if (root.has("generation")) {
+                BookMeta.Generation generation = Enums.getIfPresent(BookMeta.Generation.class, root.get("generation").getAsString().toUpperCase()).orNull();
+                if (generation == null) {
+                    return ObjectResultWrapper.failExceptionally("Unexpected value for \"generation\". Given \"" + root.get("generation").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/BookMeta.Generation.html", JsonParseException::new);
+                }
+
+                metaSpecific.setGeneration(generation);
+            }
+
+            if (root.has("pages") && root.get("pages").isJsonArray()) {
+                root.getAsJsonArray("pages").forEach(p -> metaSpecific.addPage(p.getAsString()));
+            }
+        }
+
+        // Firework star meta (FireworkEffectMeta)
+        if (meta instanceof FireworkEffectMeta) {
+            FireworkEffectMeta metaSpecific = (FireworkEffectMeta) meta;
+
+            if (!root.has("effect")) {
+                return ObjectResultWrapper.failExceptionally("Firework effect missing element \"effect\".", JsonParseException::new);
+            }
+
+            FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
+
+            FireworkEffect.Type effectType = Enums.getIfPresent(FireworkEffect.Type.class, root.get("effect").getAsString().toUpperCase()).orNull();
+            if (effectType == null) {
+                return ObjectResultWrapper.failExceptionally("Unexpected value for \"effect\". Given \"" + root.get("effect").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/FireworkEffect.Type.html", JsonParseException::new);
+            }
+
+            effectBuilder.with(effectType);
+            effectBuilder.flicker(root.has("flicker") ? root.get("flicker").getAsBoolean() : false);
+            effectBuilder.flicker(root.has("trail") ? root.get("trail").getAsBoolean() : true);
+
+            if (root.has("color")) {
+                JsonElement colourElement = root.get("color");
+                if (!colourElement.isJsonObject()) {
+                    return ObjectResultWrapper.failExceptionally("Element \"color\" is of unexpected type. Expected JsonObject, got " + colourElement.getClass().getSimpleName(), JsonParseException::new);
+                }
+
+                JsonObject colourRoot = colourElement.getAsJsonObject();
+                if (colourRoot.has("primary")) {
+                    JsonElement primaryElement = colourRoot.get("primary");
+
+                    if (primaryElement.isJsonPrimitive()) {
+                        effectBuilder.withColor(Color.fromRGB(Integer.decode(primaryElement.getAsString())));
+                    }
+
+                    else if (primaryElement.isJsonArray()) {
+                        JsonArray primaryArray = primaryElement.getAsJsonArray();
+                        List<Color> colours = new ArrayList<>(primaryArray.size());
+                        primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
+                        effectBuilder.withColor(colours);
+                    }
+                }
+
+                if (colourRoot.has("fade")) {
+                    JsonElement primaryElement = colourRoot.get("fade");
+
+                    if (primaryElement.isJsonPrimitive()) {
+                        effectBuilder.withColor(Color.fromRGB(Integer.decode(primaryElement.getAsString())));
+                    }
+
+                    else if (primaryElement.isJsonArray()) {
+                        JsonArray primaryArray = primaryElement.getAsJsonArray();
+                        List<Color> colours = new ArrayList<>(primaryArray.size());
+                        primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
+                        effectBuilder.withColor(colours);
+                    }
+                }
+            }
+
+            metaSpecific.setEffect(effectBuilder.build());
+        }
+
+        // Firework rocket meta (FireworkMeta)
+        if (meta instanceof FireworkMeta) {
+            FireworkMeta metaSpecific = (FireworkMeta) meta;
+
+            if (root.has("effects") && root.get("effects").isJsonArray()) {
+                JsonArray effectsArray = root.getAsJsonArray("effects");
+                for (JsonElement effectElement : effectsArray) {
+                    if (!effectElement.isJsonObject()) {
+                        return ObjectResultWrapper.failExceptionally("\"effects\" array element is of unexpected type. Expected JsonObject, got " + effectElement.getClass().getSimpleName(), JsonParseException::new);
+                    }
+
+                    JsonObject effectRoot = effectElement.getAsJsonObject();
+                    FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
+
+                    FireworkEffect.Type effectType = Enums.getIfPresent(FireworkEffect.Type.class, effectRoot.get("effect").getAsString().toUpperCase()).orNull();
+                    if (effectType == null) {
+                        return ObjectResultWrapper.failExceptionally("Unexpected value for \"effect\". Given \"" + effectRoot.get("effect").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/FireworkEffect.Type.html", JsonParseException::new);
+                    }
+
+                    effectBuilder.with(effectType);
+                    effectBuilder.flicker(effectRoot.has("flicker") ? effectRoot.get("flicker").getAsBoolean() : false);
+                    effectBuilder.flicker(effectRoot.has("trail") ? effectRoot.get("trail").getAsBoolean() : true);
+
+                    if (effectRoot.has("color")) {
+                        JsonElement colourElement = effectRoot.get("color");
+                        if (!colourElement.isJsonObject()) {
+                            return ObjectResultWrapper.failExceptionally("Element \"color\" is of unexpected type. Expected JsonObject, got " + colourElement.getClass().getSimpleName(), JsonParseException::new);
+                        }
+
+                        JsonObject colourRoot = colourElement.getAsJsonObject();
+                        if (colourRoot.has("primary")) {
+                            JsonElement primaryElement = colourRoot.get("primary");
+
+                            if (primaryElement.isJsonPrimitive()) {
+                                effectBuilder.withColor(Color.fromRGB(Integer.decode(primaryElement.getAsString())));
+                            }
+
+                            else if (primaryElement.isJsonArray()) {
+                                JsonArray primaryArray = primaryElement.getAsJsonArray();
+                                List<Color> colours = new ArrayList<>(primaryArray.size());
+                                primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
+                                effectBuilder.withColor(colours);
+                            }
+                        }
+
+                        if (colourRoot.has("fade")) {
+                            JsonElement primaryElement = colourRoot.get("fade");
+
+                            if (primaryElement.isJsonPrimitive()) {
+                                effectBuilder.withColor(Color.fromRGB(Integer.decode(primaryElement.getAsString())));
+                            }
+
+                            else if (primaryElement.isJsonArray()) {
+                                JsonArray primaryArray = primaryElement.getAsJsonArray();
+                                List<Color> colours = new ArrayList<>(primaryArray.size());
+                                primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
+                                effectBuilder.withColor(colours);
+                            }
+                        }
+                    }
+
+                    metaSpecific.addEffect(effectBuilder.build());
+                }
+            }
+        }
+
+        // Knowledge book meta (KnowledgeBookMeta)
+        if (meta instanceof KnowledgeBookMeta) {
+            KnowledgeBookMeta metaSpecific = (KnowledgeBookMeta) meta;
+
+            if (root.has("recipes") && root.get("recipes").isJsonArray()) {
+                root.getAsJsonArray("recipes").forEach(e -> metaSpecific.addRecipe(toNamespacedKey(e.getAsString())));
+            }
+        }
+
+        // Leather armour meta (LeatherArmorMeta)
+        if (meta instanceof LeatherArmorMeta) {
+            LeatherArmorMeta metaSpecific = (LeatherArmorMeta) meta;
+
+            if (root.has("color")) {
+                metaSpecific.setColor(Color.fromRGB(Integer.decode(root.get("color").getAsString())));
+            }
+        }
+
+        // Map meta (MapMeta)
+        if (meta instanceof MapMeta) {
+            MapMeta metaSpecific = (MapMeta) meta;
+
+            if (root.has("color")) {
+                metaSpecific.setColor(Color.fromRGB(Integer.decode(root.get("color").getAsString())));
+            }
+
+            if (root.has("location")) {
+                metaSpecific.setLocationName(root.get("location").getAsString());
+            }
+
+            if (root.has("scaling")) {
+                metaSpecific.setScaling(root.get("scaling").getAsBoolean());
+            }
+        }
+
+        // Potion meta (PotionMeta)
+        if (meta instanceof PotionMeta) {
+            PotionMeta metaSpecific = (PotionMeta) meta;
+
+            PotionType basePotionType = (root.has("base")) ? Enums.getIfPresent(PotionType.class, root.get("base").getAsString().toUpperCase()).or(PotionType.UNCRAFTABLE) : PotionType.UNCRAFTABLE;
+            boolean upgraded = basePotionType.isUpgradeable() && root.has("upgraded") && root.get("upgraded").getAsBoolean();
+            boolean extended = basePotionType.isExtendable() && root.has("extended") && root.get("extended").getAsBoolean();
+
+            metaSpecific.setBasePotionData(new PotionData(basePotionType, upgraded, extended));
+
+            if (root.has("color")) {
+                metaSpecific.setColor(Color.fromRGB(Integer.decode(root.get("color").getAsString())));
+            }
+
+            if (root.has("effects") && root.get("effects").isJsonObject()) {
+                JsonObject effectsRoot = root.getAsJsonObject("effects");
+                for (Entry<String, JsonElement> effectElement : effectsRoot.entrySet()) {
+                    PotionEffectType effect = PotionEffectType.getByName(effectElement.getKey());
+                    if (effect == null) {
+                        return ObjectResultWrapper.failExceptionally("Could not find effect with id \"" + effectElement.getKey() + "\" for item loot pool. Does it exist?", JsonParseException::new);
+                    }
+
+                    // Default to 30 seconds
+                    int duration = 600, amplifier = 0;
+                    boolean ambient = false;
+
+                    JsonElement effectDataElement = effectElement.getValue();
+                    if (effectDataElement.isJsonPrimitive()) {
+                        duration = effectDataElement.getAsInt();
+                    }
+                    else if (effectDataElement.isJsonObject()) {
+                        JsonObject effectDataRoot = effectDataElement.getAsJsonObject();
+
+                        if (effectDataRoot.has("duration")) {
+                            duration = effectDataRoot.get("duration").getAsInt();
+                        }
+
+                        if (effectDataRoot.has("amplifier")) {
+                            amplifier = effectDataRoot.get("amplifier").getAsInt();
+                        }
+
+                        if (effectDataRoot.has("ambient")) {
+                            ambient = effectDataRoot.get("ambient").getAsBoolean();
+                        }
+                    } else {
+                        return ObjectResultWrapper.failExceptionally("Unexpected structure for potion effect. Expected either integer duration or object", JsonParseException::new);
+                    }
+
+                    metaSpecific.addCustomEffect(effect.createEffect(duration, amplifier), ambient);
+                }
+            }
+        }
+
+        // Skull meta (SkullMeta)
+        if (meta instanceof SkullMeta) {
+            SkullMeta metaSpecific = (SkullMeta) meta;
+
+            if (root.has("owner")) {
+                metaSpecific.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(root.get("owner").getAsString())));
+            }
+        }
+
+        // Suspicious Stew Meta (SuspiciousStewMeta)
+        if (meta instanceof SuspiciousStewMeta) {
+            SuspiciousStewMeta metaSpecific = (SuspiciousStewMeta) meta;
+
+            if (root.has("effects")) {
+                JsonObject effectsRoot = root.getAsJsonObject("effects");
+                for (Entry<String, JsonElement> effectElement : effectsRoot.entrySet()) {
+                    PotionEffectType effect = PotionEffectType.getByName(effectElement.getKey());
+                    if (effect == null) {
+                        return ObjectResultWrapper.failExceptionally("Could not find effect with id \"" + effectElement.getKey() + "\" for item loot pool. Does it exist?", JsonParseException::new);
+                    }
+
+                    // Default to 30 seconds
+                    int duration = 600, amplifier = 0;
+                    boolean ambient = false;
+
+                    JsonElement effectDataElement = effectElement.getValue();
+                    if (effectDataElement.isJsonPrimitive()) {
+                        duration = effectDataElement.getAsInt();
+                    }
+                    else if (effectDataElement.isJsonObject()) {
+                        JsonObject effectDataRoot = effectDataElement.getAsJsonObject();
+
+                        if (effectDataRoot.has("duration")) {
+                            duration = effectDataRoot.get("duration").getAsInt();
+                        }
+
+                        if (effectDataRoot.has("amplifier")) {
+                            amplifier = effectDataRoot.get("amplifier").getAsInt();
+                        }
+
+                        if (effectDataRoot.has("ambient")) {
+                            ambient = effectDataRoot.get("ambient").getAsBoolean();
+                        }
+                    } else {
+                        return ObjectResultWrapper.failExceptionally("Unexpected structure for potion effect. Expected either integer duration or object", JsonParseException::new);
+                    }
+
+                    metaSpecific.addCustomEffect(effect.createEffect(duration, amplifier), ambient);
+                }
+            }
+        }
+
+        // Fish bucket meta (TropicalFishBucketMeta)
+        if (meta instanceof TropicalFishBucketMeta) {
+            TropicalFishBucketMeta metaSpecific = (TropicalFishBucketMeta) meta;
+
+            if (root.has("pattern")) {
+                TropicalFish.Pattern pattern = Enums.getIfPresent(TropicalFish.Pattern.class, root.get("pattern").getAsString().toUpperCase()).orNull();
+                if (pattern == null) {
+                    return ObjectResultWrapper.failExceptionally("Unexpected value for \"pattern\". Given \"" + root.get("pattern").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/TropicalFish.Pattern.html", JsonParseException::new);
+                }
+
+                metaSpecific.setPattern(pattern);
+            }
+
+            if (root.has("color") && root.get("color").isJsonObject()) {
+                JsonObject colorRoot = root.getAsJsonObject("color");
+
+                if (colorRoot.has("body")) {
+                    metaSpecific.setBodyColor(Enums.getIfPresent(DyeColor.class, colorRoot.get("body").getAsString()).or(DyeColor.WHITE));
+                }
+
+                if (colorRoot.has("pattern")) {
+                    metaSpecific.setPatternColor(Enums.getIfPresent(DyeColor.class, colorRoot.get("pattern").getAsString()).or(DyeColor.WHITE));
+                }
+            }
         }
 
         item.setItemMeta(meta);
-        return new DragonLootElementItem(item, minAmount, maxAmount, weight);
+        return ObjectResultWrapper.success(new DragonLootElementItem(item, minAmount, maxAmount, weight));
     }
 
     @SuppressWarnings("deprecation")

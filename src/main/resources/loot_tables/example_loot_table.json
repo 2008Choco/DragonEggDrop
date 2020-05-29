@@ -1,0 +1,277 @@
+{
+    "egg": {
+        "chance": 100.0,
+        "name": "%dragoneggdrop_slain_dragon%'s Egg",
+        "lore": [
+            "The egg of %dragoneggdrop_slain_dragon%",
+            "A valiant opponent"
+        ]
+    },
+    "command_pools": [
+        {
+            "rolls": 1,
+            "chance": 100.0,
+            "commands": [
+                {
+                    "weight": 1.0,
+                    "command": 'minecraft:tellraw %dragoneggdrop_top_damager% {"text":"Congratulations! You have killed ","color":"red","extra":[{"text":"%dragoneggdrop_slain_dragon%"}]}'
+                }
+            ]
+        }
+    ],
+    "chest": {
+        "chance": 100.0,
+        "name": "&6Testing Chest",
+        "pools": [
+            {
+                "name": "base-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:diamond_sword",
+                        "name": "Hello!",
+                        "lore": [
+                            "First line",
+                            "Second line!"
+                        ],
+                        "damage": 35,
+                        "unbreakable": true,
+                        "custom_model_data": 1337,
+                        "enchantments": {
+                            "minecraft:sharpness": 4,
+                            "minecraft:unbreaking": 3
+                        },
+                        "attribute_modifiers": {
+                            "generic_max_health": {
+                                "uuid": "3da64fcf-328f-4815-b0a6-ec9a3a839562",
+                                "name": "my_health_modifier",
+                                "operation": "add_number",
+                                "value": 10,
+                                "slot": "off_hand"
+                            },
+                            "generic_attack_damage": {
+                                "name": "my_damage_modifier",
+                                "operation": "multiply_scalar_1",
+                                "value": 2.5
+                            }
+                        },
+                        "item_flags": [
+                            "hide_enchants",
+                            "hide_unbreakable"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "banner-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:white_banner",
+                        "patterns": [
+                            {
+                                "color": "red",
+                                "pattern": "skull"
+                            },
+                            {
+                                "color": "green",
+                                "pattern": "globe"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "book-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:written_book",
+                        "author": "Choco",
+                        "title": "How To Write Loot Tables",
+                        "generation": "tattered",
+                        "pages": [
+                            "This is the first page of the book. You can write whatever you want here",
+                            "This is the second page of the book. You have to click the arrow to go to the next page",
+                            "This is the third page of the book! The end!",
+                            "(You can include as many pages as you'd like - limited to Minecraft's page limit)"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "firework-star-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:firework_star",
+                        "effect": "star",
+                        "flicker": true,
+                        "trail": false,
+                        "color": {
+                            "primary": [
+                                "#EB3434",
+                                "#19B33D"
+                            ],
+                            "fade": "#E8CB25"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "firework-rocket-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:firework_rocket",
+                        "power": 3,
+                        "effects": [
+                            {
+                                "effect": "star",
+                                "flicker": false,
+                                "trail": true,
+                                "color": {
+                                    "primary": [
+                                        "#EB3434",
+                                        "#19B33D"
+                                    ],
+                                    "fade": [
+                                        "#4681E0",
+                                        "#B330E3",
+                                        "#E8CB25"
+                                    ]
+                                }
+                            },
+                            {
+                                "effect": "creeper",
+                                "color": {
+                                    "primary": [
+                                        "#4681E0",
+                                        "#B330E3",
+                                        "#E8CB25"
+                                    ],
+                                    "fade": [
+                                        "#EB3434",
+                                        "#19B33D"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "knowledge-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:knowledge_book",
+                        "recipes": [
+                            "minecraft:arrow",
+                            "minecraft:furnace",
+                            "minecraft:boat"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "leather-armour-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:leather_chestplate",
+                        "color": "#55E3C2"
+                    }
+                ]
+            },
+            {
+                "name": "map-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:filled_map",
+                        "color": "#9DD62A",
+                        "location": "Sunken Treasure",
+                        "scaling": false
+                    }
+                ]
+            },
+            {
+                "name": "potion-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:potion",
+                        "base": "weakness",
+                        "upgraded": true,
+                        "extended": false,
+                        "color": "#33FF22",
+                        "effects": {
+                            "speed": {
+                                "duration": 600,
+                                "amplifier": 2,
+                                "ambient": true
+                            },
+                            "increase_damage": 1000,
+                            "fire_resistance": 400
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "skull-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:player_head",
+                        "owner": "2e5bb75b-c55f-4798-903e-db21c6f814c8"
+                    }
+                ]
+            },
+            {
+                "name": "suspicious-stew-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:suspicious_stew",
+                        "effects": {
+                            "speed": {
+                                "duration": 600,
+                                "amplifier": 2,
+                                "ambient": true
+                            },
+                            "increase_damage": 1000,
+                            "fire_resistance": 400
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "fish-bucket-meta-example",
+                "rolls": 1,
+                "items": [
+                    {
+                        "weight": 1.0,
+                        "type": "minecraft:tropical_fish_bucket",
+                        "pattern": "dasher",
+                        "color": {
+                            "body": "red",
+                            "pattern": "blue"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
