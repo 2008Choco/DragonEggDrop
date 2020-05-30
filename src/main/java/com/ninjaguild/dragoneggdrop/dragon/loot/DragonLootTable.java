@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -239,7 +240,7 @@ public class DragonLootTable {
      * @throws IllegalArgumentException if the file is invalid
      * @throws JsonParseException if the parsing at all fails
      */
-    public static DragonLootTable fromJsonFile(File file) {
+    public static DragonLootTable fromJsonFile(File file) throws JsonParseException {
         String fileName = file.getName();
         if (!fileName.endsWith(".json")) {
             throw new IllegalArgumentException("Expected .json file. Got " + fileName.substring(fileName.lastIndexOf('.')) + " instead");
@@ -250,11 +251,11 @@ public class DragonLootTable {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             root = DragonEggDrop.GSON.fromJson(reader, JsonObject.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new JsonParseException(e.getMessage(), e.getCause());
         }
 
         if (root == null) {
-            throw new JsonParseException("Could not parse loot table");
+            throw new JsonParseException("Invalid root element");
         }
 
         String id = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -270,7 +271,7 @@ public class DragonLootTable {
             JsonArray commandPoolsRoot = root.getAsJsonArray("command_pools");
             for (JsonElement element : commandPoolsRoot) {
                 if (!element.isJsonObject()) {
-                    throw new JsonParseException("Invalid command pool for dragon loot table " + fileName);
+                    throw new JsonParseException("Invalid command pool. Expected object, got " + element.getClass().getSimpleName());
                 }
 
                 commandPools.add(LootPoolCommand.fromJson(element.getAsJsonObject()));
@@ -292,14 +293,10 @@ public class DragonLootTable {
                 JsonArray chestPoolsRoot = chestRoot.getAsJsonArray("pools");
                 for (JsonElement element : chestPoolsRoot) {
                     if (!element.isJsonObject()) {
-                        throw new JsonParseException("Invalid item pool for dragon loot table " + fileName);
+                        throw new JsonParseException("Invalid item pool. Expected object, got " + element.getClass().getSimpleName());
                     }
 
-                    try {
-                        chestPools.add(LootPoolItem.fromJson(element.getAsJsonObject()));
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
+                    chestPools.add(LootPoolItem.fromJson(element.getAsJsonObject()));
                 }
             }
         }
@@ -316,7 +313,7 @@ public class DragonLootTable {
      * @return all parsed DragonLootTable objects
      */
     public static List<DragonLootTable> loadLootTables() {
-        DragonEggDrop plugin = DragonEggDrop.getInstance();
+        Logger logger = DragonEggDrop.getInstance().getLogger();
         List<DragonLootTable> lootTables = new ArrayList<>();
 
         // Return empty list if the folder was just created
@@ -326,19 +323,25 @@ public class DragonLootTable {
 
         for (File file : LOOT_TABLES_FOLDER.listFiles((file, name) -> name.endsWith(".json"))) {
             if (file.getName().contains(" ")) {
-                plugin.getLogger().warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
+                logger.warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
                 continue;
             }
 
-            DragonLootTable lootTable = DragonLootTable.fromJsonFile(file);
+            try {
+                DragonLootTable lootTable = DragonLootTable.fromJsonFile(file);
 
-            // Checking for existing templates
-            if (lootTables.stream().anyMatch(t -> t.getId().matches(lootTable.getId()))) {
-                plugin.getLogger().warning("Duplicate dragon loot table with file name " + file.getName() + ". Ignoring...");
-                continue;
+                // Checking for existing templates
+                if (lootTables.stream().anyMatch(t -> t.getId().matches(lootTable.getId()))) {
+                    logger.warning("Duplicate dragon loot table with file name " + file.getName() + ". Ignoring...");
+                    continue;
+                }
+
+                lootTables.add(lootTable);
+            } catch (JsonParseException e) {
+                logger.warning("Could not load loot table for file at location: " + file.getAbsolutePath());
+                logger.warning("Ensure all values are correct and run the JSON through a validator such as https://jsonformatter.curiousconcept.com/");
+                logger.warning(e.getMessage());
             }
-
-            lootTables.add(lootTable);
         }
 
         return lootTables;

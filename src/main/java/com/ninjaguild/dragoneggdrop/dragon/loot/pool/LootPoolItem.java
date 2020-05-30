@@ -3,15 +3,12 @@ package com.ninjaguild.dragoneggdrop.dragon.loot.pool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementItem;
-import com.ninjaguild.dragoneggdrop.utils.ObjectResultWrapper;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 /**
@@ -84,11 +81,10 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      * @param root the root element that represents this pool
      *
      * @return the created instance
-     * @throws Throwable
      *
      * @throws JsonParseException if parsing the object has failed
      */
-    public static LootPoolItem fromJson(JsonObject root) throws Throwable {
+    public static LootPoolItem fromJson(JsonObject root) throws JsonParseException {
         int minRolls = 0, maxRolls = 0;
         String name = root.has("name") ? root.get("name").getAsString() : null;
         double chance = root.has("chance") ? MathUtils.clamp(root.get("chance").getAsDouble(), 0.0, 100.0) : 100.0;
@@ -117,18 +113,7 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
                 throw new JsonParseException("Invalid item for loot pool with name " + name + ". Expected object. Got " + element.getClass().getSimpleName());
             }
 
-            ObjectResultWrapper<DragonLootElementItem> item = DragonLootElementItem.fromJson(element.getAsJsonObject());
-            if (item.isFailure()) {
-                if (item.failedExceptionally()) {
-                    throw item.getThrowable();
-                } else if (item.hasReason()) {
-                    Logger logger = DragonEggDrop.getInstance().getLogger();
-                    logger.warning("Failed to parse item loot element. Reason: ");
-                    logger.warning(item.getReason());
-                }
-            } else {
-                itemElements.add(item.getResult());
-            }
+            itemElements.add(DragonLootElementItem.fromJson(element.getAsJsonObject()));
         }
 
         return new LootPoolItem(name, chance, minRolls, maxRolls, itemElements);
