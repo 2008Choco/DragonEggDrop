@@ -321,6 +321,8 @@ public class DragonLootTable {
             return lootTables;
         }
 
+        boolean suggestLinter = false;
+
         for (File file : LOOT_TABLES_FOLDER.listFiles((file, name) -> name.endsWith(".json"))) {
             if (file.getName().contains(" ")) {
                 logger.warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
@@ -338,10 +340,14 @@ public class DragonLootTable {
 
                 lootTables.add(lootTable);
             } catch (JsonParseException e) {
-                logger.warning("Could not load loot table for file at location: " + file.getAbsolutePath());
-                logger.warning("Ensure all values are correct and run the JSON through a validator such as https://jsonformatter.curiousconcept.com/");
+                logger.warning("Could not load loot table \"" + file.getName() + "\"");
                 logger.warning(e.getMessage());
+                suggestLinter = true;
             }
+        }
+
+        if (suggestLinter) {
+            logger.warning("Ensure all values are correct and run the JSON through a validator such as https://jsonformatter.curiousconcept.com/");
         }
 
         return lootTables;

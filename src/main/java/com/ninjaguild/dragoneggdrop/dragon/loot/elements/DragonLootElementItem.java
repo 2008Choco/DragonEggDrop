@@ -133,15 +133,19 @@ public class DragonLootElementItem implements IDragonLootElement {
 
         // Base meta (ItemMeta)
         if (root.has("amount")) {
-            JsonElement amount = root.get("amount");
-            if (amount.isJsonPrimitive()) {
-                minAmount = maxAmount = Math.max(amount.getAsInt(), 0);
+            JsonElement amountElement = root.get("amount");
+            if (amountElement.isJsonPrimitive()) {
+                minAmount = maxAmount = Math.max(amountElement.getAsInt(), 0);
             }
 
-            else if (amount.isJsonObject()) {
-                JsonObject amountObject = amount.getAsJsonObject();
+            else if (amountElement.isJsonObject()) {
+                JsonObject amountObject = amountElement.getAsJsonObject();
                 minAmount = amountObject.has("min") ? Math.max(amountObject.get("min").getAsInt(), 0) : 0;
                 maxAmount = amountObject.has("max") ? Math.max(amountObject.get("max").getAsInt(), 0) : minAmount;
+            }
+
+            else {
+                throw new JsonParseException("Element \"amount\" is of unexpected type. Expected number or object, got " + amountElement.getClass().getSimpleName());
             }
         }
 
@@ -149,11 +153,15 @@ public class DragonLootElementItem implements IDragonLootElement {
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', root.get("name").getAsString()));
         }
 
-        if (root.has("lore") && root.get("lore").isJsonArray()) {
+        if (root.has("lore")) {
+            JsonElement loreElement = root.get("lore");
+            if (!loreElement.isJsonArray()) {
+                throw new JsonParseException("Element \"lore\" is of unexpected type. Expected array, got " + loreElement.getClass().getSimpleName());
+            }
+
             List<String> lore = new ArrayList<>();
 
-            JsonArray loreObject = root.getAsJsonArray("lore");
-            for (JsonElement element : loreObject) {
+            for (JsonElement element : loreElement.getAsJsonArray()) {
                 if (!element.isJsonPrimitive()) {
                     throw new JsonParseException("Malformated lore in item loot pool. Expected string, got " + element.getClass().getSimpleName());
                 }
@@ -166,28 +174,35 @@ public class DragonLootElementItem implements IDragonLootElement {
             }
         }
 
-        if (root.has("enchantments") && root.get("enchantments").isJsonObject()) {
+        if (root.has("enchantments")) {
+            JsonElement enchantmentsElement = root.get("enchantments");
+            if (!enchantmentsElement.isJsonObject()) {
+                throw new JsonParseException("Element \"enchantments\" is of unexpected type. Expected object, got " + enchantmentsElement.getClass().getSimpleName());
+            }
+
             Map<Enchantment, Integer> enchantments = new IdentityHashMap<>();
 
-            JsonObject enchantmentsRoot = root.getAsJsonObject("enchantments");
-            for (Entry<String, JsonElement> enchantmentElement : enchantmentsRoot.entrySet()) {
+            for (Entry<String, JsonElement> enchantmentElement : root.getAsJsonObject("enchantments").entrySet()) {
                 Enchantment enchantment = Enchantment.getByKey(toNamespacedKey(enchantmentElement.getKey()));
                 if (enchantment == null) {
                     throw new JsonParseException("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?");
                 }
 
                 int level = Math.max(enchantmentElement.getValue().getAsInt(), 0);
-                if (level != 0) {
+                if (level > 0) {
                     enchantments.put(enchantment, level);
                 }
             }
 
-            if (!enchantments.isEmpty()) {
-                enchantments.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
-            }
+            enchantments.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
         }
 
         if (root.has("damage") && meta instanceof Damageable) {
+            int damage = root.get("damage").getAsInt();
+            if (damage > type.getMaxDurability()) {
+                throw new JsonParseException("Element \"damage\" has a value greater than its type's maximum durability (" + damage + " > " + type.getMaxDurability() + ")");
+            }
+
             ((Damageable) meta).setDamage(Math.max(root.get("damage").getAsInt(), 0));
         }
 
@@ -198,19 +213,19 @@ public class DragonLootElementItem implements IDragonLootElement {
         if (root.has("attribute_modifiers")) {
             JsonElement modifiersElement = root.get("attribute_modifiers");
             if (!modifiersElement.isJsonObject()) {
-                throw new JsonParseException("Element \"attribute_modifiers\" is of unexpected type. Expected JsonObject, got " + modifiersElement.getClass().getSimpleName());
+                throw new JsonParseException("Element \"attribute_modifiers\" is of unexpected type. Expected object, got " + modifiersElement.getClass().getSimpleName());
             }
 
             JsonObject modifiersRoot = modifiersElement.getAsJsonObject();
             for (Entry<String, JsonElement> modifierEntry : modifiersRoot.entrySet()) {
                 Attribute attribute = Enums.getIfPresent(Attribute.class, modifierEntry.getKey().toUpperCase()).orNull();
                 if (attribute == null) {
-                    throw new JsonParseException("Invalid attribute modifier specified, \"" + modifierEntry.getKey() + "\". Does it exist?");
+                    throw new JsonParseException("Unexpected attribute modifier key. Given \"" + modifierEntry.getKey() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/Attribute.html");
                 }
 
                 JsonElement modifierElement = modifierEntry.getValue();
                 if (!modifierElement.isJsonObject()) {
-                    throw new JsonParseException("Element \"" + modifierEntry.getKey() + "\" is of unexpected type. Expected JsonObject, got " + modifiersElement.getClass().getSimpleName());
+                    throw new JsonParseException("Element \"" + modifierEntry.getKey() + "\" is of unexpected type. Expected object, got " + modifiersElement.getClass().getSimpleName());
                 }
 
                 JsonObject modifierRoot = modifierElement.getAsJsonObject();
@@ -239,9 +254,13 @@ public class DragonLootElementItem implements IDragonLootElement {
             }
         }
 
-        if (root.has("item_flags") && root.get("item_flags").isJsonArray()) {
-            JsonArray flagsArray = root.getAsJsonArray("item_flags");
-            flagsArray.forEach(e -> {
+        if (root.has("item_flags")) {
+            JsonElement flagsElement = root.get("item_flags");
+            if (!flagsElement.isJsonArray()) {
+                throw new JsonParseException("Element \"item_flags\" is of unexpected type. Expected array, got " + flagsElement.getClass().getSimpleName());
+            }
+
+            flagsElement.getAsJsonArray().forEach(e -> {
                 // Guava's Optionals don't have #ifPresent() >:[
                 ItemFlag flag = Enums.getIfPresent(ItemFlag.class, e.getAsString().toUpperCase()).orNull();
                 if (flag != null) {
@@ -254,10 +273,15 @@ public class DragonLootElementItem implements IDragonLootElement {
         if (meta instanceof BannerMeta) {
             BannerMeta metaSpecific = (BannerMeta) meta;
 
-            if (root.has("patterns") && root.get("patterns").isJsonArray()) {
-                for (JsonElement patternElement : root.getAsJsonArray("patterns")) {
+            if (root.has("patterns")) {
+                JsonElement patternsElement = root.get("patterns");
+                if (!patternsElement.isJsonArray()) {
+                    throw new JsonParseException("Element \"patterns\" is of unexpected type. Expected array, got " + patternsElement.getClass().getSimpleName());
+                }
+
+                for (JsonElement patternElement : patternsElement.getAsJsonArray()) {
                     if (!patternElement.isJsonObject()) {
-                        throw new JsonParseException("Element \"patterns\" has an unexpected type. Expected JsonObject, got " + patternElement.getClass().getSimpleName());
+                        throw new JsonParseException("Element \"patterns\" has an unexpected type. Expected object, got " + patternElement.getClass().getSimpleName());
                     }
 
                     JsonObject patternRoot = patternElement.getAsJsonObject();
@@ -327,7 +351,7 @@ public class DragonLootElementItem implements IDragonLootElement {
             if (root.has("color")) {
                 JsonElement colourElement = root.get("color");
                 if (!colourElement.isJsonObject()) {
-                    throw new JsonParseException("Element \"color\" is of unexpected type. Expected JsonObject, got " + colourElement.getClass().getSimpleName());
+                    throw new JsonParseException("Element \"color\" is of unexpected type. Expected object, got " + colourElement.getClass().getSimpleName());
                 }
 
                 JsonObject colourRoot = colourElement.getAsJsonObject();
@@ -344,6 +368,10 @@ public class DragonLootElementItem implements IDragonLootElement {
                         primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
                         effectBuilder.withColor(colours);
                     }
+
+                    else {
+                        throw new JsonParseException("Element \"primary\" is of unexpected type. Expected number (decimal, hex, binary, etc.) or object, got " + primaryElement.getClass().getSimpleName());
+                    }
                 }
 
                 if (colourRoot.has("fade")) {
@@ -359,6 +387,10 @@ public class DragonLootElementItem implements IDragonLootElement {
                         primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
                         effectBuilder.withColor(colours);
                     }
+
+                    else {
+                        throw new JsonParseException("Element \"fade\" is of unexpected type. Expected number (decimal, hex, binary, etc.) or object, got " + primaryElement.getClass().getSimpleName());
+                    }
                 }
             }
 
@@ -373,7 +405,7 @@ public class DragonLootElementItem implements IDragonLootElement {
                 JsonArray effectsArray = root.getAsJsonArray("effects");
                 for (JsonElement effectElement : effectsArray) {
                     if (!effectElement.isJsonObject()) {
-                        throw new JsonParseException("\"effects\" array element is of unexpected type. Expected JsonObject, got " + effectElement.getClass().getSimpleName());
+                        throw new JsonParseException("\"effects\" array element is of unexpected type. Expected object, got " + effectElement.getClass().getSimpleName());
                     }
 
                     JsonObject effectRoot = effectElement.getAsJsonObject();
@@ -408,6 +440,10 @@ public class DragonLootElementItem implements IDragonLootElement {
                                 primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
                                 effectBuilder.withColor(colours);
                             }
+
+                            else {
+                                throw new JsonParseException("Element \"primary\" is of unexpected type. Expected number (decimal, hex, binary, etc.) or object, got " + primaryElement.getClass().getSimpleName());
+                            }
                         }
 
                         if (colourRoot.has("fade")) {
@@ -423,6 +459,10 @@ public class DragonLootElementItem implements IDragonLootElement {
                                 primaryArray.forEach(e -> colours.add(Color.fromRGB(Integer.decode(e.getAsString()))));
                                 effectBuilder.withColor(colours);
                             }
+
+                            else {
+                                throw new JsonParseException("Element \"fade\" is of unexpected type. Expected number (decimal, hex, binary, etc.) or object, got " + primaryElement.getClass().getSimpleName());
+                            }
                         }
                     }
 
@@ -435,8 +475,13 @@ public class DragonLootElementItem implements IDragonLootElement {
         if (meta instanceof KnowledgeBookMeta) {
             KnowledgeBookMeta metaSpecific = (KnowledgeBookMeta) meta;
 
-            if (root.has("recipes") && root.get("recipes").isJsonArray()) {
-                root.getAsJsonArray("recipes").forEach(e -> metaSpecific.addRecipe(toNamespacedKey(e.getAsString())));
+            if (root.has("recipes")) {
+                JsonElement recipesElement = root.get("recipes");
+                if (!recipesElement.isJsonArray()) {
+                    throw new JsonParseException("Element \"recipes\" is of unexpected type. Expected array, got " + recipesElement.getClass().getSimpleName());
+                }
+
+                recipesElement.getAsJsonArray().forEach(e -> metaSpecific.addRecipe(toNamespacedKey(e.getAsString())));
             }
         }
 
@@ -481,11 +526,15 @@ public class DragonLootElementItem implements IDragonLootElement {
             }
 
             if (root.has("effects") && root.get("effects").isJsonObject()) {
-                JsonObject effectsRoot = root.getAsJsonObject("effects");
-                for (Entry<String, JsonElement> effectElement : effectsRoot.entrySet()) {
+                JsonElement effectsElement = root.get("effects");
+                if (!effectsElement.isJsonObject()) {
+                    throw new JsonParseException("Element \"effects\" is of unexpected type. Expected object, got " + effectsElement.getClass().getSimpleName());
+                }
+
+                for (Entry<String, JsonElement> effectElement : effectsElement.getAsJsonObject().entrySet()) {
                     PotionEffectType effect = PotionEffectType.getByName(effectElement.getKey());
                     if (effect == null) {
-                        throw new JsonParseException("Could not find effect with id \"" + effectElement.getKey() + "\" for item loot pool. Does it exist?");
+                        throw new JsonParseException("Could not find potion effect with id \"" + effectElement.getKey() + "\" for item loot pool. Does it exist? https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html");
                     }
 
                     // Default to 30 seconds
@@ -496,6 +545,7 @@ public class DragonLootElementItem implements IDragonLootElement {
                     if (effectDataElement.isJsonPrimitive()) {
                         duration = effectDataElement.getAsInt();
                     }
+
                     else if (effectDataElement.isJsonObject()) {
                         JsonObject effectDataRoot = effectDataElement.getAsJsonObject();
 
@@ -510,8 +560,10 @@ public class DragonLootElementItem implements IDragonLootElement {
                         if (effectDataRoot.has("ambient")) {
                             ambient = effectDataRoot.get("ambient").getAsBoolean();
                         }
-                    } else {
-                        throw new JsonParseException("Unexpected structure for potion effect. Expected either integer duration or object");
+                    }
+
+                    else {
+                        throw new JsonParseException("Effect element is of unexpected type. Expected number (duration) or object, got " + effectsElement.getClass().getSimpleName());
                     }
 
                     metaSpecific.addCustomEffect(effect.createEffect(duration, amplifier), ambient);
@@ -537,7 +589,7 @@ public class DragonLootElementItem implements IDragonLootElement {
                 for (Entry<String, JsonElement> effectElement : effectsRoot.entrySet()) {
                     PotionEffectType effect = PotionEffectType.getByName(effectElement.getKey());
                     if (effect == null) {
-                        throw new JsonParseException("Could not find effect with id \"" + effectElement.getKey() + "\" for item loot pool. Does it exist?");
+                        throw new JsonParseException("Could not find potion effect with id \"" + effectElement.getKey() + "\" for item loot pool. Does it exist? https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html");
                     }
 
                     // Default to 30 seconds
@@ -548,6 +600,7 @@ public class DragonLootElementItem implements IDragonLootElement {
                     if (effectDataElement.isJsonPrimitive()) {
                         duration = effectDataElement.getAsInt();
                     }
+
                     else if (effectDataElement.isJsonObject()) {
                         JsonObject effectDataRoot = effectDataElement.getAsJsonObject();
 
@@ -562,8 +615,10 @@ public class DragonLootElementItem implements IDragonLootElement {
                         if (effectDataRoot.has("ambient")) {
                             ambient = effectDataRoot.get("ambient").getAsBoolean();
                         }
-                    } else {
-                        throw new JsonParseException("Unexpected structure for potion effect. Expected either integer duration or object");
+                    }
+
+                    else {
+                        throw new JsonParseException("Effect element is of unexpected type. Expected number (duration) or object, got " + effectElement.getClass().getSimpleName());
                     }
 
                     metaSpecific.addCustomEffect(effect.createEffect(duration, amplifier), ambient);
@@ -607,6 +662,7 @@ public class DragonLootElementItem implements IDragonLootElement {
             return null;
         }
 
+        key = key.toLowerCase();
         if (!key.contains(":")) {
             return NamespacedKey.minecraft(key);
         }
