@@ -588,11 +588,11 @@ public class DragonLootElementItem implements IDragonLootElement {
                 JsonObject colorRoot = root.getAsJsonObject("color");
 
                 if (colorRoot.has("body")) {
-                    metaSpecific.setBodyColor(Enums.getIfPresent(DyeColor.class, colorRoot.get("body").getAsString()).or(DyeColor.WHITE));
+                    metaSpecific.setBodyColor(Enums.getIfPresent(DyeColor.class, colorRoot.get("body").getAsString().toUpperCase()).or(DyeColor.WHITE));
                 }
 
                 if (colorRoot.has("pattern")) {
-                    metaSpecific.setPatternColor(Enums.getIfPresent(DyeColor.class, colorRoot.get("pattern").getAsString()).or(DyeColor.WHITE));
+                    metaSpecific.setPatternColor(Enums.getIfPresent(DyeColor.class, colorRoot.get("pattern").getAsString().toUpperCase()).or(DyeColor.WHITE));
                 }
             }
         }
