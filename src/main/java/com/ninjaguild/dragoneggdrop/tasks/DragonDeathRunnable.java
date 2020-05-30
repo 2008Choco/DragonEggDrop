@@ -132,6 +132,9 @@ public class DragonDeathRunnable extends BukkitRunnable {
                 }
                 else {
                     this.plugin.getLogger().warning("Could not generate loot for template " + activeTemplate.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
+
+                    // Let's just generate an egg instead...
+                    this.location.getBlock().setType(Material.DRAGON_EGG);
                 }
 
                 this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
