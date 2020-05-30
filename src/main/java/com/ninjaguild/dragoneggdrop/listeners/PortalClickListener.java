@@ -36,7 +36,7 @@ public final class PortalClickListener implements Listener {
 
         DragonBattle dragonBattle = world.getEnderDragonBattle();
         Location portalLocation = dragonBattle.getEndPortalLocation().add(0, 4, 0);
-        if (clickedBlock.getLocation().distanceSquared(portalLocation) > 25) { // 5 blocks
+        if (clickedBlock.getLocation().distanceSquared(portalLocation) > 36) { // 6 blocks
             return;
         }
 
