@@ -294,7 +294,7 @@ public class DragonTemplate {
      * @return all dragon templates
      */
     public static Collection<DragonTemplate> getAll() {
-        return Collections.unmodifiableCollection(REGISTRY_WEIGHTED.values());
+        return Collections.unmodifiableCollection(REGISTRY_BY_ID.values());
     }
 
     /**
