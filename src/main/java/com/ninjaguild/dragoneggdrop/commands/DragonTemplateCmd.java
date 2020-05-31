@@ -93,9 +93,9 @@ public final class DragonTemplateCmd implements TabExecutor {
             double chanceToSpawn = (template.getSpawnWeight() / totalWeight) * 100;
 
             sender.sendMessage(ChatColor.GRAY + "Dragon Name: " + ChatColor.GREEN + template.getName());
-            sender.sendMessage(ChatColor.GRAY + "Bar Style: " + ChatColor.GREEN + template.getBarStyle());
-            sender.sendMessage(ChatColor.GRAY + "Bar Colour: " + BAR_COLOURS.get(template.getBarColor()) + template.getBarColor());
-            sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.DARK_GREEN + template.getSpawnWeight() + ChatColor.GREEN + " (out of " + ChatColor.DARK_GREEN + totalWeight + ChatColor.GREEN + " - " + ChatColor.DARK_GREEN + DECIMAL_FORMAT.format(chanceToSpawn) + "% " + ChatColor.GREEN + "chance to spawn)");
+            sender.sendMessage(ChatColor.GRAY + "Bar Style: " + ChatColor.GREEN + ChatColor.BOLD + template.getBarStyle());
+            sender.sendMessage(ChatColor.GRAY + "Bar Colour: " + BAR_COLOURS.get(template.getBarColor()) + ChatColor.BOLD + template.getBarColor());
+            sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.DARK_GREEN + template.getSpawnWeight() + (template.getSpawnWeight() > 0.0 ? ChatColor.GREEN + " (out of " + ChatColor.DARK_GREEN + totalWeight + ChatColor.GREEN + " - " + ChatColor.DARK_GREEN + DECIMAL_FORMAT.format(chanceToSpawn) + "% " + ChatColor.GREEN + "chance to spawn)" : ChatColor.RED.toString() + ChatColor.BOLD + " (IMPOSSIBLE)"));
             sender.sendMessage(ChatColor.GRAY + "Announce Spawn: " + (template.shouldAnnounceSpawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceSpawn());
             sender.sendMessage(ChatColor.GRAY + "Loot table: " + ChatColor.YELLOW + (template.getLootTable() != null ? template.getLootTable().getId() : "N/A"));
         }
@@ -151,7 +151,7 @@ public final class DragonTemplateCmd implements TabExecutor {
             hoverComponentBuilder.append("\nBar Colour: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getBarColor().name()).color(BAR_COLOURS_SPIGOT.get(template.getBarColor())).bold(true);
             hoverComponentBuilder.append("\nSpawn Weight: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(String.valueOf(template.getSpawnWeight())).color(net.md_5.bungee.api.ChatColor.DARK_GREEN);
             if (template.getSpawnWeight() > 0.0) {
-                hoverComponentBuilder.append(" (out of ").color(net.md_5.bungee.api.ChatColor.GREEN).append(String.valueOf(totalWeight)).color(net.md_5.bungee.api.ChatColor.DARK_GREEN).append(" - ").color(net.md_5.bungee.api.ChatColor.GREEN).append(DECIMAL_FORMAT.format(chanceToSpawn) + "% ").color(net.md_5.bungee.api.ChatColor.DARK_GREEN).append(" chance to spawn)").color(net.md_5.bungee.api.ChatColor.GREEN); // Did you really scroll all the way to the end? Weirdo...
+                hoverComponentBuilder.append(" (out of ").color(net.md_5.bungee.api.ChatColor.GREEN).append(String.valueOf(totalWeight)).color(net.md_5.bungee.api.ChatColor.DARK_GREEN).append(" - ").color(net.md_5.bungee.api.ChatColor.GREEN).append(DECIMAL_FORMAT.format(chanceToSpawn) + "% ").color(net.md_5.bungee.api.ChatColor.DARK_GREEN).append("chance to spawn)").color(net.md_5.bungee.api.ChatColor.GREEN); // Did you really scroll all the way to the end? Weirdo...
             } else {
                 hoverComponentBuilder.append(" (IMPOSSIBLE)").color(net.md_5.bungee.api.ChatColor.RED).bold(true);
             }
