@@ -2,7 +2,6 @@ package com.ninjaguild.dragoneggdrop.utils.math;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
@@ -93,25 +92,26 @@ public class ParticleShapeDefinition {
          * x = x
          * z = z
          */
-        BALL(location -> new ParticleShapeDefinition(location, "x", "z")),
+        BALL("x", "z"),
 
         /**
          * x = cos(theta) * 1.2
          * z = sin(theta) * 1.2
          */
-        HELIX(location -> new ParticleShapeDefinition(location, "cos(theta) * 1.2", "sin(theta) * 1.2")),
+        HELIX("cos(theta) * 1.2", "sin(theta) * 1.2"),
 
         /**
          * x = cos(theta) * (100 / t)
          * z = sin(theta) * (100 / t)
          */
-        OPEN_END_HELIX(location -> new ParticleShapeDefinition(location, "cos(theta) * (100 / t)", "sin(theta) * (100 / t)"));
+        OPEN_END_HELIX("cos(theta) * (100 / t)", "sin(theta) * (100 / t)");
 
 
-        private final Function<Location, ParticleShapeDefinition> fabricator;
+        private final String xExpression, zExpression;
 
-        private Prefab(Function<Location, ParticleShapeDefinition> fabricator) {
-            this.fabricator = fabricator;
+        private Prefab(String xExpression, String zExpression) {
+            this.xExpression = xExpression;
+            this.zExpression = zExpression;
         }
 
         /**
@@ -123,7 +123,7 @@ public class ParticleShapeDefinition {
          * @return the created prefab
          */
         public ParticleShapeDefinition create(Location location) {
-            return fabricator.apply(location);
+            return new ParticleShapeDefinition(location, xExpression, zExpression);
         }
 
     }
