@@ -180,56 +180,58 @@ public final class DragonRespawnCmd implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        List<String> options = new ArrayList<>();
+
         if (args.length == 1) {
-            return StringUtil.copyPartialMatches(args[0], Arrays.asList("stop", "interrupt", "cancel", "start", "template"), new ArrayList<>());
+            StringUtil.copyPartialMatches(args[0], Arrays.asList("stop", "interrupt", "cancel", "start", "template"), options);
         }
 
         else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel")) {
-                return StringUtil.copyPartialMatches(args[1], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[1], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                        .map(World::getName).collect(Collectors.toList()), options);
             }
 
             else if (args[0].equalsIgnoreCase("start")) {
-                return StringUtil.copyPartialMatches(args[1], Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s"), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[1], Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s"), options);
             }
 
             else if (args[0].equalsIgnoreCase("template")) {
-                return StringUtil.copyPartialMatches(args[1], Arrays.asList("set", "get"), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[1], Arrays.asList("set", "get"), options);
             }
         }
 
         else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("start") || (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("get"))) {
-                return StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                        .map(World::getName).collect(Collectors.toList()), options);
             }
 
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
-                return StringUtil.copyPartialMatches(args[2], DragonTemplate.getAll().stream()
-                        .map(DragonTemplate::getId).collect(Collectors.toList()), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[2], DragonTemplate.getAll().stream()
+                        .map(DragonTemplate::getId).collect(Collectors.toList()), options);
             }
         }
 
         else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("start")) {
-                return StringUtil.copyPartialMatches(args[3], DragonTemplate.getAll().stream()
-                        .map(DragonTemplate::getId).collect(Collectors.toList()), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[3], DragonTemplate.getAll().stream()
+                        .map(DragonTemplate::getId).collect(Collectors.toList()), options);
             }
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
-                return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                        .map(World::getName).collect(Collectors.toList()), options);
             }
         }
 
         else if (args.length == 5) {
             if (args[0].equalsIgnoreCase("start")) {
-                return StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().getLootTables().stream()
-                        .map(DragonLootTable::getId).collect(Collectors.toList()), new ArrayList<>());
+                StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().getLootTables().stream()
+                        .map(DragonLootTable::getId).collect(Collectors.toList()), options);
             }
         }
 
-        return null;
+        return options;
     }
 
     private World getWorldFromContext(CommandSender sender, String[] args, int argumentIndex) {
