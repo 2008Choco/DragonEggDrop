@@ -1,4 +1,5 @@
 perform-update-checks: true
+metrics: true
 
 # All data involving the particle effects displayed after the death of the Ender Dragon
 Particles:

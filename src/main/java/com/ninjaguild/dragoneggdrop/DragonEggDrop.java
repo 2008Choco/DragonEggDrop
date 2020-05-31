@@ -26,6 +26,7 @@ import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -106,6 +107,12 @@ public class DragonEggDrop extends JavaPlugin {
 
         // Register external placeholder functionality
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);
+
+        // Enable metrics
+        if (getConfig().getBoolean("metrics", true)) {
+            new Metrics(this, 7697); // https://bstats.org/what-is-my-plugin-id
+            this.getLogger().info("Successfully enabled metrics. Thanks for keeping these enabled!");
+        }
 
         // Update check
         UpdateChecker.init(this, 35570);
