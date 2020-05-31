@@ -99,7 +99,7 @@ public class DamageHistory {
      * If offset of 2, third most. So on and so forth. Offset 0 would be equivalent to
      * {@link #getTopDamager()}.
      *
-     * @param offset the damage entry offset. Must be < {@link #uniqueDamagers()}
+     * @param offset the damage entry offset. Must be {@literal <} {@link #uniqueDamagers()}
      *
      * @return the top damager at the given offset
      */
@@ -182,7 +182,7 @@ public class DamageHistory {
      * offset of 2, third most. So on and so forth. Offset 0 would be equivalent to
      * {@link #getMostRecentDamage()}.
      *
-     * @param offset the damage entry offset. Must be < {@link #size()}
+     * @param offset the damage entry offset. Must be {@literal <} {@link #size()}
      *
      * @return the damage entry at the given offset
      */
