@@ -25,10 +25,10 @@ public final class DragonRespawnCmd implements TabExecutor {
 
     /* /dragonrespawn
      *     <stop, interrupt, cancel> [world] - Stop any active respawn countdown
-     *     start [time] [world] [template] - Start a respawn
-     *     template
+     *     start [time] [world] [template] [loot_table] - Start a respawn
+     *     template - Get the template to spawn in the currnet world
      *         set <template> [world] - Set the dragon to spawn while the countdown is active
-     *         get [world] - Get the template to spawn
+     *         [world] - Get the template to spawn in the specified world
      */
 
     private final DragonEggDrop plugin;
@@ -120,12 +120,8 @@ public final class DragonRespawnCmd implements TabExecutor {
                 return true;
             }
 
-            if (args.length < 2) {
-                DragonEggDrop.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " " + args[0] + " <set|get>");
-                return true;
-            }
-
-            if (args[1].equalsIgnoreCase("set")) {
+            // /dragonrespawn template set <template> [world]
+            if (args.length >= 2 && args[1].equalsIgnoreCase("set")) {
                 World world = getWorldFromContext(sender, args, 3);
                 if (world == null) {
                     return true;
@@ -150,25 +146,24 @@ public final class DragonRespawnCmd implements TabExecutor {
 
                 worldWrapper.setRespawningTemplate(template);
                 DragonEggDrop.sendMessage(sender, "The dragon template " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+                return true;
             }
-            else if (args[1].equalsIgnoreCase("get")) {
-                World world = getWorldFromContext(sender, args, 2);
-                if (world == null) {
-                    return true;
-                }
 
-                EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
-                DragonTemplate template = worldWrapper.getRespawningTemplate();
-                if (template == null) {
-                    DragonEggDrop.sendMessage(sender, "No respawn is currently in progress, no template has yet been determined");
-                    return true;
-                }
+            // /dragonrespawn template [world]
+            World world = getWorldFromContext(sender, args, 1);
+            if (world == null) {
+                return true;
+            }
 
-                DragonEggDrop.sendMessage(sender, "The template with ID " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+            EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
+            DragonTemplate template = worldWrapper.getRespawningTemplate();
+            if (template == null) {
+                DragonEggDrop.sendMessage(sender, "No respawn is currently in progress, no template has yet been determined");
+                return true;
             }
-            else {
-                DragonEggDrop.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[1] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + " " + args[0] + " <set|get>");
-            }
+
+            DragonEggDrop.sendMessage(sender, "The template with ID " + ChatColor.YELLOW + template.getId() + ChatColor.GRAY + " will be spawned in the world " + ChatColor.GREEN + world.getName());
+            return true;
         }
 
         else {
@@ -197,12 +192,20 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             else if (args[0].equalsIgnoreCase("template")) {
-                StringUtil.copyPartialMatches(args[1], Arrays.asList("set", "get"), options);
+                List<String> possibleOptions = new ArrayList<>();
+                possibleOptions.add("set");
+                Bukkit.getWorlds().forEach(world -> {
+                    if (world.getEnvironment() == Environment.THE_END) {
+                        possibleOptions.add(world.getName());
+                    }
+                });
+
+                StringUtil.copyPartialMatches(args[1], possibleOptions, options);
             }
         }
 
         else if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("start") || (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("get"))) {
+            if (args[0].equalsIgnoreCase("start")) {
                 StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
                         .map(World::getName).collect(Collectors.toList()), options);
             }
