@@ -48,7 +48,7 @@ public final class DragonEggDropCmd implements TabExecutor {
         }
 
         else if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.hasPermission("dragoneggdrop.reload")) {
+            if (!sender.hasPermission("dragoneggdrop.command.reload")) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }

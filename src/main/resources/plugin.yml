@@ -15,10 +15,12 @@ commands:
     description: Functionality to manipulate the dragon respawn process
     usage: /<command> <stop|start|template>
     aliases: [respawndragon, dragonspawn, spawndragon]
+    permission: dragoneggdrop.command.respawn
   dragontemplate:
     description: A utility command to control dragon templates
     usage: /<command> <template> <view|edit>
     aliases: [dragontemplates, template, templates]
+    permission: dragoneggdrop.command.template
 
 permissions:
   dragoneggdrop.*:
@@ -26,20 +28,22 @@ permissions:
     default: op
     children:
       dragoneggdrop.reload: true
-      dragoneggdrop.respawn.*: true
-      dragoneggdrop.template.*: true
+      dragoneggdrop.command.respawn: true
+      dragoneggdrop.command.respawn.*: true
+      dragoneggdrop.command.template: true
+      dragoneggdrop.command.template.*: true
 
-  dragoneggdrop.respawn.*:
+  dragoneggdrop.command.respawn.*:
     description: Allow access to all /dragonrespawn subcommands
     default: op
     children:
-      dragoneggdrop.respawn.stop: true
-      dragoneggdrop.respawn.start: true
-      dragoneggdrop.respawn.template: true
+      dragoneggdrop.command.respawn.stop: true
+      dragoneggdrop.command.respawn.start: true
+      dragoneggdrop.command.respawn.template: true
 
-  dragoneggdrop.template.*:
+  dragoneggdrop.command.template.*:
     description: Allow access to the details of all loaded dragon templates
     default: op
     children:
-      dragoneggdrop.template.list: true
-      dragoneggdrop.template.info: true
+      dragoneggdrop.command.template.list: true
+      dragoneggdrop.command.template.info: true

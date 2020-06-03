@@ -84,7 +84,7 @@ public final class DragonTemplateCmd implements TabExecutor {
 
         // "view/info" and "edit" params
         if (args[1].equalsIgnoreCase("view") || args[1].equalsIgnoreCase("info")) {
-            if (!sender.hasPermission("dragoneggdrop.template.info")) {
+            if (!sender.hasPermission("dragoneggdrop.command.template.info")) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -123,7 +123,7 @@ public final class DragonTemplateCmd implements TabExecutor {
     }
 
     private void listTemplates(CommandSender sender) {
-        if (!sender.hasPermission("dragoneggdrop.template.list")) {
+        if (!sender.hasPermission("dragoneggdrop.command.template.list")) {
             DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
             return;
         }

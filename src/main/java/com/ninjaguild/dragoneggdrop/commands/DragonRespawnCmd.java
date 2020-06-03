@@ -45,7 +45,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel")) {
-            if (!sender.hasPermission("dragoneggdrop.respawn.stop")) {
+            if (!sender.hasPermission("dragoneggdrop.command.respawn.stop")) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -66,7 +66,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         else if (args[0].equalsIgnoreCase("start")) {
-            if (!sender.hasPermission("dragoneggdrop.respawn.start")) {
+            if (!sender.hasPermission("dragoneggdrop.command.respawn.start")) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -115,7 +115,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         else if (args[0].equalsIgnoreCase("template")) {
-            if (!sender.hasPermission("dragoneggdrop.respawn.template")) {
+            if (!sender.hasPermission("dragoneggdrop.command.respawn.template")) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
