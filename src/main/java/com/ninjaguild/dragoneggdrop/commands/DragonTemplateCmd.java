@@ -16,6 +16,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -184,7 +185,7 @@ public final class DragonTemplateCmd implements TabExecutor {
             }
             hoverComponentBuilder.append("\nAnnounce Spawn: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(String.valueOf(template.shouldAnnounceSpawn())).color(template.shouldAnnounceSpawn() ? net.md_5.bungee.api.ChatColor.GREEN : net.md_5.bungee.api.ChatColor.RED);
             hoverComponentBuilder.append("\nLoot Table: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getLootTable() != null ? template.getLootTable().getId() : "N/A").color(net.md_5.bungee.api.ChatColor.YELLOW);
-            componentBuilder.event(new HoverEvent(Action.SHOW_TEXT, hoverComponentBuilder.create()));
+            componentBuilder.event(new HoverEvent(Action.SHOW_TEXT, new Text(hoverComponentBuilder.create())));
 
             componentBuilder.append(", ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY);
         });
