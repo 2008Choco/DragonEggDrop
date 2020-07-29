@@ -166,7 +166,7 @@ public class DragonLootElementItem implements IDragonLootElement {
                     throw new JsonParseException("Malformated lore in item loot pool. Expected string, got " + element.getClass().getSimpleName());
                 }
 
-                lore.add(element.getAsString());
+                lore.add(ChatColor.translateAlternateColorCodes('&', element.getAsString()));
             }
 
             if (!lore.isEmpty()) {
