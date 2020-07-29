@@ -94,8 +94,9 @@ public enum PortalCrystal {
             return null;
         }
 
-        Location portal = world.getEnderDragonBattle().getEndPortalLocation();
-        return getRelativeTo(portal);
+        DragonBattle dragonBattle = world.getEnderDragonBattle();
+        dragonBattle.generateEndPortal(false);
+        return getRelativeTo(dragonBattle.getEndPortalLocation());
     }
 
     /**
@@ -114,6 +115,7 @@ public enum PortalCrystal {
 
         // (Cloned from #isPresent() only because "location" is required)
         DragonBattle battle = world.getEnderDragonBattle();
+        battle.generateEndPortal(false);
         Location location = getRelativeTo(battle.getEndPortalLocation()).add(0.5, 0, 0.5);
 
         // Check for existing crystal
@@ -146,6 +148,7 @@ public enum PortalCrystal {
      */
     public EnderCrystal get(World world) {
         DragonBattle battle = world.getEnderDragonBattle();
+        battle.generateEndPortal(false);
         Location location = getRelativeTo(battle.getEndPortalLocation());
 
         Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
@@ -161,6 +164,7 @@ public enum PortalCrystal {
      */
     public boolean isPresent(World world) {
         DragonBattle battle = world.getEnderDragonBattle();
+        battle.generateEndPortal(false);
         Location location = getRelativeTo(battle.getEndPortalLocation());
 
         // Check for existing crystal
