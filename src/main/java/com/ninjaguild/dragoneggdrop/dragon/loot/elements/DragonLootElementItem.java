@@ -39,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -194,7 +195,12 @@ public class DragonLootElementItem implements IDragonLootElement {
                 }
             }
 
-            enchantments.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
+            if (meta instanceof EnchantmentStorageMeta) {
+                EnchantmentStorageMeta metaSpecific = (EnchantmentStorageMeta) meta;
+                enchantments.forEach((enchantment, level) -> metaSpecific.addStoredEnchant(enchantment, level, true));
+            } else {
+                enchantments.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
+            }
         }
 
         if (root.has("damage") && meta instanceof Damageable) {
