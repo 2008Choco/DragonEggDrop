@@ -18,6 +18,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,7 +50,7 @@ public final class DragonTemplateCmd implements TabExecutor {
         BAR_COLOURS_SPIGOT.put(BarColor.YELLOW, net.md_5.bungee.api.ChatColor.YELLOW);
     }
 
-    // /template <list|"template"> <(view/info)|edit>
+    // /template <list|"template"> <(view/info)|generateloot>
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -100,6 +102,27 @@ public final class DragonTemplateCmd implements TabExecutor {
             sender.sendMessage(ChatColor.GRAY + "Loot table: " + ChatColor.YELLOW + (template.getLootTable() != null ? template.getLootTable().getId() : "N/A"));
         }
 
+        else if (args[1].equalsIgnoreCase("generateloot")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("This command cannot be run from the console");
+                return true;
+            }
+
+            if (!sender.hasPermission("dragoneggdrop.command.template.generateloot")) {
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                return true;
+            }
+
+            Block block = ((Player) sender).getLocation().getBlock();
+            if (block.getType() != Material.AIR) {
+                DragonEggDrop.sendMessage(sender, "You must be standing on " + ChatColor.YELLOW + "air" + ChatColor.GRAY + " in order to generate a loot chest");
+                return true;
+            }
+
+            template.getLootTable().generate(block, ((Player) sender));
+            DragonEggDrop.sendMessage(sender, ChatColor.GREEN + "The loot of " + template.getName() + ChatColor.GREEN + " has been generated!");
+        }
+
         return true;
     }
 
@@ -115,8 +138,12 @@ public final class DragonTemplateCmd implements TabExecutor {
         }
 
         // Before completion: "/dragontemplate <template> "
-        else if (args.length == 2 && !args[0].equals("list")) {
-            StringUtil.copyPartialMatches(args[1], Arrays.asList("view"), options);
+        else if (args.length == 2) {
+            if (args[0].equals("list")) {
+                return options;
+            }
+
+            StringUtil.copyPartialMatches(args[1], Arrays.asList("view", "generateloot"), options);
         }
 
         return options;
