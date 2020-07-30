@@ -101,8 +101,7 @@ public class DragonLootElementItem implements IDragonLootElement {
             slot = random.nextInt(inventory.getSize());
         } while (inventory.getItem(slot) != null);
 
-        ItemStack generated = item.clone();
-        DragonEggDropPlaceholders.inject(killer, generated);
+        ItemStack generated = DragonEggDropPlaceholders.injectCopy(killer, item);
         generated.setAmount(Math.max(random.nextInt(max), min));
         inventory.setItem(slot, generated);
     }
