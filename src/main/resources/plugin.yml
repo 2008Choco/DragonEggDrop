@@ -4,7 +4,8 @@ version: ${project.version}
 description: ${project.description}
 softdepend: [PlaceholderAPI]
 author: Choco
-api-version: 1.15
+contributors: [NinjaStix]
+api-version: 1.16
 
 commands:
   dragoneggdrop:
