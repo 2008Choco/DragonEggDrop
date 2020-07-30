@@ -48,3 +48,4 @@ permissions:
     children:
       dragoneggdrop.command.template.list: true
       dragoneggdrop.command.template.info: true
+      dragoneggdrop.command.template.generateloot: true
