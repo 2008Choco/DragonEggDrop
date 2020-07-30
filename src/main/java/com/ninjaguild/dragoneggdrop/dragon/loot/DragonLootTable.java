@@ -175,14 +175,17 @@ public class DragonLootTable {
 
     /**
      * Generate item loot for this loot table and place it in a chest to be set at the
-     * given Block position. This method will not generate the egg.
+     * given Block position.
      *
      * @param block the block at which to set the chest
      * @param player the player for whom to generate the loot. May be null
      */
     public void generate(Block block, Player player) {
         block.setType(Material.CHEST);
-        this.generateLootPools(chestPools, DragonEggDrop.getInstance(), null, null, player, ThreadLocalRandom.current(), (Chest) block.getState());
+
+        Chest chest = (Chest) block.getState();
+        this.egg.generate(null, null, player, ThreadLocalRandom.current(), chest);
+        this.generateLootPools(chestPools, DragonEggDrop.getInstance(), null, null, player, ThreadLocalRandom.current(), chest);
     }
 
     /**
