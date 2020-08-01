@@ -29,6 +29,7 @@ permissions:
     default: op
     children:
       dragoneggdrop.command.*: true
+      dragoneggdrop.overridecrystals: false
 
   dragoneggdrop.command.*:
     description: Allow access to all commands in dragoneggdrop
@@ -39,6 +40,10 @@ permissions:
       dragoneggdrop.command.respawn.*: true
       dragoneggdrop.command.template: true
       dragoneggdrop.command.template.*: true
+
+  dragoneggdrop.overridecrystals:
+    description: Override the allow-crystal-respawns configuration option and grant the ability to spawn dragons using crystals
+    default: false
 
   dragoneggdrop.command.respawn.*:
     description: Allow access to all /dragonrespawn subcommands

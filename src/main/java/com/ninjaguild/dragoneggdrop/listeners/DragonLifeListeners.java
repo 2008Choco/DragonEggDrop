@@ -111,7 +111,7 @@ public final class DragonLifeListeners implements Listener {
         Block block = event.getClickedBlock();
         ItemStack item = event.getItem();
         if (block == null || block.getType() != Material.BEDROCK || item == null || item.getType() != Material.END_CRYSTAL
-                || plugin.getConfig().getBoolean("allow-crystal-respawns")) {
+                || plugin.getConfig().getBoolean("allow-crystal-respawns") || player.hasPermission("dragoneggdrop.overridecrystals")) {
             return;
         }
 
