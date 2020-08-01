@@ -55,19 +55,19 @@ public final class MathUtils {
      * Evaluate a mathematical expression with given variables.
      *
      * @param expression the string to parse
-     * @param variables the map containing necessary variables for this expression (To
-     * modify variables at any given time between evaluations, replace values in the map)
+     * @param parameters the parameter context containing necessary variables for this expression.
+     * To modify variables at any given time between evaluations, update values in the context
      *
      * @return The mathematical expression
      */
-    public static MathExpression parseExpression(String expression, Map<String, Double> variables) {
-        return new ExpressionEvaluator(expression, variables).parse();
+    public static MathExpression parseExpression(String expression, ParticleParameterContext parameters) {
+        return new ExpressionEvaluator(expression, parameters).parse();
     }
 
     /**
      * Evaluate a basic mathematical expression. Variables are not permitted in
      * expressions parsed by this method. For variable-based functions, see
-     * {@link #parseExpression(String, Map)}.
+     * {@link #parseExpression(String, ParticleParameterContext)}.
      *
      * @param expression the string to parse
      *
@@ -222,15 +222,15 @@ public final class MathUtils {
         private int pos = -1, ch;
 
         private final String expression;
-        private final Map<String, Double> variables;
+        private final ParticleParameterContext parameters;
 
-        public ExpressionEvaluator(String expression, Map<String, Double> variables) {
+        public ExpressionEvaluator(String expression, ParticleParameterContext parameters) {
             this.expression = expression;
-            this.variables = variables;
+            this.parameters = parameters;
         }
 
         public ExpressionEvaluator(String expression) {
-            this(expression, new HashMap<>());
+            this(expression, new ParticleParameterContext());
         }
 
         /**
@@ -375,7 +375,7 @@ public final class MathUtils {
                     x = (() -> operand.applyAsDouble(a.evaluate()));
                 }
                 else {
-                    x = (() -> variables != null ? variables.getOrDefault(function, 0.0) : 0);
+                    x = (() -> parameters.get(function, 0.0));
                 }
             }
             else {

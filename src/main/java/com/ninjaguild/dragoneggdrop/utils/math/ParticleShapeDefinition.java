@@ -1,8 +1,5 @@
 package com.ninjaguild.dragoneggdrop.utils.math;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
 
 import org.bukkit.Location;
@@ -16,7 +13,7 @@ import org.bukkit.Particle;
  */
 public class ParticleShapeDefinition {
 
-    private final Map<String, Double> variables = new HashMap<>();
+    private final ParticleParameterContext parameters;
 
     private final Location initialLocation;
     private final MathExpression xExpression, zExpression;
@@ -34,14 +31,11 @@ public class ParticleShapeDefinition {
         Preconditions.checkArgument(xExpression != null && !xExpression.isEmpty(), "The x axis expression cannot be null or empty");
         Preconditions.checkArgument(zExpression != null && !zExpression.isEmpty(), "The z axis expression cannot be null or empty");
 
-        this.variables.put("x", 0.0);
-        this.variables.put("z", 0.0);
-        this.variables.put("t", 0.0);
-        this.variables.put("theta", 0.0);
+        this.parameters = new ParticleParameterContext();
 
         this.initialLocation = initialLocation.clone();
-        this.xExpression = MathUtils.parseExpression(xExpression, variables);
-        this.zExpression = MathUtils.parseExpression(zExpression, variables);
+        this.xExpression = MathUtils.parseExpression(xExpression, parameters);
+        this.zExpression = MathUtils.parseExpression(zExpression, parameters);
     }
 
     /**
@@ -53,10 +47,7 @@ public class ParticleShapeDefinition {
      * @param theta the new theta value
      */
     public void updateVariables(double x, double z, double t, double theta) {
-        this.variables.put("x", x);
-        this.variables.put("z", z);
-        this.variables.put("t", t);
-        this.variables.put("theta", theta);
+        this.parameters.update(x, z, t, theta);
     }
 
     /**
