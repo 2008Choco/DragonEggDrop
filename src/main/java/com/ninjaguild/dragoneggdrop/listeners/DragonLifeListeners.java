@@ -10,6 +10,7 @@ import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import com.ninjaguild.dragoneggdrop.tasks.DragonDeathRunnable;
 import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public final class DragonLifeListeners implements Listener {
         EndWorldWrapper world = EndWorldWrapper.of(dragon.getWorld());
 
         DragonTemplate template = world.getRespawningTemplate();
-        if (plugin.getConfig().getBoolean("strict-countdown") && world.isRespawnInProgress()) {
+        if (plugin.getConfig().getBoolean(DEDConstants.CONFIG_STRICT_COUNTDOWN) && world.isRespawnInProgress()) {
             world.stopRespawn();
         }
 
@@ -111,7 +112,7 @@ public final class DragonLifeListeners implements Listener {
         Block block = event.getClickedBlock();
         ItemStack item = event.getItem();
         if (block == null || block.getType() != Material.BEDROCK || item == null || item.getType() != Material.END_CRYSTAL
-                || plugin.getConfig().getBoolean("allow-crystal-respawns") || player.hasPermission("dragoneggdrop.overridecrystals")) {
+                || plugin.getConfig().getBoolean(DEDConstants.CONFIG_ALLOW_CRYSTAL_RESPAWNS) || player.hasPermission(DEDConstants.PERMISSION_OVERRIDE_CRYSTALS)) {
             return;
         }
 

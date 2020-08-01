@@ -21,6 +21,7 @@ import com.ninjaguild.dragoneggdrop.listeners.LootListeners;
 import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
@@ -108,14 +109,14 @@ public class DragonEggDrop extends JavaPlugin {
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);
 
         // Enable metrics
-        if (getConfig().getBoolean("metrics", true)) {
+        if (getConfig().getBoolean(DEDConstants.CONFIG_METRICS, true)) {
             new Metrics(this, 7697); // https://bstats.org/what-is-my-plugin-id
             this.getLogger().info("Successfully enabled metrics. Thanks for keeping these enabled!");
         }
 
         // Update check
         UpdateChecker.init(this, 35570);
-        if (getConfig().getBoolean("perform-update-checks", true)) {
+        if (getConfig().getBoolean(DEDConstants.CONFIG_PERFORM_UPDATE_CHECKS, true)) {
             this.updateTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                 UpdateChecker.get().requestUpdateCheck().whenComplete((result, exception) -> {
                     if (result.requiresUpdate()) {

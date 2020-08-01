@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
@@ -45,7 +46,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel")) {
-            if (!sender.hasPermission("dragoneggdrop.command.respawn.stop")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_STOP)) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -66,7 +67,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         else if (args[0].equalsIgnoreCase("start")) {
-            if (!sender.hasPermission("dragoneggdrop.command.respawn.start")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -115,7 +116,7 @@ public final class DragonRespawnCmd implements TabExecutor {
         }
 
         else if (args[0].equalsIgnoreCase("template")) {
-            if (!sender.hasPermission("dragoneggdrop.command.respawn.template")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }

@@ -8,6 +8,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
@@ -57,10 +58,10 @@ public class RespawnRunnable extends BukkitRunnable {
         this.dragonBattle = world.getEnderDragonBattle();
         this.dragon = dragonBattle.getEnderDragon();
 
-        this.announceMessages = plugin.getConfig().getStringList("announce-messages").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
+        this.announceMessages = plugin.getConfig().getStringList(DEDConstants.CONFIG_ANNOUNCE_MESSAGES).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
         this.announceRespawn = announceMessages.size() > 0;
 
-        int announceMessageRadius = plugin.getConfig().getInt("announce-message-radius", -1);
+        int announceMessageRadius = plugin.getConfig().getInt(DEDConstants.CONFIG_ANNOUNCE_MESSAGES_RADIUS, -1);
         this.limitAnnounceToRadius = (announceMessageRadius > 0);
         this.announceMessageRadiusSquared = (int) Math.pow(announceMessageRadius, 2);
 

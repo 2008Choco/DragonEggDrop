@@ -1,5 +1,6 @@
 package com.ninjaguild.dragoneggdrop.world;
 
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,12 +13,12 @@ public enum RespawnReason {
     /**
      * A player joined the world
      */
-    JOIN("join-respawn-delay", 60), // 60 second default
+    JOIN(DEDConstants.CONFIG_JOIN_RESPAWN_DELAY, 60), // 60 second default
 
     /**
      * The ender dragon was killed
      */
-    DEATH("death-respawn-delay", 300); // 5 minute default
+    DEATH(DEDConstants.CONFIG_DEATH_RESPAWN_DELAY, 300); // 5 minute default
 
 
     private final String configPath;

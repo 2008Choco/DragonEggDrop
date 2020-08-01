@@ -6,6 +6,7 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.math.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.world.RespawnReason;
@@ -69,31 +70,31 @@ public class DragonDeathRunnable extends BukkitRunnable {
         this.dragon = dragon;
 
         FileConfiguration config = plugin.getConfig();
-        this.particleType = Enums.getIfPresent(Particle.class, config.getString("Particles.type", "FLAME").toUpperCase()).or(Particle.FLAME);
-        this.particleAmount = config.getInt("Particles.amount", 4);
-        this.particleExtra = config.getDouble("Particles.extra", 0.0D);
-        this.particleMultiplier = config.getDouble("Particles.speed-multiplier", 0.0D);
-        this.particleStreamInterval = 360 / Math.max(1, config.getInt("Particles.stream-count"));
-        this.xOffset = config.getDouble("Particles.xOffset");
-        this.yOffset = config.getDouble("Particles.yOffset");
-        this.zOffset = config.getDouble("Particles.zOffset");
-        this.particleInterval = config.getLong("Particles.interval", 1L);
-        this.lightningAmount = config.getInt("lightning-amount");
+        this.particleType = Enums.getIfPresent(Particle.class, config.getString(DEDConstants.CONFIG_PARTICLES_TYPE, "FLAME").toUpperCase()).or(Particle.FLAME);
+        this.particleAmount = config.getInt(DEDConstants.CONFIG_PARTICLES_AMOUNT, 4);
+        this.particleExtra = config.getDouble(DEDConstants.CONFIG_PARTICLES_EXTRA, 0.0D);
+        this.particleMultiplier = config.getDouble(DEDConstants.CONFIG_PARTICLES_SPEED_MULTIPLIER, 0.0D);
+        this.particleStreamInterval = 360 / Math.max(1, config.getInt(DEDConstants.CONFIG_PARTICLES_STREAM_COUNT));
+        this.xOffset = config.getDouble(DEDConstants.CONFIG_PARTICLES_X_OFFSET);
+        this.yOffset = config.getDouble(DEDConstants.CONFIG_PARTICLES_Y_OFFSET);
+        this.zOffset = config.getDouble(DEDConstants.CONFIG_PARTICLES_Z_OFFSET);
+        this.particleInterval = config.getLong(DEDConstants.CONFIG_PARTICLES_INTERVAL, 1L);
+        this.lightningAmount = config.getInt(DEDConstants.CONFIG_LIGHTNING_AMOUNT);
 
         // Portal location
         DragonBattle dragonBattle = dragon.getDragonBattle();
-        this.location = dragonBattle.getEndPortalLocation().add(0.5, config.getDouble("Particles.egg-start-y", 128), 0.5);
+        this.location = dragonBattle.getEndPortalLocation().add(0.5, config.getDouble(DEDConstants.CONFIG_PARTICLES_START_Y, 128), 0.5);
 
         // Expression parsing
-        String shape = config.getString("Particles.Advanced.preset-shape");
-        String xCoordExpressionString = config.getString("Particles.Advanced.x-coord-expression");
-        String zCoordExpressionString = config.getString("Particles.Advanced.z-coord-expression");
+        String shape = config.getString(DEDConstants.CONFIG_PARTICLES_ADVANCED_PRESET_SHAPE);
+        String xCoordExpressionString = config.getString(DEDConstants.CONFIG_PARTICLES_ADVANCED_X_COORD_EXPRESSION);
+        String zCoordExpressionString = config.getString(DEDConstants.CONFIG_PARTICLES_ADVANCED_Z_COORD_EXPRESSION);
 
         this.particleShape = Enums.getIfPresent(ParticleShapeDefinition.Prefab.class, shape)
                 .transform(p -> p.create(location))
                 .or(new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString));
 
-        this.respawnDragon = config.getBoolean("respawn-on-death", false);
+        this.respawnDragon = config.getBoolean(DEDConstants.CONFIG_RESPAWN_ON_DEATH, false);
         this.runTaskTimer(plugin, 0, particleInterval);
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
@@ -146,7 +147,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
                 this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
             }
 
-            if (respawnDragon && world.getPlayers().size() > 0 && plugin.getConfig().getBoolean("respawn-on-death", true)) {
+            if (respawnDragon && world.getPlayers().size() > 0) {
                 this.worldWrapper.startRespawn(RespawnReason.DEATH);
             }
 

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -87,7 +88,7 @@ public final class DragonTemplateCmd implements TabExecutor {
 
         // "view/info" and "edit" params
         if (args[1].equalsIgnoreCase("view") || args[1].equalsIgnoreCase("info")) {
-            if (!sender.hasPermission("dragoneggdrop.command.template.info")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_TEMPLATE_INFO)) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -109,7 +110,7 @@ public final class DragonTemplateCmd implements TabExecutor {
                 return true;
             }
 
-            if (!sender.hasPermission("dragoneggdrop.command.template.generateloot")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_TEMPLATE_GENERATELOOT)) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }
@@ -151,7 +152,7 @@ public final class DragonTemplateCmd implements TabExecutor {
     }
 
     private void listTemplates(CommandSender sender) {
-        if (!sender.hasPermission("dragoneggdrop.command.template.list")) {
+        if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_TEMPLATE_LIST)) {
             DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
             return;
         }
@@ -187,7 +188,7 @@ public final class DragonTemplateCmd implements TabExecutor {
             hoverComponentBuilder.append("\nLoot Table: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getLootTable() != null ? template.getLootTable().getId() : "N/A").color(net.md_5.bungee.api.ChatColor.YELLOW);
             componentBuilder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverComponentBuilder.create())));
 
-            if (sender.hasPermission("dragoneggdrop.command.respawn")) {
+            if (sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
                 componentBuilder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/dragonrespawn start 10s " + ((Player) sender).getWorld().getName() + " " + template.getId()));
             }
 

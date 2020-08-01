@@ -2,6 +2,7 @@ package com.ninjaguild.dragoneggdrop.listeners;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 
@@ -41,7 +42,7 @@ public final class RespawnListeners implements Listener {
         }
 
         // Start the respawn countdown if joining an empty world
-        if (plugin.getConfig().getBoolean("respawn-on-join", false)) {
+        if (plugin.getConfig().getBoolean(DEDConstants.CONFIG_RESPAWN_ON_JOIN, false)) {
             if (world.getPlayers().size() > 1 || worldWrapper.isRespawnInProgress() || world.getEntitiesByClass(EnderDragon.class).size() == 0) {
                 return;
             }
@@ -76,7 +77,7 @@ public final class RespawnListeners implements Listener {
         }
 
         // Dragon respawn logic
-        if (!plugin.getConfig().getBoolean("respawn-on-join", false)) {
+        if (!plugin.getConfig().getBoolean(DEDConstants.CONFIG_RESPAWN_ON_JOIN, false)) {
             return;
         }
 

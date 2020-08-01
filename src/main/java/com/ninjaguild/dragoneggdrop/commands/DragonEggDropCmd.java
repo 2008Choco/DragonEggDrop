@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
@@ -54,7 +55,7 @@ public final class DragonEggDropCmd implements TabExecutor {
         }
 
         else if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.hasPermission("dragoneggdrop.command.reload")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RELOAD)) {
                 DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
                 return true;
             }

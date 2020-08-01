@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
 import org.apache.commons.lang.Validate;
@@ -72,10 +73,10 @@ public class DragonTemplate {
         this.configFile = YamlConfiguration.loadConfiguration(file);
         this.id = file.getName().substring(0, file.getName().lastIndexOf('.')).replace(' ', '_');
 
-        this.name = (configFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', configFile.getString("dragon-name")) : null);
-        this.barStyle = Enums.getIfPresent(BarStyle.class, configFile.getString("bar-style", "SOLID").toUpperCase()).or(BarStyle.SOLID);
-        this.barColour = Enums.getIfPresent(BarColor.class, configFile.getString("bar-color", "PINK").toUpperCase()).or(BarColor.PINK);
-        this.lootTable = DragonEggDrop.getInstance().getLootTableRegistry().getLootTable(configFile.getString("loot"));
+        this.name = (configFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', configFile.getString(DEDConstants.TEMPLATE_DRAGON_NAME)) : null);
+        this.barStyle = Enums.getIfPresent(BarStyle.class, configFile.getString(DEDConstants.TEMPLATE_BAR_COLOR, "SOLID").toUpperCase()).or(BarStyle.SOLID);
+        this.barColour = Enums.getIfPresent(BarColor.class, configFile.getString(DEDConstants.TEMPLATE_BAR_STYLE, "PINK").toUpperCase()).or(BarColor.PINK);
+        this.lootTable = DragonEggDrop.getInstance().getLootTableRegistry().getLootTable(configFile.getString(DEDConstants.TEMPLATE_LOOT));
     }
 
     /**
@@ -335,25 +336,25 @@ public class DragonTemplate {
             }
 
             DragonTemplate template = new DragonTemplate(file);
-            template.spawnWeight = template.configFile.getDouble("spawn-weight", 1);
+            template.spawnWeight = template.configFile.getDouble(DEDConstants.TEMPLATE_SPAWN_WEIGHT, 1);
 
             if (template.configFile.isList("spawn-announcement")) {
-                template.spawnAnnouncement = template.configFile.getStringList("spawn-announcement").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", template.getName()))).collect(Collectors.toList());
+                template.spawnAnnouncement = template.configFile.getStringList(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", template.getName()))).collect(Collectors.toList());
             }
             else if (template.configFile.isString("spawn-announcement")) {
-                template.spawnAnnouncement = Arrays.asList(ChatColor.translateAlternateColorCodes('&', template.configFile.getString("spawn-announcement").replace("%dragon%", template.getName())));
+                template.spawnAnnouncement = Arrays.asList(ChatColor.translateAlternateColorCodes('&', template.configFile.getString(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).replace("%dragon%", template.getName())));
             }
 
             // Attribute modifier loading
             if (template.configFile.contains("attributes")) {
-                for (String attributeKey : template.configFile.getConfigurationSection("attributes").getValues(false).keySet()) {
+                for (String attributeKey : template.configFile.getConfigurationSection(DEDConstants.TEMPLATE_ATTRIBUTES).getValues(false).keySet()) {
                     Attribute attribute = Enums.getIfPresent(Attribute.class, attributeKey.toUpperCase()).orNull();
                     if (attribute == null) {
                         plugin.getLogger().warning("Unknown attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
                         continue;
                     }
 
-                    double value = template.configFile.getDouble("attributes." + attributeKey, -1);
+                    double value = template.configFile.getDouble(DEDConstants.TEMPLATE_ATTRIBUTES + "." + attributeKey, -1);
                     if (value == -1) {
                         plugin.getLogger().warning("Invalid double value specified at attribute \"" + attributeKey + "\" for template \"" + file.getName() + "\". Ignoring...");
                         continue;
