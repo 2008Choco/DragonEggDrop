@@ -114,7 +114,7 @@ public class DragonLootElementItem implements IDragonLootElement {
         }
         generated.setItemMeta(meta);
 
-        generated.setAmount(Math.max(random.nextInt(max), min));
+        generated.setAmount(min + random.nextInt(max - min + 1));
         inventory.setItem(slot, generated);
     }
 
