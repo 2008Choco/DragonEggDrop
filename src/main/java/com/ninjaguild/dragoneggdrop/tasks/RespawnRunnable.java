@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
-import com.ninjaguild.dragoneggdrop.api.PortalCrystal;
 import com.ninjaguild.dragoneggdrop.utils.ActionBarUtil;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
+import com.ninjaguild.dragoneggdrop.world.PortalCrystal;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

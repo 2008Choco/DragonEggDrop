@@ -1,4 +1,4 @@
-package com.ninjaguild.dragoneggdrop.api;
+package com.ninjaguild.dragoneggdrop.world;
 
 import java.util.ArrayList;
 import java.util.Collection;
