@@ -7,6 +7,7 @@ import java.util.List;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
+import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
 
 import org.bukkit.ChatColor;
@@ -38,8 +39,13 @@ public final class DragonEggDropCmd implements TabExecutor {
             sender.sendMessage(ChatColor.GRAY + "Report bugs to: " + ChatColor.YELLOW + "https://github.com/2008Choco/DragonEggDrop/issues/");
 
             UpdateResult result = UpdateChecker.get().getLastResult();
-            if (sender.isOp() && result != null && result.requiresUpdate()) {
-                sender.sendMessage(ChatColor.AQUA + "New version available: " + result.getNewestVersion());
+            if (sender.isOp() && result != null) {
+                if (result.requiresUpdate()) {
+                    sender.sendMessage(ChatColor.AQUA + "New version available: " + result.getNewestVersion());
+                }
+                else if (result.getReason() == UpdateReason.UNRELEASED_VERSION) {
+                    sender.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "WARNING! " + ChatColor.AQUA + "You are on a development version of DragonEggDrop. Things may not be stable. Proceed with caution!");
+                }
             }
 
             sender.sendMessage("");
