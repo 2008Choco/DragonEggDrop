@@ -8,8 +8,6 @@ import java.util.TreeMap;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.lang.Validate;
-
 /**
  * An implementation of a Collection based on a TreeMap. The goal of the RandomCollection
  * is to simplify the process of retrieving a random object based on its mapped weight.
@@ -35,7 +33,7 @@ public class RandomCollection<E> {
      * @param random an instance of Random to use
      */
     public RandomCollection(Random random) {
-        Validate.notNull(random, "Random instance must not be null");
+        Preconditions.checkArgument(random != null, "random must not be null");
         this.random = random;
     }
 
@@ -160,7 +158,7 @@ public class RandomCollection<E> {
      * @return the collection copy
      */
     public static <E> RandomCollection<E> copyOf(RandomCollection<E> toCopy) {
-        Validate.notNull(toCopy, "Cannot copy a null collection");
+        Preconditions.checkArgument(toCopy != null, "Cannot copy null collection");
 
         RandomCollection<E> result = new RandomCollection<>(toCopy.random);
         result.addAll(toCopy);

@@ -3,7 +3,8 @@ package com.ninjaguild.dragoneggdrop.utils.math;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import com.google.common.base.Preconditions;
+
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -29,16 +30,16 @@ public class ParticleShapeDefinition {
      * @param zExpression the expression for the y axis
      */
     public ParticleShapeDefinition(Location initialLocation, String xExpression, String zExpression) {
-        Validate.notNull(initialLocation, "Null initial locations are not supported");
-        Validate.notEmpty(xExpression, "The x axis expression cannot be null or empty");
-        Validate.notEmpty(zExpression, "The z axis expression cannot be null or empty");
+        Preconditions.checkArgument(initialLocation != null, "null initial locations are not supported");
+        Preconditions.checkArgument(xExpression != null && !xExpression.isEmpty(), "The x axis expression cannot be null or empty");
+        Preconditions.checkArgument(zExpression != null && !zExpression.isEmpty(), "The z axis expression cannot be null or empty");
 
         this.variables.put("x", 0.0);
         this.variables.put("z", 0.0);
         this.variables.put("t", 0.0);
         this.variables.put("theta", 0.0);
 
-        this.initialLocation = initialLocation;
+        this.initialLocation = initialLocation.clone();
         this.xExpression = MathUtils.parseExpression(xExpression, variables);
         this.zExpression = MathUtils.parseExpression(zExpression, variables);
     }
@@ -71,7 +72,7 @@ public class ParticleShapeDefinition {
      * is dependent on the type of particle used)
      */
     public void executeExpression(Particle particleType, int particleAmount, double xOffset, double yOffset, double zOffset, double particleExtra) {
-        Validate.notNull(particleType, "Cannot spawn Particle of type null");
+        Preconditions.checkArgument(particleType != null, "Cannot spawn null particle");
 
         double x = xExpression.evaluate(), z = zExpression.evaluate();
 

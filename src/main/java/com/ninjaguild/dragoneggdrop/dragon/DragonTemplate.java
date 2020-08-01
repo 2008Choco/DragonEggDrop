@@ -19,7 +19,6 @@ import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -89,7 +88,7 @@ public class DragonTemplate {
      * @param lootTable the dragon's loot table. Can be null
      */
     public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour, DragonLootTable lootTable) {
-        Validate.notEmpty(identifier, "Idenfitier must not be empty or null");
+        Preconditions.checkArgument(identifier != null && !identifier.isEmpty(), "identifier must not be empty or null");
         Preconditions.checkArgument(identifier.contains(" "), "Template identifiers must not have any spaces");
 
         this.file = null;
