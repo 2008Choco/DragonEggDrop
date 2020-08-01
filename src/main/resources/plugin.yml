@@ -25,10 +25,16 @@ commands:
 
 permissions:
   dragoneggdrop.*:
+    description: Allow access to all dragoneggdrop features
+    default: op
+    children:
+      dragoneggdrop.command.*: true
+
+  dragoneggdrop.command.*:
     description: Allow access to all commands in dragoneggdrop
     default: op
     children:
-      dragoneggdrop.reload: true
+      dragoneggdrop.command.reload: true
       dragoneggdrop.command.respawn: true
       dragoneggdrop.command.respawn.*: true
       dragoneggdrop.command.template: true
