@@ -14,6 +14,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 
 import org.bukkit.Bukkit;
@@ -30,7 +31,6 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.EquipmentSlot;
@@ -87,7 +87,7 @@ public class DragonLootElementItem implements IDragonLootElement {
     }
 
     @Override
-    public void generate(DragonBattle battle, EnderDragon dragon, Player killer, Random random, Chest chest) {
+    public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
         if (chest == null) {
             return;
         }
@@ -107,10 +107,10 @@ public class DragonLootElementItem implements IDragonLootElement {
         // Apply %dragon% placeholder
         ItemMeta meta = generated.getItemMeta();
         if (meta.hasDisplayName()) {
-            meta.setDisplayName(meta.getDisplayName().replace("%dragon%", dragon.getCustomName()));
+            meta.setDisplayName(meta.getDisplayName().replace("%dragon%", template.getName()));
         }
         if (meta.hasLore()) {
-            meta.setLore(meta.getLore().stream().map(s -> s.replace("%dragon%", dragon.getCustomName())).collect(Collectors.toList()));
+            meta.setLore(meta.getLore().stream().map(s -> s.replace("%dragon%", template.getName())).collect(Collectors.toList()));
         }
         generated.setItemMeta(meta);
 

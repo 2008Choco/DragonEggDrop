@@ -4,12 +4,12 @@ import java.util.Random;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
 /**
@@ -40,12 +40,12 @@ public class DragonLootElementCommand implements IDragonLootElement {
     }
 
     @Override
-    public void generate(DragonBattle battle, EnderDragon dragon, Player killer, Random random, Chest chest) {
+    public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
         if (command == null) {
             return;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DragonEggDropPlaceholders.inject(killer, command).replace("%dragon%", dragon.getCustomName()));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DragonEggDropPlaceholders.inject(killer, command).replace("%dragon%", template.getName()));
     }
 
     /**

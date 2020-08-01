@@ -18,6 +18,12 @@ import org.bukkit.World;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -128,7 +134,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
             if (activeTemplate != null) {
                 DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : activeTemplate.getLootTable();
                 if (lootTable != null) {
-                    lootTable.generate(dragonBattle, dragon);
+                    lootTable.generate(dragonBattle, activeTemplate, findDragonKiller(dragon));
                 }
                 else {
                     this.plugin.getLogger().warning("Could not generate loot for template " + activeTemplate.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
@@ -148,6 +154,29 @@ public class DragonDeathRunnable extends BukkitRunnable {
             Bukkit.getPluginManager().callEvent(bscEventCrystals);
             this.cancel();
         }
+    }
+
+    private Player findDragonKiller(EnderDragon dragon) {
+        EntityDamageEvent lastDamageCause = dragon.getLastDamageCause();
+        if (!(lastDamageCause instanceof EntityDamageByEntityEvent)) {
+            return null;
+        }
+
+        Entity damager = ((EntityDamageByEntityEvent) lastDamageCause).getDamager();
+        if (damager instanceof Player) {
+            return (Player) damager;
+        }
+
+        else if (damager instanceof Projectile) {
+            ProjectileSource projectileSource = ((Projectile) damager).getShooter();
+            if (!(projectileSource instanceof Player)) {
+                return null; // Give up
+            }
+
+            return (Player) projectileSource;
+        }
+
+        return null;
     }
 
 }

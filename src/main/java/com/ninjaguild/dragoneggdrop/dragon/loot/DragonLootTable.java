@@ -17,6 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementCommand;
 import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
 import com.ninjaguild.dragoneggdrop.dragon.loot.elements.DragonLootElementItem;
@@ -33,12 +34,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * Represents a dragon's loot table. These tables are used to randomly generate unique
@@ -137,14 +133,14 @@ public class DragonLootTable {
      * chest if necessary), then the chest item pools, followed by the command pools.
      *
      * @param battle the battle for which to generate loot
-     * @param dragon the dragon for which to generate loot
+     * @param template the template for which to generate loot
+     * @param killer the player that has slain the dragon. May be null
      */
-    public void generate(DragonBattle battle, EnderDragon dragon) {
+    public void generate(DragonBattle battle, DragonTemplate template, Player killer) {
         Preconditions.checkArgument(battle != null, "Attempted to generate loot for null dragon battle");
-        Preconditions.checkArgument(dragon != null, "Attempted to generate loot for null ender dragon");
+        Preconditions.checkArgument(template != null, "Attempted to generate loot for null dragon template");
 
         Chest chest = null;
-        Player killer = findDragonKiller(dragon);
         Location endPortalLocation = battle.getEndPortalLocation().add(0, 4, 0);
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -164,13 +160,13 @@ public class DragonLootTable {
         }
 
         // Generate the egg
-        this.egg.generate(battle, dragon, killer, random, chest);
+        this.egg.generate(battle, template, killer, random, chest);
 
         // Generate the item loot pools
-        this.generateLootPools(chestPools, plugin, battle, dragon, killer, random, chest);
+        this.generateLootPools(chestPools, plugin, battle, template, killer, random, chest);
 
         // Execute the command loot pools
-        this.generateLootPools(commandPools, plugin, battle, dragon, killer, random, chest);
+        this.generateLootPools(commandPools, plugin, battle, template, killer, random, chest);
     }
 
     /**
@@ -178,14 +174,17 @@ public class DragonLootTable {
      * given Block position.
      *
      * @param block the block at which to set the chest
+     * @param template the template for which to generate loot.
      * @param player the player for whom to generate the loot. May be null
      */
-    public void generate(Block block, Player player) {
+    public void generate(Block block, DragonTemplate template, Player player) {
+        Preconditions.checkArgument(template != null, "Attempted to generate loot for null dragon template");
+
         block.setType(Material.CHEST);
 
         Chest chest = (Chest) block.getState();
-        this.egg.generate(null, null, player, ThreadLocalRandom.current(), chest);
-        this.generateLootPools(chestPools, DragonEggDrop.getInstance(), null, null, player, ThreadLocalRandom.current(), chest);
+        this.egg.generate(null, template, player, ThreadLocalRandom.current(), chest);
+        this.generateLootPools(chestPools, DragonEggDrop.getInstance(), null, template, player, ThreadLocalRandom.current(), chest);
     }
 
     /**
@@ -197,30 +196,7 @@ public class DragonLootTable {
         return new JsonObject();
     }
 
-    private Player findDragonKiller(EnderDragon dragon) {
-        EntityDamageEvent lastDamageCause = dragon.getLastDamageCause();
-        if (!(lastDamageCause instanceof EntityDamageByEntityEvent)) {
-            return null;
-        }
-
-        Entity damager = ((EntityDamageByEntityEvent) lastDamageCause).getDamager();
-        if (damager instanceof Player) {
-            return (Player) damager;
-        }
-
-        else if (damager instanceof Projectile) {
-            ProjectileSource projectileSource = ((Projectile) damager).getShooter();
-            if (!(projectileSource instanceof Player)) {
-                return null; // Give up
-            }
-
-            return (Player) projectileSource;
-        }
-
-        return null;
-    }
-
-    private <T extends IDragonLootElement> void generateLootPools(List<ILootPool<T>> pools, DragonEggDrop plugin, DragonBattle battle, EnderDragon dragon, Player killer, ThreadLocalRandom random, Chest chest) {
+    private <T extends IDragonLootElement> void generateLootPools(List<ILootPool<T>> pools, DragonEggDrop plugin, DragonBattle battle, DragonTemplate template, Player killer, ThreadLocalRandom random, Chest chest) {
         if (pools == null || pools.isEmpty()) {
             return;
         }
@@ -238,7 +214,7 @@ public class DragonLootTable {
                     continue;
                 }
 
-                loot.generate(battle, dragon, killer, random, chest);
+                loot.generate(battle, template, killer, random, chest);
             }
         }
     }

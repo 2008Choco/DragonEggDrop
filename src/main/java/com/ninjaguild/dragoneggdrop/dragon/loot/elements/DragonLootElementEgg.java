@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -120,7 +120,7 @@ public class DragonLootElementEgg implements IDragonLootElement {
     }
 
     @Override
-    public void generate(DragonBattle battle, EnderDragon dragon, Player killer, Random random, Chest chest) {
+    public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
         if (random.nextDouble() * 100 >= chance) {
             return;
         }
@@ -134,11 +134,11 @@ public class DragonLootElementEgg implements IDragonLootElement {
         ItemMeta eggMeta = egg.getItemMeta();
 
         if (name != null) {
-            eggMeta.setDisplayName(DragonEggDropPlaceholders.inject(killer, name).replace("%dragon%", dragon.getCustomName()));
+            eggMeta.setDisplayName(DragonEggDropPlaceholders.inject(killer, name).replace("%dragon%", template.getName()));
         }
 
         if (lore != null && !lore.isEmpty()) {
-            List<String> contextualLore = lore.stream().map(s -> DragonEggDropPlaceholders.inject(killer, s).replace("%dragon%", dragon.getCustomName())).collect(Collectors.toList());
+            List<String> contextualLore = lore.stream().map(s -> DragonEggDropPlaceholders.inject(killer, s).replace("%dragon%", template.getName())).collect(Collectors.toList());
             eggMeta.setLore(contextualLore);
         }
 

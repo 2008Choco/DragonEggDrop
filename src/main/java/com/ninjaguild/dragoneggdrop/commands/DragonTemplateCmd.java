@@ -120,7 +120,7 @@ public final class DragonTemplateCmd implements TabExecutor {
                 return true;
             }
 
-            template.getLootTable().generate(block, ((Player) sender));
+            template.getLootTable().generate(block, template, ((Player) sender));
             DragonEggDrop.sendMessage(sender, ChatColor.GREEN + "The loot of " + template.getName() + ChatColor.GREEN + " has been generated!");
         }
 
