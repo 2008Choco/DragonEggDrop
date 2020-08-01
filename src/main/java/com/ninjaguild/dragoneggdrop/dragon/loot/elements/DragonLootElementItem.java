@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Enums;
 import com.google.gson.JsonArray;
@@ -102,6 +103,17 @@ public class DragonLootElementItem implements IDragonLootElement {
         } while (inventory.getItem(slot) != null);
 
         ItemStack generated = DragonEggDropPlaceholders.injectCopy(killer, item);
+
+        // Apply %dragon% placeholder
+        ItemMeta meta = generated.getItemMeta();
+        if (meta.hasDisplayName()) {
+            meta.setDisplayName(meta.getDisplayName().replace("%dragon%", dragon.getCustomName()));
+        }
+        if (meta.hasLore()) {
+            meta.setLore(meta.getLore().stream().map(s -> s.replace("%dragon%", dragon.getCustomName())).collect(Collectors.toList()));
+        }
+        generated.setItemMeta(meta);
+
         generated.setAmount(Math.max(random.nextInt(max), min));
         inventory.setItem(slot, generated);
     }
