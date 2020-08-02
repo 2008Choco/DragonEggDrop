@@ -6,8 +6,8 @@ import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
-import com.ninjaguild.dragoneggdrop.utils.math.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 

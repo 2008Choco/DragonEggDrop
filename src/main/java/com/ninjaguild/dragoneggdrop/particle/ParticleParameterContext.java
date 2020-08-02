@@ -1,16 +1,16 @@
-package com.ninjaguild.dragoneggdrop.utils.math;
+package com.ninjaguild.dragoneggdrop.particle;
 
 public final class ParticleParameterContext {
 
-    double x, z;
-    double t;
-    double theta;
+    private double x, z;
+    private double t;
+    private double theta;
 
-    ParticleParameterContext(double x, double z, double t, double theta) {
+    public ParticleParameterContext(double x, double z, double t, double theta) {
         this.update(x, z, t, theta);
     }
 
-    ParticleParameterContext() {
+    public ParticleParameterContext() {
         this(0.0, 0.0, 0.0, 0.0);
     }
 

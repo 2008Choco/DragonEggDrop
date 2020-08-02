@@ -1,6 +1,8 @@
-package com.ninjaguild.dragoneggdrop.utils.math;
+package com.ninjaguild.dragoneggdrop.particle;
 
 import com.google.common.base.Preconditions;
+import com.ninjaguild.dragoneggdrop.utils.math.MathExpression;
+import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;

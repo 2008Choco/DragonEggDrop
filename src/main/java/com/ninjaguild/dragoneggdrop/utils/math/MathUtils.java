@@ -7,6 +7,8 @@ import java.util.function.DoubleUnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ninjaguild.dragoneggdrop.particle.ParticleParameterContext;
+
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
