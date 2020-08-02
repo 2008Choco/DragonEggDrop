@@ -33,7 +33,7 @@ public class ParticleShapeDefinition {
 
         this.parameters = new ParticleParameterContext();
 
-        this.initialLocation = initialLocation.clone();
+        this.initialLocation = initialLocation;
         this.xExpression = MathUtils.parseExpression(xExpression, parameters);
         this.zExpression = MathUtils.parseExpression(zExpression, parameters);
     }
