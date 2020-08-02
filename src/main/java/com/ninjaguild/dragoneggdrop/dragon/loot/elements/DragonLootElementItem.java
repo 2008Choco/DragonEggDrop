@@ -1,7 +1,8 @@
 package com.ninjaguild.dragoneggdrop.dragon.loot.elements;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import com.ninjaguild.dragoneggdrop.utils.IntegerRange;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,22 +64,20 @@ import org.bukkit.potion.PotionType;
  */
 public class DragonLootElementItem implements IDragonLootElement {
 
+    private IntegerRange amount, damage;
+    private Map<Enchantment, IntegerRange> enchantments;
+
     private final ItemStack item;
-    private final int min, max;
     private final double weight;
 
     /**
      * Create a {@link DragonLootElementCommand}.
      *
      * @param item the item to generate
-     * @param min the minimum amount of this item to generate (inclusive)
-     * @param max the maximum amount of this item to generate (inclusive)
      * @param weight this element's weight in the loot pool
      */
-    public DragonLootElementItem(ItemStack item, int min, int max, double weight) {
+    private DragonLootElementItem(ItemStack item, double weight) {
         this.item = item;
-        this.min = min;
-        this.max = max;
         this.weight = weight;
     }
 
@@ -103,18 +103,40 @@ public class DragonLootElementItem implements IDragonLootElement {
         } while (inventory.getItem(slot) != null);
 
         ItemStack generated = DragonEggDropPlaceholders.injectCopy(killer, item);
+        ItemMeta meta = generated.getItemMeta();
+        if (meta == null) {
+            meta = Bukkit.getItemFactory().getItemMeta(generated.getType());
+        }
 
         // Apply %dragon% placeholder
-        ItemMeta meta = generated.getItemMeta();
         if (meta.hasDisplayName()) {
             meta.setDisplayName(meta.getDisplayName().replace("%dragon%", template.getName()));
         }
         if (meta.hasLore()) {
             meta.setLore(meta.getLore().stream().map(s -> s.replace("%dragon%", template.getName())).collect(Collectors.toList()));
         }
-        generated.setItemMeta(meta);
 
-        generated.setAmount(min + random.nextInt(max - min + 1));
+        // Generate enchantments
+        for (Map.Entry<Enchantment, IntegerRange> enchantmentEntry : enchantments.entrySet()) {
+            int level = enchantmentEntry.getValue().getRandomValue(random);
+            if (level <= 0) {
+                return;
+            }
+
+            if (meta instanceof EnchantmentStorageMeta) {
+                ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantmentEntry.getKey(), level, true);
+            } else {
+                meta.addEnchant(enchantmentEntry.getKey(), level, true);
+            }
+        }
+
+        // Apply damage
+        if (meta instanceof Damageable) {
+            ((Damageable) meta).setDamage(damage.getRandomValue(random));
+        }
+
+        generated.setItemMeta(meta);
+        generated.setAmount(amount.getRandomValue(random));
         inventory.setItem(slot, generated);
     }
 
@@ -129,7 +151,8 @@ public class DragonLootElementItem implements IDragonLootElement {
      */
     public static DragonLootElementItem fromJson(JsonObject root) throws JsonParseException {
         double weight = root.has("weight") ? Math.max(root.get("weight").getAsDouble(), 0.0) : 1.0;
-        int minAmount = 1, maxAmount = 1;
+
+        DragonLootElementItemBuilder elementBuilder = new DragonLootElementItemBuilder();
 
         if (!root.has("type")) {
             throw new JsonParseException("Could not find \"type\" for item in loot pool");
@@ -145,20 +168,7 @@ public class DragonLootElementItem implements IDragonLootElement {
 
         // Base meta (ItemMeta)
         if (root.has("amount")) {
-            JsonElement amountElement = root.get("amount");
-            if (amountElement.isJsonPrimitive()) {
-                minAmount = maxAmount = Math.max(amountElement.getAsInt(), 0);
-            }
-
-            else if (amountElement.isJsonObject()) {
-                JsonObject amountObject = amountElement.getAsJsonObject();
-                minAmount = amountObject.has("min") ? Math.max(amountObject.get("min").getAsInt(), 0) : 0;
-                maxAmount = amountObject.has("max") ? Math.max(amountObject.get("max").getAsInt(), 0) : minAmount;
-            }
-
-            else {
-                throw new JsonParseException("Element \"amount\" is of unexpected type. Expected number or object, got " + amountElement.getClass().getSimpleName());
-            }
+            elementBuilder.amount(parseRange(root, "amount"));
         }
 
         if (root.has("name")) {
@@ -192,35 +202,27 @@ public class DragonLootElementItem implements IDragonLootElement {
                 throw new JsonParseException("Element \"enchantments\" is of unexpected type. Expected object, got " + enchantmentsElement.getClass().getSimpleName());
             }
 
-            Map<Enchantment, Integer> enchantments = new IdentityHashMap<>();
-
-            for (Entry<String, JsonElement> enchantmentElement : root.getAsJsonObject("enchantments").entrySet()) {
+            JsonObject enchantmentsObject = enchantmentsElement.getAsJsonObject();
+            for (Entry<String, JsonElement> enchantmentElement : enchantmentsObject.entrySet()) {
                 Enchantment enchantment = Enchantment.getByKey(toNamespacedKey(enchantmentElement.getKey()));
                 if (enchantment == null) {
                     throw new JsonParseException("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?");
                 }
 
-                int level = Math.max(enchantmentElement.getValue().getAsInt(), 0);
-                if (level > 0) {
-                    enchantments.put(enchantment, level);
-                }
-            }
-
-            if (meta instanceof EnchantmentStorageMeta) {
-                EnchantmentStorageMeta metaSpecific = (EnchantmentStorageMeta) meta;
-                enchantments.forEach((enchantment, level) -> metaSpecific.addStoredEnchant(enchantment, level, true));
-            } else {
-                enchantments.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
+                elementBuilder.enchantment(enchantment, parseRange(enchantmentsObject, enchantmentElement.getKey()));
             }
         }
 
         if (root.has("damage") && meta instanceof Damageable) {
-            int damage = root.get("damage").getAsInt();
-            if (damage > type.getMaxDurability()) {
-                throw new JsonParseException("Element \"damage\" has a value greater than its type's maximum durability (" + damage + " > " + type.getMaxDurability() + ")");
+            IntegerRange damageRange = parseRange(root, "damage");
+            if (damageRange.getMax() > type.getMaxDurability()) {
+                throw new JsonParseException("Element \"damage\" has a maximum value greater than its type's maximum durability (" + damageRange.getMax() + " > " + type.getMaxDurability() + ")");
+            }
+            else if (damageRange.getMin() < 0) {
+                throw new JsonParseException("Element \"damage\" has a minimum value less than 0");
             }
 
-            ((Damageable) meta).setDamage(Math.max(root.get("damage").getAsInt(), 0));
+            elementBuilder.damage(damageRange);
         }
 
         if (root.has("unbreakable")) {
@@ -670,7 +672,27 @@ public class DragonLootElementItem implements IDragonLootElement {
         }
 
         item.setItemMeta(meta);
-        return new DragonLootElementItem(item, minAmount, maxAmount, weight);
+        return elementBuilder.build(item, weight);
+    }
+
+    private static IntegerRange parseRange(JsonObject root, String elementName) {
+        JsonElement element = root.get(elementName);
+        if (element.isJsonPrimitive()) {
+            return IntegerRange.only(Math.max(element.getAsInt(), 0));
+        }
+
+        else if (element.isJsonObject()) {
+            JsonObject elementObject = element.getAsJsonObject();
+
+            int min = elementObject.has("min") ? Math.max(elementObject.get("min").getAsInt(), 0) : 0;
+            int max = elementObject.has("max") ? Math.max(elementObject.get("max").getAsInt(), 0) : min;
+
+            return IntegerRange.between(min, max);
+        }
+
+        else {
+            throw new JsonParseException("Element \"" + elementName + "\" is of unexpected type. Expected number or object, got " + element.getClass().getSimpleName());
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -691,6 +713,41 @@ public class DragonLootElementItem implements IDragonLootElement {
 
         // This constructor really shouldn't be deprecated
         return new NamespacedKey(parts[0], parts[1]);
+    }
+
+    private static class DragonLootElementItemBuilder {
+
+        private IntegerRange amount, damage;
+        private Map<Enchantment, IntegerRange> enchantments;
+
+        private DragonLootElementItemBuilder() { }
+
+        public void amount(IntegerRange amount) {
+            this.amount = amount;
+        }
+
+        public void damage(IntegerRange damage) {
+            this.damage = damage;
+        }
+
+        public void enchantment(Enchantment enchantment, IntegerRange levelRange) {
+            if (enchantments == null) {
+                this.enchantments = new HashMap<>();
+            }
+
+            this.enchantments.put(enchantment, levelRange);
+        }
+
+        public DragonLootElementItem build(ItemStack item, double weight) {
+            DragonLootElementItem element = new DragonLootElementItem(item, weight);
+
+            element.amount = (amount != null ? amount : IntegerRange.only(1));
+            element.enchantments = (enchantments != null ? enchantments : Collections.emptyMap());
+            element.damage = (damage != null ? damage : IntegerRange.only(0));
+
+            return element;
+        }
+
     }
 
 }

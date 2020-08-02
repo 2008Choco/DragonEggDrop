@@ -35,11 +35,17 @@
                             "First line",
                             "Second line!"
                         ],
-                        "damage": 35,
+                        "damage": {
+                            "min": 0,
+                            "max": 35
+                        },
                         "unbreakable": true,
                         "custom_model_data": 1337,
                         "enchantments": {
-                            "minecraft:sharpness": 4,
+                            "minecraft:sharpness": {
+                                "min": 2,
+                                "max": 4
+                            },
                             "minecraft:unbreaking": 3
                         },
                         "attribute_modifiers": {
