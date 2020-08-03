@@ -11,7 +11,6 @@ public final class DEDConstants {
     public static final String CONFIG_METRICS = "metrics";
     public static final String CONFIG_PERFORM_UPDATE_CHECKS = "perform-update-checks";
 
-    public static final String CONFIG_PARTICLES = "particles";
     public static final String CONFIG_LIGHTNING_AMOUNT = "lightning-amount";
     public static final String CONFIG_ALLOW_CRYSTAL_RESPAWNS = "allow-crystal-respawns";
     public static final String CONFIG_STRICT_COUNTDOWN = "strict-countdown";
@@ -26,10 +25,11 @@ public final class DEDConstants {
     public static final String TEMPLATE_DRAGON_NAME = "dragon-name";
     public static final String TEMPLATE_BAR_STYLE = "bar-style";
     public static final String TEMPLATE_BAR_COLOR = "bar-color";
-    public static final String TEMPLATE_LOOT = "loot";
     public static final String TEMPLATE_SPAWN_WEIGHT = "spawn-weight";
     public static final String TEMPLATE_SPAWN_ANNOUNCEMENT = "spawn-announcement";
     public static final String TEMPLATE_ATTRIBUTES = "attributes";
+    public static final String TEMPLATE_PARTICLES = "particles";
+    public static final String TEMPLATE_LOOT = "loot";
 
     // Permission nodes
     public static final String PERMISSION_COMMAND_RELOAD = "dragoneggdrop.command.reload";

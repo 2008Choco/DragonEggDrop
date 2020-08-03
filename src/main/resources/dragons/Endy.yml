@@ -4,4 +4,5 @@ bar-color: PINK
 
 spawn-weight: 2
 
+particles: "ball"
 loot: "common_dragon"

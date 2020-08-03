@@ -38,6 +38,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
     private final World world;
     private final EndWorldWrapper worldWrapper;
+    private final DragonTemplate template;
 
     private int lightningAmount;
 
@@ -56,9 +57,10 @@ public class DragonDeathRunnable extends BukkitRunnable {
         this.worldWrapper = worldWrapper;
         this.world = worldWrapper.getWorld();
         this.dragon = dragon;
+        this.template = worldWrapper.getActiveTemplate();
 
         FileConfiguration config = plugin.getConfig();
-        ParticleShapeDefinition particleShapeDefinition = plugin.getParticleShapeDefinitionRegistry().getParticleShapeDefinition(config.getString(DEDConstants.CONFIG_PARTICLES));
+        ParticleShapeDefinition particleShapeDefinition = (template != null ? template.getParticleShapeDefinition() : null);
         this.lightningAmount = config.getInt(DEDConstants.CONFIG_LIGHTNING_AMOUNT);
 
         // Portal location
@@ -71,49 +73,54 @@ public class DragonDeathRunnable extends BukkitRunnable {
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
 
-        this.particleSession = particleShapeDefinition.createSession(world, portalLocation.getX(), portalLocation.getZ());
+        if (particleShapeDefinition != null) {
+            this.particleSession = particleShapeDefinition.createSession(world, portalLocation.getX(), portalLocation.getZ());
+        }
     }
 
     @Override
     public void run() {
-        this.particleSession.tick();
+        if (particleSession != null) {
+            this.particleSession.tick();
+
+            if (!particleSession.shouldStop()) {
+                return;
+            }
+        }
 
         // Particles finished, place reward
-        if (particleSession.shouldStop()) {
-            Location location = particleSession.getCurrentLocation().add(0, 1, 0);
+        Location location = particleSession.getCurrentLocation().add(0, 1, 0);
 
-            // Summon Zeus!
-            for (int i = 0; i < lightningAmount; i++) {
-                this.worldWrapper.getWorld().strikeLightning(location);
-            }
-
-            DragonBattle dragonBattle = dragon.getDragonBattle();
-            DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
-            this.worldWrapper.setActiveTemplate(null);
-
-            if (activeTemplate != null) {
-                DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : activeTemplate.getLootTable();
-                if (lootTable != null) {
-                    lootTable.generate(dragonBattle, activeTemplate, findDragonKiller(dragon));
-                }
-                else {
-                    this.plugin.getLogger().warning("Could not generate loot for template " + activeTemplate.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
-
-                    // Let's just generate an egg instead...
-                    location.getBlock().setType(Material.DRAGON_EGG);
-                }
-
-                this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
-            }
-
-            if (respawnDragon && world.getPlayers().size() > 0) {
-                this.worldWrapper.startRespawn(RespawnReason.DEATH);
-            }
-
-            BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
-            Bukkit.getPluginManager().callEvent(bscEventCrystals);
-            this.cancel();
+        // Summon Zeus!
+        for (int i = 0; i < lightningAmount; i++) {
+            this.worldWrapper.getWorld().strikeLightning(location);
         }
+
+        DragonBattle dragonBattle = dragon.getDragonBattle();
+        this.worldWrapper.setActiveTemplate(null);
+
+        if (template != null) {
+            DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : template.getLootTable();
+            if (lootTable != null) {
+                lootTable.generate(dragonBattle, template, findDragonKiller(dragon));
+            }
+            else {
+                this.plugin.getLogger().warning("Could not generate loot for template " + template.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
+
+                // Let's just generate an egg instead...
+                location.getBlock().setType(Material.DRAGON_EGG);
+            }
+
+            this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
+        }
+
+        if (respawnDragon && world.getPlayers().size() > 0) {
+            this.worldWrapper.startRespawn(RespawnReason.DEATH);
+        }
+
+        BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.PARTICLES_START, BattleState.LOOT_SPAWN);
+        Bukkit.getPluginManager().callEvent(bscEventCrystals);
+        this.cancel();
     }
 
     private Player findDragonKiller(EnderDragon dragon) {

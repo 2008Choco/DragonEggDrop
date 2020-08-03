@@ -4,9 +4,6 @@ perform-update-checks: true
 # Send anonymous statistics to bStats (https://bstats.org/plugin/bukkit/DragonEggDrop/).
 metrics: true
 
-# The particle definition to use (located in "particles" directory)
-particles: "open_end_helix"
-
 # The amount of lightning bolts to spawn when the loot has generated.
 lightning-amount: 4
 

@@ -9,4 +9,5 @@ attributes:
   GENERIC_ARMOR: 10
   GENERIC_ATTACK_DAMAGE: 6
 
+particles: "helix"
 loot: "very_rare_dragon"

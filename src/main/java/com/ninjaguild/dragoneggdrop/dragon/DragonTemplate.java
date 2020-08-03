@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.RandomCollection;
 
@@ -48,6 +49,7 @@ public class DragonTemplate {
     protected final File file;
     protected final FileConfiguration configFile;
 
+    private final ParticleShapeDefinition particleShapeDefinition;
     private final DragonLootTable lootTable;
     private final String id;
 
@@ -75,7 +77,10 @@ public class DragonTemplate {
         this.name = (configFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', configFile.getString(DEDConstants.TEMPLATE_DRAGON_NAME)) : null);
         this.barStyle = Enums.getIfPresent(BarStyle.class, configFile.getString(DEDConstants.TEMPLATE_BAR_COLOR, "SOLID").toUpperCase()).or(BarStyle.SOLID);
         this.barColour = Enums.getIfPresent(BarColor.class, configFile.getString(DEDConstants.TEMPLATE_BAR_STYLE, "PINK").toUpperCase()).or(BarColor.PINK);
-        this.lootTable = DragonEggDrop.getInstance().getLootTableRegistry().getLootTable(configFile.getString(DEDConstants.TEMPLATE_LOOT));
+
+        DragonEggDrop plugin = DragonEggDrop.getInstance();
+        this.particleShapeDefinition = plugin.getParticleShapeDefinitionRegistry().getParticleShapeDefinition(configFile.getString(DEDConstants.TEMPLATE_PARTICLES));
+        this.lootTable = plugin.getLootTableRegistry().getLootTable(configFile.getString(DEDConstants.TEMPLATE_LOOT));
     }
 
     /**
@@ -85,9 +90,10 @@ public class DragonTemplate {
      * @param name the name of the dragon. Can be null
      * @param barStyle the style of the bar. Can be null
      * @param barColour the colour of the bar. Can be null
+     * @param particleShapeDefinition the dragon's particle shape definition. Can be null
      * @param lootTable the dragon's loot table. Can be null
      */
-    public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour, DragonLootTable lootTable) {
+    public DragonTemplate(String identifier, String name, BarStyle barStyle, BarColor barColour, ParticleShapeDefinition particleShapeDefinition, DragonLootTable lootTable) {
         Preconditions.checkArgument(identifier != null && !identifier.isEmpty(), "identifier must not be empty or null");
         Preconditions.checkArgument(identifier.contains(" "), "Template identifiers must not have any spaces");
 
@@ -98,6 +104,7 @@ public class DragonTemplate {
         this.name = (name != null ? ChatColor.translateAlternateColorCodes('&', name) : null);
         this.barStyle = (barStyle != null ? barStyle : BarStyle.SOLID);
         this.barColour = (barColour != null ? barColour : BarColor.PINK);
+        this.particleShapeDefinition = particleShapeDefinition;
         this.lootTable = lootTable;
     }
 
@@ -146,6 +153,15 @@ public class DragonTemplate {
      */
     public BarColor getBarColor() {
         return barColour;
+    }
+
+    /**
+     * Get the particle shape definition to use when this dragon is killed.
+     *
+     * @return the shape definition
+     */
+    public ParticleShapeDefinition getParticleShapeDefinition() {
+        return particleShapeDefinition;
     }
 
     /**
