@@ -4,7 +4,7 @@ version: ${project.version}
 description: ${project.description}
 softdepend: [PlaceholderAPI]
 author: Choco
-contributors: [NinjaStix]
+contributors: [NinjaStix, Photon]
 api-version: 1.16
 
 commands:
