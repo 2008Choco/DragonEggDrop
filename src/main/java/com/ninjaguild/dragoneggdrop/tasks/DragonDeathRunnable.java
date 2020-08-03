@@ -1,11 +1,11 @@
 package com.ninjaguild.dragoneggdrop.tasks;
 
-import com.google.common.base.Enums;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.api.BattleState;
 import com.ninjaguild.dragoneggdrop.api.BattleStateChangeEvent;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.particle.AnimatedParticleSession;
 import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
@@ -14,7 +14,6 @@ import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,26 +34,15 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
     private final DragonEggDrop plugin;
 
-    private ParticleShapeDefinition particleShape;
+    private AnimatedParticleSession particleSession;
 
     private final World world;
     private final EndWorldWrapper worldWrapper;
 
-    private Particle particleType = null;
-    private int particleAmount = 0;
-    private double particleExtra = 0D;
-    private double particleMultiplier = 1D;
-    private int particleStreamInterval = 360;
-    private double xOffset, yOffset, zOffset;
-    private long particleInterval = 0L;
     private int lightningAmount;
 
     private EnderDragon dragon;
     private boolean respawnDragon = false;
-
-    private Location location;
-    private double animationTime = 0;
-    private double theta = 0;
 
     /**
      * Construct a new DragonDeathRunnable object.
@@ -70,58 +58,29 @@ public class DragonDeathRunnable extends BukkitRunnable {
         this.dragon = dragon;
 
         FileConfiguration config = plugin.getConfig();
-        this.particleType = Enums.getIfPresent(Particle.class, config.getString(DEDConstants.CONFIG_PARTICLES_TYPE, "FLAME").toUpperCase()).or(Particle.FLAME);
-        this.particleAmount = config.getInt(DEDConstants.CONFIG_PARTICLES_AMOUNT, 4);
-        this.particleExtra = config.getDouble(DEDConstants.CONFIG_PARTICLES_EXTRA, 0.0D);
-        this.particleMultiplier = config.getDouble(DEDConstants.CONFIG_PARTICLES_SPEED_MULTIPLIER, 0.0D);
-        this.particleStreamInterval = 360 / Math.max(1, config.getInt(DEDConstants.CONFIG_PARTICLES_STREAM_COUNT));
-        this.xOffset = config.getDouble(DEDConstants.CONFIG_PARTICLES_X_OFFSET);
-        this.yOffset = config.getDouble(DEDConstants.CONFIG_PARTICLES_Y_OFFSET);
-        this.zOffset = config.getDouble(DEDConstants.CONFIG_PARTICLES_Z_OFFSET);
-        this.particleInterval = config.getLong(DEDConstants.CONFIG_PARTICLES_INTERVAL, 1L);
+        ParticleShapeDefinition particleShapeDefinition = plugin.getParticleShapeDefinitionRegistry().getParticleShapeDefinition(config.getString(DEDConstants.CONFIG_PARTICLES));
         this.lightningAmount = config.getInt(DEDConstants.CONFIG_LIGHTNING_AMOUNT);
 
         // Portal location
         DragonBattle dragonBattle = dragon.getDragonBattle();
-        this.location = dragonBattle.getEndPortalLocation().add(0.5, config.getDouble(DEDConstants.CONFIG_PARTICLES_START_Y, 128), 0.5);
-
-        // Expression parsing
-        String shape = config.getString(DEDConstants.CONFIG_PARTICLES_ADVANCED_PRESET_SHAPE);
-        String xCoordExpressionString = config.getString(DEDConstants.CONFIG_PARTICLES_ADVANCED_X_COORD_EXPRESSION);
-        String zCoordExpressionString = config.getString(DEDConstants.CONFIG_PARTICLES_ADVANCED_Z_COORD_EXPRESSION);
-
-        this.particleShape = Enums.getIfPresent(ParticleShapeDefinition.Prefab.class, shape)
-                .transform(p -> p.create(location))
-                .or(new ParticleShapeDefinition(location, xCoordExpressionString, zCoordExpressionString));
+        Location portalLocation = dragonBattle.getEndPortalLocation().add(0.5, 0.0, 0.5);
 
         this.respawnDragon = config.getBoolean(DEDConstants.CONFIG_RESPAWN_ON_DEATH, false);
-        this.runTaskTimer(plugin, 0, particleInterval);
+        this.runTaskTimer(plugin, 0, 1);
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_END, BattleState.PARTICLES_START);
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
+
+        this.particleSession = particleShapeDefinition.createSession(world, portalLocation.getX(), portalLocation.getZ());
     }
 
     @Override
     public void run() {
-        this.animationTime++;
-        this.theta += 5;
-
-        this.location.subtract(0, 1 / particleMultiplier, 0);
-        if (particleStreamInterval < 360) {
-            for (int i = 0; i < 360; i += particleStreamInterval) {
-                this.theta += particleStreamInterval;
-                this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
-                this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
-            }
-        }
-        else {
-            this.particleShape.updateVariables(location.getX(), location.getZ(), animationTime, theta);
-            this.particleShape.executeExpression(particleType, particleAmount, xOffset, yOffset, zOffset, particleExtra);
-        }
+        this.particleSession.tick();
 
         // Particles finished, place reward
-        if (location.getBlock().getType() == Material.BEDROCK) {
-            this.location.add(0, 1, 0);
+        if (particleSession.shouldStop()) {
+            Location location = particleSession.getCurrentLocation().add(0, 1, 0);
 
             // Summon Zeus!
             for (int i = 0; i < lightningAmount; i++) {
@@ -141,7 +100,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
                     this.plugin.getLogger().warning("Could not generate loot for template " + activeTemplate.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
 
                     // Let's just generate an egg instead...
-                    this.location.getBlock().setType(Material.DRAGON_EGG);
+                    location.getBlock().setType(Material.DRAGON_EGG);
                 }
 
                 this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead

@@ -4,44 +4,8 @@ perform-update-checks: true
 # Send anonymous statistics to bStats (https://bstats.org/plugin/bukkit/DragonEggDrop/).
 metrics: true
 
-Particles:
-    # The y coordinates where particles will start.
-    egg-start-y: 180.0
-
-    # The particle type to use. See: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
-    type: 'FLAME'
-
-    # The amount of particles to spawn per interval.
-    amount: 4
-
-    # Extra data of the particle (Most are not affected by this value).
-    extra: 0
-
-    # The particle offsets for each axis
-    x-offset: 0.001
-    y-offset: 0.001
-    z-offset: 0.001
-
-    # The speed multiplier at which particles will be spawned (how fast they will descend).
-    speed-multiplier: 1
-
-    # The amount of particle streams that will spawn from the starting position.
-    stream-count: 6
-
-    # How often to spawn the particles (in ticks).
-    interval: 1
-
-    # Advanced particle configuration. For more information, see https://github.com/2008Choco/DragonEggDrop/wiki/Advanced-Particle-Equations
-    Advanced:
-        # A pre-defined mathematical shape for the particles. If set to "CUSTOM", x-coord-expression and z-coord-expression will be used.
-        # (Available: "BALL", "HELIX", "OPEN_END_HELIX", "CUSTOM")
-        preset-shape: 'OPEN_END_HELIX'
-
-        # The mathematical expression particles will use along the x axis.
-        x-coord-expression: 'cos(theta)'
-
-        # The mathematical expression particles will use along the z axis.
-        z-coord-expression: 'sin(theta)'
+# The particle definition to use (located in "particles" directory)
+particles: "open_end_helix"
 
 # The amount of lightning bolts to spawn when the loot has generated.
 lightning-amount: 4

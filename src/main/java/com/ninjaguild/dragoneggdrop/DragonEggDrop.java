@@ -20,6 +20,8 @@ import com.ninjaguild.dragoneggdrop.listeners.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.listeners.LootListeners;
 import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
+import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
+import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinitionRegistry;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
@@ -56,6 +58,7 @@ public class DragonEggDrop extends JavaPlugin {
     private static DragonEggDrop instance;
 
     private DragonLootTableRegistry lootTableRegistry;
+    private ParticleShapeDefinitionRegistry particleShapeDefinitionRegistry;
 
     private BukkitTask updateTask;
     private File tempDataFile;
@@ -72,11 +75,19 @@ public class DragonEggDrop extends JavaPlugin {
         if (DragonLootTable.LOOT_TABLES_FOLDER.mkdirs()) {
             this.saveDefaultDirectory("loot_tables");
         }
+        if (ParticleShapeDefinition.PARTICLES_FOLDER.mkdirs()) {
+            this.saveDefaultDirectory("particles");
+        }
 
         this.getLogger().info("Loading loot tables...");
         this.lootTableRegistry = new DragonLootTableRegistry();
         this.lootTableRegistry.reloadDragonLootTables();
         this.getLogger().info("Done! Successfully loaded " + lootTableRegistry.getLootTables().size() + " loot tables");
+
+        this.getLogger().info("Loading particle shape definitions...");
+        this.particleShapeDefinitionRegistry = new ParticleShapeDefinitionRegistry();
+        this.particleShapeDefinitionRegistry.reload();
+        this.getLogger().info("Done! Successfully loaded " + particleShapeDefinitionRegistry.getParticleShapeDefinitions().size() + " shape definitions");
 
         this.getLogger().info("Loading dragon templates...");
         DragonTemplate.reload();
@@ -168,6 +179,15 @@ public class DragonEggDrop extends JavaPlugin {
      */
     public DragonLootTableRegistry getLootTableRegistry() {
         return lootTableRegistry;
+    }
+
+    /**
+     * Get the particle shape definition registry.
+     *
+     * @return the particle shapde definition registry
+     */
+    public ParticleShapeDefinitionRegistry getParticleShapeDefinitionRegistry() {
+        return particleShapeDefinitionRegistry;
     }
 
     /**

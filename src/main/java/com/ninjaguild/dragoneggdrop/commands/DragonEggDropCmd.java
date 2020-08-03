@@ -63,6 +63,7 @@ public final class DragonEggDropCmd implements TabExecutor {
             this.plugin.reloadConfig();
             DragonTemplate.reload();
             this.plugin.getLootTableRegistry().reloadDragonLootTables();
+            this.plugin.getParticleShapeDefinitionRegistry().reload();
             DragonEggDrop.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
         }
 

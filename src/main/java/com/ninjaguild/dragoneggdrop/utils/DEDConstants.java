@@ -11,20 +11,7 @@ public final class DEDConstants {
     public static final String CONFIG_METRICS = "metrics";
     public static final String CONFIG_PERFORM_UPDATE_CHECKS = "perform-update-checks";
 
-    public static final String CONFIG_PARTICLES_START_Y = "Particles.egg-start-y";
-    public static final String CONFIG_PARTICLES_TYPE = "Particles.type";
-    public static final String CONFIG_PARTICLES_AMOUNT = "Particles.amount";
-    public static final String CONFIG_PARTICLES_EXTRA = "Particles.extra";
-    public static final String CONFIG_PARTICLES_SPEED_MULTIPLIER = "Particles.speed-multiplier";
-    public static final String CONFIG_PARTICLES_STREAM_COUNT = "Particles.stream-count";
-    public static final String CONFIG_PARTICLES_X_OFFSET = "Particles.xOffset";
-    public static final String CONFIG_PARTICLES_Y_OFFSET = "Particles.yOffset";
-    public static final String CONFIG_PARTICLES_Z_OFFSET = "Particles.zOffset";
-    public static final String CONFIG_PARTICLES_INTERVAL = "Particles.interval";
-    public static final String CONFIG_PARTICLES_ADVANCED_PRESET_SHAPE = "Particles.Advanced.preset-shape";
-    public static final String CONFIG_PARTICLES_ADVANCED_X_COORD_EXPRESSION = "Particles.Advanced.x-coord-expression";
-    public static final String CONFIG_PARTICLES_ADVANCED_Z_COORD_EXPRESSION = "Particles.Advanced.z-coord-expression";
-
+    public static final String CONFIG_PARTICLES = "particles";
     public static final String CONFIG_LIGHTNING_AMOUNT = "lightning-amount";
     public static final String CONFIG_ALLOW_CRYSTAL_RESPAWNS = "allow-crystal-respawns";
     public static final String CONFIG_STRICT_COUNTDOWN = "strict-countdown";
