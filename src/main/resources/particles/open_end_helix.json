@@ -1,0 +1,22 @@
+{
+    "start_y": 180.0,
+    "arguments": {
+        "particle": "flame",
+        "particle_amount": 4,
+        "particle_extra": 0.0,
+        "particle_offset_x": 0.001,
+        "particle_offset_y": 0.001,
+        "particle_offset_z": 0.001,
+        "particle_streams": 6,
+        "speed_multiplier": 1.0,
+        "frame_interval_ticks": 1,
+        "theta_increment": 5.0
+    },
+    "equations": [
+        {
+            "conditions": [ { "name": "always_true" } ],
+            "x": "cos(theta) * (100 / t)",
+            "z": "sin(theta) * (100 / t)"
+        }
+    ]
+}

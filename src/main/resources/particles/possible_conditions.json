@@ -1,0 +1,31 @@
+// Lines prefixed with a double slash ("//") are considered comments and must be removed as they are not valid JSON.
+// These comments exist purely as an explanation for the various conditions.
+// NOTE: JSON files with the name "possible_conditions.json" will be ignored by DragonEggDrop's parser.
+
+{
+    "equations": [
+        {
+            "conditions": [
+                // This condition will always return true.
+                {
+                    "name": "always_true"
+                },
+
+                // Compares a value against the current y position of the particle animation.
+                // Possible operations:
+                //   - "less_than"
+                //   - "greater_than"
+                //   - "equal"
+                // Required arguments:
+                //   - "value": the value against which the y position should be compared
+                {
+                    "name": "y_position",
+                    "operation": "less_than",
+                    "arguments": {
+                        "value": 128.0
+                    }
+                }
+            ]
+        }
+    ]
+}

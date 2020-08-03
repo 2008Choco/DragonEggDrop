@@ -8,4 +8,5 @@ attributes:
   GENERIC_MAX_HEALTH: 400
   GENERIC_ARMOR: 5
 
+particles: "helix"
 loot: "rare_dragon"

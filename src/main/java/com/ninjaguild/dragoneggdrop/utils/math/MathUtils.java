@@ -52,22 +52,7 @@ public final class MathUtils {
     private MathUtils() {}
 
     /**
-     * Evaluate a mathematical expression with given variables.
-     *
-     * @param expression the string to parse
-     * @param parameters the parameter context containing necessary variables for this expression.
-     * To modify variables at any given time between evaluations, update values in the context
-     *
-     * @return The mathematical expression
-     */
-    public static MathExpression parseExpression(String expression, ParticleParameterContext parameters) {
-        return new ExpressionEvaluator(expression, parameters).parse();
-    }
-
-    /**
-     * Evaluate a basic mathematical expression. Variables are not permitted in
-     * expressions parsed by this method. For variable-based functions, see
-     * {@link #parseExpression(String, ParticleParameterContext)}.
+     * Evaluate a basic mathematical expression.
      *
      * @param expression the string to parse
      *
@@ -222,15 +207,9 @@ public final class MathUtils {
         private int pos = -1, ch;
 
         private final String expression;
-        private final ParticleParameterContext parameters;
-
-        public ExpressionEvaluator(String expression, ParticleParameterContext parameters) {
-            this.expression = expression;
-            this.parameters = parameters;
-        }
 
         public ExpressionEvaluator(String expression) {
-            this(expression, new ParticleParameterContext());
+            this.expression = expression;
         }
 
         /**
@@ -297,11 +276,11 @@ public final class MathUtils {
             while (true) {
                 if (eat('+')) { // addition
                     MathExpression a = x, b = parseTerm();
-                    x = (() -> a.evaluate() + b.evaluate());
+                    x = (variables -> a.evaluate(variables) + b.evaluate(variables));
                 }
                 else if (eat('-')) { // subtraction
                     MathExpression a = x, b = parseTerm();
-                    x = (() -> a.evaluate() - b.evaluate());
+                    x = (variables -> a.evaluate(variables) - b.evaluate(variables));
                 }
                 else {
                     return x;
@@ -320,11 +299,11 @@ public final class MathUtils {
             while (true) {
                 if (eat('*')) { // multiplication
                     MathExpression a = x, b = parseFactor();
-                    x = (() -> a.evaluate() * b.evaluate());
+                    x = (variables -> a.evaluate(variables) * b.evaluate(variables));
                 }
                 else if (eat('/')) { // division
                     MathExpression a = x, b = parseFactor();
-                    x = (() -> a.evaluate() / b.evaluate());
+                    x = (variables -> a.evaluate(variables) / b.evaluate(variables));
                 }
                 else {
                     return x;
@@ -344,7 +323,7 @@ public final class MathUtils {
             }
 
             if (eat('-')) {
-                return () -> -parseFactor().evaluate(); // unary minus
+                return variables -> -parseFactor().evaluate(variables); // unary minus
             }
 
             MathExpression x;
@@ -360,7 +339,7 @@ public final class MathUtils {
                 }
 
                 String value = expression.substring(startPos, this.pos);
-                x = (() -> Double.parseDouble(value));
+                x = (variables -> Double.parseDouble(value));
             }
             else if (ch >= 'a' && ch <= 'z') { // functions
                 while (ch >= 'a' && ch <= 'z') {
@@ -372,10 +351,10 @@ public final class MathUtils {
                 if (OPERATORS.containsKey(function)) {
                     DoubleUnaryOperator operand = OPERATORS.get(function);
                     MathExpression a = this.parseFactor();
-                    x = (() -> operand.applyAsDouble(a.evaluate()));
+                    x = (variables -> operand.applyAsDouble(a.evaluate(variables)));
                 }
                 else {
-                    x = (() -> parameters.get(function, 0.0));
+                    x = (variables -> variables.get(function, 0.0));
                 }
             }
             else {
@@ -384,7 +363,7 @@ public final class MathUtils {
 
             if (eat('^')) { // exponentiation
                 MathExpression a = x, b = parseFactor();
-                x = (() -> Math.pow(a.evaluate(), b.evaluate()));
+                x = (variables -> Math.pow(a.evaluate(variables), b.evaluate(variables)));
             }
 
             return x;

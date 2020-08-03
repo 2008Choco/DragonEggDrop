@@ -4,4 +4,5 @@ bar-color: GREEN
 
 spawn-weight: 2
 
+particles: "ball"
 loot: "common_dragon"

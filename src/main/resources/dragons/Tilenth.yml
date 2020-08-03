@@ -12,4 +12,5 @@ attributes:
   GENERIC_ARMOR: 15
   GENERIC_ATTACK_DAMAGE: 9
 
+particles: "open_end_helix"
 loot: "legendary_dragon"
