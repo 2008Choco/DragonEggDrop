@@ -88,6 +88,10 @@ public class DragonLootElementItem implements IDragonLootElement {
 
     @Override
     public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+
         if (chest == null) {
             return;
         }
