@@ -40,7 +40,6 @@ public class EndWorldWrapper {
     /**
      * Construct a new EndWorldWrapper around an existing world
      *
-     * @param plugin the plugin instance
      * @param world the world to wrap
      */
     protected EndWorldWrapper(World world) {

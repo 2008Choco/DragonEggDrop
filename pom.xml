@@ -48,6 +48,25 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <verbose>true</verbose>
+          <encoding>UTF-8</encoding>
+
+          <javadocExecutable>${env.JAVA_HOME}/bin</javadocExecutable>
+          <detectJavaApiLink>false</detectJavaApiLink>
+
+          <links>
+            <link>https://docs.oracle.com/en/java/javase/11/docs/api</link>
+            <link>https://hub.spigotmc.org/javadocs/spigot</link>
+            <link>https://ci.md-5.net/job/BungeeCord/ws/api/target/apidocs</link>
+          </links>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M4</version>
         <configuration>
