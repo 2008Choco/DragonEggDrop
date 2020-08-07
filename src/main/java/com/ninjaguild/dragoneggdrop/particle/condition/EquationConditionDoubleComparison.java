@@ -42,11 +42,11 @@ public class EquationConditionDoubleComparison implements EquationCondition {
         String operation = JsonUtils.getRequiredField(object, "operation", JsonElement::getAsString);
 
         DoubleBiPredicate predicate = null;
-        if (operation.equalsIgnoreCase("less_than")) {
+        if (operation.equalsIgnoreCase("less_than") || operation.equals("<")) {
             predicate = (queried, value) -> queried < value;
-        } else if (operation.equalsIgnoreCase("greater_than")) {
+        } else if (operation.equalsIgnoreCase("greater_than") || operation.equals(">")) {
             predicate = (queried, value) -> queried > value;
-        } else if (operation.equalsIgnoreCase("equal_to")) {
+        } else if (operation.equalsIgnoreCase("equal_to") || operation.equals("=")) {
             predicate = (queried, value) -> queried == value;
         } else {
             throw new JsonParseException("Unexpected operation, " + "\"" + operation + "\"");
