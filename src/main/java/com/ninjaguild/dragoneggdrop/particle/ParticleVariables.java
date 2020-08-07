@@ -1,5 +1,7 @@
 package com.ninjaguild.dragoneggdrop.particle;
 
+import java.util.Random;
+
 /**
  * Represents a set of variables to be used when parsing and evaluating an expression
  * in a {@link ParticleShapeDefinition}.
@@ -7,6 +9,8 @@ package com.ninjaguild.dragoneggdrop.particle;
  * @author Parker Hawke - Choco
  */
 public final class ParticleVariables {
+
+    private final Random random = new Random();
 
     private double x, y, z;
     private double t;
@@ -101,6 +105,7 @@ public final class ParticleVariables {
             case "z": return z;
             case "t": return t;
             case "theta": return theta;
+            case "random": return random.nextDouble();
             default: return defaultValue;
         }
     }
