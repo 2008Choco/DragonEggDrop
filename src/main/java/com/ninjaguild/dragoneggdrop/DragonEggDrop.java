@@ -22,6 +22,7 @@ import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
 import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinitionRegistry;
+import com.ninjaguild.dragoneggdrop.particle.condition.ConditionFactory;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
@@ -162,6 +163,9 @@ public class DragonEggDrop extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        this.particleShapeDefinitionRegistry.clear();
+        ConditionFactory.clear();
 
         this.lootTableRegistry.clear();
         DragonTemplate.clear();

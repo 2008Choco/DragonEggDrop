@@ -1,13 +1,14 @@
 package com.ninjaguild.dragoneggdrop.particle;
 
+import static com.ninjaguild.dragoneggdrop.utils.JsonUtils.getOptionalField;
+import static com.ninjaguild.dragoneggdrop.utils.JsonUtils.getRequiredField;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
@@ -16,9 +17,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
+import com.ninjaguild.dragoneggdrop.particle.condition.ConditionFactory;
 import com.ninjaguild.dragoneggdrop.particle.condition.EquationCondition;
 import com.ninjaguild.dragoneggdrop.particle.condition.EquationConditionAlwaysTrue;
-import com.ninjaguild.dragoneggdrop.particle.condition.EquationConditionValueComparison;
+import com.ninjaguild.dragoneggdrop.particle.condition.EquationConditionDoubleComparison;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.Particle;
@@ -33,6 +35,11 @@ import org.bukkit.World;
 public class ParticleShapeDefinition {
 
     public static final File PARTICLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "particles/");
+
+    static {
+        ConditionFactory.registerCondition("always_true", EquationConditionAlwaysTrue::create);
+        ConditionFactory.registerCondition("y_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getY()));
+    }
 
     private double startY;
     private List<ConditionalEquationData> equationData = new ArrayList<>();
@@ -183,46 +190,12 @@ public class ParticleShapeDefinition {
     private EquationCondition parseCondition(JsonObject conditionObject) {
         String name = getRequiredField(conditionObject, "name", JsonElement::getAsString);
 
-        if (name.equalsIgnoreCase("always_true")) {
-            return EquationConditionAlwaysTrue.INSTANCE;
-        }
-        else if (name.equalsIgnoreCase("y_position")) {
-            String operation = getRequiredField(conditionObject, "operation", JsonElement::getAsString);
-
-            BiPredicate<Double, Double> predicate = null;
-            if (operation.equalsIgnoreCase("less_than")) {
-                predicate = (queried, value) -> queried < value;
-            } else if (operation.equalsIgnoreCase("greater_than")) {
-                predicate = (queried, value) -> queried > value;
-            } else if (operation.equalsIgnoreCase("equal_to")) {
-                predicate = (queried, value) -> queried == value;
-            } else {
-                throw new JsonParseException("Unexpected operation, " + "\"" + operation + "\"");
-            }
-
-            JsonObject argumentsObject = getRequiredField(conditionObject, "arguments", JsonElement::getAsJsonObject);
-            double value = getRequiredField(argumentsObject, "value", JsonElement::getAsDouble);
-
-            return new EquationConditionValueComparison<>(context -> context.getVariables().getY(), value, predicate);
+        EquationCondition condition = ConditionFactory.create(name, conditionObject);
+        if (condition == null) {
+            throw new JsonParseException("Unexpected condition name, \"" + name + "\". (Names are case sensitive)");
         }
 
-        throw new JsonParseException("Unexpected condition name, \"" + name + "\"");
-    }
-
-    private <T> T getRequiredField(JsonObject root, String name, Function<JsonElement, T> getter) {
-        if (!root.has(name)) {
-            throw new JsonParseException("Missing element \"" + name + "\". This element is required.");
-        }
-
-        return getter.apply(root.get(name));
-    }
-
-    private <T> T getOptionalField(JsonObject root, String name, Function<JsonElement, T> getter, T defaultValue) {
-        if (!root.has(name)) {
-            return defaultValue;
-        }
-
-        return getter.apply(root.get(name));
+        return condition;
     }
 
 }
