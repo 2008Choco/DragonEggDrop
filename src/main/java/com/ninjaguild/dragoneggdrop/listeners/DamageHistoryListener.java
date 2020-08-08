@@ -23,7 +23,7 @@ public final class DamageHistoryListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onDamageDragon(EntityDamageByEntityEvent event) {
+    private void onDamageDragon(EntityDamageByEntityEvent event) {
         Entity damaged = event.getEntity(), damager = event.getDamager();
         if (damaged.getType() != EntityType.ENDER_DRAGON) {
             return;
@@ -43,7 +43,7 @@ public final class DamageHistoryListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamagedByLightning(EntityDamageByEntityEvent event) {
+    private void onEntityDamagedByLightning(EntityDamageByEntityEvent event) {
         if (event.getCause() != DamageCause.LIGHTNING || plugin.getConfig().getBoolean(DEDConstants.CONFIG_LIGHTNING_DAMAGES_ENTITIES, false)) {
             return;
         }

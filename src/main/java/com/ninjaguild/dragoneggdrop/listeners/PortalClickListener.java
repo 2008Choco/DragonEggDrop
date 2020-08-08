@@ -21,7 +21,7 @@ import org.bukkit.inventory.PlayerInventory;
 public final class PortalClickListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onClickEndPortalFrame(PlayerInteractEvent event) {
+    private void onClickEndPortalFrame(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         World world = player.getWorld();
         Block clickedBlock = event.getClickedBlock();

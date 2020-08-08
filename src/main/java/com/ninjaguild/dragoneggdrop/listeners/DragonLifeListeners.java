@@ -46,7 +46,7 @@ public final class DragonLifeListeners implements Listener {
     }
 
     @EventHandler
-    public void onDragonSpawn(CreatureSpawnEvent event) {
+    private void onDragonSpawn(CreatureSpawnEvent event) {
         if (!(event.getEntity() instanceof EnderDragon)) {
             return;
         }
@@ -80,7 +80,7 @@ public final class DragonLifeListeners implements Listener {
     }
 
     @EventHandler
-    public void onDragonDeath(EntityDeathEvent event) {
+    private void onDragonDeath(EntityDeathEvent event) {
         if (!(event.getEntity() instanceof EnderDragon)) {
             return;
         }
@@ -107,7 +107,7 @@ public final class DragonLifeListeners implements Listener {
     }
 
     @EventHandler
-    public void onAttemptRespawn(PlayerInteractEvent event) {
+    private void onAttemptRespawn(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         ItemStack item = event.getItem();

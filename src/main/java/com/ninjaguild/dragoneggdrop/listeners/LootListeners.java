@@ -21,7 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public final class LootListeners implements Listener {
 
     @EventHandler
-    public void onItemSpawn(ItemSpawnEvent event) {
+    private void onItemSpawn(ItemSpawnEvent event) {
         Item item = event.getEntity();
         ItemStack stack = item.getItemStack();
         World world = item.getWorld();

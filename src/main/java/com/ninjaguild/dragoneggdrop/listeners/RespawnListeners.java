@@ -25,7 +25,7 @@ public final class RespawnListeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerSwitchWorlds(PlayerChangedWorldEvent event) {
+    private void onPlayerSwitchWorlds(PlayerChangedWorldEvent event) {
         World world = event.getPlayer().getWorld();
         if (world.getEnvironment() != Environment.THE_END) {
             return;
@@ -60,7 +60,7 @@ public final class RespawnListeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    private void onPlayerJoin(PlayerJoinEvent event) {
         World world = event.getPlayer().getWorld();
         if (world.getEnvironment() != Environment.THE_END) {
             return;
