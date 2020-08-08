@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
-import com.ninjaguild.dragoneggdrop.utils.DataFileUtil;
+import com.ninjaguild.dragoneggdrop.utils.DataFileUtils;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
@@ -18,11 +18,11 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 
-public final class DragonEggDropCmd implements TabExecutor {
+public final class CommandDragonEggDrop implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public DragonEggDropCmd(DragonEggDrop plugin) {
+    public CommandDragonEggDrop(DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 
@@ -61,7 +61,7 @@ public final class DragonEggDropCmd implements TabExecutor {
             }
 
             this.plugin.reloadConfig();
-            DataFileUtil.reloadInMemoryData(plugin, false);
+            DataFileUtils.reloadInMemoryData(plugin, false);
             DragonEggDrop.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
         }
 

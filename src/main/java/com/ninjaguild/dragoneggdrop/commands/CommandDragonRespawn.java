@@ -22,7 +22,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-public final class DragonRespawnCmd implements TabExecutor {
+public final class CommandDragonRespawn implements TabExecutor {
 
     /* /dragonrespawn
      *     <stop, interrupt, cancel> [world] - Stop any active respawn countdown
@@ -34,7 +34,7 @@ public final class DragonRespawnCmd implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public DragonRespawnCmd(DragonEggDrop plugin) {
+    public CommandDragonRespawn(DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 

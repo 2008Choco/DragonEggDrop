@@ -30,7 +30,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-public final class DragonTemplateCmd implements TabExecutor {
+public final class CommandDragonTemplate implements TabExecutor {
 
     private static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
     private static final Map<BarColor, ChatColor> BAR_COLOURS = new EnumMap<>(BarColor.class);
@@ -57,7 +57,7 @@ public final class DragonTemplateCmd implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public DragonTemplateCmd(DragonEggDrop plugin) {
+    public CommandDragonTemplate(DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 

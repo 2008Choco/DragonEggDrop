@@ -8,9 +8,9 @@ import java.util.jar.JarFile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
-import com.ninjaguild.dragoneggdrop.commands.DragonRespawnCmd;
-import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
+import com.ninjaguild.dragoneggdrop.commands.CommandDragonEggDrop;
+import com.ninjaguild.dragoneggdrop.commands.CommandDragonRespawn;
+import com.ninjaguild.dragoneggdrop.commands.CommandDragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.listeners.DamageHistoryListener;
@@ -105,9 +105,9 @@ public class DragonEggDrop extends JavaPlugin {
 
         // Register commands
         this.getLogger().info("Registering command executors and tab completion");
-        this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
-        this.registerCommand("dragonrespawn", new DragonRespawnCmd(this));
-        this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
+        this.registerCommand("dragoneggdrop", new CommandDragonEggDrop(this));
+        this.registerCommand("dragonrespawn", new CommandDragonRespawn(this));
+        this.registerCommand("dragontemplate", new CommandDragonTemplate(this));
 
         // Register external placeholder functionality
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);
