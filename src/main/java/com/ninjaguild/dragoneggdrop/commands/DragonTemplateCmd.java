@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,12 @@ public final class DragonTemplateCmd implements TabExecutor {
 
     // /template <list|"template"> <(view/info)|generateloot>
 
+    private final DragonEggDrop plugin;
+
+    public DragonTemplateCmd(DragonEggDrop plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
@@ -73,7 +80,7 @@ public final class DragonTemplateCmd implements TabExecutor {
         }
 
         // Template was identified
-        DragonTemplate template = DragonTemplate.getById(args[0]);
+        DragonTemplate template = plugin.getDragonTemplateRegistry().get(args[0]);
 
         // No template found
         if (template == null) {
@@ -93,7 +100,7 @@ public final class DragonTemplateCmd implements TabExecutor {
                 return true;
             }
 
-            double totalWeight = DragonTemplate.getAll().stream().mapToDouble(DragonTemplate::getSpawnWeight).sum();
+            double totalWeight = plugin.getDragonTemplateRegistry().values().stream().mapToDouble(DragonTemplate::getSpawnWeight).sum();
             double chanceToSpawn = (template.getSpawnWeight() / totalWeight) * 100;
 
             sender.sendMessage(ChatColor.GRAY + "Dragon Name: " + ChatColor.GREEN + template.getName());
@@ -134,7 +141,7 @@ public final class DragonTemplateCmd implements TabExecutor {
 
         // Before completion: "/dragontemplate "
         if (args.length == 1) {
-            List<String> possibleOptions = DragonTemplate.getAll().stream().map(DragonTemplate::getId).collect(Collectors.toList());
+            List<String> possibleOptions = new ArrayList<>(plugin.getDragonTemplateRegistry().keys());
             possibleOptions.add(0, "list");
             StringUtil.copyPartialMatches(args[0], possibleOptions, options);
         }
@@ -157,18 +164,19 @@ public final class DragonTemplateCmd implements TabExecutor {
             return;
         }
 
+        Collection<DragonTemplate> templates = plugin.getDragonTemplateRegistry().values();
         DragonEggDrop.sendMessage(sender, ChatColor.GRAY + "Loaded Templates:");
 
         // Don't do any component building for non-players... it's super unnecessary. Converts to legacy anyways
         if (!(sender instanceof Player)) {
-            String templates = DragonTemplate.getAll().stream().map(t -> (t.getSpawnWeight() > 0.0 ? ChatColor.GREEN : ChatColor.DARK_GREEN) + t.getId()).collect(Collectors.joining(ChatColor.GRAY + ", "));
-            sender.sendMessage(templates);
+            String templatesMessage = templates.stream().map(t -> (t.getSpawnWeight() > 0.0 ? ChatColor.GREEN : ChatColor.DARK_GREEN) + t.getId()).collect(Collectors.joining(ChatColor.GRAY + ", "));
+            sender.sendMessage(templatesMessage);
             return;
         }
 
-        double totalWeight = DragonTemplate.getAll().stream().mapToDouble(DragonTemplate::getSpawnWeight).sum();
+        double totalWeight = templates.stream().mapToDouble(DragonTemplate::getSpawnWeight).sum();
         ComponentBuilder componentBuilder = new ComponentBuilder();
-        DragonTemplate.getAll().stream().forEach(template -> {
+        templates.forEach(template -> {
             componentBuilder.append(template.getId()).color(template.getSpawnWeight() > 0.0 ? net.md_5.bungee.api.ChatColor.GREEN : net.md_5.bungee.api.ChatColor.DARK_GREEN);
             componentBuilder.italic(template.getSpawnWeight() <= 0.0);
 

@@ -37,7 +37,7 @@ public final class RespawnListeners implements Listener {
         DragonBattle battle = world.getEnderDragonBattle();
         DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
         if (battle.getEnderDragon() != null && activeTemplate == null) {
-            worldWrapper.setActiveTemplate(activeTemplate = DragonTemplate.randomTemplate());
+            worldWrapper.setActiveTemplate(activeTemplate = plugin.getDragonTemplateRegistry().getRandomTemplate());
             activeTemplate.applyToBattle(battle.getEnderDragon(), battle);
         }
 

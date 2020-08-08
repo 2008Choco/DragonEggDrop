@@ -134,7 +134,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(int, DragonTemplate)
      */
     public boolean startRespawn(int respawnDelay) {
-        return startRespawn(respawnDelay, DragonTemplate.randomTemplate(), null);
+        return startRespawn(respawnDelay, DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate(), null);
     }
 
     /**
@@ -150,7 +150,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(int)
      */
     public boolean startRespawn(RespawnReason reason) {
-        return startRespawn(reason.getRespawnTime(plugin.getConfig()), DragonTemplate.randomTemplate(), null);
+        return startRespawn(reason.getRespawnTime(plugin.getConfig()), DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate(), null);
     }
 
     /**

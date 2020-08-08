@@ -66,6 +66,15 @@ public class RandomCollection<E> {
     }
 
     /**
+     * Remove the provided element from this collection.
+     *
+     * @param element the element to remove
+     */
+    public void remove(E element) {
+        this.map.values().remove(element);
+    }
+
+    /**
      * Check whether this collection contains a specific value.
      *
      * @param value whether the value to check for

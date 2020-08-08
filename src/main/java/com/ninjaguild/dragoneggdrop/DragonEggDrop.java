@@ -12,20 +12,20 @@ import com.ninjaguild.dragoneggdrop.commands.DragonEggDropCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonRespawnCmd;
 import com.ninjaguild.dragoneggdrop.commands.DragonTemplateCmd;
 import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
-import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
 import com.ninjaguild.dragoneggdrop.listeners.DamageHistoryListener;
 import com.ninjaguild.dragoneggdrop.listeners.DragonLifeListeners;
 import com.ninjaguild.dragoneggdrop.listeners.LootListeners;
 import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
 import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
-import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinitionRegistry;
 import com.ninjaguild.dragoneggdrop.particle.condition.ConditionFactory;
 import com.ninjaguild.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import com.ninjaguild.dragoneggdrop.registry.DragonTemplateRegistry;
+import com.ninjaguild.dragoneggdrop.registry.HashRegistry;
+import com.ninjaguild.dragoneggdrop.registry.Registry;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
-import com.ninjaguild.dragoneggdrop.utils.TempDataUtils;
+import com.ninjaguild.dragoneggdrop.utils.DataFileUtils;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
@@ -58,11 +58,14 @@ public class DragonEggDrop extends JavaPlugin {
 
     private static DragonEggDrop instance;
 
-    private DragonLootTableRegistry lootTableRegistry;
-    private ParticleShapeDefinitionRegistry particleShapeDefinitionRegistry;
+    private DragonTemplateRegistry dragonTemplateRegistry = new DragonTemplateRegistry();
+    private Registry<DragonLootTable> lootTableRegistry = new HashRegistry<>();
+    private Registry<ParticleShapeDefinition> particleShapeDefinitionRegistry = new HashRegistry<>();
 
     private BukkitTask updateTask;
     private File tempDataFile;
+
+    private File dragonTemplateDirectory, lootTableDirectory, particleDirectory;
 
     @Override
     public void onEnable() {
@@ -70,35 +73,24 @@ public class DragonEggDrop extends JavaPlugin {
         this.saveDefaultConfig();
 
         // Load default templates and loot tables
-        if (DragonTemplate.DRAGONS_FOLDER.mkdirs()) {
+        if ((dragonTemplateDirectory = new File(getDataFolder(), "dragons")).mkdirs()) {
             this.saveDefaultDirectory("dragons");
         }
-        if (DragonLootTable.LOOT_TABLES_FOLDER.mkdirs()) {
+        if ((lootTableDirectory = new File(getDataFolder(), "loot_tables")).mkdirs()) {
             this.saveDefaultDirectory("loot_tables");
         }
-        if (ParticleShapeDefinition.PARTICLES_FOLDER.mkdirs()) {
+        if ((particleDirectory = new File(getDataFolder(), "particles")).mkdirs()) {
             this.saveDefaultDirectory("particles");
         }
 
-        this.getLogger().info("Loading loot tables...");
-        this.lootTableRegistry = new DragonLootTableRegistry();
-        this.lootTableRegistry.reloadDragonLootTables();
-        this.getLogger().info("Done! Successfully loaded " + lootTableRegistry.getLootTables().size() + " loot tables");
-
-        this.getLogger().info("Loading particle shape definitions...");
-        this.particleShapeDefinitionRegistry = new ParticleShapeDefinitionRegistry();
-        this.particleShapeDefinitionRegistry.reload();
-        this.getLogger().info("Done! Successfully loaded " + particleShapeDefinitionRegistry.getParticleShapeDefinitions().size() + " shape definitions");
-
-        this.getLogger().info("Loading dragon templates...");
-        DragonTemplate.reload();
-        this.getLogger().info("Done! Successfully loaded " + DragonTemplate.getAll().size() + " dragon templates");
+        // Load all necessary data into memory
+        DataFileUtils.reloadInMemoryData(this, true);
 
         // Load temp data (reload support)
         this.tempDataFile = new File(getDataFolder(), "tempData.json");
         if (tempDataFile.exists()) {
             this.getLogger().info("Reading temporary data from previous server session...");
-            TempDataUtils.readTempData(this, tempDataFile);
+            DataFileUtils.readTempData(this, tempDataFile);
             this.tempDataFile.delete();
         }
 
@@ -115,7 +107,7 @@ public class DragonEggDrop extends JavaPlugin {
         this.getLogger().info("Registering command executors and tab completion");
         this.registerCommand("dragoneggdrop", new DragonEggDropCmd(this));
         this.registerCommand("dragonrespawn", new DragonRespawnCmd(this));
-        this.registerCommand("dragontemplate", new DragonTemplateCmd());
+        this.registerCommand("dragontemplate", new DragonTemplateCmd(this));
 
         // Register external placeholder functionality
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);
@@ -159,21 +151,30 @@ public class DragonEggDrop extends JavaPlugin {
         }
 
         try {
-            TempDataUtils.writeTempData(tempDataFile);
+            DataFileUtils.writeTempData(tempDataFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        this.particleShapeDefinitionRegistry.clear();
-        ConditionFactory.clear();
-
-        this.lootTableRegistry.clear();
-        DragonTemplate.clear();
-        DamageHistory.clearGlobalDamageHistory();
-
         // Clear the world wrappers
         EndWorldWrapper.getAll().forEach(EndWorldWrapper::stopRespawn);
         EndWorldWrapper.clear();
+
+        this.particleShapeDefinitionRegistry.clear();
+        this.lootTableRegistry.clear();
+        this.dragonTemplateRegistry.clear();
+
+        ConditionFactory.clear();
+        DamageHistory.clearGlobalDamageHistory();
+    }
+
+    /**
+     * Get the dragon template registry.
+     *
+     * @return the dragon template registry.
+     */
+    public DragonTemplateRegistry getDragonTemplateRegistry() {
+        return dragonTemplateRegistry;
     }
 
     /**
@@ -181,7 +182,7 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the loot table registry
      */
-    public DragonLootTableRegistry getLootTableRegistry() {
+    public Registry<DragonLootTable> getLootTableRegistry() {
         return lootTableRegistry;
     }
 
@@ -190,8 +191,35 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the particle shapde definition registry
      */
-    public ParticleShapeDefinitionRegistry getParticleShapeDefinitionRegistry() {
+    public Registry<ParticleShapeDefinition> getParticleShapeDefinitionRegistry() {
         return particleShapeDefinitionRegistry;
+    }
+
+    /**
+     * Get the directory in which dragon templates are located.
+     *
+     * @return the dragon templates directory
+     */
+    public File getDragonTemplateDirectory() {
+        return dragonTemplateDirectory;
+    }
+
+    /**
+     * Get the directory in which loot tables are located.
+     *
+     * @return the loot table directory
+     */
+    public File getLootTableDirectory() {
+        return lootTableDirectory;
+    }
+
+    /**
+     * Get the directory in which particle shape definitions are located.
+     *
+     * @return the particle shape definition directory
+     */
+    public File getParticleDirectory() {
+        return particleDirectory;
     }
 
     /**

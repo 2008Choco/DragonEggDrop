@@ -84,9 +84,9 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             int respawnSeconds = (args.length >= 2) ? MathUtils.parseRespawnSeconds(args[1]) : 300; // Default 5 minutes
-            DragonTemplate template = DragonTemplate.randomTemplate();
+            DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
             if (args.length >= 4) {
-                DragonTemplate templateArgument = DragonTemplate.getById(args[3]);
+                DragonTemplate templateArgument = plugin.getDragonTemplateRegistry().get(args[3]);
                 if (templateArgument == null) {
                     DragonEggDrop.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[3] + ChatColor.GRAY + " does not exist");
                     return true;
@@ -97,7 +97,7 @@ public final class DragonRespawnCmd implements TabExecutor {
 
             DragonLootTable lootTable = null;
             if (args.length >= 5) {
-                DragonLootTable lootTableArgument = plugin.getLootTableRegistry().getLootTable(args[4]);
+                DragonLootTable lootTableArgument = plugin.getLootTableRegistry().get(args[4]);
                 if (lootTableArgument == null) {
                     DragonEggDrop.sendMessage(sender, "A loot table with the id " + ChatColor.YELLOW + args[4] + ChatColor.GRAY + " does not exist");
                     return true;
@@ -139,7 +139,7 @@ public final class DragonRespawnCmd implements TabExecutor {
                     return true;
                 }
 
-                DragonTemplate template = DragonTemplate.getById(args[2]);
+                DragonTemplate template = plugin.getDragonTemplateRegistry().get(args[2]);
                 if (template == null) {
                     DragonEggDrop.sendMessage(sender, "A template with the name " + ChatColor.YELLOW + args[2] + ChatColor.GRAY + " does not exist");
                     return true;
@@ -212,15 +212,13 @@ public final class DragonRespawnCmd implements TabExecutor {
             }
 
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
-                StringUtil.copyPartialMatches(args[2], DragonTemplate.getAll().stream()
-                        .map(DragonTemplate::getId).collect(Collectors.toList()), options);
+                StringUtil.copyPartialMatches(args[2], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), options);
             }
         }
 
         else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("start")) {
-                StringUtil.copyPartialMatches(args[3], DragonTemplate.getAll().stream()
-                        .map(DragonTemplate::getId).collect(Collectors.toList()), options);
+                StringUtil.copyPartialMatches(args[3], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), options);
             }
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
                 StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
@@ -230,7 +228,7 @@ public final class DragonRespawnCmd implements TabExecutor {
 
         else if (args.length == 5) {
             if (args[0].equalsIgnoreCase("start")) {
-                StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().getLootTables().stream()
+                StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().values().stream()
                         .map(DragonLootTable::getId).collect(Collectors.toList()), options);
             }
         }

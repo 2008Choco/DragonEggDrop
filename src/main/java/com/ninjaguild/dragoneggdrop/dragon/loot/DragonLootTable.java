@@ -25,6 +25,7 @@ import com.ninjaguild.dragoneggdrop.dragon.loot.elements.IDragonLootElement;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.ILootPool;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.LootPoolCommand;
 import com.ninjaguild.dragoneggdrop.dragon.loot.pool.LootPoolItem;
+import com.ninjaguild.dragoneggdrop.registry.Registerable;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.ChatColor;
@@ -42,9 +43,7 @@ import org.bukkit.entity.Player;
  *
  * @author Parker Hawke - Choco
  */
-public class DragonLootTable {
-
-    public static final File LOOT_TABLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "loot_tables/");
+public class DragonLootTable implements Registerable {
 
     private double chestChance;
     private String chestName;
@@ -63,7 +62,7 @@ public class DragonLootTable {
      * @param chestPools the chest loot pools
      *
      * @see ILootPool
-     * @see #fromJsonFile(File)
+     * @see #fromFile(File)
      */
     public DragonLootTable(String id, DragonLootElementEgg egg, List<ILootPool<DragonLootElementCommand>> commandPools, List<ILootPool<DragonLootElementItem>> chestPools) {
         this.id = id;
@@ -72,11 +71,7 @@ public class DragonLootTable {
         this.chestPools = (chestPools != null) ? new ArrayList<>(chestPools) : Collections.EMPTY_LIST;
     }
 
-    /**
-     * Get this loot table's unique id.
-     *
-     * @return the loot table id
-     */
+    @Override
     public String getId() {
         return id;
     }
@@ -231,7 +226,7 @@ public class DragonLootTable {
      * @throws IllegalArgumentException if the file is invalid
      * @throws JsonParseException if the parsing at all fails
      */
-    public static DragonLootTable fromJsonFile(File file) throws JsonParseException {
+    public static DragonLootTable fromFile(File file) throws JsonParseException {
         String fileName = file.getName();
         if (!fileName.endsWith(".json")) {
             throw new IllegalArgumentException("Expected .json file. Got " + fileName.substring(fileName.lastIndexOf('.')) + " instead");
@@ -301,27 +296,29 @@ public class DragonLootTable {
     /**
      * Load and parse all DragonLootTable objects from the dragons folder.
      *
+     * @param plugin the plugin instance
+     *
      * @return all parsed DragonLootTable objects
      */
-    public static List<DragonLootTable> loadLootTables() {
-        Logger logger = DragonEggDrop.getInstance().getLogger();
+    public static List<DragonLootTable> loadLootTables(DragonEggDrop plugin) {
+        Logger logger = plugin.getLogger();
         List<DragonLootTable> lootTables = new ArrayList<>();
 
         // Return empty list if the folder was just created
-        if (LOOT_TABLES_FOLDER.mkdir()) {
+        if (plugin.getLootTableDirectory().mkdir()) {
             return lootTables;
         }
 
         boolean suggestLinter = false;
 
-        for (File file : LOOT_TABLES_FOLDER.listFiles((file, name) -> name.endsWith(".json"))) {
+        for (File file : plugin.getLootTableDirectory().listFiles((file, name) -> name.endsWith(".json"))) {
             if (file.getName().contains(" ")) {
                 logger.warning("Dragon loot table files must not contain spaces (File=\"" + file.getName() + "\")! Ignoring...");
                 continue;
             }
 
             try {
-                DragonLootTable lootTable = DragonLootTable.fromJsonFile(file);
+                DragonLootTable lootTable = DragonLootTable.fromFile(file);
 
                 // Checking for existing templates
                 if (lootTables.stream().anyMatch(t -> t.getId().matches(lootTable.getId()))) {

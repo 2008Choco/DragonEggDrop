@@ -21,6 +21,7 @@ import com.ninjaguild.dragoneggdrop.particle.condition.ConditionFactory;
 import com.ninjaguild.dragoneggdrop.particle.condition.EquationCondition;
 import com.ninjaguild.dragoneggdrop.particle.condition.EquationConditionAlwaysTrue;
 import com.ninjaguild.dragoneggdrop.particle.condition.EquationConditionDoubleComparison;
+import com.ninjaguild.dragoneggdrop.registry.Registerable;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 
 import org.bukkit.Particle;
@@ -32,9 +33,7 @@ import org.bukkit.World;
  *
  * @author Parker Hawke - Choco
  */
-public class ParticleShapeDefinition {
-
-    public static final File PARTICLES_FOLDER = new File(DragonEggDrop.getInstance().getDataFolder(), "particles/");
+public class ParticleShapeDefinition implements Registerable {
 
     static {
         ConditionFactory.registerCondition("always_true", EquationConditionAlwaysTrue::create);
@@ -47,22 +46,33 @@ public class ParticleShapeDefinition {
     private final String id;
 
     /**
-     * Construct and parse a new particle shape definition from the given file.
+     * Construct a new {@link ParticleShapeDefinition}.
      *
-     * @param file the file from which to read definition data
+     * @param id the unique id of this shape definition
+     * @param startY the starting y coordinate of this shape definition
+     * @param equationData this shape definition's equation data
      */
-    public ParticleShapeDefinition(File file) {
-        Preconditions.checkArgument(file != null, "file cannot be null");
+    public ParticleShapeDefinition(String id, double startY, List<ConditionalEquationData> equationData) {
+        Preconditions.checkArgument(id != null, "id cannot be null");
+        Preconditions.checkArgument(startY >= 0, "startY must be >= 0");
+        Preconditions.checkArgument(equationData != null, "equationData must not be null");
 
-        this.id = file.getName().substring(0, file.getName().lastIndexOf('.')).replace(' ', '_');
-        this.readFromFile(file);
+        this.id = id;
+        this.startY = startY;
+        this.equationData = new ArrayList<>(equationData);
     }
 
     /**
-     * Get the string that identifies this shape definition.
+     * Construct a new {@link ParticleShapeDefinition} with empty equation data.
      *
-     * @return the unique shape definition identifier
+     * @param id the unique id of this shape definition
+     * @param startY the starting y coordinate of this shape definition
      */
+    public ParticleShapeDefinition(String id, double startY) {
+        this(id, startY, new ArrayList<>());
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -91,7 +101,14 @@ public class ParticleShapeDefinition {
         return new AnimatedParticleSession(this, equationData, world, x, z);
     }
 
-    private void readFromFile(File file) {
+    /**
+     * Load and create a {@link ParticleShapeDefinition} from a JSON {@link File}.
+     *
+     * @param file the file from which to parse a shape definition
+     *
+     * @return the shape definition
+     */
+    public static ParticleShapeDefinition fromFile(File file) {
         String fileName = file.getName();
         if (!fileName.endsWith(".json")) {
             throw new IllegalArgumentException("Expected .json file. Got " + fileName.substring(fileName.lastIndexOf('.')) + " instead");
@@ -109,7 +126,8 @@ public class ParticleShapeDefinition {
             throw new JsonParseException("Invalid root element");
         }
 
-        this.startY = getRequiredField(root, "start_y", JsonElement::getAsDouble);
+        String id = fileName.substring(0, fileName.lastIndexOf('.')).replace(' ', '_');
+        double startY = getRequiredField(root, "start_y", JsonElement::getAsDouble);
 
         JsonObject argumentsObject = getRequiredField(root, "arguments", JsonElement::getAsJsonObject);
 
@@ -129,6 +147,8 @@ public class ParticleShapeDefinition {
         double speedMultiplier = getRequiredField(argumentsObject, "speed_multiplier", JsonElement::getAsDouble);
         int frameIntervalTicks = getRequiredField(argumentsObject, "frame_interval_ticks", JsonElement::getAsInt);
         int thetaIncrement = getRequiredField(argumentsObject, "theta_increment", JsonElement::getAsInt);
+
+        List<ConditionalEquationData> equationDataList = new ArrayList<>();
 
         JsonArray equationsArray = getRequiredField(root, "equations", JsonElement::getAsJsonArray);
         for (JsonElement equationElement : equationsArray) {
@@ -183,11 +203,13 @@ public class ParticleShapeDefinition {
             equationData.frameIntervalTicks = getOptionalField(equationArgumentsRoot, "frame_interval_ticks", JsonElement::getAsInt, frameIntervalTicks);
             equationData.thetaIncrement = getOptionalField(equationArgumentsRoot, "theta_increment", JsonElement::getAsInt, thetaIncrement);
 
-            this.equationData.add(equationData);
+            equationDataList.add(equationData);
         }
+
+        return new ParticleShapeDefinition(id, startY, equationDataList);
     }
 
-    private EquationCondition parseCondition(JsonObject conditionObject) {
+    private static EquationCondition parseCondition(JsonObject conditionObject) {
         String name = getRequiredField(conditionObject, "name", JsonElement::getAsString);
 
         EquationCondition condition = ConditionFactory.create(name, conditionObject);

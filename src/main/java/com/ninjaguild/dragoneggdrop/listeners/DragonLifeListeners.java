@@ -64,7 +64,7 @@ public final class DragonLifeListeners implements Listener {
             world.stopRespawn();
         }
 
-        world.setActiveTemplate((template != null) ? template : (template = DragonTemplate.randomTemplate()));
+        world.setActiveTemplate((template != null) ? template : (template = plugin.getDragonTemplateRegistry().getRandomTemplate()));
         world.setRespawningTemplate(null);
 
         template.applyToBattle(dragon, dragonBattle);

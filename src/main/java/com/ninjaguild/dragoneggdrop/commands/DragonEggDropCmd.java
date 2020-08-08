@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
-import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
+import com.ninjaguild.dragoneggdrop.utils.DataFileUtil;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import com.ninjaguild.dragoneggdrop.utils.UpdateChecker.UpdateResult;
@@ -61,9 +61,7 @@ public final class DragonEggDropCmd implements TabExecutor {
             }
 
             this.plugin.reloadConfig();
-            DragonTemplate.reload();
-            this.plugin.getLootTableRegistry().reloadDragonLootTables();
-            this.plugin.getParticleShapeDefinitionRegistry().reload();
+            DataFileUtil.reloadInMemoryData(plugin, false);
             DragonEggDrop.sendMessage(sender, ChatColor.GREEN + "Reload complete!");
         }
 

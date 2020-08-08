@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import com.google.common.collect.Iterables;
 import com.google.gson.JsonElement;
@@ -15,17 +16,30 @@ import com.google.gson.stream.JsonWriter;
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
-import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTableRegistry;
+import com.ninjaguild.dragoneggdrop.particle.ParticleShapeDefinition;
+import com.ninjaguild.dragoneggdrop.registry.Registry;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.EnderDragon;
 
-public final class TempDataUtils {
+/**
+ * A utility class to ease access to data files provided by DragonEggDrop.
+ *
+ * @author Parker Hawke - Choco
+ */
+public final class DataFileUtils {
 
-    private TempDataUtils() {}
+    private DataFileUtils() {}
 
+    /**
+     * Write temporary data from DragonEggDrop to the provided File.
+     *
+     * @param file the file to which temporary data should be written
+     *
+     * @throws IOException if an io exception occurred
+     */
     public static void writeTempData(File file) throws IOException {
         if (!file.createNewFile()) {
             return;
@@ -62,6 +76,12 @@ public final class TempDataUtils {
         }
     }
 
+    /**
+     * Read temporary data to DragonEggDrop from the provided File.
+     *
+     * @param plugin the plugin instance
+     * @param file the file from which to read temporary data
+     */
     public static void readTempData(DragonEggDrop plugin, File file) {
         JsonObject root = null;
         try (FileReader reader = new FileReader(file)) {
@@ -74,7 +94,8 @@ public final class TempDataUtils {
             return;
         }
 
-        DragonLootTableRegistry lootTableRegistry = plugin.getLootTableRegistry();
+        Registry<DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
+        Registry<DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
 
         for (Entry<String, JsonElement> entry : root.entrySet()) {
             World world = Bukkit.getWorld(entry.getKey());
@@ -95,7 +116,7 @@ public final class TempDataUtils {
             }
 
             if (element.has("respawnTemplate")) {
-                DragonTemplate template = DragonTemplate.getById(element.get("respawnTemplate").getAsString());
+                DragonTemplate template = dragonTemplateRegistry.get(element.get("respawnTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setRespawningTemplate(template);
                 }
@@ -103,7 +124,7 @@ public final class TempDataUtils {
 
             Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
             if (element.has("activeTemplate") && !dragons.isEmpty()) {
-                DragonTemplate template = DragonTemplate.getById(element.get("activeTemplate").getAsString());
+                DragonTemplate template = dragonTemplateRegistry.get(element.get("respawnTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setActiveTemplate(template);
                     template.applyToBattle(Iterables.get(dragons, 0), world.getEnderDragonBattle());
@@ -111,12 +132,61 @@ public final class TempDataUtils {
             }
 
             if (element.has("lootTableOverride")) {
-                DragonLootTable lootTable = lootTableRegistry.getLootTable(element.get("lootTableOverride").getAsString());
+                DragonLootTable lootTable = lootTableRegistry.get(element.get("lootTableOverride").getAsString());
                 if (lootTable != null) {
                     worldWrapper.setLootTableOverride(lootTable);
                 }
             }
         }
+    }
+
+    /**
+     * Reload all data that is stored in memory. This includes:
+     * <ul>
+     *   <li>Dragon templates
+     *   <li>Dragon loot tables
+     *   <li>Particle shape definitions
+     * </ul>
+     *
+     * @param plugin the plugin instance
+     * @param log whether or not to log to console about the reloading process
+     */
+    public static void reloadInMemoryData(DragonEggDrop plugin, boolean log) {
+        Logger logger = plugin.getLogger();
+
+        // Load loot tables
+        if (log) {
+            logger.info("Loading loot tables...");
+        }
+        Registry<DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
+        DragonLootTable.loadLootTables(plugin).forEach(lootTableRegistry::register);
+        if (log) {
+            logger.info("Done! Successfully loaded " + lootTableRegistry.size() + " loot tables");
+        }
+
+        // Load shape definitions
+        if (log) {
+            logger.info("Loading particle shape definitions...");
+        }
+        Registry<ParticleShapeDefinition> particleRegistry = plugin.getParticleShapeDefinitionRegistry();
+        for (File file : plugin.getParticleDirectory().listFiles((file, name) -> name.endsWith(".json") && !name.equals("possible_conditions.json"))) {
+            ParticleShapeDefinition shapeDefinition = ParticleShapeDefinition.fromFile(file);
+            particleRegistry.register(shapeDefinition);
+        }
+        if (log) {
+            logger.info("Done! Successfully loaded " + particleRegistry.size() + " shape definitions");
+        }
+
+        // Load dragon templates
+        if (log) {
+            logger.info("Loading dragon templates...");
+        }
+        Registry<DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
+        for (File file : plugin.getDragonTemplateDirectory().listFiles((file, name) -> name.endsWith(".yml"))) {
+            DragonTemplate dragonTemplate = DragonTemplate.fromFile(file);
+            dragonTemplateRegistry.register(dragonTemplate);
+        }
+        logger.info("Done! Successfully loaded " + dragonTemplateRegistry.size() + " dragon templates");
     }
 
 }
