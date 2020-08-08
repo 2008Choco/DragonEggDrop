@@ -2,12 +2,14 @@ package com.ninjaguild.dragoneggdrop.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
+import com.ninjaguild.dragoneggdrop.utils.CommandUtils;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 import com.ninjaguild.dragoneggdrop.utils.math.MathUtils;
 import com.ninjaguild.dragoneggdrop.world.EndWorldWrapper;
@@ -176,23 +178,27 @@ public final class CommandDragonRespawn implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        List<String> options = new ArrayList<>();
-
         if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], Arrays.asList("stop", "interrupt", "cancel", "start", "template"), options);
+            List<String> suggestions = new ArrayList<>();
+
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_STOP, suggestions, "stop", "interrupt", "cancel");
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_START, suggestions, "start");
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE, suggestions, "template");
+
+            return suggestions;
         }
 
         else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel")) {
-                StringUtil.copyPartialMatches(args[1], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), options);
+            if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_STOP)) {
+                return StringUtil.copyPartialMatches(args[1], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
             }
 
-            else if (args[0].equalsIgnoreCase("start")) {
-                StringUtil.copyPartialMatches(args[1], Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s"), options);
+            else if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
+                return StringUtil.copyPartialMatches(args[1], Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s"), new ArrayList<>());
             }
 
-            else if (args[0].equalsIgnoreCase("template")) {
+            else if (args[0].equalsIgnoreCase("template") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
                 List<String> possibleOptions = new ArrayList<>();
                 possibleOptions.add("set");
                 Bukkit.getWorlds().forEach(world -> {
@@ -201,39 +207,38 @@ public final class CommandDragonRespawn implements TabExecutor {
                     }
                 });
 
-                StringUtil.copyPartialMatches(args[1], possibleOptions, options);
+                return StringUtil.copyPartialMatches(args[1], possibleOptions, new ArrayList<>());
             }
         }
 
         else if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("start")) {
-                StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), options);
+            if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
+                return StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
             }
 
-            else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
-                StringUtil.copyPartialMatches(args[2], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), options);
+            else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
+                return StringUtil.copyPartialMatches(args[2], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), new ArrayList<>());
             }
         }
 
         else if (args.length == 4) {
-            if (args[0].equalsIgnoreCase("start")) {
-                StringUtil.copyPartialMatches(args[3], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), options);
+            if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
+                return StringUtil.copyPartialMatches(args[3], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), new ArrayList<>());
             }
-            else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set")) {
-                StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), options);
+            else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
+                return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
             }
         }
 
         else if (args.length == 5) {
-            if (args[0].equalsIgnoreCase("start")) {
-                StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().values().stream()
-                        .map(DragonLootTable::getId).collect(Collectors.toList()), options);
+            if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
+                return StringUtil.copyPartialMatches(args[4], new ArrayList<>(plugin.getLootTableRegistry().keys()), new ArrayList<>());
             }
         }
 
-        return options;
+        return Collections.emptyList();
     }
 
     private World getWorldFromContext(CommandSender sender, String[] args, int argumentIndex) {

@@ -3,8 +3,8 @@ package com.ninjaguild.dragoneggdrop.commands;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.ninjaguild.dragoneggdrop.DragonEggDrop;
 import com.ninjaguild.dragoneggdrop.dragon.DragonTemplate;
+import com.ninjaguild.dragoneggdrop.utils.CommandUtils;
 import com.ninjaguild.dragoneggdrop.utils.DEDConstants;
 
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -65,6 +66,11 @@ public final class CommandDragonTemplate implements TabExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             if (label.endsWith("s")) {
+                if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_TEMPLATE_LIST)) {
+                    DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                    return true;
+                }
+
                 this.listTemplates(sender);
                 return true;
             }
@@ -75,6 +81,11 @@ public final class CommandDragonTemplate implements TabExecutor {
 
         // List all existing templates
         if (args[0].equalsIgnoreCase("list")) {
+            if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_TEMPLATE_LIST)) {
+                DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
+                return true;
+            }
+
             this.listTemplates(sender);
             return true;
         }
@@ -137,33 +148,31 @@ public final class CommandDragonTemplate implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> options = new ArrayList<>();
-
         // Before completion: "/dragontemplate "
         if (args.length == 1) {
-            List<String> possibleOptions = new ArrayList<>(plugin.getDragonTemplateRegistry().keys());
-            possibleOptions.add(0, "list");
-            StringUtil.copyPartialMatches(args[0], possibleOptions, options);
+            List<String> suggestions = new ArrayList<>(plugin.getDragonTemplateRegistry().keys());
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_TEMPLATE_LIST, suggestions, "list");
+            return StringUtil.copyPartialMatches(args[0], suggestions, new ArrayList<>());
         }
 
         // Before completion: "/dragontemplate <template> "
         else if (args.length == 2) {
             if (args[0].equals("list")) {
-                return options;
+                return Collections.emptyList();
             }
 
-            StringUtil.copyPartialMatches(args[1], Arrays.asList("view", "generateloot"), options);
+            List<String> suggestions = new ArrayList<>();
+
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_TEMPLATE_INFO, suggestions, "view", "info");
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_TEMPLATE_GENERATELOOT, suggestions, "generateloot");
+
+            return StringUtil.copyPartialMatches(args[1], suggestions, new ArrayList<>());
         }
 
-        return options;
+        return Collections.emptyList();
     }
 
     private void listTemplates(CommandSender sender) {
-        if (!sender.hasPermission(DEDConstants.PERMISSION_COMMAND_TEMPLATE_LIST)) {
-            DragonEggDrop.sendMessage(sender, ChatColor.RED + "You have insufficient privileges to execute this command");
-            return;
-        }
-
         Collection<DragonTemplate> templates = plugin.getDragonTemplateRegistry().values();
         DragonEggDrop.sendMessage(sender, ChatColor.GRAY + "Loaded Templates:");
 

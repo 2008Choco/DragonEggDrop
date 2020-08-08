@@ -72,7 +72,7 @@ public final class CommandDragonEggDrop implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> options = new ArrayList<>();
 
-        if (args.length == 1) {
+        if (args.length == 1 && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RELOAD)) {
             StringUtil.copyPartialMatches(args[0], Arrays.asList("reload"), options);
         }
 
