@@ -14,7 +14,6 @@ import com.ninjaguild.dragoneggdrop.world.RespawnReason;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderDragon;
@@ -36,7 +35,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
     private AnimatedParticleSession particleSession;
 
-    private final World world;
     private final EndWorldWrapper worldWrapper;
     private final DragonTemplate template;
 
@@ -55,7 +53,6 @@ public class DragonDeathRunnable extends BukkitRunnable {
     public DragonDeathRunnable(DragonEggDrop plugin, EndWorldWrapper worldWrapper, EnderDragon dragon) {
         this.plugin = plugin;
         this.worldWrapper = worldWrapper;
-        this.world = worldWrapper.getWorld();
         this.dragon = dragon;
         this.template = worldWrapper.getActiveTemplate();
 
@@ -74,7 +71,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
 
         if (particleShapeDefinition != null) {
-            this.particleSession = particleShapeDefinition.createSession(world, portalLocation.getX(), portalLocation.getZ());
+            this.particleSession = particleShapeDefinition.createSession(worldWrapper.getWorld(), portalLocation.getX(), portalLocation.getZ());
         }
     }
 
@@ -114,7 +111,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
             this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
         }
 
-        if (respawnDragon && world.getPlayers().size() > 0) {
+        if (respawnDragon && worldWrapper.getWorld().getPlayers().size() > 0) {
             this.worldWrapper.startRespawn(RespawnReason.DEATH);
         }
 
