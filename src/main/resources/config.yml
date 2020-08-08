@@ -4,8 +4,13 @@ perform-update-checks: true
 # Send anonymous statistics to bStats (https://bstats.org/plugin/bukkit/DragonEggDrop/).
 metrics: true
 
-# The amount of lightning bolts to spawn when the loot has generated.
-lightning-amount: 4
+# Lightning-related configuration options
+lightning:
+  # The amount of lightning bolts to summon when the loot has been generated.
+  amount: 4
+
+  # Whether or not the lightning will damage nearby entities
+  damages-entities: false
 
 # Start the respawn countdown when a player joins the server.
 # Time unit suffixes are supported (i.e. 2w3d12h10m15s = 2 weeks, 3 days, 12 hours, 10 minutes and 15 seconds).

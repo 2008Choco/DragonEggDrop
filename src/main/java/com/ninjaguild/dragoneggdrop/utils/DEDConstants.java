@@ -11,7 +11,9 @@ public final class DEDConstants {
     public static final String CONFIG_METRICS = "metrics";
     public static final String CONFIG_PERFORM_UPDATE_CHECKS = "perform-update-checks";
 
-    public static final String CONFIG_LIGHTNING_AMOUNT = "lightning-amount";
+    public static final String CONFIG_LIGHTNING_AMOUNT = "lightning.amount";
+    public static final String CONFIG_LIGHTNING_DAMAGES_ENTITIES = "lightning.damages-entities";
+
     public static final String CONFIG_ALLOW_CRYSTAL_RESPAWNS = "allow-crystal-respawns";
     public static final String CONFIG_STRICT_COUNTDOWN = "strict-countdown";
     public static final String CONFIG_RESPAWN_ON_JOIN = "respawn-on-join";
@@ -40,6 +42,9 @@ public final class DEDConstants {
     public static final String PERMISSION_COMMAND_TEMPLATE_INFO = "dragoneggdrop.command.template.info";
     public static final String PERMISSION_COMMAND_TEMPLATE_LIST = "dragoneggdrop.command.template.list";
     public static final String PERMISSION_OVERRIDE_CRYSTALS = "dragoneggdrop.overridecrystals";
+
+    // Metadata constants
+    public static final String METADATA_LOOT_LIGHTNING = "loot_lightning";
 
     private DEDConstants() { }
 

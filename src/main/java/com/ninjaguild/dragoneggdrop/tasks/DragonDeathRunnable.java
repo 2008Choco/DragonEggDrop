@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -90,7 +91,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         // Summon Zeus!
         for (int i = 0; i < lightningAmount; i++) {
-            this.worldWrapper.getWorld().strikeLightning(location);
+            this.worldWrapper.getWorld().strikeLightning(location).setMetadata(DEDConstants.METADATA_LOOT_LIGHTNING, new FixedMetadataValue(plugin, true));
         }
 
         DragonBattle dragonBattle = dragon.getDragonBattle();

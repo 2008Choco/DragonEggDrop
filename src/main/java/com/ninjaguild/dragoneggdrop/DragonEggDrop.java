@@ -97,11 +97,11 @@ public class DragonEggDrop extends JavaPlugin {
         // Register events
         this.getLogger().info("Registering event listeners");
         PluginManager manager = Bukkit.getPluginManager();
+        manager.registerEvents(new DamageHistoryListener(this), this);
         manager.registerEvents(new DragonLifeListeners(this), this);
         manager.registerEvents(new LootListeners(), this);
-        manager.registerEvents(new RespawnListeners(this), this);
         manager.registerEvents(new PortalClickListener(), this);
-        manager.registerEvents(new DamageHistoryListener(), this);
+        manager.registerEvents(new RespawnListeners(this), this);
 
         // Register commands
         this.getLogger().info("Registering command executors and tab completion");
