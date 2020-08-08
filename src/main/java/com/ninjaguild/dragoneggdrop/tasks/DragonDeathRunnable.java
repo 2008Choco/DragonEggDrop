@@ -72,7 +72,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
 
         if (particleShapeDefinition != null) {
-            this.particleSession = particleShapeDefinition.createSession(worldWrapper.getWorld(), portalLocation.getX(), portalLocation.getZ());
+            this.particleSession = particleShapeDefinition.createSession(worldWrapper.getWorld(), portalLocation.getX() + 0.5, portalLocation.getZ() + 0.5);
         }
     }
 
