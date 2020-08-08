@@ -176,6 +176,9 @@ public final class CommandDragonRespawn implements TabExecutor {
         return true;
     }
 
+    private static final List<String> DEFAULT_TIME_SUGGESTIONS = Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s");
+    private static final char[] POSSIBLE_TIME_SUFFIXES = { 's', 'm', 'h', 'd', 'w' };
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 1) {
@@ -185,7 +188,7 @@ public final class CommandDragonRespawn implements TabExecutor {
             CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_START, suggestions, "start");
             CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE, suggestions, "template");
 
-            return suggestions;
+            return StringUtil.copyPartialMatches(args[0], suggestions, new ArrayList<>());
         }
 
         else if (args.length == 2) {
@@ -195,7 +198,23 @@ public final class CommandDragonRespawn implements TabExecutor {
             }
 
             else if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
-                return StringUtil.copyPartialMatches(args[1], Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s"), new ArrayList<>());
+                String timeArg = args[1];
+                if (timeArg.isEmpty()) {
+                    return DEFAULT_TIME_SUGGESTIONS;
+                }
+
+                char character = timeArg.charAt(timeArg.length() - 1);
+                if (character >= '0' && character <= '9') {
+                    List<String> suggestions = new ArrayList<>();
+
+                    for (char timeSuffix : POSSIBLE_TIME_SUFFIXES) {
+                        if (timeArg.lastIndexOf(timeSuffix) == -1) {
+                            suggestions.add(timeArg + timeSuffix);
+                        }
+                    }
+
+                    return StringUtil.copyPartialMatches(args[1], suggestions, new ArrayList<>());
+                }
             }
 
             else if (args[0].equalsIgnoreCase("template") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
