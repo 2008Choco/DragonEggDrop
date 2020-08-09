@@ -35,7 +35,6 @@ public final class CommandDragonTemplate implements TabExecutor {
 
     private static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
     private static final Map<BarColor, ChatColor> BAR_COLOURS = new EnumMap<>(BarColor.class);
-    private static final Map<BarColor, net.md_5.bungee.api.ChatColor> BAR_COLOURS_SPIGOT = new EnumMap<>(BarColor.class);
     static {
         BAR_COLOURS.put(BarColor.BLUE, ChatColor.BLUE);
         BAR_COLOURS.put(BarColor.GREEN, ChatColor.GREEN);
@@ -44,14 +43,6 @@ public final class CommandDragonTemplate implements TabExecutor {
         BAR_COLOURS.put(BarColor.RED, ChatColor.RED);
         BAR_COLOURS.put(BarColor.WHITE, ChatColor.WHITE);
         BAR_COLOURS.put(BarColor.YELLOW, ChatColor.YELLOW);
-
-        BAR_COLOURS_SPIGOT.put(BarColor.BLUE, net.md_5.bungee.api.ChatColor.BLUE);
-        BAR_COLOURS_SPIGOT.put(BarColor.GREEN, net.md_5.bungee.api.ChatColor.GREEN);
-        BAR_COLOURS_SPIGOT.put(BarColor.PINK, net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
-        BAR_COLOURS_SPIGOT.put(BarColor.PURPLE, net.md_5.bungee.api.ChatColor.DARK_PURPLE);
-        BAR_COLOURS_SPIGOT.put(BarColor.RED, net.md_5.bungee.api.ChatColor.RED);
-        BAR_COLOURS_SPIGOT.put(BarColor.WHITE, net.md_5.bungee.api.ChatColor.WHITE);
-        BAR_COLOURS_SPIGOT.put(BarColor.YELLOW, net.md_5.bungee.api.ChatColor.YELLOW);
     }
 
     // /template <list|"template"> <(view/info)|generateloot>
@@ -194,7 +185,7 @@ public final class CommandDragonTemplate implements TabExecutor {
             ComponentBuilder hoverComponentBuilder = new ComponentBuilder();
             hoverComponentBuilder.append("Dragon Name: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getName()).color(net.md_5.bungee.api.ChatColor.GREEN);
             hoverComponentBuilder.append("\nBar Style: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getBarStyle().name()).color(net.md_5.bungee.api.ChatColor.GREEN).bold(true);
-            hoverComponentBuilder.append("\nBar Colour: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getBarColor().name()).color(BAR_COLOURS_SPIGOT.get(template.getBarColor())).bold(true);
+            hoverComponentBuilder.append("\nBar Colour: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getBarColor().name()).color(BAR_COLOURS.get(template.getBarColor()).asBungee()).bold(true);
             hoverComponentBuilder.append("\nSpawn Weight: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(String.valueOf(template.getSpawnWeight())).color(net.md_5.bungee.api.ChatColor.DARK_GREEN);
             if (template.getSpawnWeight() > 0.0) {
                 hoverComponentBuilder.append(" (out of ").color(net.md_5.bungee.api.ChatColor.GREEN).append(String.valueOf(totalWeight)).color(net.md_5.bungee.api.ChatColor.DARK_GREEN).append(" - ").color(net.md_5.bungee.api.ChatColor.GREEN).append(DECIMAL_FORMAT.format(chanceToSpawn) + "% ").color(net.md_5.bungee.api.ChatColor.DARK_GREEN).append("chance to spawn)").color(net.md_5.bungee.api.ChatColor.GREEN); // Did you really scroll all the way to the end? Weirdo...
