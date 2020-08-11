@@ -3,6 +3,7 @@ package com.ninjaguild.dragoneggdrop.dragon;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -29,26 +30,26 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EnderDragon;
 
 /**
- * Represents a template for a custom dragon to be spawned containing information about
- * its name, the style of its boss bar, as well as the loot table used to generate its
+ * Represents an immutable template for a custom dragon to be spawned containing information
+ * about its name, the style of its boss bar, as well as the loot table used to generate its
  * loot after it has been killed.
  *
  * @author Parker Hawke - Choco
  */
 public class DragonTemplate implements Registerable {
 
+    private final String id;
     private final ParticleShapeDefinition particleShapeDefinition;
     private final DragonLootTable lootTable;
-    private final String id;
 
-    private String name;
-    private BarStyle barStyle;
-    private BarColor barColour;
+    private final String name;
+    private final BarStyle barStyle;
+    private final BarColor barColour;
 
-    private double spawnWeight;
-    private List<String> spawnAnnouncement;
+    private final double spawnWeight;
+    private final List<String> spawnAnnouncement;
 
-    private final Map<Attribute, Double> attributes = new EnumMap<>(Attribute.class);
+    private final Map<Attribute, Double> attributes;
 
     /**
      * Construct a new DragonTemplate object.
@@ -56,14 +57,31 @@ public class DragonTemplate implements Registerable {
      * @param id the unique id for this template
      * @param particleShapeDefinition the dragon's particle shape definition. Can be null
      * @param lootTable the dragon's loot table. Can be null
+     * @param spawnWeight this template's spawn weight. Must be >= 0.0
+     * @param name the name of the Ender Dragon to use when it is spawned. Can be null
+     * @param barStyle the boss bar style. Can be null
+     * @param barColour the boss bar colour. Can be null
+     * @param spawnAnnouncement the spawn announcement list. Can be null
+     * @param attributes the dragon's attribute modifier values. Can be null
+     *
+     * @see DragonTemplateBuilder
      */
-    public DragonTemplate(String id, ParticleShapeDefinition particleShapeDefinition, DragonLootTable lootTable) {
+    DragonTemplate(String id, ParticleShapeDefinition particleShapeDefinition, DragonLootTable lootTable, double spawnWeight, String name, BarStyle barStyle, BarColor barColour, List<String> spawnAnnouncement, Map<Attribute, Double> attributes) {
         Preconditions.checkArgument(id != null && !id.isEmpty(), "identifier must not be empty or null");
         Preconditions.checkArgument(!id.contains(" "), "Template identifiers must not have any spaces");
+        Preconditions.checkArgument(spawnWeight >= 0.0, "spawnWeight must be >= 0");
 
         this.id = id;
         this.particleShapeDefinition = particleShapeDefinition;
         this.lootTable = lootTable;
+
+        this.name = name;
+        this.barStyle = (barStyle != null) ? barStyle : BarStyle.SOLID;
+        this.barColour = (barColour != null) ? barColour : BarColor.PINK;
+
+        this.spawnWeight = spawnWeight;
+        this.spawnAnnouncement = (spawnAnnouncement != null) ? new ArrayList<>(spawnAnnouncement) : Collections.emptyList();
+        this.attributes = (attributes != null) ? new EnumMap<>(attributes) : Collections.emptyMap();
     }
 
     @Override
@@ -74,7 +92,7 @@ public class DragonTemplate implements Registerable {
     /**
      * Get the name of the dragon.
      *
-     * @return the dragon's name
+     * @return the dragon's name. null if none
      */
     public String getName() {
         return name;
@@ -131,7 +149,7 @@ public class DragonTemplate implements Registerable {
      * @return the spawn announcement
      */
     public List<String> getSpawnAnnouncement() {
-        return (spawnAnnouncement != null) ? new ArrayList<>(spawnAnnouncement) : null;
+        return spawnAnnouncement;
     }
 
     /**
@@ -207,6 +225,30 @@ public class DragonTemplate implements Registerable {
     }
 
     /**
+     * Get a new {@link DragonTemplateBuilder} to construct an instance of {@link DragonTemplate}.
+     *
+     * @param id the template's unique id
+     *
+     * @return the template builder
+     */
+    public static DragonTemplateBuilder builder(String id) {
+        return new DragonTemplateBuilder(id);
+    }
+
+    /**
+     * Get a new {@link DragonTemplateBuilder} to construct an instance of {@link DragonTemplate}
+     * with values copied from an existing template.
+     *
+     * @param id the template's unique id
+     * @param template the template from which to copy values
+     *
+     * @return the template builder
+     */
+    public static DragonTemplateBuilder buildCopy(String id, DragonTemplate template) {
+        return new DragonTemplateBuilder(id, template);
+    }
+
+    /**
      * Load and create a {@link DragonTemplate} from a YAML {@link File}.
      *
      * @param file the file from which to parse a dragon template
@@ -226,25 +268,24 @@ public class DragonTemplate implements Registerable {
         }
 
         FileConfiguration templateFile = YamlConfiguration.loadConfiguration(file);
+        DragonTemplateBuilder templateBuilder = new DragonTemplateBuilder(id);
 
-        // Loading required information for the template
-        ParticleShapeDefinition particleShapeDefinition = plugin.getParticleShapeDefinitionRegistry().get(templateFile.getString(DEDConstants.TEMPLATE_PARTICLES));
-        DragonLootTable lootTable = plugin.getLootTableRegistry().get(templateFile.getString(DEDConstants.TEMPLATE_LOOT));
-
-        DragonTemplate template = new DragonTemplate(id, particleShapeDefinition, lootTable);
+        templateBuilder.particleShapeDefinition(plugin.getParticleShapeDefinitionRegistry().get(templateFile.getString(DEDConstants.TEMPLATE_PARTICLES)));
+        templateBuilder.lootTable(plugin.getLootTableRegistry().get(templateFile.getString(DEDConstants.TEMPLATE_LOOT)));
 
         // Loading less-necessary information from the template file
-        template.name = (templateFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', templateFile.getString(DEDConstants.TEMPLATE_DRAGON_NAME)) : null);
-        template.barStyle = Enums.getIfPresent(BarStyle.class, templateFile.getString(DEDConstants.TEMPLATE_BAR_COLOR, "SOLID").toUpperCase()).or(BarStyle.SOLID);
-        template.barColour = Enums.getIfPresent(BarColor.class, templateFile.getString(DEDConstants.TEMPLATE_BAR_STYLE, "PINK").toUpperCase()).or(BarColor.PINK);
+        String dragonName = (templateFile.contains("dragon-name") ? ChatColor.translateAlternateColorCodes('&', templateFile.getString(DEDConstants.TEMPLATE_DRAGON_NAME)) : null);
+        templateBuilder.name(dragonName);
+        templateBuilder.barStyle(Enums.getIfPresent(BarStyle.class, templateFile.getString(DEDConstants.TEMPLATE_BAR_COLOR, "SOLID").toUpperCase()).or(BarStyle.SOLID));
+        templateBuilder.barColor(Enums.getIfPresent(BarColor.class, templateFile.getString(DEDConstants.TEMPLATE_BAR_STYLE, "PINK").toUpperCase()).or(BarColor.PINK));
 
-        template.spawnWeight = templateFile.getDouble(DEDConstants.TEMPLATE_SPAWN_WEIGHT, 1);
+        templateBuilder.spawnWeight(templateFile.getDouble(DEDConstants.TEMPLATE_SPAWN_WEIGHT, 1));
 
         if (templateFile.isList("spawn-announcement")) {
-            template.spawnAnnouncement = templateFile.getStringList(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", template.getName()))).collect(Collectors.toList());
+            templateBuilder.spawnAnnouncement(templateFile.getStringList(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s.replace("%dragon%", dragonName))).collect(Collectors.toList()));
         }
         else if (templateFile.isString("spawn-announcement")) {
-            template.spawnAnnouncement = Arrays.asList(ChatColor.translateAlternateColorCodes('&', templateFile.getString(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).replace("%dragon%", template.getName())));
+            templateBuilder.spawnAnnouncement(Arrays.asList(ChatColor.translateAlternateColorCodes('&', templateFile.getString(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).replace("%dragon%", dragonName))));
         }
 
         // Attribute modifier loading
@@ -262,11 +303,11 @@ public class DragonTemplate implements Registerable {
                     continue;
                 }
 
-                template.attributes.put(attribute, value);
+                templateBuilder.attribute(attribute, value);
             }
         }
 
-        return template;
+        return templateBuilder.build();
     }
 
 }
