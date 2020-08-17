@@ -1,5 +1,5 @@
 name: ${project.name}
-main: com.ninjaguild.dragoneggdrop.DragonEggDrop
+main: wtf.choco.dragoneggdrop.DragonEggDrop
 version: ${project.version}
 description: ${project.description}
 softdepend: [PlaceholderAPI]
