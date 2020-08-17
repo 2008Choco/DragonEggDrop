@@ -15,6 +15,7 @@ import com.ninjaguild.dragoneggdrop.dragon.DamageHistory;
 import com.ninjaguild.dragoneggdrop.dragon.loot.DragonLootTable;
 import com.ninjaguild.dragoneggdrop.listeners.DamageHistoryListener;
 import com.ninjaguild.dragoneggdrop.listeners.DragonLifeListeners;
+import com.ninjaguild.dragoneggdrop.listeners.KillCommandDeprecationListener;
 import com.ninjaguild.dragoneggdrop.listeners.LootListeners;
 import com.ninjaguild.dragoneggdrop.listeners.PortalClickListener;
 import com.ninjaguild.dragoneggdrop.listeners.RespawnListeners;
@@ -99,6 +100,7 @@ public class DragonEggDrop extends JavaPlugin {
         PluginManager manager = Bukkit.getPluginManager();
         manager.registerEvents(new DamageHistoryListener(this), this);
         manager.registerEvents(new DragonLifeListeners(this), this);
+        manager.registerEvents(new KillCommandDeprecationListener(this), this);
         manager.registerEvents(new LootListeners(), this);
         manager.registerEvents(new PortalClickListener(), this);
         manager.registerEvents(new RespawnListeners(this), this);
