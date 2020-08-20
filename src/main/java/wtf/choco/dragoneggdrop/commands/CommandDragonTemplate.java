@@ -111,6 +111,7 @@ public final class CommandDragonTemplate implements TabExecutor {
             sender.sendMessage(ChatColor.GRAY + "Spawn Weight: " + ChatColor.DARK_GREEN + template.getSpawnWeight() + (template.getSpawnWeight() > 0.0 ? ChatColor.GREEN + " (out of " + ChatColor.DARK_GREEN + totalWeight + ChatColor.GREEN + " - " + ChatColor.DARK_GREEN + DECIMAL_FORMAT.format(chanceToSpawn) + "% " + ChatColor.GREEN + "chance to spawn)" : ChatColor.RED.toString() + ChatColor.BOLD + " (IMPOSSIBLE)"));
             sender.sendMessage(ChatColor.GRAY + "Announce Spawn: " + (template.shouldAnnounceSpawn() ? ChatColor.GREEN : ChatColor.RED) + template.shouldAnnounceSpawn());
             sender.sendMessage(ChatColor.GRAY + "Loot table: " + ChatColor.YELLOW + (template.getLootTable() != null ? template.getLootTable().getId() : "N/A"));
+            sender.sendMessage(ChatColor.GRAY + "Particle: " + ChatColor.YELLOW + (template.getParticleShapeDefinition() != null ? template.getParticleShapeDefinition().getId() : "N/A"));
         }
 
         else if (args[1].equalsIgnoreCase("generateloot")) {
@@ -194,6 +195,7 @@ public final class CommandDragonTemplate implements TabExecutor {
             }
             hoverComponentBuilder.append("\nAnnounce Spawn: ", FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.GRAY).append(String.valueOf(template.shouldAnnounceSpawn())).color(template.shouldAnnounceSpawn() ? net.md_5.bungee.api.ChatColor.GREEN : net.md_5.bungee.api.ChatColor.RED);
             hoverComponentBuilder.append("\nLoot Table: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getLootTable() != null ? template.getLootTable().getId() : "N/A").color(net.md_5.bungee.api.ChatColor.YELLOW);
+            hoverComponentBuilder.append("\nParticle: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(template.getParticleShapeDefinition() != null ? template.getParticleShapeDefinition().getId() : "N/A").color(net.md_5.bungee.api.ChatColor.YELLOW);
             componentBuilder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverComponentBuilder.create())));
 
             if (sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
