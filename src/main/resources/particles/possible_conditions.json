@@ -11,11 +11,41 @@
                     "name": "always_true"
                 },
 
+                // Compares a value against the current x position of the particle animation.
+                // Possible operations:
+                //   - "less_than" or "<"
+                //   - "greater_than" or ">"
+                //   - "equal" or "="
+                // Required arguments:
+                //   - "value": the value against which the x position should be compared
+                {
+                    "name": "x_position",
+                    "operation": "=",
+                    "arguments": {
+                        "value": 16.0
+                    }
+                },
+
+                // Compares a value against the current z position of the particle animation.
+                // Possible operations:
+                //   - "less_than" or "<"
+                //   - "greater_than" or ">"
+                //   - "equal" or "="
+                // Required arguments:
+                //   - "value": the value against which the z position should be compared
+                {
+                    "name": "z_position",
+                    "operation": ">",
+                    "arguments": {
+                        "value": 16.0
+                    }
+                },
+
                 // Compares a value against the current y position of the particle animation.
                 // Possible operations:
-                //   - "less_than"
-                //   - "greater_than"
-                //   - "equal"
+                //   - "less_than" or "<"
+                //   - "greater_than" or ">"
+                //   - "equal" or "="
                 // Required arguments:
                 //   - "value": the value against which the y position should be compared
                 {
@@ -23,6 +53,46 @@
                     "operation": "less_than",
                     "arguments": {
                         "value": 128.0
+                    }
+                },
+
+                // Compares a value against the current value of t of the particle animation.
+                // Possible operations:
+                //   - "less_than" or "<"
+                //   - "greater_than" or ">"
+                //   - "equal" or "="
+                // Required arguments:
+                //   - "value": the value against which t should be compared
+                {
+                    "name": "t",
+                    "operation": "greater_than",
+                    "arguments": {
+                        "value": 300.0
+                    }
+                },
+
+                // Compares a value against the current value of theta of the particle animation.
+                // Possible operations:
+                //   - "less_than" or "<"
+                //   - "greater_than" or ">"
+                //   - "equal" or "="
+                // Required arguments:
+                //   - "value": the value against which theta should be compared
+                {
+                    "name": "theta",
+                    "operation": "<",
+                    "arguments": {
+                        "value": 180.0
+                    }
+                },
+
+                // Compares a value against the name of the world in which the particle animation is playing.
+                // Required arguments:
+                //   - "value": the value (case sensitive) against which the name of the world should be compared
+                {
+                    "name": "world",
+                    "arguments": {
+                        "value": "world_the_end"
                     }
                 }
             ]

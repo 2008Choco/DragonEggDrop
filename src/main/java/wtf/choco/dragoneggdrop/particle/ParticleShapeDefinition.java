@@ -25,6 +25,7 @@ import wtf.choco.dragoneggdrop.particle.condition.ConditionFactory;
 import wtf.choco.dragoneggdrop.particle.condition.EquationCondition;
 import wtf.choco.dragoneggdrop.particle.condition.EquationConditionAlwaysTrue;
 import wtf.choco.dragoneggdrop.particle.condition.EquationConditionDoubleComparison;
+import wtf.choco.dragoneggdrop.particle.condition.EquationConditionStringComparison;
 import wtf.choco.dragoneggdrop.registry.Registerable;
 import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 
@@ -38,7 +39,12 @@ public class ParticleShapeDefinition implements Registerable {
 
     static {
         ConditionFactory.registerCondition("always_true", EquationConditionAlwaysTrue::create);
+        ConditionFactory.registerCondition("x_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getX()));
         ConditionFactory.registerCondition("y_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getY()));
+        ConditionFactory.registerCondition("z_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getZ()));
+        ConditionFactory.registerCondition("t", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getT()));
+        ConditionFactory.registerCondition("theta", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getTheta()));
+        ConditionFactory.registerCondition("world", json -> EquationConditionStringComparison.create(json, context -> context.getWorld().getName()));
     }
 
     private double startY;
