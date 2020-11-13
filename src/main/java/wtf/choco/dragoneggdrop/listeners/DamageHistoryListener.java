@@ -39,6 +39,11 @@ public final class DamageHistoryListener implements Listener {
             damager = (Entity) source;
         }
 
+        double finalDamage = event.getFinalDamage();
+        if (finalDamage <= 0.0) {
+            return;
+        }
+
         DamageHistory.forEntity(damaged).recordDamage(damager, event.getFinalDamage());
     }
 
