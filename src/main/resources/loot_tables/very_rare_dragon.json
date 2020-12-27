@@ -14,7 +14,7 @@
             "commands": [
                 {
                     "weight": 1.0,
-                    "command": 'minecraft:tellraw %dragoneggdrop_top_damager% {"text":"Congratulations! You have killed ","color":"red","extra":[{"text":"%dragon%"}]}'
+                    "command": "minecraft:tellraw %dragoneggdrop_top_damager% {\"text\":\"Congratulations! You have killed \",\"color\":\"red\",\"extra\":[{\"text\":\"%dragon%\"}]}"
                 }
             ]
         }
