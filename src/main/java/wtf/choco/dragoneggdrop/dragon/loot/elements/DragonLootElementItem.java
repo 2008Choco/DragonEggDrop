@@ -1,5 +1,11 @@
 package wtf.choco.dragoneggdrop.dragon.loot.elements;
 
+import com.google.common.base.Enums;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,12 +15,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Enums;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,12 +51,14 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import wtf.choco.dragoneggdrop.utils.IntegerRange;
+import wtf.choco.dragoneggdrop.utils.NamespacedKeyUtil;
 
 /**
  * An implementation of {@link IDragonLootElement} to represent an item.
@@ -169,11 +171,16 @@ public class DragonLootElementItem implements IDragonLootElement {
         }
 
         ItemStack item = new ItemStack(type);
-        ItemMeta meta = item.getItemMeta();
 
         // Base meta (ItemMeta)
         if (root.has("amount")) {
             elementBuilder.amount(parseRange(root, "amount"));
+        }
+
+        // This should only happen if the item type is air, at which point no other types of meta applies
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            throw new JsonParseException("Could not create item of type \"air\". This is an illegal item.");
         }
 
         if (root.has("name")) {
@@ -209,7 +216,7 @@ public class DragonLootElementItem implements IDragonLootElement {
 
             JsonObject enchantmentsObject = enchantmentsElement.getAsJsonObject();
             for (Entry<String, JsonElement> enchantmentElement : enchantmentsObject.entrySet()) {
-                Enchantment enchantment = Enchantment.getByKey(toNamespacedKey(enchantmentElement.getKey()));
+                Enchantment enchantment = Enchantment.getByKey(NamespacedKeyUtil.fromString(enchantmentElement.getKey(), null));
                 if (enchantment == null) {
                     throw new JsonParseException("Could not find enchantment with id \"" + enchantmentElement.getKey() + "\" for item loot pool. Does it exist?");
                 }
@@ -232,6 +239,10 @@ public class DragonLootElementItem implements IDragonLootElement {
 
         if (root.has("unbreakable")) {
             meta.setUnbreakable(root.get("unbreakable").getAsBoolean());
+        }
+
+        if (root.has("custom_model_data")) {
+            meta.setCustomModelData(root.get("custom_model_data").getAsInt());
         }
 
         if (root.has("attribute_modifiers")) {
@@ -425,6 +436,10 @@ public class DragonLootElementItem implements IDragonLootElement {
         if (meta instanceof FireworkMeta) {
             FireworkMeta metaSpecific = (FireworkMeta) meta;
 
+            if (root.has("power")) {
+                metaSpecific.setPower(Math.max(root.get("power").getAsInt(), 0));
+            }
+
             if (root.has("effects") && root.get("effects").isJsonArray()) {
                 JsonArray effectsArray = root.getAsJsonArray("effects");
                 for (JsonElement effectElement : effectsArray) {
@@ -505,7 +520,12 @@ public class DragonLootElementItem implements IDragonLootElement {
                     throw new JsonParseException("Element \"recipes\" is of unexpected type. Expected array, got " + recipesElement.getClass().getSimpleName());
                 }
 
-                recipesElement.getAsJsonArray().forEach(e -> metaSpecific.addRecipe(toNamespacedKey(e.getAsString())));
+                recipesElement.getAsJsonArray().forEach(e -> {
+                    NamespacedKey recipe = NamespacedKeyUtil.fromString(e.getAsString(), null);
+                    if (recipe != null) {
+                        metaSpecific.addRecipe(recipe);
+                    }
+                });
             }
         }
 
@@ -563,7 +583,7 @@ public class DragonLootElementItem implements IDragonLootElement {
 
                     // Default to 30 seconds
                     int duration = 600, amplifier = 0;
-                    boolean ambient = false;
+                    boolean ambient = false, particles = true, icon = true;
 
                     JsonElement effectDataElement = effectElement.getValue();
                     if (effectDataElement.isJsonPrimitive()) {
@@ -584,13 +604,21 @@ public class DragonLootElementItem implements IDragonLootElement {
                         if (effectDataRoot.has("ambient")) {
                             ambient = effectDataRoot.get("ambient").getAsBoolean();
                         }
+
+                        if (effectDataRoot.has("particles")) {
+                            particles = effectDataRoot.get("particles").getAsBoolean();
+                        }
+
+                        if (effectDataRoot.has("icon")) {
+                            icon = effectDataRoot.get("icon").getAsBoolean();
+                        }
                     }
 
                     else {
                         throw new JsonParseException("Effect element is of unexpected type. Expected number (duration) or object, got " + effectsElement.getClass().getSimpleName());
                     }
 
-                    metaSpecific.addCustomEffect(effect.createEffect(duration, amplifier), ambient);
+                    metaSpecific.addCustomEffect(new PotionEffect(effect, duration, amplifier, ambient, particles, icon), false);
                 }
             }
         }
@@ -618,7 +646,7 @@ public class DragonLootElementItem implements IDragonLootElement {
 
                     // Default to 30 seconds
                     int duration = 600, amplifier = 0;
-                    boolean ambient = false;
+                    boolean ambient = false, particles = true, icon = true;
 
                     JsonElement effectDataElement = effectElement.getValue();
                     if (effectDataElement.isJsonPrimitive()) {
@@ -639,13 +667,21 @@ public class DragonLootElementItem implements IDragonLootElement {
                         if (effectDataRoot.has("ambient")) {
                             ambient = effectDataRoot.get("ambient").getAsBoolean();
                         }
+
+                        if (effectDataRoot.has("particles")) {
+                            particles = effectDataRoot.get("particles").getAsBoolean();
+                        }
+
+                        if (effectDataRoot.has("icon")) {
+                            icon = effectDataRoot.get("icon").getAsBoolean();
+                        }
                     }
 
                     else {
                         throw new JsonParseException("Effect element is of unexpected type. Expected number (duration) or object, got " + effectElement.getClass().getSimpleName());
                     }
 
-                    metaSpecific.addCustomEffect(effect.createEffect(duration, amplifier), ambient);
+                    metaSpecific.addCustomEffect(new PotionEffect(effect, duration, amplifier, ambient, particles, icon), false);
                 }
             }
         }
@@ -698,26 +734,6 @@ public class DragonLootElementItem implements IDragonLootElement {
         else {
             throw new JsonParseException("Element \"" + elementName + "\" is of unexpected type. Expected number or object, got " + element.getClass().getSimpleName());
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static NamespacedKey toNamespacedKey(String key) {
-        if (key == null) {
-            return null;
-        }
-
-        key = key.toLowerCase();
-        if (!key.contains(":")) {
-            return NamespacedKey.minecraft(key);
-        }
-
-        String[] parts = key.split(":", 2);
-        if (parts.length != 2 || parts[1].contains(":")) {
-            throw new JsonParseException("Malformed namespaced key: \"" + key + "\"");
-        }
-
-        // This constructor really shouldn't be deprecated
-        return new NamespacedKey(parts[0], parts[1]);
     }
 
     private static class DragonLootElementItemBuilder {
