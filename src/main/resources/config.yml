@@ -29,12 +29,25 @@ allow-crystal-respawns: true
 # Whether or not to stop any running countdowns when a dragon has been spawned before its completion (such as with end crystals).
 strict-countdown: true
 
-# The messages to show in the action bar when a respawn countdown is running.
-# May be set to either one message or a list of messages. Lists will be iterated in order every second.
-announce-messages:
-- '&6Dragon respawning in &e%dragoneggdrop_respawn_time%'
-- '&eDragon respawning in &6%dragoneggdrop_respawn_time%'
+respawn-messages:
+  # The messages to show in the action bar when a respawn countdown is running.
+  # May be set to either one message or a list of messages. Lists will be iterated in order every second.
+  messages:
+  - '&6Dragon respawning in &e%dragoneggdrop_respawn_time%'
+  - '&eDragon respawning in &6%dragoneggdrop_respawn_time%'
 
-# The radius, relative to the centre of the end portal, required for players to receive the respawn countdown message.
-# If set to -1, all players in the end will receive the action bar.
-announce-message-radius: -1
+  # Whether or not the %dragoneggdrop_respawn_time% placeholder should be condensed.
+  # false: "1 week, 2 days, 3 hours, 4 minutes, 5 seconds"
+  # true: "1w, 2d, 3h, 4m, 5s"
+  condensed: false
+
+  # The time units to omit from the %dragoneggdrop_respawn_time% placeholder. Example:
+  # omit-time-units:
+  # - "seconds"
+  # - "minutes"
+  # Accepted values are "seconds", "minutes", "hours" and "days". Weeks cannot be omitted.
+  omit-time-units: []
+
+  # The radius, relative to the centre of the end portal, required for players to receive the respawn countdown message.
+  # If set to -1, all players in the end will receive the action bar.
+  radius: -1

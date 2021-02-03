@@ -1,13 +1,13 @@
 package wtf.choco.dragoneggdrop;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -103,7 +103,7 @@ public class DragonEggDrop extends JavaPlugin {
         manager.registerEvents(new DragonLifeListeners(this), this);
         manager.registerEvents(new KillCommandDeprecationListener(this), this);
         manager.registerEvents(new LootListeners(), this);
-        manager.registerEvents(new PortalClickListener(), this);
+        manager.registerEvents(new PortalClickListener(this), this);
         manager.registerEvents(new RespawnListeners(this), this);
 
         // Register commands

@@ -58,10 +58,10 @@ public class RespawnRunnable extends BukkitRunnable {
         this.dragonBattle = world.getEnderDragonBattle();
         this.dragon = dragonBattle.getEnderDragon();
 
-        this.announceMessages = plugin.getConfig().getStringList(DEDConstants.CONFIG_ANNOUNCE_MESSAGES).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
+        this.announceMessages = plugin.getConfig().getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_MESSAGES).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
         this.announceRespawn = announceMessages.size() > 0;
 
-        int announceMessageRadius = plugin.getConfig().getInt(DEDConstants.CONFIG_ANNOUNCE_MESSAGES_RADIUS, -1);
+        int announceMessageRadius = plugin.getConfig().getInt(DEDConstants.CONFIG_RESPAWN_MESSAGES_RADIUS, -1);
         this.limitAnnounceToRadius = (announceMessageRadius > 0);
         this.announceMessageRadiusSquared = (int) Math.pow(announceMessageRadius, 2);
 

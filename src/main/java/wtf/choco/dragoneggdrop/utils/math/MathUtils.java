@@ -1,7 +1,9 @@
 package wtf.choco.dragoneggdrop.utils.math;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleUnaryOperator;
 import java.util.regex.Matcher;
@@ -139,49 +141,78 @@ public final class MathUtils {
      * "invalid seconds" otherwise.
      *
      * @param timeInSeconds the time in seconds
+     * @param condensed whether or not to condense time units (i.e. hours {@literal ->} h)
+     * @param omitions the time units to omit
      *
      * @return the formatted time
      */
-    public static String getFormattedTime(int timeInSeconds) {
+    public static String getFormattedTime(int timeInSeconds, boolean condensed, TimeUnit... omitions) {
         if (timeInSeconds <= 0) {
             return (timeInSeconds == 0) ? "now" : "invalid seconds";
         }
 
-        StringBuilder resultTime = new StringBuilder();
+        Set<TimeUnit> omitionsSet = EnumSet.noneOf(TimeUnit.class);
+        if (omitions != null) {
+            for (TimeUnit unit : omitions) {
+                omitionsSet.add(unit);
+            }
+        }
+
+        StringBuilder resultBuilder = new StringBuilder();
 
         if (timeInSeconds >= 604800) { // Weeks
-            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 604800), "week", timeInSeconds %= 604800);
+            MathUtils.appendAndSeparate(resultBuilder, (int) Math.floor(timeInSeconds / 604800), "week", condensed);
+            timeInSeconds %= 604800;
         }
 
         if (timeInSeconds >= 86400) { // Days
-            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 86400), "day", timeInSeconds %= 86400);
+            if (!omitionsSet.contains(TimeUnit.DAYS)) {
+                MathUtils.appendAndSeparate(resultBuilder, (int) Math.floor(timeInSeconds / 86400), "day", condensed);
+            }
+
+            timeInSeconds %= 86400;
         }
 
         if (timeInSeconds >= 3600) { // Hours
-            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 3600), "hour", timeInSeconds %= 3600);
+            if (!omitionsSet.contains(TimeUnit.HOURS)) {
+                MathUtils.appendAndSeparate(resultBuilder, (int) Math.floor(timeInSeconds / 3600), "hour", condensed);
+            }
+
+            timeInSeconds %= 3600;
         }
 
         if (timeInSeconds >= 60) { // Minutes
-            MathUtils.appendAndSeparate(resultTime, (int) Math.floor(timeInSeconds / 60), "minute", timeInSeconds %= 60);
+            if (!omitionsSet.contains(TimeUnit.MINUTES)) {
+                MathUtils.appendAndSeparate(resultBuilder, (int) Math.floor(timeInSeconds / 60), "minute", condensed);
+            }
+
+            timeInSeconds %= 60;
         }
 
-        if (timeInSeconds > 0) { // Seconds
-            MathUtils.appendAndSeparate(resultTime, timeInSeconds, "second", 0);
+        if (!omitionsSet.contains(TimeUnit.SECONDS) && timeInSeconds > 0) { // Seconds
+            MathUtils.appendAndSeparate(resultBuilder, timeInSeconds, "second", condensed);
         }
 
-        return resultTime.toString();
+        String result = resultBuilder.toString().trim();
+        if (result.endsWith(",")) {
+            result = result.substring(0, result.length() - 1);
+        }
+
+        if (result.isEmpty()) {
+            result = "soon";
+        }
+
+        return result;
     }
 
-    private static void appendAndSeparate(StringBuilder builder, int value, String toAppend, int seconds) {
-        builder.append(value).append(' ').append(toAppend);
+    private static void appendAndSeparate(StringBuilder builder, int value, String toAppend, boolean condensed) {
+        builder.append(value).append(' ').append(condensed ? toAppend.charAt(0) : toAppend);
 
-        if (value > 1) {
+        if (!condensed && value > 1) {
             builder.append('s');
         }
 
-        if (seconds > 0) {
-            builder.append(", ");
-        }
+        builder.append(", ");
     }
 
     /**

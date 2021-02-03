@@ -20,8 +20,11 @@ public final class DEDConstants {
     public static final String CONFIG_JOIN_RESPAWN_DELAY = "join-respawn-delay";
     public static final String CONFIG_RESPAWN_ON_DEATH = "respawn-on-death";
     public static final String CONFIG_DEATH_RESPAWN_DELAY = "death-respawn-delay";
-    public static final String CONFIG_ANNOUNCE_MESSAGES = "announce-messages";
-    public static final String CONFIG_ANNOUNCE_MESSAGES_RADIUS = "announce-messages-radius";
+
+    public static final String CONFIG_RESPAWN_MESSAGES_MESSAGES = "respawn-messages.messages";
+    public static final String CONFIG_RESPAWN_MESSAGES_CONDENSED = "respawn-messages.condensed";
+    public static final String CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS = "respawn-messages.omit-time-units";
+    public static final String CONFIG_RESPAWN_MESSAGES_RADIUS = "respawn-messages.radius";
 
     // Template configuration paths
     public static final String TEMPLATE_DRAGON_NAME = "dragon-name";

@@ -3,6 +3,7 @@ package wtf.choco.dragoneggdrop.placeholder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -18,6 +20,8 @@ import org.bukkit.plugin.PluginManager;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DamageHistory;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
+import wtf.choco.dragoneggdrop.utils.ConfigUtils;
+import wtf.choco.dragoneggdrop.utils.DEDConstants;
 import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
@@ -170,7 +174,12 @@ public final class DragonEggDropPlaceholders {
             }
 
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn()) : "no respawn in progress";
+
+            FileConfiguration config = DragonEggDrop.getInstance().getConfig();
+            boolean condensed = config.getBoolean(DEDConstants.CONFIG_RESPAWN_MESSAGES_CONDENSED);
+            TimeUnit[] omitions = ConfigUtils.getTimeUnits(config.getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS));
+
+            return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn(), condensed, omitions) : "no respawn in progress";
         }
 
         else if (placeholder.startsWith("respawn_time_")) { // %dragoneggdrop_respawn_time[_world]%
@@ -180,7 +189,12 @@ public final class DragonEggDropPlaceholders {
             }
 
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn()) : null;
+
+            FileConfiguration config = DragonEggDrop.getInstance().getConfig();
+            boolean condensed = config.getBoolean(DEDConstants.CONFIG_RESPAWN_MESSAGES_CONDENSED);
+            TimeUnit[] omitions = ConfigUtils.getTimeUnits(config.getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS));
+
+            return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn(), condensed, omitions) : null;
         }
 
         else if (DragonEggDropPlaceholders.PATTERN_TOP_DAMAGER.asPredicate().test(placeholder)) { // %dragoneggdrop_top_damager<_number>[_world]%
