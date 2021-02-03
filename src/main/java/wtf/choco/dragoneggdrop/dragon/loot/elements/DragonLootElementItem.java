@@ -180,7 +180,7 @@ public class DragonLootElementItem implements IDragonLootElement {
         // This should only happen if the item type is air, at which point no other types of meta applies
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
-            throw new JsonParseException("Could not create item of type \"air\". This is an illegal item.");
+            return elementBuilder.build(item, weight);
         }
 
         if (root.has("name")) {
