@@ -5,7 +5,7 @@
 
   <groupId>wtf.choco</groupId>
   <artifactId>DragonEggDrop</artifactId>
-  <version>1.8.2</version>
+  <version>1.9.0</version>
   <name>DragonEggDrop</name>
   <description>Reward your players with a dragon egg and/or loot chest after every Ender Dragon battle in a grand fashion</description>
 
