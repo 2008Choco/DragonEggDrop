@@ -1,5 +1,11 @@
 package wtf.choco.dragoneggdrop.utils;
 
+import com.google.common.collect.Iterables;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonWriter;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,12 +13,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
-
-import com.google.common.collect.Iterables;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -160,6 +160,7 @@ public final class DataFileUtils {
             logger.info("Loading loot tables...");
         }
         Registry<DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
+        lootTableRegistry.clear();
         DragonLootTable.loadLootTables(plugin).forEach(lootTableRegistry::register);
         if (log) {
             logger.info("Done! Successfully loaded " + lootTableRegistry.size() + " loot tables");
@@ -170,6 +171,7 @@ public final class DataFileUtils {
             logger.info("Loading particle shape definitions...");
         }
         Registry<ParticleShapeDefinition> particleRegistry = plugin.getParticleShapeDefinitionRegistry();
+        particleRegistry.clear();
         for (File file : plugin.getParticleDirectory().listFiles((file, name) -> name.endsWith(".json") && !name.equals("possible_conditions.json"))) {
             ParticleShapeDefinition shapeDefinition = ParticleShapeDefinition.fromFile(file);
             particleRegistry.register(shapeDefinition);
@@ -183,6 +185,7 @@ public final class DataFileUtils {
             logger.info("Loading dragon templates...");
         }
         Registry<DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
+        dragonTemplateRegistry.clear();
         for (File file : plugin.getDragonTemplateDirectory().listFiles((file, name) -> name.endsWith(".yml"))) {
             DragonTemplate dragonTemplate = DragonTemplate.fromFile(file);
             dragonTemplateRegistry.register(dragonTemplate);
