@@ -22,6 +22,10 @@ commands:
     usage: /<command> <template> <view|edit>
     aliases: [dragontemplates, template, templates]
     permission: dragoneggdrop.command.template
+  dragonparticle:
+    description: A utility command to play particle shapes
+    usage: /<command> <particle> [x y z] [world] [startY]
+    permission: dragoneggdrop.command.particle
 
 permissions:
   dragoneggdrop.*:
@@ -40,6 +44,7 @@ permissions:
       dragoneggdrop.command.respawn.*: true
       dragoneggdrop.command.template: true
       dragoneggdrop.command.template.*: true
+      dragoneggdrop.command.particle: true
 
   dragoneggdrop.overridecrystals:
     description: Override the allow-crystal-respawns configuration option and grant the ability to spawn dragons using crystals

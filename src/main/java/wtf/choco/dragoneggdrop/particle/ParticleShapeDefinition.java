@@ -1,7 +1,11 @@
 package wtf.choco.dragoneggdrop.particle;
 
-import static wtf.choco.dragoneggdrop.utils.JsonUtils.getOptionalField;
-import static wtf.choco.dragoneggdrop.utils.JsonUtils.getRequiredField;
+import com.google.common.base.Enums;
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,13 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Enums;
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 
@@ -28,6 +26,9 @@ import wtf.choco.dragoneggdrop.particle.condition.EquationConditionDoubleCompari
 import wtf.choco.dragoneggdrop.particle.condition.EquationConditionStringComparison;
 import wtf.choco.dragoneggdrop.registry.Registerable;
 import wtf.choco.dragoneggdrop.utils.math.MathUtils;
+
+import static wtf.choco.dragoneggdrop.utils.JsonUtils.getOptionalField;
+import static wtf.choco.dragoneggdrop.utils.JsonUtils.getRequiredField;
 
 /**
  * Represents a defined particle shape. Shape definitions may be defined in JSON files in
@@ -94,8 +95,37 @@ public class ParticleShapeDefinition implements Registerable {
     }
 
     /**
-     * Create an aninated particle session unique to the specified world and coordinates. The created
+     * Create an animated particle session unique to the specified world and coordinates. The created
      * session will represent this shape definition.
+     *
+     * @param location the location at which the animation should originate
+     *
+     * @return the animated particle session ready to be run
+     */
+    public AnimatedParticleSession createSession(Location location) {
+        Preconditions.checkArgument(location != null, "world must not be null");
+        return createSession(location.getWorld(), location.getX(), location.getY(), location.getZ());
+    }
+
+    /**
+     * Create an animated particle session unique to the specified world and coordinates. The created
+     * session will represent this shape definition.
+     *
+     * @param world the world in which to create the session
+     * @param x the x coordinate at which the animation should originate
+     * @param y the y coordinate at which the animation should originate
+     * @param z the z coordinate at which the animation should originate
+     *
+     * @return the animated particle session ready to be run
+     */
+    public AnimatedParticleSession createSession(World world, double x, double y, double z) {
+        Preconditions.checkArgument(world != null, "world must not be null");
+        return new AnimatedParticleSession(this, equationData, world, x, y, z);
+    }
+
+    /**
+     * Create an animated particle session unique to the specified world and coordinates. The created
+     * session will represent this shape definition. This session will start at {@link #getStartY()}.
      *
      * @param world the world in which to create the session
      * @param x the x coordinate at which the animation should originate
@@ -104,8 +134,7 @@ public class ParticleShapeDefinition implements Registerable {
      * @return the animated particle session ready to be run
      */
     public AnimatedParticleSession createSession(World world, double x, double z) {
-        Preconditions.checkArgument(world != null, "world must not be null");
-        return new AnimatedParticleSession(this, equationData, world, x, z);
+        return createSession(world, x, getStartY(), z);
     }
 
     /**

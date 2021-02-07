@@ -23,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import wtf.choco.dragoneggdrop.commands.CommandDragonEggDrop;
+import wtf.choco.dragoneggdrop.commands.CommandDragonParticle;
 import wtf.choco.dragoneggdrop.commands.CommandDragonRespawn;
 import wtf.choco.dragoneggdrop.commands.CommandDragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.DamageHistory;
@@ -111,6 +112,7 @@ public class DragonEggDrop extends JavaPlugin {
         this.registerCommand("dragoneggdrop", new CommandDragonEggDrop(this));
         this.registerCommand("dragonrespawn", new CommandDragonRespawn(this));
         this.registerCommand("dragontemplate", new CommandDragonTemplate(this));
+        this.registerCommand("dragonparticle", new CommandDragonParticle(this));
 
         // Register external placeholder functionality
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);

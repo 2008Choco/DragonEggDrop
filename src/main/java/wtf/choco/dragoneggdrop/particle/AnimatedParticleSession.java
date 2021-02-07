@@ -30,11 +30,11 @@ public class AnimatedParticleSession {
     private final ParticleVariables variables;
     private final ConditionContext equationContext;
 
-    AnimatedParticleSession(ParticleShapeDefinition definition, List<ConditionalEquationData> equationData, World world, double x, double z) {
+    AnimatedParticleSession(ParticleShapeDefinition definition, List<ConditionalEquationData> equationData, World world, double x, double y, double z) {
         this.shape = definition;
         this.equationData = equationData;
 
-        this.currentLocation = new Location(world, x, definition.getStartY(), z);
+        this.currentLocation = new Location(world, x, y, z);
         this.variables = new ParticleVariables();
         this.equationContext = new ConditionContext(variables, world);
     }
