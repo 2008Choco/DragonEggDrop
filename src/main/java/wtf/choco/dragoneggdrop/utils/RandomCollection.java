@@ -1,12 +1,12 @@
 package wtf.choco.dragoneggdrop.utils;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
-
-import com.google.common.base.Preconditions;
 
 /**
  * An implementation of a Collection based on a TreeMap. The goal of the RandomCollection

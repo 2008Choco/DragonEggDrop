@@ -1,5 +1,10 @@
 package wtf.choco.dragoneggdrop.utils;
 
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -7,12 +12,6 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,29 +23,27 @@ import org.bukkit.plugin.java.JavaPlugin;
  * preferrably in its {@link JavaPlugin#onEnable()} method, though that is not a
  * requirement.
  * <p>
- * This class performs asynchronous queries to <a href="https://spiget.org">SpiGet</a>, an
- * REST server which is updated periodically. If the results of
+ * This class performs asynchronous queries to Spigot's API. If the results of
  * {@link #requestUpdateCheck()} are inconsistent with what is published on SpigotMC, it
- * may be due to SpiGet's cache. Results will be updated in due time.
+ * may be due to the REST API cache. Results will be updated in due time.
  *
  * @author Parker Hawke - Choco
  */
 public final class UpdateChecker {
 
+    /** The default version scheme for this update checker */
     public static final VersionScheme VERSION_SCHEME_DECIMAL = (first, second) -> {
-        String[] firstSplit = splitVersionInfo(first),
-                        secondSplit = splitVersionInfo(second);
-        if (firstSplit == null || secondSplit == null)
+        String[] firstSplit = splitVersionInfo(first), secondSplit = splitVersionInfo(second);
+        if (firstSplit == null || secondSplit == null) {
             return null;
+        }
 
         for (int i = 0; i < Math.min(firstSplit.length, secondSplit.length); i++) {
-            int currentValue = NumberUtils.toInt(firstSplit[i]),
-                            newestValue = NumberUtils.toInt(secondSplit[i]);
+            int currentValue = NumberUtils.toInt(firstSplit[i]), newestValue = NumberUtils.toInt(secondSplit[i]);
 
             if (newestValue > currentValue) {
                 return second;
-            }
-            else if (newestValue < currentValue) {
+            } else if (newestValue < currentValue) {
                 return first;
             }
         }
@@ -55,7 +52,7 @@ public final class UpdateChecker {
     };
 
     private static final String USER_AGENT = "CHOCO-update-checker";
-    private static final String UPDATE_URL = "https://api.spiget.org/v2/resources/%d/versions?size=1&sort=-releaseDate";
+    private static final String UPDATE_URL = "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=%d";
     private static final Pattern DECIMAL_SCHEME_PATTERN = Pattern.compile("\\d+(?:\\.\\d+)*");
 
     private static UpdateChecker instance;
@@ -73,47 +70,45 @@ public final class UpdateChecker {
     }
 
     /**
-     * Request an update check to SpiGet. This request is asynchronous and may not
-     * complete immediately as an HTTP GET request is published to the SpiGet API.
+     * Request an update check to Spigot. This request is asynchronous and may not
+     * complete immediately as an HTTP GET request is published to the Spigot API.
      *
      * @return a future update result
      */
     public CompletableFuture<UpdateResult> requestUpdateCheck() {
         return CompletableFuture.supplyAsync(() -> {
             int responseCode = -1;
+
             try {
                 URL url = new URL(String.format(UPDATE_URL, pluginID));
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.addRequestProperty("User-Agent", USER_AGENT);
-
-                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
                 responseCode = connection.getResponseCode();
 
-                JsonElement element = new JsonParser().parse(reader);
-                if (!element.isJsonArray()) {
+                JsonParser parser = new JsonParser();
+                JsonReader reader = new JsonReader(new InputStreamReader(connection.getInputStream()));
+                JsonElement json = parser.parse(reader);
+                reader.close();
+
+                if (!json.isJsonObject()) {
                     return new UpdateResult(UpdateReason.INVALID_JSON);
                 }
 
-                reader.close();
-
-                JsonObject versionObject = element.getAsJsonArray().get(0).getAsJsonObject();
-                String current = plugin.getDescription().getVersion(),
-                                newest = versionObject.get("name").getAsString();
-                String latest = versionScheme.compareVersions(current, newest);
+                String currentVersion = json.getAsJsonObject().get("current_version").getAsString();
+                String pluginVersion = plugin.getDescription().getVersion();
+                String latest = versionScheme.compareVersions(pluginVersion, currentVersion);
 
                 if (latest == null) {
                     return new UpdateResult(UpdateReason.UNSUPPORTED_VERSION_SCHEME);
                 }
-                else if (latest.equals(current)) {
-                    return new UpdateResult(current.equals(newest) ? UpdateReason.UP_TO_DATE : UpdateReason.UNRELEASED_VERSION);
+                else if (latest.equals(pluginVersion)) {
+                    return new UpdateResult(pluginVersion.equals(currentVersion) ? UpdateReason.UP_TO_DATE : UpdateReason.UNRELEASED_VERSION);
                 }
-                else if (latest.equals(newest)) {
+                else if (latest.equals(currentVersion)) {
                     return new UpdateResult(UpdateReason.NEW_UPDATE, latest);
                 }
             } catch (IOException e) {
                 return new UpdateResult(UpdateReason.COULD_NOT_CONNECT);
-            } catch (JsonSyntaxException e) {
-                return new UpdateResult(UpdateReason.INVALID_JSON);
             }
 
             return new UpdateResult(responseCode == 401 ? UpdateReason.UNAUTHORIZED_QUERY : UpdateReason.UNKNOWN_ERROR);
@@ -133,10 +128,7 @@ public final class UpdateChecker {
 
     private static String[] splitVersionInfo(String version) {
         Matcher matcher = DECIMAL_SCHEME_PATTERN.matcher(version);
-        if (!matcher.find())
-            return null;
-
-        return matcher.group().split("\\.");
+        return matcher.find() ? matcher.group().split("\\.") : null;
     }
 
     /**
@@ -229,17 +221,17 @@ public final class UpdateChecker {
         NEW_UPDATE, // The only reason that requires an update
 
         /**
-         * A successful connection to the SpiGet API could not be established.
+         * A successful connection to the Spigot API could not be established.
          */
         COULD_NOT_CONNECT,
 
         /**
-         * The JSON retrieved from SpiGet was invalid or malformed.
+         * The JSON retrieved from Spigot was invalid or malformed.
          */
         INVALID_JSON,
 
         /**
-         * A 401 error was returned by the SpiGet API.
+         * A 401 error was returned by the Spigot API.
          */
         UNAUTHORIZED_QUERY,
 
@@ -288,6 +280,7 @@ public final class UpdateChecker {
 
         private UpdateResult(UpdateReason reason) {
             Preconditions.checkArgument(reason != UpdateReason.NEW_UPDATE, "Reasons that require updates must also provide the latest version String");
+
             this.reason = reason;
             this.newestVersion = plugin.getDescription().getVersion();
         }
@@ -311,8 +304,8 @@ public final class UpdateChecker {
         }
 
         /**
-         * Get the latest version of the plugin. This may be the currently installed
-         * version, it may not be. This depends entirely on the result of the update.
+         * Get the latest version of the plugin. This may be the currently installed version, it
+         * may not be. This depends entirely on the result of the update.
          *
          * @return the newest version of the plugin
          */

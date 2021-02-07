@@ -1,9 +1,9 @@
 package wtf.choco.dragoneggdrop.particle.condition;
 
-import java.util.function.Function;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.function.Function;
 
 import wtf.choco.dragoneggdrop.utils.JsonUtils;
 

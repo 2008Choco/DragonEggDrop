@@ -6,9 +6,9 @@ import java.util.Set;
 /**
  * Represents a key-value registry.
  *
- * @param <T> the type of registered object
- *
  * @author Parker Hawke - Choco
+ *
+ * @param <T> the type of registered object
  */
 public interface Registry<T extends Registerable> {
 

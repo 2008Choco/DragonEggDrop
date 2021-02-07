@@ -1,21 +1,21 @@
 package wtf.choco.dragoneggdrop.registry;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
  * A simple {@link Registry} implementation backed by a {@link HashMap}.
  *
- * @param <T> the type of registered object
- *
  * @author Parker Hawke - Choco
+ *
+ * @param <T> the type of registered object
  */
 public class HashRegistry<T extends Registerable> implements Registry<T> {
 

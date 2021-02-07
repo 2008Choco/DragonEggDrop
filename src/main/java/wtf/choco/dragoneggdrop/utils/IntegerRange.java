@@ -1,8 +1,8 @@
 package wtf.choco.dragoneggdrop.utils;
 
-import java.util.Random;
-
 import com.google.common.base.Preconditions;
+
+import java.util.Random;
 
 /**
  * Represents a pair of integer values denoting a minimum and maximum.

@@ -13,9 +13,9 @@ import wtf.choco.dragoneggdrop.utils.math.MathUtils;
  * Represents a set of tickable equation data capable of animating a {@link ParticleShapeDefinition}
  * in the world. Stated data for a specific animation.
  *
- * @see ParticleShapeDefinition#createSession(World, double, double)
- *
  * @author Parker Hawke - Choco
+ *
+ * @see ParticleShapeDefinition#createSession(World, double, double)
  */
 public class AnimatedParticleSession {
 

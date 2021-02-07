@@ -17,7 +17,7 @@ import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
  * issues in vanilla dragon respawning mechanics. If a dragon has not respawned within 40
  * seconds (800 ticks), the respawning process will restart.
  */
-class RespawnSafeguardRunnable extends BukkitRunnable {
+final class RespawnSafeguardRunnable extends BukkitRunnable {
 
     // Respawn takes about 30 seconds. Timeout at 35 seconds
     private static final long TIMEOUT_PERIOD_TICKS = 700L;

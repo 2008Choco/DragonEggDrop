@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.dragon;
 
+import com.google.common.base.Preconditions;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -10,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
@@ -20,7 +20,7 @@ import org.bukkit.entity.Entity;
  *
  * @author Parker Hawke - Choco
  */
-public class DamageHistory {
+public final class DamageHistory {
 
     private static final Map<UUID, DamageHistory> ENTITY_DAMAGE_HISTORY = new HashMap<>();
 

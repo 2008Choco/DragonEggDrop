@@ -1,10 +1,10 @@
 package wtf.choco.dragoneggdrop.dragon;
 
+import com.google.common.base.Preconditions;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;

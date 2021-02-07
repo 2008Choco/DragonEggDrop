@@ -1,17 +1,17 @@
 package wtf.choco.dragoneggdrop.dragon.loot.pool;
 
-import java.util.Random;
-
 import com.google.gson.JsonObject;
+
+import java.util.Random;
 
 import wtf.choco.dragoneggdrop.dragon.loot.elements.IDragonLootElement;
 
 /**
  * Represents a pool of loot elements.
  *
- * @param <T> the type of element
- *
  * @author Parker Hawke - Choco
+ *
+ * @param <T> the type of element
  */
 public interface ILootPool<T extends IDragonLootElement> {
 

@@ -1,9 +1,9 @@
 package wtf.choco.dragoneggdrop.dragon.loot.elements;
 
-import java.util.Random;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;

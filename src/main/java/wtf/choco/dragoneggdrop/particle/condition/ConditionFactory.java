@@ -1,10 +1,10 @@
 package wtf.choco.dragoneggdrop.particle.condition;
 
+import com.google.gson.JsonObject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.google.gson.JsonObject;
 
 import wtf.choco.dragoneggdrop.particle.ParticleShapeDefinition;
 

@@ -1,13 +1,13 @@
 package wtf.choco.dragoneggdrop.dragon.loot.pool;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementItem;
 import wtf.choco.dragoneggdrop.utils.math.MathUtils;

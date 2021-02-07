@@ -1,10 +1,10 @@
 package wtf.choco.dragoneggdrop.utils;
 
-import java.util.function.Function;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import java.util.function.Function;
 
 /**
  * Various utility methods used to fetch values from a {@link JsonObject}.

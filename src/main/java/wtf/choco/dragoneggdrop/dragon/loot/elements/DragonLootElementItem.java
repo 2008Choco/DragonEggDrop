@@ -65,7 +65,7 @@ import wtf.choco.dragoneggdrop.utils.NamespacedKeyUtil;
  *
  * @author Parker Hawke - Choco
  */
-public class DragonLootElementItem implements IDragonLootElement {
+public final class DragonLootElementItem implements IDragonLootElement {
 
     private IntegerRange amount, damage;
     private Map<Enchantment, IntegerRange> enchantments;
@@ -736,7 +736,7 @@ public class DragonLootElementItem implements IDragonLootElement {
         }
     }
 
-    private static class DragonLootElementItemBuilder {
+    private static final class DragonLootElementItemBuilder {
 
         private IntegerRange amount, damage;
         private Map<Enchantment, IntegerRange> enchantments;

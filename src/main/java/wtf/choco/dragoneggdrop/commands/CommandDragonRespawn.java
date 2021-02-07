@@ -177,7 +177,7 @@ public final class CommandDragonRespawn implements TabExecutor {
     }
 
     private static final List<String> DEFAULT_TIME_SUGGESTIONS = Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s");
-    private static final char[] POSSIBLE_TIME_SUFFIXES = { 's', 'm', 'h', 'd', 'w' };
+    private static final char[] POSSIBLE_TIME_SUFFIXES = {'s', 'm', 'h', 'd', 'w'};
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {

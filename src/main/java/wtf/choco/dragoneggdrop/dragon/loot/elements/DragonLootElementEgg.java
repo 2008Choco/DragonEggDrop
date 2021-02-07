@@ -23,7 +23,7 @@ import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
  *
  * @author Parker Hawke - Choco
  */
-public class DragonLootElementEgg implements IDragonLootElement {
+public final class DragonLootElementEgg implements IDragonLootElement {
 
     private final String name;
     private final List<String> lore;
