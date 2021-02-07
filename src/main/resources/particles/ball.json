@@ -2,11 +2,11 @@
     "start_y": 180.0,
     "arguments": {
         "particle": "flame",
-        "particle_amount": 6,
+        "particle_amount": 10,
         "particle_extra": 0.0,
-        "particle_offset_x": 0.05,
-        "particle_offset_y": 0.05,
-        "particle_offset_z": 0.05,
+        "particle_offset_x": 0.2,
+        "particle_offset_y": 0.2,
+        "particle_offset_z": 0.2,
         "particle_streams": 1,
         "speed_multiplier": 1.0,
         "frame_interval_ticks": 1,
@@ -15,8 +15,8 @@
     "equations": [
         {
             "conditions": [ { "name": "always_true" } ],
-            "x": "x",
-            "z": "z"
+            "x": "0",
+            "z": "0"
         }
     ]
 }
