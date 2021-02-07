@@ -153,7 +153,7 @@ public final class DragonEggDropPlaceholders {
         }
 
         else if (placeholder.startsWith("slain_dragon_")) { // %dragoneggdrop_slain_dragon[_world]%
-            World world = Bukkit.getWorld(placeholder.substring("dragon_".length()));
+            World world = Bukkit.getWorld(placeholder.substring("slain_dragon_".length()));
             if (world == null || world.getEnvironment() != Environment.THE_END) {
                 return "no dragon in this world";
             }
