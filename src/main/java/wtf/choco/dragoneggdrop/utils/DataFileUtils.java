@@ -63,6 +63,9 @@ public final class DataFileUtils {
             if (world.getActiveTemplate() != null) {
                 jsonWorld.addProperty("activeTemplate", world.getActiveTemplate().getId());
             }
+            if (world.getPreviousTemplate() != null) {
+                jsonWorld.addProperty("previousTemplate", world.getPreviousTemplate().getId());
+            }
             if (world.hasLootTableOverride()) {
                 jsonWorld.addProperty("lootTableOverride", world.getLootTableOverride().getId());
             }
@@ -129,6 +132,13 @@ public final class DataFileUtils {
                 if (template != null) {
                     worldWrapper.setActiveTemplate(template);
                     template.applyToBattle(Iterables.get(dragons, 0), world.getEnderDragonBattle());
+                }
+            }
+
+            if (element.has("previousTemplate")) {
+                DragonTemplate template = dragonTemplateRegistry.get(element.get("previousTemplate").getAsString());
+                if (template != null) {
+                    worldWrapper.setPreviousTemplate(template);
                 }
             }
 

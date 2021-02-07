@@ -242,6 +242,15 @@ public class EndWorldWrapper {
     }
 
     /**
+     * Set the template represented in the last successful battle.
+     *
+     * @param previousTemplate the previous template
+     */
+    public void setPreviousTemplate(DragonTemplate previousTemplate) {
+        this.previousTemplate = previousTemplate;
+    }
+
+    /**
      * Get the template represented in the last successful battle.
      *
      * @return the last battle
