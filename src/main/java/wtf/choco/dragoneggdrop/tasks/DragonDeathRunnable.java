@@ -38,6 +38,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
     private final EndWorldWrapper worldWrapper;
     private final DragonTemplate template;
+    private final Location portalLocation;
 
     private int lightningAmount;
 
@@ -63,7 +64,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         // Portal location
         DragonBattle dragonBattle = dragon.getDragonBattle();
-        Location portalLocation = dragonBattle.getEndPortalLocation().add(0.5, 0.0, 0.5);
+        this.portalLocation = dragonBattle.getEndPortalLocation().add(0.5, 0.0, 0.5);
 
         this.respawnDragon = config.getBoolean(DEDConstants.CONFIG_RESPAWN_ON_DEATH, false);
         this.runTaskTimer(plugin, 0, 1);
@@ -87,7 +88,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
         }
 
         // Particles finished, place reward
-        Location location = particleSession.getCurrentLocation().add(0, 1, 0);
+        Location location = particleSession != null ? particleSession.getCurrentLocation().clone().add(0, 1, 0) : portalLocation.clone().add(0.0, 4.0, 0.0);
 
         // Summon Zeus!
         for (int i = 0; i < lightningAmount; i++) {

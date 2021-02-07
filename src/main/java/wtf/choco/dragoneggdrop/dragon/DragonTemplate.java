@@ -1,5 +1,9 @@
 package wtf.choco.dragoneggdrop.dragon;
 
+import com.google.common.base.Enums;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,10 +12,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Enums;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
@@ -271,7 +271,16 @@ public class DragonTemplate implements Registerable {
         FileConfiguration templateFile = YamlConfiguration.loadConfiguration(file);
         DragonTemplateBuilder templateBuilder = new DragonTemplateBuilder(id);
 
-        templateBuilder.particleShapeDefinition(plugin.getParticleShapeDefinitionRegistry().get(templateFile.getString(DEDConstants.TEMPLATE_PARTICLES)));
+        String particleShapeId = templateFile.getString(DEDConstants.TEMPLATE_PARTICLES);
+        ParticleShapeDefinition particleShapeDefinition = plugin.getParticleShapeDefinitionRegistry().get(particleShapeId);
+        if (particleShapeId == null) {
+            plugin.getLogger().warning("Template with id \"" + id + "\" does not have a particles option defined. No particles will be played on death");
+        }
+        else if (particleShapeDefinition == null) {
+            plugin.getLogger().warning("Template with id \"" + id + "\" has declared an unknown particle shape, " + particleShapeId + ". Using default, open_ended_helix.");
+        }
+
+        templateBuilder.particleShapeDefinition(particleShapeDefinition);
         templateBuilder.lootTable(plugin.getLootTableRegistry().get(templateFile.getString(DEDConstants.TEMPLATE_LOOT)));
 
         // Loading less-necessary information from the template file
