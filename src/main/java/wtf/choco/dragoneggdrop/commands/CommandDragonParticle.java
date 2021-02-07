@@ -89,7 +89,7 @@ public final class CommandDragonParticle implements TabExecutor {
             particleSession.tick();
 
             if (particleSession.shouldStop() || particleSession.getCurrentLocation().getY() < finalEndLocation.getY()) {
-                DragonEggDrop.sendMessage(player, ChatColor.GREEN + "Done! " + ChatColor.GRAY + "(" + ChatColor.YELLOW + particleShapeDefinition.getId() + ")");
+                DragonEggDrop.sendMessage(player, ChatColor.GREEN + "Done! " + ChatColor.GRAY + "(" + ChatColor.YELLOW + particleShapeDefinition.getId() + ChatColor.GRAY + ")");
                 task.cancel();
             }
         }, 0L, 1L);
