@@ -123,7 +123,12 @@ public final class DragonEggDropPlaceholders {
 
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             DragonTemplate template = endWorld.getActiveTemplate();
-            return (template != null) ? template.getName() : null;
+            if (template != null) {
+                return template.getName();
+            }
+
+            DragonTemplate respawningTemplate = endWorld.getRespawningTemplate();
+            return respawningTemplate != null ? respawningTemplate.getName() : "no dragon";
         }
 
         else if (placeholder.startsWith("dragon_")) { // %dragoneggdrop_dragon[_world]%
@@ -134,7 +139,12 @@ public final class DragonEggDropPlaceholders {
 
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
             DragonTemplate template = endWorld.getActiveTemplate();
-            return (template != null) ? template.getName() : "no dragon";
+            if (template != null) {
+                return template.getName();
+            }
+
+            DragonTemplate respawningTemplate = endWorld.getRespawningTemplate();
+            return respawningTemplate != null ? respawningTemplate.getName() : "no dragon";
         }
 
         else if (placeholder.equalsIgnoreCase("slain_dragon")) { // %dragoneggdrop_slain_dragon%
