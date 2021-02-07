@@ -125,7 +125,7 @@ public final class DataFileUtils {
 
             Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
             if (element.has("activeTemplate") && !dragons.isEmpty()) {
-                DragonTemplate template = dragonTemplateRegistry.get(element.get("respawnTemplate").getAsString());
+                DragonTemplate template = dragonTemplateRegistry.get(element.get("activeTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setActiveTemplate(template);
                     template.applyToBattle(Iterables.get(dragons, 0), world.getEnderDragonBattle());
