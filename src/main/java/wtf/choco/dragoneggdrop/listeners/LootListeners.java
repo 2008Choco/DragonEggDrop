@@ -1,6 +1,9 @@
 package wtf.choco.dragoneggdrop.listeners;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -43,12 +46,12 @@ public final class LootListeners implements Listener {
         ItemMeta meta = stack.getItemMeta();
         String name = egg.getName();
         if (name != null) {
-            meta.setDisplayName(name);
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name.replace("%dragon%", dragon.getName())));
         }
 
         List<String> lore = egg.getLore();
         if (lore != null && !lore.isEmpty()) {
-            meta.setLore(lore);
+            meta.setLore(lore.stream().map(line -> ChatColor.translateAlternateColorCodes('&', line.replace("%dragon%", dragon.getName()))).collect(Collectors.toList()));
         }
 
         stack.setItemMeta(meta);
@@ -57,6 +60,8 @@ public final class LootListeners implements Listener {
         if (players.size() >= 1) { // Only need it for the world anyways
             DragonEggDropPlaceholders.inject(players.get(0), stack);
         }
+
+        item.setItemStack(stack);
     }
 
 }
