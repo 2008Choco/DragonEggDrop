@@ -198,6 +198,10 @@ public final class DataFileUtils {
         dragonTemplateRegistry.clear();
         for (File file : plugin.getDragonTemplateDirectory().listFiles((file, name) -> name.endsWith(".yml"))) {
             DragonTemplate dragonTemplate = DragonTemplate.fromFile(file);
+            if (dragonTemplate == null) {
+                continue;
+            }
+
             dragonTemplateRegistry.register(dragonTemplate);
         }
         logger.info("Done! Successfully loaded " + dragonTemplateRegistry.size() + " dragon templates");
