@@ -278,6 +278,7 @@ public class DragonTemplate implements Registerable {
         }
         else if (particleShapeDefinition == null) {
             plugin.getLogger().warning("Template with id \"" + id + "\" has declared an unknown particle shape, " + particleShapeId + ". Using default, open_ended_helix.");
+            particleShapeDefinition = plugin.getParticleShapeDefinitionRegistry().get("open_ended_helix"); // If it's null here, whatever. It doesn't matter
         }
 
         templateBuilder.particleShapeDefinition(particleShapeDefinition);
