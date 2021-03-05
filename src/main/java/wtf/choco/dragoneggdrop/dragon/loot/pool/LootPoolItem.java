@@ -1,5 +1,6 @@
 package wtf.choco.dragoneggdrop.dragon.loot.pool;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,6 +9,9 @@ import com.google.gson.JsonParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementItem;
@@ -30,7 +34,7 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      * (inclusive).
      * @param itemElements the elements in this loot pool
      */
-    public LootPoolItem(String name, double chance, int minRolls, int maxRolls, Collection<DragonLootElementItem> itemElements) {
+    public LootPoolItem(@Nullable String name, double chance, int minRolls, int maxRolls, @NotNull Collection<@Nullable DragonLootElementItem> itemElements) {
         super(name, chance, minRolls, maxRolls, itemElements);
     }
 
@@ -42,7 +46,7 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      * @param rolls the amount of times this loot pool should be rolled
      * @param itemElements the elements in this loot pool
      */
-    public LootPoolItem(String name, double chance, int rolls, Collection<DragonLootElementItem> itemElements) {
+    public LootPoolItem(@Nullable String name, double chance, int rolls, @NotNull Collection<@Nullable DragonLootElementItem> itemElements) {
         this(name, chance, rolls, rolls, itemElements);
     }
 
@@ -56,7 +60,7 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      * (inclusive).
      * @param itemElements the elements in this loot pool
      */
-    public LootPoolItem(String name, int minRolls, int maxRolls, Collection<DragonLootElementItem> itemElements) {
+    public LootPoolItem(@Nullable String name, int minRolls, int maxRolls, @NotNull Collection<@Nullable DragonLootElementItem> itemElements) {
         this(name, 100.0, minRolls, maxRolls, itemElements);
     }
 
@@ -67,10 +71,11 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      * @param rolls the amount of times this loot pool should be rolled
      * @param itemElements the elements in this loot pool
      */
-    public LootPoolItem(String name, int rolls, Collection<DragonLootElementItem> itemElements) {
+    public LootPoolItem(@Nullable String name, int rolls, @NotNull Collection<@Nullable DragonLootElementItem> itemElements) {
         this(name, 100.0, rolls, rolls, itemElements);
     }
 
+    @NotNull
     @Override
     public JsonObject toJson() {
         return new JsonObject(); // TODO: Write to JSON
@@ -85,7 +90,10 @@ public class LootPoolItem extends AbstractLootPool<DragonLootElementItem> {
      *
      * @throws JsonParseException if parsing the object has failed
      */
-    public static LootPoolItem fromJson(JsonObject root) throws JsonParseException {
+    @NotNull
+    public static LootPoolItem fromJson(@NotNull JsonObject root) throws JsonParseException {
+        Preconditions.checkArgument(root != null, "root must not be null");
+
         int minRolls = 0, maxRolls = 0;
         String name = root.has("name") ? root.get("name").getAsString() : null;
         double chance = root.has("chance") ? MathUtil.clamp(root.get("chance").getAsDouble(), 0.0, 100.0) : 100.0;

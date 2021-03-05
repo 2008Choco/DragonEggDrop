@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.placeholder;
 
+import com.google.common.base.Preconditions;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.UUID;
@@ -14,12 +16,16 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DamageHistory;
+import wtf.choco.dragoneggdrop.dragon.DamageHistory.DamageEntry;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.utils.ConfigUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
@@ -35,7 +41,10 @@ public final class DragonEggDropPlaceholders {
 
     private DragonEggDropPlaceholders() { }
 
-    public static void registerPlaceholders(DragonEggDrop plugin, PluginManager pluginManager) {
+    public static void registerPlaceholders(@NotNull DragonEggDrop plugin, @NotNull PluginManager pluginManager) {
+        Preconditions.checkArgument(plugin != null, "plugin must not be null");
+        Preconditions.checkArgument(pluginManager != null, "pluginManager must not be null");
+
         // DragonEggDrop PlaceholderExpansion (PlaceholderAPI)
         if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
             PlaceholderProviderPlaceholderAPI expansion = new PlaceholderProviderPlaceholderAPI(plugin);
@@ -57,6 +66,7 @@ public final class DragonEggDropPlaceholders {
      *
      * @return the placeholder provider
      */
+    @NotNull
     public static PlaceholderProvider getProvider() {
         return provider;
     }
@@ -73,7 +83,8 @@ public final class DragonEggDropPlaceholders {
      *
      * @see PlaceholderProvider#inject(OfflinePlayer, String)
      */
-    public static String inject(OfflinePlayer player, String string) {
+    @NotNull
+    public static String inject(@Nullable OfflinePlayer player, @NotNull String string) {
         return provider.inject(player, string);
     }
 
@@ -88,7 +99,7 @@ public final class DragonEggDropPlaceholders {
      *
      * @see PlaceholderProvider#inject(OfflinePlayer, ItemStack)
      */
-    public static void inject(OfflinePlayer player, ItemStack item) {
+    public static void inject(@Nullable OfflinePlayer player, @NotNull ItemStack item) {
         provider.inject(player, item);
     }
 
@@ -106,17 +117,23 @@ public final class DragonEggDropPlaceholders {
      *
      * @see PlaceholderProvider#injectCopy(OfflinePlayer, ItemStack)
      */
-    public static ItemStack injectCopy(OfflinePlayer player, final ItemStack item) {
+    @NotNull
+    public static ItemStack injectCopy(@Nullable OfflinePlayer player, @NotNull final ItemStack item) {
         return provider.injectCopy(player, item);
     }
 
-    static String replacePlaceholder(OfflinePlayer player, String placeholder) {
+    @Nullable
+    static String replacePlaceholder(@Nullable OfflinePlayer player, @NotNull String placeholder) {
         if (placeholder.equalsIgnoreCase("dragon")) { // %dragoneggdrop_dragon%
             if (player == null || !player.isOnline()) {
                 return null;
             }
 
-            World world = player.getPlayer().getWorld();
+            World world = getWorld(player);
+            if (world == null) {
+                return "unknown world";
+            }
+
             if (world.getEnvironment() != Environment.THE_END) {
                 return "no dragon in this world";
             }
@@ -152,7 +169,11 @@ public final class DragonEggDropPlaceholders {
                 return null;
             }
 
-            World world = player.getPlayer().getWorld();
+            World world = getWorld(player);
+            if (world == null) {
+                return "unknown world";
+            }
+
             if (world.getEnvironment() != Environment.THE_END) {
                 return "no dragon in this world";
             }
@@ -178,7 +199,11 @@ public final class DragonEggDropPlaceholders {
                 return null;
             }
 
-            World world = player.getPlayer().getWorld();
+            World world = getWorld(player);
+            if (world == null) {
+                return "unknown world";
+            }
+
             if (world.getEnvironment() != Environment.THE_END) {
                 return "no respawn in this world";
             }
@@ -218,7 +243,7 @@ public final class DragonEggDropPlaceholders {
                 return null;
             }
 
-            World world = (matcher.group(2) != null) ? Bukkit.getWorld(matcher.group(2)) : (player != null && player.isOnline() ? player.getPlayer().getWorld() : null);
+            World world = (matcher.group(2) != null) ? Bukkit.getWorld(matcher.group(2)) : (player != null && player.isOnline() ? getWorld(player) : null);
             if (world == null || world.getEnvironment() != Environment.THE_END) {
                 return "invalid world";
             }
@@ -234,7 +259,12 @@ public final class DragonEggDropPlaceholders {
                 return "None";
             }
 
-            Entity topDamager = history.getTopDamager(offset).getSourceEntity();
+            DamageEntry topDamageEntry = history.getTopDamager(offset);
+            if (topDamageEntry == null) {
+                return "None";
+            }
+
+            Entity topDamager = topDamageEntry.getSourceEntity();
             return (topDamager != null) ? topDamager.getName() : "INVALID_ENTITY";
         }
 
@@ -249,7 +279,7 @@ public final class DragonEggDropPlaceholders {
                 return null;
             }
 
-            World world = (matcher.group(2) != null) ? Bukkit.getWorld(matcher.group(2)) : (player != null && player.isOnline() ? player.getPlayer().getWorld() : null);
+            World world = (matcher.group(2) != null) ? Bukkit.getWorld(matcher.group(2)) : (player != null && player.isOnline() ? getWorld(player) : null);
             if (world == null || world.getEnvironment() != Environment.THE_END) {
                 return "invalid world";
             }
@@ -261,10 +291,29 @@ public final class DragonEggDropPlaceholders {
                 history = DamageHistory.forEntity(previousDragonUUID);
             }
 
-            return (history != null && offset < history.uniqueDamagers()) ? DECIMAL_FORMAT.format(history.getTopDamager(offset).getDamage()) : "0";
+            if (history == null) {
+                return "0";
+            }
+
+            DamageEntry topDamageEntry = history.getTopDamager(offset);
+            if (topDamageEntry == null) {
+                return "0";
+            }
+
+            return (history != null && offset < history.uniqueDamagers()) ? DECIMAL_FORMAT.format(topDamageEntry.getDamage()) : "0";
         }
 
         return null;
+    }
+
+    @Nullable
+    private static World getWorld(@Nullable OfflinePlayer player) {
+        if (player == null) {
+            return null;
+        }
+
+        Player onlinePlayer = player.getPlayer();
+        return onlinePlayer != null ? onlinePlayer.getWorld() : null;
     }
 
 }

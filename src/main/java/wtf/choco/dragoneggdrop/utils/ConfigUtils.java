@@ -5,6 +5,8 @@ import com.google.common.base.Enums;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class ConfigUtils {
 
     private ConfigUtils() { }
@@ -16,7 +18,8 @@ public final class ConfigUtils {
      *
      * @return the time units
      */
-    public static TimeUnit[] getTimeUnits(List<String> timeUnitStrings) {
+    @NotNull
+    public static TimeUnit[] getTimeUnits(@NotNull List<@NotNull String> timeUnitStrings) {
         if (timeUnitStrings == null || timeUnitStrings.isEmpty()) {
             return new TimeUnit[0];
         }

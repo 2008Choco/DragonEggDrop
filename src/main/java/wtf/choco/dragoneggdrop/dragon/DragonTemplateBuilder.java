@@ -9,6 +9,8 @@ import java.util.Map;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.particle.ParticleShapeDefinition;
@@ -29,20 +31,22 @@ public final class DragonTemplateBuilder {
     private String name;
     private BarStyle barStyle;
     private BarColor barColour;
-    private List<String> spawnAnnouncement;
-    private Map<Attribute, Double> attributes;
+    private List<@NotNull String> spawnAnnouncement;
+    private Map<@NotNull Attribute, @NotNull Double> attributes;
 
     private final String id;
 
-    DragonTemplateBuilder(String id) {
+    DragonTemplateBuilder(@NotNull String id) {
         Preconditions.checkArgument(id != null && !id.isEmpty(), "id must not be empty or null");
         Preconditions.checkArgument(!id.contains(" "), "id must not have any spaces");
 
         this.id = id;
     }
 
-    DragonTemplateBuilder(String id, DragonTemplate template) {
+    DragonTemplateBuilder(@NotNull String id, @NotNull DragonTemplate template) {
         this(id);
+
+        Preconditions.checkArgument(template != null, "template must not be null");
 
         this.particleShapeDefinition = template.getParticleShapeDefinition();
         this.lootTable = template.getLootTable();
@@ -61,7 +65,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder particleShapeDefinition(ParticleShapeDefinition particleShapeDefinition) {
+    @NotNull
+    public DragonTemplateBuilder particleShapeDefinition(@Nullable ParticleShapeDefinition particleShapeDefinition) {
         this.particleShapeDefinition = particleShapeDefinition;
         return this;
     }
@@ -73,7 +78,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder lootTable(DragonLootTable lootTable) {
+    @NotNull
+    public DragonTemplateBuilder lootTable(@Nullable DragonLootTable lootTable) {
         this.lootTable = lootTable;
         return this;
     }
@@ -85,6 +91,7 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
+    @NotNull
     public DragonTemplateBuilder spawnWeight(double spawnWeight) {
         this.spawnWeight = spawnWeight;
         return this;
@@ -97,7 +104,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder name(String name) {
+    @NotNull
+    public DragonTemplateBuilder name(@Nullable String name) {
         this.name = name;
         return this;
     }
@@ -109,7 +117,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder barStyle(BarStyle barStyle) {
+    @NotNull
+    public DragonTemplateBuilder barStyle(@Nullable BarStyle barStyle) {
         this.barStyle = barStyle;
         return this;
     }
@@ -121,7 +130,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder barColor(BarColor barColour) {
+    @NotNull
+    public DragonTemplateBuilder barColor(@Nullable BarColor barColour) {
         this.barColour = barColour;
         return this;
     }
@@ -133,7 +143,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder spawnAnnouncement(List<String> spawnAnnouncement) {
+    @NotNull
+    public DragonTemplateBuilder spawnAnnouncement(@Nullable List<@NotNull String> spawnAnnouncement) {
         this.spawnAnnouncement = spawnAnnouncement;
         return this;
     }
@@ -146,7 +157,8 @@ public final class DragonTemplateBuilder {
      *
      * @return this instance. Allows for chained method calls
      */
-    public DragonTemplateBuilder attribute(Attribute attribute, double value) {
+    @NotNull
+    public DragonTemplateBuilder attribute(@NotNull Attribute attribute, double value) {
         if (attributes == null) {
             this.attributes = new EnumMap<>(Attribute.class);
         }
@@ -160,6 +172,7 @@ public final class DragonTemplateBuilder {
      *
      * @return the dragon template
      */
+    @NotNull
     public DragonTemplate build() {
         return new DragonTemplate(id, particleShapeDefinition, lootTable, spawnWeight, name, barStyle, barColour, spawnAnnouncement, attributes);
     }

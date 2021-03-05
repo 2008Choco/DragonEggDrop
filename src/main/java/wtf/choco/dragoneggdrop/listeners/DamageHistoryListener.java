@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DamageHistory;
@@ -18,7 +19,7 @@ public final class DamageHistoryListener implements Listener {
 
     private final DragonEggDrop plugin;
 
-    public DamageHistoryListener(DragonEggDrop plugin) {
+    public DamageHistoryListener(@NotNull DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 

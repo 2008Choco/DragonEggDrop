@@ -1,9 +1,12 @@
 package wtf.choco.dragoneggdrop.particle;
 
+import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Particle;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.particle.condition.ConditionContext;
 import wtf.choco.dragoneggdrop.particle.condition.EquationCondition;
@@ -28,7 +31,7 @@ public class ConditionalEquationData {
     int frameIntervalTicks;
     double thetaIncrement;
 
-    private List<EquationCondition> conditions;
+    private List<@NotNull EquationCondition> conditions;
 
     private final MathExpression xExpression, zExpression;
 
@@ -38,7 +41,10 @@ public class ConditionalEquationData {
      * @param xExpression the x expression
      * @param zExpression the z expression
      */
-    public ConditionalEquationData(MathExpression xExpression, MathExpression zExpression) {
+    public ConditionalEquationData(@NotNull MathExpression xExpression, @NotNull MathExpression zExpression) {
+        Preconditions.checkArgument(xExpression != null, "xExpression must not be null");
+        Preconditions.checkArgument(zExpression != null, "zExpression must not be null");
+
         this.xExpression = xExpression;
         this.zExpression = zExpression;
     }
@@ -48,6 +54,7 @@ public class ConditionalEquationData {
      *
      * @return the x axis expression
      */
+    @NotNull
     public MathExpression getXExpression() {
         return xExpression;
     }
@@ -57,6 +64,7 @@ public class ConditionalEquationData {
      *
      * @return the z axis expression
      */
+    @NotNull
     public MathExpression getZExpression() {
         return zExpression;
     }
@@ -66,7 +74,9 @@ public class ConditionalEquationData {
      *
      * @param condition the condition to add
      */
-    public void addCondition(EquationCondition condition) {
+    public void addCondition(@NotNull EquationCondition condition) {
+        Preconditions.checkArgument(condition != null, "condition must not be null");
+
         if (conditions == null) {
             this.conditions = new ArrayList<>();
         }
@@ -82,7 +92,9 @@ public class ConditionalEquationData {
      *
      * @return true if met, false otherwise
      */
-    public boolean isMet(ConditionContext context) {
+    public boolean isMet(@NotNull ConditionContext context) {
+        Preconditions.checkArgument(context != null, "context must not be null");
+
         if (conditions == null || conditions.isEmpty()) {
             return true;
         }
@@ -101,6 +113,7 @@ public class ConditionalEquationData {
      *
      * @return the particle
      */
+    @NotNull
     public Particle getParticle() {
         return particle;
     }

@@ -4,6 +4,9 @@ import com.google.gson.JsonObject;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import wtf.choco.dragoneggdrop.dragon.loot.elements.IDragonLootElement;
 
 /**
@@ -20,6 +23,7 @@ public interface ILootPool<T extends IDragonLootElement> {
      *
      * @return the loot pool name
      */
+    @Nullable
     public String getName();
 
     /**
@@ -51,13 +55,15 @@ public interface ILootPool<T extends IDragonLootElement> {
      *
      * @return the randomly generated loot from this pool
      */
-    public T roll(Random random);
+    @Nullable
+    public T roll(@NotNull Random random);
 
     /**
      * Write this loot pool as a JsonObject.
      *
      * @return the JSON representation
      */
+    @NotNull
     public JsonObject toJson();
 
 }

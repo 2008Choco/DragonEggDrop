@@ -1,5 +1,6 @@
 package wtf.choco.dragoneggdrop.utils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
@@ -16,7 +17,9 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
@@ -41,7 +44,9 @@ public final class DataFileUtils {
      *
      * @throws IOException if an io exception occurred
      */
-    public static void writeTempData(File file) throws IOException {
+    public static void writeTempData(@NotNull File file) throws IOException {
+        Preconditions.checkArgument(file != null, "file must not be null");
+
         if (!file.createNewFile()) {
             return;
         }
@@ -49,25 +54,29 @@ public final class DataFileUtils {
         JsonObject root = new JsonObject();
 
         for (EndWorldWrapper world : EndWorldWrapper.getAll()) {
-            if (!world.isRespawnInProgress() && world.getActiveTemplate() == null) {
-                return;
-            }
-
             JsonObject jsonWorld = new JsonObject();
             if (world.isRespawnInProgress()) {
                 jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
             }
-            if (world.getRespawningTemplate() != null) {
-                jsonWorld.addProperty("respawnTemplate", world.getRespawningTemplate().getId());
+
+            DragonTemplate respawningTemplate = world.getRespawningTemplate();
+            if (respawningTemplate != null) {
+                jsonWorld.addProperty("respawnTemplate", respawningTemplate.getId());
             }
-            if (world.getActiveTemplate() != null) {
-                jsonWorld.addProperty("activeTemplate", world.getActiveTemplate().getId());
+
+            DragonTemplate activeTemplate = world.getActiveTemplate();
+            if (activeTemplate != null) {
+                jsonWorld.addProperty("activeTemplate", activeTemplate.getId());
             }
-            if (world.getPreviousTemplate() != null) {
-                jsonWorld.addProperty("previousTemplate", world.getPreviousTemplate().getId());
+
+            DragonTemplate previousTemplate = world.getPreviousTemplate();
+            if (previousTemplate != null) {
+                jsonWorld.addProperty("previousTemplate", previousTemplate.getId());
             }
-            if (world.hasLootTableOverride()) {
-                jsonWorld.addProperty("lootTableOverride", world.getLootTableOverride().getId());
+
+            DragonLootTable lootTableOverride = world.getLootTableOverride();
+            if (lootTableOverride != null) {
+                jsonWorld.addProperty("lootTableOverride", lootTableOverride.getId());
             }
 
             root.add(world.getWorld().getName(), jsonWorld);
@@ -86,7 +95,10 @@ public final class DataFileUtils {
      * @param plugin the plugin instance
      * @param file the file from which to read temporary data
      */
-    public static void readTempData(DragonEggDrop plugin, File file) {
+    public static void readTempData(@NotNull DragonEggDrop plugin, @NotNull File file) {
+        Preconditions.checkArgument(plugin != null, "plugin must not be null");
+        Preconditions.checkArgument(file != null, "file must not be null");
+
         JsonObject root = null;
         try (FileReader reader = new FileReader(file)) {
             root = DragonEggDrop.GSON.fromJson(reader, JsonObject.class);
@@ -98,8 +110,8 @@ public final class DataFileUtils {
             return;
         }
 
-        Registry<DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
-        Registry<DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
+        Registry<@NotNull DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
+        Registry<@NotNull DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
 
         for (Entry<String, JsonElement> entry : root.entrySet()) {
             World world = Bukkit.getWorld(entry.getKey());
@@ -126,12 +138,14 @@ public final class DataFileUtils {
                 }
             }
 
-            Collection<EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
+            Collection<@NotNull EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
             if (element.has("activeTemplate") && !dragons.isEmpty()) {
                 DragonTemplate template = dragonTemplateRegistry.get(element.get("activeTemplate").getAsString());
-                if (template != null) {
+                DragonBattle battle = world.getEnderDragonBattle();
+
+                if (template != null && battle != null) {
                     worldWrapper.setActiveTemplate(template);
-                    template.applyToBattle(Iterables.get(dragons, 0), world.getEnderDragonBattle());
+                    template.applyToBattle(Iterables.get(dragons, 0), battle);
                 }
             }
 
@@ -162,14 +176,16 @@ public final class DataFileUtils {
      * @param plugin the plugin instance
      * @param log whether or not to log to console about the reloading process
      */
-    public static void reloadInMemoryData(DragonEggDrop plugin, boolean log) {
+    public static void reloadInMemoryData(@NotNull DragonEggDrop plugin, boolean log) {
+        Preconditions.checkArgument(plugin != null, "plugin must not be null");
+
         Logger logger = plugin.getLogger();
 
         // Load loot tables
         if (log) {
             logger.info("Loading loot tables...");
         }
-        Registry<DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
+        Registry<@NotNull DragonLootTable> lootTableRegistry = plugin.getLootTableRegistry();
         lootTableRegistry.clear();
         DragonLootTable.loadLootTables(plugin).forEach(lootTableRegistry::register);
         if (log) {
@@ -180,7 +196,7 @@ public final class DataFileUtils {
         if (log) {
             logger.info("Loading particle shape definitions...");
         }
-        Registry<ParticleShapeDefinition> particleRegistry = plugin.getParticleShapeDefinitionRegistry();
+        Registry<@NotNull ParticleShapeDefinition> particleRegistry = plugin.getParticleShapeDefinitionRegistry();
         particleRegistry.clear();
         for (File file : plugin.getParticleDirectory().listFiles((file, name) -> name.endsWith(".json") && !name.equals("possible_conditions.json"))) {
             ParticleShapeDefinition shapeDefinition = ParticleShapeDefinition.fromFile(file);
@@ -194,14 +210,10 @@ public final class DataFileUtils {
         if (log) {
             logger.info("Loading dragon templates...");
         }
-        Registry<DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
+        Registry<@NotNull DragonTemplate> dragonTemplateRegistry = plugin.getDragonTemplateRegistry();
         dragonTemplateRegistry.clear();
         for (File file : plugin.getDragonTemplateDirectory().listFiles((file, name) -> name.endsWith(".yml"))) {
             DragonTemplate dragonTemplate = DragonTemplate.fromFile(file);
-            if (dragonTemplate == null) {
-                continue;
-            }
-
             dragonTemplateRegistry.register(dragonTemplate);
         }
         logger.info("Done! Successfully loaded " + dragonTemplateRegistry.size() + " dragon templates");

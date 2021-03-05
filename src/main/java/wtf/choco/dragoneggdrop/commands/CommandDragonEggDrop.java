@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.commons.util.UpdateChecker;
 import wtf.choco.commons.util.UpdateChecker.UpdateReason;
@@ -22,12 +23,12 @@ public final class CommandDragonEggDrop implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public CommandDragonEggDrop(DragonEggDrop plugin) {
+    public CommandDragonEggDrop(@NotNull DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (args.length == 0) {
             PluginDescriptionFile description = plugin.getDescription();
 
@@ -68,8 +69,9 @@ public final class CommandDragonEggDrop implements TabExecutor {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
         List<String> options = new ArrayList<>();
 
         if (args.length == 1 && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RELOAD)) {

@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
@@ -50,12 +51,16 @@ public final class LootListeners implements Listener {
         }
 
         ItemMeta meta = stack.getItemMeta();
+        if (meta == null) { // Probably impossible
+            return;
+        }
+
         String name = egg.getName();
         if (name != null) {
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name.replace("%dragon%", dragon.getName())));
         }
 
-        List<String> lore = egg.getLore();
+        List<@NotNull String> lore = egg.getLore();
         if (lore != null && !lore.isEmpty()) {
             meta.setLore(lore.stream().map(line -> ChatColor.translateAlternateColorCodes('&', line.replace("%dragon%", dragon.getName()))).collect(Collectors.toList()));
         }

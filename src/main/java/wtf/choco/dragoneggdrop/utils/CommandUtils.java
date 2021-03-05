@@ -3,6 +3,7 @@ package wtf.choco.dragoneggdrop.utils;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A utility class providing command-related utility methods.
@@ -21,7 +22,7 @@ public final class CommandUtils {
      * @param suggestionList the list to which the suggestions should be added
      * @param suggestions the suggestions to add
      */
-    public static void addIfHasPermission(CommandSender sender, String permission, List<String> suggestionList, String... suggestions) {
+    public static void addIfHasPermission(@NotNull CommandSender sender, @NotNull String permission, @NotNull List<@NotNull String> suggestionList, @NotNull String @NotNull... suggestions) {
         if (sender.hasPermission(permission)) {
             for (String suggestion : suggestions) {
                 suggestionList.add(suggestion);
@@ -37,7 +38,7 @@ public final class CommandUtils {
      * @param suggestionList the list to which the suggestions should be added
      * @param suggestion the suggestion to add
      */
-    public static void addIfHasPermission(CommandSender sender, String permission, List<String> suggestionList, String suggestion) {
+    public static void addIfHasPermission(@NotNull CommandSender sender, @NotNull String permission, @NotNull List<@NotNull String> suggestionList, @NotNull String suggestion) {
         if (sender.hasPermission(permission)) {
             suggestionList.add(suggestion);
         }

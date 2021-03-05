@@ -1,6 +1,8 @@
 package wtf.choco.dragoneggdrop.placeholder;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class PlaceholderProviderDefault implements PlaceholderProvider {
 
@@ -8,8 +10,9 @@ final class PlaceholderProviderDefault implements PlaceholderProvider {
 
     PlaceholderProviderDefault() { }
 
+    @NotNull
     @Override
-    public String inject(OfflinePlayer player, String string) {
+    public String inject(@Nullable OfflinePlayer player, @NotNull String string) {
         StringBuilder injected = new StringBuilder();
 
         boolean buffering = false;

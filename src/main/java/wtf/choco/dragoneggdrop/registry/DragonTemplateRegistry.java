@@ -1,5 +1,8 @@
 package wtf.choco.dragoneggdrop.registry;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import wtf.choco.commons.collection.RandomCollection;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 
@@ -13,16 +16,17 @@ import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
  */
 public final class DragonTemplateRegistry extends HashRegistry<DragonTemplate> {
 
-    private final RandomCollection<DragonTemplate> weightedTemplates = new RandomCollection<>();
+    private final RandomCollection<@NotNull DragonTemplate> weightedTemplates = new RandomCollection<>();
 
     @Override
-    public void register(DragonTemplate value) {
+    public void register(@NotNull DragonTemplate value) {
         super.register(value);
         this.weightedTemplates.add(value.getSpawnWeight(), value);
     }
 
+    @Nullable
     @Override
-    public DragonTemplate unregister(String key) {
+    public DragonTemplate unregister(@Nullable String key) {
         DragonTemplate template = super.unregister(key);
 
         if (template != null) {
@@ -43,6 +47,7 @@ public final class DragonTemplateRegistry extends HashRegistry<DragonTemplate> {
      *
      * @return a random template
      */
+    @Nullable
     public DragonTemplate getRandomTemplate() {
         return weightedTemplates.next();
     }

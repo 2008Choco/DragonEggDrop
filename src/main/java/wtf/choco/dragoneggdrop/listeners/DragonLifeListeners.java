@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.api.BattleState;
@@ -41,7 +42,7 @@ public final class DragonLifeListeners implements Listener {
 
     private final DragonEggDrop plugin;
 
-    public DragonLifeListeners(DragonEggDrop plugin) {
+    public DragonLifeListeners(@NotNull DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 
@@ -57,6 +58,10 @@ public final class DragonLifeListeners implements Listener {
         }
 
         DragonBattle dragonBattle = dragon.getDragonBattle();
+        if (dragonBattle == null) {
+            return;
+        }
+
         EndWorldWrapper world = EndWorldWrapper.of(dragon.getWorld());
 
         DragonTemplate template = world.getRespawningTemplate();
@@ -67,10 +72,14 @@ public final class DragonLifeListeners implements Listener {
         world.setActiveTemplate((template != null) ? template : (template = plugin.getDragonTemplateRegistry().getRandomTemplate()));
         world.setRespawningTemplate(null);
 
+        if (template == null) { // Theoretically impossible but we're going to be absolutely certain here
+            return;
+        }
+
         template.applyToBattle(dragon, dragonBattle);
 
         if (template.shouldAnnounceSpawn()) {
-            List<String> announcement = template.getSpawnAnnouncement();
+            List<@NotNull String> announcement = template.getSpawnAnnouncement();
             // Cannot use p::sendMessage here. Compile-error with Maven. Compiler assumes the wrong method overload
             Bukkit.getOnlinePlayers().forEach(p -> announcement.forEach(m -> p.sendMessage(ChatColor.translateAlternateColorCodes('&', DragonEggDropPlaceholders.inject(p, m)))));
         }
@@ -117,14 +126,24 @@ public final class DragonLifeListeners implements Listener {
         }
 
         World world = player.getWorld();
-        List<EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
+        List<@NotNull EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
 
         // Check for 3 crystals because PlayerInteractEvent is fired first
         if (crystals.size() < 3) {
             return;
         }
 
-        Vector portalLocationVector = world.getEnderDragonBattle().getEndPortalLocation().toVector();
+        DragonBattle battle = world.getEnderDragonBattle();
+        if (battle == null) {
+            return;
+        }
+
+        Location endPortalLocation = battle.getEndPortalLocation();
+        if (endPortalLocation == null) {
+            return;
+        }
+
+        Vector portalLocationVector = endPortalLocation.toVector();
         for (EnderCrystal crystal : crystals) {
             Location location = crystal.getLocation();
             location.getBlock().setType(Material.AIR); // Remove fire

@@ -1,5 +1,6 @@
 package wtf.choco.dragoneggdrop.world;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import org.bukkit.World.Environment;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents all possible locations in which an end crystal may be spawned in regards to
@@ -76,7 +79,9 @@ public enum PortalCrystal {
      *
      * @return the relative crystal location
      */
-    public Location getRelativeTo(Location location) {
+    @NotNull
+    public Location getRelativeTo(@NotNull Location location) {
+        Preconditions.checkArgument(location != null, "location must not be null");
         return location.add(xOffset, 1, zOffset);
     }
 
@@ -89,14 +94,24 @@ public enum PortalCrystal {
      * @return the relative crystal location. null if world is not (@link
      * Environment#THE_END)
      */
-    public Location getRelativeToPortal(World world) {
+    @Nullable
+    public Location getRelativeToPortal(@NotNull World world) {
+        Preconditions.checkArgument(world != null, "world must not be null");
+
         if (world.getEnvironment() != Environment.THE_END) {
             return null;
         }
 
         DragonBattle dragonBattle = world.getEnderDragonBattle();
+        if (dragonBattle == null) {
+            return null;
+        }
+
         dragonBattle.generateEndPortal(false);
-        return getRelativeTo(dragonBattle.getEndPortalLocation());
+        Location endPortalLocation = dragonBattle.getEndPortalLocation();
+        assert endPortalLocation != null; // Impossible
+
+        return getRelativeTo(endPortalLocation);
     }
 
     /**
@@ -108,15 +123,25 @@ public enum PortalCrystal {
      *
      * @return the spawned crystal. null if unsuccessfully spawned
      */
-    public EnderCrystal spawn(World world, boolean invulnerable) {
+    @Nullable
+    public EnderCrystal spawn(@NotNull World world, boolean invulnerable) {
+        Preconditions.checkArgument(world != null, "world must not be null");
+
         if (world.getEnvironment() != Environment.THE_END) {
             return null;
         }
 
         // (Cloned from #isPresent() only because "location" is required)
         DragonBattle battle = world.getEnderDragonBattle();
+        if (battle == null) {
+            return null;
+        }
+
         battle.generateEndPortal(false);
-        Location location = getRelativeTo(battle.getEndPortalLocation()).add(0.5, 0, 0.5);
+        Location endPortalLocation = battle.getEndPortalLocation();
+        assert endPortalLocation != null; // Impossible
+
+        Location location = getRelativeTo(endPortalLocation).add(0.5, 0, 0.5);
 
         // Check for existing crystal
         Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
@@ -135,7 +160,8 @@ public enum PortalCrystal {
      *
      * @see #spawn(World, boolean)
      */
-    public EnderCrystal spawn(World world) {
+    @Nullable
+    public EnderCrystal spawn(@NotNull World world) {
         return spawn(world, true);
     }
 
@@ -146,11 +172,20 @@ public enum PortalCrystal {
      *
      * @return the crystal positioned at the crystal location. null if none
      */
-    public EnderCrystal get(World world) {
-        DragonBattle battle = world.getEnderDragonBattle();
-        battle.generateEndPortal(false);
-        Location location = getRelativeTo(battle.getEndPortalLocation());
+    @Nullable
+    public EnderCrystal get(@NotNull World world) {
+        Preconditions.checkArgument(world != null, "world must not be null");
 
+        DragonBattle battle = world.getEnderDragonBattle();
+        if (battle == null) {
+            return null;
+        }
+
+        battle.generateEndPortal(false);
+        Location endPortalLocation = battle.getEndPortalLocation();
+        assert endPortalLocation != null; // Impossible
+
+        Location location = getRelativeTo(endPortalLocation);
         Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
         return (EnderCrystal) Iterables.find(entities, e -> e instanceof EnderCrystal, null);
     }
@@ -162,10 +197,19 @@ public enum PortalCrystal {
      *
      * @return true if a crystal is spawned. false otherwise
      */
-    public boolean isPresent(World world) {
+    public boolean isPresent(@NotNull World world) {
+        Preconditions.checkArgument(world != null, "world must not be null");
+
         DragonBattle battle = world.getEnderDragonBattle();
+        if (battle == null) {
+            return false;
+        }
+
         battle.generateEndPortal(false);
-        Location location = getRelativeTo(battle.getEndPortalLocation());
+        Location endPortalLocation = battle.getEndPortalLocation();
+        assert endPortalLocation != null; // Impossible
+
+        Location location = getRelativeTo(endPortalLocation);
 
         // Check for existing crystal
         Collection<Entity> entities = world.getNearbyEntities(location, 1, 1, 1);
@@ -179,7 +223,10 @@ public enum PortalCrystal {
      *
      * @return all spawned ender crystals
      */
-    public static List<EnderCrystal> getAllSpawnedCrystals(World world) {
+    @NotNull
+    public static List<@NotNull EnderCrystal> getAllSpawnedCrystals(@NotNull World world) {
+        Preconditions.checkArgument(world != null, "world must not be null");
+
         List<EnderCrystal> crystals = new ArrayList<>();
 
         for (PortalCrystal portalCrystal : values()) {

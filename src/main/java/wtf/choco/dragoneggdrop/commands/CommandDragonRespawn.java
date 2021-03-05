@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
@@ -36,12 +37,12 @@ public final class CommandDragonRespawn implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public CommandDragonRespawn(DragonEggDrop plugin) {
+    public CommandDragonRespawn(@NotNull DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (args.length == 0) {
             DragonEggDrop.sendMessage(sender, "Missing arguments... " + ChatColor.YELLOW + "/" + label + " <stop|start|template>");
             return true;
@@ -87,6 +88,8 @@ public final class CommandDragonRespawn implements TabExecutor {
 
             int respawnSeconds = (args.length >= 2) ? MathUtil.parseSeconds(args[1]) : 300; // Default 5 minutes
             DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
+            assert template != null; // Impossible
+
             if (args.length >= 4) {
                 DragonTemplate templateArgument = plugin.getDragonTemplateRegistry().get(args[3]);
                 if (templateArgument == null) {
@@ -113,8 +116,9 @@ public final class CommandDragonRespawn implements TabExecutor {
                 return true;
             }
 
+            DragonLootTable lootTableOverride = worldWrapper.getLootTableOverride();
             DragonEggDrop.sendMessage(sender, "A respawn has been started in world " + ChatColor.YELLOW + world.getName() + ChatColor.GRAY + " with template " + ChatColor.GREEN + template.getId()
-                    + (worldWrapper.hasLootTableOverride() ? ChatColor.GRAY + " (loot table override: " + ChatColor.LIGHT_PURPLE + worldWrapper.getLootTableOverride().getId() + ChatColor.GRAY + ")" : ""));
+                    + (lootTableOverride != null ? ChatColor.GRAY + " (loot table override: " + ChatColor.LIGHT_PURPLE + lootTableOverride.getId() + ChatColor.GRAY + ")" : ""));
         }
 
         else if (args[0].equalsIgnoreCase("template")) {
@@ -179,8 +183,10 @@ public final class CommandDragonRespawn implements TabExecutor {
     private static final List<String> DEFAULT_TIME_SUGGESTIONS = Arrays.asList("30s", "5m", "1h", "7d", "2w", "2w7d1h5m30s");
     private static final char[] POSSIBLE_TIME_SUFFIXES = {'s', 'm', 'h', 'd', 'w'};
 
+    @NotNull
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+    @SuppressWarnings("null") // Eclipse weirdness
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (args.length == 1) {
             List<String> suggestions = new ArrayList<>();
 

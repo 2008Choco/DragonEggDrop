@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.particle.condition;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a condition to be checked before evaluating equations.
  *
@@ -14,6 +16,6 @@ public interface EquationCondition {
      *
      * @return true if met, false otherwise
      */
-    public boolean isMet(ConditionContext context);
+    public boolean isMet(@NotNull ConditionContext context);
 
 }

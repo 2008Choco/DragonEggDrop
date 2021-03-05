@@ -1,8 +1,12 @@
 package wtf.choco.dragoneggdrop.utils.math;
 
+import com.google.common.base.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A utility class to parse and obtain instances of {@link MathExpression}
@@ -20,7 +24,7 @@ public final class ExpressionUtils {
      * Object-Oriented format
      */
 
-    private static final Map<String, DoubleUnaryOperator> OPERATORS = new HashMap<>();
+    private static final Map<@NotNull String, @NotNull DoubleUnaryOperator> OPERATORS = new HashMap<>();
 
     static {
         // Basic arithmetics
@@ -51,7 +55,9 @@ public final class ExpressionUtils {
      *
      * @return The mathematical expression
      */
-    public static MathExpression parseExpression(String expression) {
+    @NotNull
+    public static MathExpression parseExpression(@NotNull String expression) {
+        Preconditions.checkArgument(expression != null, "expression must not be null");
         return new ExpressionEvaluator(expression).parse();
     }
 
@@ -63,7 +69,10 @@ public final class ExpressionUtils {
      *
      * @return true if successful. false if operator already exists
      */
-    public static boolean injectMathematicalOperator(String functionName, DoubleUnaryOperator operator) {
+    public static boolean injectMathematicalOperator(@NotNull String functionName, @NotNull DoubleUnaryOperator operator) {
+        Preconditions.checkArgument(functionName != null, "functionName must not be null");
+        Preconditions.checkArgument(operator != null, "operator must not be null");
+
         if (OPERATORS.containsKey(functionName)) {
             return false;
         }
@@ -83,7 +92,7 @@ public final class ExpressionUtils {
 
         private final String expression;
 
-        public ExpressionEvaluator(String expression) {
+        public ExpressionEvaluator(@NotNull String expression) {
             this.expression = expression;
         }
 
@@ -120,6 +129,7 @@ public final class ExpressionUtils {
          *
          * @return the parsed mathematical expression
          */
+        @NotNull
         public MathExpression parse() {
             this.nextChar();
 
@@ -145,6 +155,7 @@ public final class ExpressionUtils {
          *
          * @return the parsed expression
          */
+        @NotNull
         public MathExpression parseExpression() {
             MathExpression x = parseTerm();
 
@@ -168,6 +179,7 @@ public final class ExpressionUtils {
          *
          * @return the parsed term
          */
+        @NotNull
         public MathExpression parseTerm() {
             MathExpression x = parseFactor();
 
@@ -192,6 +204,7 @@ public final class ExpressionUtils {
          *
          * @return the parsed factor
          */
+        @NotNull
         public MathExpression parseFactor() {
             if (eat('+')) {
                 return parseFactor(); // unary plus

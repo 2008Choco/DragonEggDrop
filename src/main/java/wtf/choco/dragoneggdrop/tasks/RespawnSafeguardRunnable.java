@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.tasks;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collection;
 
 import org.bukkit.World;
@@ -8,6 +10,7 @@ import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
@@ -37,7 +40,7 @@ final class RespawnSafeguardRunnable extends BukkitRunnable {
     @Override
     public void run() {
         World bukkitWorld = world.getWorld();
-        Collection<EnderCrystal> crystals = bukkitWorld.getEntitiesByClass(EnderCrystal.class);
+        Collection<@NotNull EnderCrystal> crystals = bukkitWorld.getEntitiesByClass(EnderCrystal.class);
 
         // Ender dragon was not found. Forcibly respawn it
         if (bukkitWorld.getEntitiesByClass(EnderDragon.class).size() == 0) {
@@ -67,8 +70,13 @@ final class RespawnSafeguardRunnable extends BukkitRunnable {
      *
      * @return the running RespawnSafeguardRunnable instance
      */
-    protected static RespawnSafeguardRunnable newTimeout(DragonEggDrop plugin, World world, DragonBattle battle) {
-        return (plugin != null && world != null && battle != null) ? new RespawnSafeguardRunnable(plugin, world, battle) : null;
+    @NotNull
+    protected static RespawnSafeguardRunnable newTimeout(@NotNull DragonEggDrop plugin, @NotNull World world, @NotNull DragonBattle battle) {
+        Preconditions.checkArgument(plugin != null, "plugin must not be null");
+        Preconditions.checkArgument(world != null, "world must not be null");
+        Preconditions.checkArgument(battle != null, "battle must not be null");
+
+        return new RespawnSafeguardRunnable(plugin, world, battle);
     }
 
 }

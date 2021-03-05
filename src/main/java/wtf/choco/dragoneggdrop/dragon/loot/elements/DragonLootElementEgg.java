@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
@@ -26,7 +29,7 @@ import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 public final class DragonLootElementEgg implements IDragonLootElement {
 
     private final String name;
-    private final List<String> lore;
+    private final List<@NotNull String> lore;
     private final double chance;
     private final boolean centered;
 
@@ -38,7 +41,7 @@ public final class DragonLootElementEgg implements IDragonLootElement {
      * @param chance the chance that this element will be generated
      * @param lore the item's lore
      */
-    public DragonLootElementEgg(String name, List<String> lore, boolean centered, double chance) {
+    public DragonLootElementEgg(@Nullable String name, @Nullable List<@NotNull String> lore, boolean centered, double chance) {
         this.name = name;
         this.lore = new ArrayList<>(lore);
         this.chance = chance;
@@ -52,7 +55,7 @@ public final class DragonLootElementEgg implements IDragonLootElement {
      * @param chance the chance that this element will be generated
      * @param lore the item's lore
      */
-    public DragonLootElementEgg(String name, List<String> lore, double chance) {
+    public DragonLootElementEgg(@Nullable String name, @Nullable List<@NotNull String> lore, double chance) {
         this(name, lore, true, chance);
     }
 
@@ -77,6 +80,7 @@ public final class DragonLootElementEgg implements IDragonLootElement {
      *
      * @return the egg name
      */
+    @Nullable
     public String getName() {
         return name;
     }
@@ -86,7 +90,8 @@ public final class DragonLootElementEgg implements IDragonLootElement {
      *
      * @return the egg lore
      */
-    public List<String> getLore() {
+    @Nullable
+    public List<@NotNull String> getLore() {
         return Collections.unmodifiableList(lore);
     }
 
@@ -120,18 +125,25 @@ public final class DragonLootElementEgg implements IDragonLootElement {
     }
 
     @Override
-    public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
+    public void generate(@Nullable DragonBattle battle, @NotNull DragonTemplate template, @Nullable Player killer, @NotNull Random random, @Nullable Chest chest) {
         if (random.nextDouble() * 100 >= chance) {
             return;
         }
 
         if (chest == null) { // If no chest is present, just set the egg on the portal
-            battle.getEndPortalLocation().add(0, 4, 0).getBlock().setType(Material.DRAGON_EGG);
+            if (battle != null) {
+                Location endPortalLocation = battle.getEndPortalLocation();
+                if (endPortalLocation != null) {
+                    endPortalLocation.add(0, 4, 0).getBlock().setType(Material.DRAGON_EGG);
+                }
+            }
+
             return;
         }
 
         ItemStack egg = new ItemStack(Material.DRAGON_EGG);
         ItemMeta eggMeta = egg.getItemMeta();
+        assert eggMeta != null; // Impossible
 
         if (name != null) {
             eggMeta.setDisplayName(DragonEggDropPlaceholders.inject(killer, name).replace("%dragon%", template.getName()));

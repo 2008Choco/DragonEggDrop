@@ -1,6 +1,7 @@
 package wtf.choco.dragoneggdrop.particle;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.particle.condition.ConditionFactory;
@@ -40,16 +42,16 @@ public class ParticleShapeDefinition implements Registerable {
 
     static {
         ConditionFactory.registerCondition("always_true", EquationConditionAlwaysTrue::create);
-        ConditionFactory.registerCondition("x_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getX()));
-        ConditionFactory.registerCondition("y_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getY()));
-        ConditionFactory.registerCondition("z_position", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getZ()));
-        ConditionFactory.registerCondition("t", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getT()));
-        ConditionFactory.registerCondition("theta", json -> EquationConditionDoubleComparison.create(json, context -> context.getVariables().getTheta()));
+        ConditionFactory.registerCondition("x_position", json -> EquationConditionDoubleComparison.create(json, context -> context != null ? context.getVariables().getX() : 0.0));
+        ConditionFactory.registerCondition("y_position", json -> EquationConditionDoubleComparison.create(json, context -> context != null ? context.getVariables().getY() : 0.0));
+        ConditionFactory.registerCondition("z_position", json -> EquationConditionDoubleComparison.create(json, context -> context != null ? context.getVariables().getZ() : 0.0));
+        ConditionFactory.registerCondition("t", json -> EquationConditionDoubleComparison.create(json, context -> context != null ? context.getVariables().getT() : 0.0));
+        ConditionFactory.registerCondition("theta", json -> EquationConditionDoubleComparison.create(json, context -> context != null ? context.getVariables().getTheta() : 0.0));
         ConditionFactory.registerCondition("world", json -> EquationConditionStringComparison.create(json, context -> context.getWorld().getName()));
     }
 
     private double startY;
-    private List<ConditionalEquationData> equationData = new ArrayList<>();
+    private List<@NotNull ConditionalEquationData> equationData = new ArrayList<>();
 
     private final String id;
 
@@ -60,7 +62,7 @@ public class ParticleShapeDefinition implements Registerable {
      * @param startY the starting y coordinate of this shape definition
      * @param equationData this shape definition's equation data
      */
-    public ParticleShapeDefinition(String id, double startY, List<ConditionalEquationData> equationData) {
+    public ParticleShapeDefinition(@NotNull String id, double startY, @NotNull List<@NotNull ConditionalEquationData> equationData) {
         Preconditions.checkArgument(id != null, "id cannot be null");
         Preconditions.checkArgument(startY >= 0, "startY must be >= 0");
         Preconditions.checkArgument(equationData != null, "equationData must not be null");
@@ -76,10 +78,11 @@ public class ParticleShapeDefinition implements Registerable {
      * @param id the unique id of this shape definition
      * @param startY the starting y coordinate of this shape definition
      */
-    public ParticleShapeDefinition(String id, double startY) {
+    public ParticleShapeDefinition(@NotNull String id, double startY) {
         this(id, startY, new ArrayList<>());
     }
 
+    @NotNull
     @Override
     public String getId() {
         return id;
@@ -102,9 +105,15 @@ public class ParticleShapeDefinition implements Registerable {
      *
      * @return the animated particle session ready to be run
      */
-    public AnimatedParticleSession createSession(Location location) {
-        Preconditions.checkArgument(location != null, "world must not be null");
-        return createSession(location.getWorld(), location.getX(), location.getY(), location.getZ());
+    @NotNull
+    public AnimatedParticleSession createSession(@NotNull Location location) {
+        Preconditions.checkArgument(location != null, "location must not be null");
+        Preconditions.checkArgument(location.getWorld() != null, "world must not be null");
+
+        World world = location.getWorld();
+        assert world != null;
+
+        return createSession(world, location.getX(), location.getY(), location.getZ());
     }
 
     /**
@@ -118,8 +127,10 @@ public class ParticleShapeDefinition implements Registerable {
      *
      * @return the animated particle session ready to be run
      */
-    public AnimatedParticleSession createSession(World world, double x, double y, double z) {
+    @NotNull
+    public AnimatedParticleSession createSession(@NotNull World world, double x, double y, double z) {
         Preconditions.checkArgument(world != null, "world must not be null");
+
         return new AnimatedParticleSession(this, equationData, world, x, y, z);
     }
 
@@ -133,7 +144,8 @@ public class ParticleShapeDefinition implements Registerable {
      *
      * @return the animated particle session ready to be run
      */
-    public AnimatedParticleSession createSession(World world, double x, double z) {
+    @NotNull
+    public AnimatedParticleSession createSession(@NotNull World world, double x, double z) {
         return createSession(world, x, getStartY(), z);
     }
 
@@ -144,7 +156,10 @@ public class ParticleShapeDefinition implements Registerable {
      *
      * @return the shape definition
      */
-    public static ParticleShapeDefinition fromFile(File file) {
+    @NotNull
+    public static ParticleShapeDefinition fromFile(@NotNull File file) {
+        Preconditions.checkArgument(file != null, "file must not be null");
+
         String fileName = file.getName();
         if (!fileName.endsWith(".json")) {
             throw new IllegalArgumentException("Expected .json file. Got " + fileName.substring(fileName.lastIndexOf('.')) + " instead");
@@ -158,18 +173,14 @@ public class ParticleShapeDefinition implements Registerable {
             throw new JsonParseException(e.getMessage(), e.getCause());
         }
 
-        if (root == null) {
-            throw new JsonParseException("Invalid root element");
-        }
-
         String id = fileName.substring(0, fileName.lastIndexOf('.')).replace(' ', '_');
         double startY = getRequiredField(root, "start_y", JsonElement::getAsDouble);
 
         JsonObject argumentsObject = getRequiredField(root, "arguments", JsonElement::getAsJsonObject);
 
         String particleName = getRequiredField(argumentsObject, "particle", JsonElement::getAsString).toUpperCase();
-        Particle particle = Enums.getIfPresent(Particle.class, particleName).orNull();
-        if (particle == null) {
+        Optional<@NotNull Particle> particle = Enums.getIfPresent(Particle.class, particleName);
+        if (!particle.isPresent()) {
             throw new JsonParseException("Unexpected particle. Given \"" + particleName + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html");
         }
 
@@ -221,13 +232,13 @@ public class ParticleShapeDefinition implements Registerable {
             }
 
             JsonObject equationArgumentsRoot = equationArgumentsElement.getAsJsonObject();
-            particleName = getOptionalField(equationArgumentsRoot, "particle", JsonElement::getAsString, particle.name()).toUpperCase();
-            Particle equationParticle = Enums.getIfPresent(Particle.class, particleName).orNull();
-            if (equationParticle == null) {
+            particleName = getOptionalField(equationArgumentsRoot, "particle", JsonElement::getAsString, particle.get().name()).toUpperCase();
+            Optional<@NotNull Particle> equationParticle = Enums.getIfPresent(Particle.class, particleName);
+            if (!equationParticle.isPresent()) {
                 throw new JsonParseException("Unexpected particle. Given \"" + particleName + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html");
             }
 
-            equationData.particle = equationParticle;
+            equationData.particle = equationParticle.get();
             equationData.particleAmount = getOptionalField(equationArgumentsRoot, "particle_amount", JsonElement::getAsInt, particleAmount);
             equationData.particleExtra = getOptionalField(equationArgumentsRoot, "particle_extra", JsonElement::getAsDouble, particleExtra);
             equationData.particleOffsetX = getOptionalField(equationArgumentsRoot, "particle_offset_x", JsonElement::getAsFloat, particleOffsetX);

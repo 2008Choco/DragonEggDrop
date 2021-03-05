@@ -1,10 +1,14 @@
 package wtf.choco.dragoneggdrop.particle.condition;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.dragoneggdrop.particle.ParticleShapeDefinition;
 
@@ -17,7 +21,7 @@ import wtf.choco.dragoneggdrop.particle.ParticleShapeDefinition;
  */
 public final class ConditionFactory {
 
-    private static final Map<String, Function<JsonObject, ? extends EquationCondition>> FACTORIES = new HashMap<>();
+    private static final Map<@NotNull String, @NotNull Function<@NotNull JsonObject, @Nullable ? extends EquationCondition>> FACTORIES = new HashMap<>();
 
     private ConditionFactory() { }
 
@@ -27,7 +31,7 @@ public final class ConditionFactory {
      * @param name the condition's unique name
      * @param factoryMethod the method used to create an instance
      */
-    public static void registerCondition(String name, Function<JsonObject, ? extends EquationCondition> factoryMethod) {
+    public static void registerCondition(@NotNull String name, @NotNull Function<@NotNull JsonObject, @Nullable ? extends EquationCondition> factoryMethod) {
         FACTORIES.put(name, factoryMethod);
     }
 
@@ -39,8 +43,12 @@ public final class ConditionFactory {
      *
      * @return the created equation. null if no condition was registered with the given name
      */
-    public static EquationCondition create(String name, JsonObject object) {
-        Function<JsonObject, ? extends EquationCondition> factoryMethod = FACTORIES.get(name);
+    @Nullable
+    public static EquationCondition create(@NotNull String name, @NotNull JsonObject object) {
+        Preconditions.checkArgument(name != null, "name must not be null");
+        Preconditions.checkArgument(object != null, "object must not be null");
+
+        Function<@NotNull JsonObject, @Nullable ? extends EquationCondition> factoryMethod = FACTORIES.get(name);
         return (factoryMethod != null) ? factoryMethod.apply(object) : null;
     }
 

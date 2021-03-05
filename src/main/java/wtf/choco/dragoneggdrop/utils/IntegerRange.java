@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a pair of integer values denoting a minimum and maximum.
  *
@@ -47,7 +49,8 @@ public final class IntegerRange {
      *
      * @return the randomly generated value between this range
      */
-    public int getRandomValue(Random random) {
+    public int getRandomValue(@NotNull Random random) {
+        Preconditions.checkArgument(random != null, "random must not be null");
         return min + random.nextInt(max - min + 1);
     }
 
@@ -59,6 +62,7 @@ public final class IntegerRange {
      *
      * @return the integer range
      */
+    @NotNull
     public static IntegerRange between(int first, int second) {
         return new IntegerRange(Math.min(first, second), Math.max(first, second));
     }
@@ -70,6 +74,7 @@ public final class IntegerRange {
      *
      * @return the integer range
      */
+    @NotNull
     public static IntegerRange only(int value) {
         return new IntegerRange(value, value);
     }

@@ -14,6 +14,7 @@ import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.api.BattleState;
@@ -36,7 +37,7 @@ public class RespawnRunnable extends BukkitRunnable {
     private final EnderDragon dragon;
 
     private final boolean announceRespawn;
-    private final List<String> announceMessages;
+    private final List<@NotNull String> announceMessages;
     private final boolean limitAnnounceToRadius;
     private final int announceMessageRadiusSquared;
 
@@ -50,7 +51,7 @@ public class RespawnRunnable extends BukkitRunnable {
      * @param world the world to execute a respawn
      * @param respawnTime the time in seconds until the respawn is executed
      */
-    public RespawnRunnable(DragonEggDrop plugin, World world, int respawnTime) {
+    public RespawnRunnable(@NotNull DragonEggDrop plugin, @NotNull World world, int respawnTime) {
         this.plugin = plugin;
         this.worldWrapper = EndWorldWrapper.of(world);
         this.secondsUntilRespawn = respawnTime;
@@ -78,7 +79,10 @@ public class RespawnRunnable extends BukkitRunnable {
                 String message = announceMessages.get(currentMessage);
 
                 if (limitAnnounceToRadius) {
-                    ActionBarUtil.broadcastActionBar(message, dragonBattle.getEndPortalLocation(), announceMessageRadiusSquared, true);
+                    Location endPortalLocation = dragonBattle.getEndPortalLocation();
+                    if (endPortalLocation != null) {
+                        ActionBarUtil.broadcastActionBar(message, endPortalLocation, announceMessageRadiusSquared, true);
+                    }
                 }
                 else {
                     ActionBarUtil.broadcastActionBar(message, worldWrapper.getWorld(), true);
@@ -102,7 +106,10 @@ public class RespawnRunnable extends BukkitRunnable {
         // Start respawn process
         PortalCrystal crystalPos = PortalCrystal.values()[currentCrystal++];
         Location crystalLocation = crystalPos.getRelativeToPortal(world);
+        assert crystalLocation != null;
+
         World crystalWorld = crystalLocation.getWorld();
+        assert crystalWorld != null; // Impossible
 
         Chunk crystalChunk = crystalWorld.getChunkAt(crystalLocation);
         if (!crystalChunk.isLoaded()) {
@@ -130,8 +137,12 @@ public class RespawnRunnable extends BukkitRunnable {
                 // Destroy all crystals
                 for (PortalCrystal portalCrystal : PortalCrystal.values()) {
                     Location location = portalCrystal.getRelativeToPortal(world);
+                    assert location != null; // Impossible
 
-                    portalCrystal.get(world).remove();
+                    EnderCrystal enderCrystal = portalCrystal.get(world);
+                    if (enderCrystal != null) {
+                        enderCrystal.remove();
+                    }
 
                     crystalWorld.getPlayers().forEach(p -> p.playSound(location, Sound.BLOCK_FIRE_EXTINGUISH, 1000, 1));
                     crystalWorld.createExplosion(location.getX(), location.getY(), location.getZ(), 0F, false, false);

@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.registry;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents an object capable of being registered to a {@link Registry}.
  *
@@ -12,6 +14,7 @@ public interface Registerable {
      *
      * @return the unique id
      */
+    @NotNull
     public String getId();
 
 }

@@ -6,6 +6,8 @@ import com.google.gson.JsonParseException;
 
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Various utility methods used to fetch values from a {@link JsonObject}.
  *
@@ -30,7 +32,8 @@ public final class JsonUtils {
      *
      * @throws JsonParseException if the value does not exist
      */
-    public static <T> T getRequiredField(JsonObject root, String name, Function<JsonElement, T> caster) {
+    @NotNull
+    public static <T> T getRequiredField(@NotNull JsonObject root, @NotNull String name, @NotNull Function<@NotNull JsonElement, @NotNull T> caster) {
         if (!root.has(name)) {
             throw new JsonParseException("Missing element \"" + name + "\". This element is required.");
         }
@@ -54,7 +57,8 @@ public final class JsonUtils {
      *
      * @throws JsonParseException if the value does not exist
      */
-    public static <T> T getOptionalField(JsonObject root, String name, Function<JsonElement, T> caster, T defaultValue) {
+    @NotNull
+    public static <T> T getOptionalField(@NotNull JsonObject root, @NotNull String name, @NotNull Function<@NotNull JsonElement, @NotNull T> caster, @NotNull T defaultValue) {
         if (!root.has(name)) {
             return defaultValue;
         }

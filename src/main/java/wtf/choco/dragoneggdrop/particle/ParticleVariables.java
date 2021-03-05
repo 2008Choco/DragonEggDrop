@@ -1,6 +1,10 @@
 package wtf.choco.dragoneggdrop.particle;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a set of variables to be used when parsing and evaluating an expression
@@ -98,7 +102,9 @@ public final class ParticleVariables {
      *
      * @return the value of the variable
      */
-    public double get(String name, double defaultValue) {
+    public double get(@NotNull String name, double defaultValue) {
+        Preconditions.checkArgument(name != null, "name must not be null");
+
         switch (name) {
             case "x": return x;
             case "y": return y;

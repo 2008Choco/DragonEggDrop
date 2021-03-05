@@ -31,14 +31,23 @@ public final class RespawnListeners implements Listener {
             return;
         }
 
-        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
+        DragonBattle battle = world.getEnderDragonBattle();
+        if (battle == null) {
+            return;
+        }
 
         // If there's a regular dragon but no active battle, try to template it
-        DragonBattle battle = world.getEnderDragonBattle();
+        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
         DragonTemplate activeTemplate = worldWrapper.getActiveTemplate();
-        if (battle.getEnderDragon() != null && activeTemplate == null) {
+        EnderDragon enderDragon = battle.getEnderDragon();
+
+        if (enderDragon != null && activeTemplate == null) {
             worldWrapper.setActiveTemplate(activeTemplate = plugin.getDragonTemplateRegistry().getRandomTemplate());
-            activeTemplate.applyToBattle(battle.getEnderDragon(), battle);
+            if (activeTemplate == null) { // Impossible but we want to be certain
+                return;
+            }
+
+            activeTemplate.applyToBattle(enderDragon, battle);
         }
 
         // Start the respawn countdown if joining an empty world

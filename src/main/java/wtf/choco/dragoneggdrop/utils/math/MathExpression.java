@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.utils.math;
 
+import org.jetbrains.annotations.NotNull;
+
 import wtf.choco.dragoneggdrop.particle.ParticleVariables;
 
 /**
@@ -17,6 +19,6 @@ public interface MathExpression {
      *
      * @return the evaluation result
      */
-    public double evaluate(ParticleVariables variables);
+    public double evaluate(@NotNull ParticleVariables variables);
 
 }

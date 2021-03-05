@@ -1,5 +1,6 @@
 package wtf.choco.dragoneggdrop;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,11 +17,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.commons.util.UpdateChecker;
 import wtf.choco.commons.util.UpdateChecker.UpdateReason;
@@ -53,7 +54,7 @@ import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
  * @author NinjaStix
  * @author Parker Hawke - Choco (Maintainer)
  */
-public class DragonEggDrop extends JavaPlugin {
+public final class DragonEggDrop extends JavaPlugin {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -62,8 +63,8 @@ public class DragonEggDrop extends JavaPlugin {
     private static DragonEggDrop instance;
 
     private DragonTemplateRegistry dragonTemplateRegistry = new DragonTemplateRegistry();
-    private Registry<DragonLootTable> lootTableRegistry = new HashRegistry<>();
-    private Registry<ParticleShapeDefinition> particleShapeDefinitionRegistry = new HashRegistry<>();
+    private Registry<@NotNull DragonLootTable> lootTableRegistry = new HashRegistry<>();
+    private Registry<@NotNull ParticleShapeDefinition> particleShapeDefinitionRegistry = new HashRegistry<>();
 
     private BukkitTask updateTask;
     private File tempDataFile;
@@ -109,10 +110,10 @@ public class DragonEggDrop extends JavaPlugin {
 
         // Register commands
         this.getLogger().info("Registering command executors and tab completion");
-        this.registerCommand("dragoneggdrop", new CommandDragonEggDrop(this));
-        this.registerCommand("dragonrespawn", new CommandDragonRespawn(this));
-        this.registerCommand("dragontemplate", new CommandDragonTemplate(this));
-        this.registerCommand("dragonparticle", new CommandDragonParticle(this));
+        this.registerCommandSafely("dragoneggdrop", new CommandDragonEggDrop(this));
+        this.registerCommandSafely("dragonrespawn", new CommandDragonRespawn(this));
+        this.registerCommandSafely("dragontemplate", new CommandDragonTemplate(this));
+        this.registerCommandSafely("dragonparticle", new CommandDragonParticle(this));
 
         // Register external placeholder functionality
         DragonEggDropPlaceholders.registerPlaceholders(this, manager);
@@ -178,6 +179,7 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the dragon template registry.
      */
+    @NotNull
     public DragonTemplateRegistry getDragonTemplateRegistry() {
         return dragonTemplateRegistry;
     }
@@ -187,7 +189,8 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the loot table registry
      */
-    public Registry<DragonLootTable> getLootTableRegistry() {
+    @NotNull
+    public Registry<@NotNull DragonLootTable> getLootTableRegistry() {
         return lootTableRegistry;
     }
 
@@ -196,7 +199,8 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the particle shapde definition registry
      */
-    public Registry<ParticleShapeDefinition> getParticleShapeDefinitionRegistry() {
+    @NotNull
+    public Registry<@NotNull ParticleShapeDefinition> getParticleShapeDefinitionRegistry() {
         return particleShapeDefinitionRegistry;
     }
 
@@ -205,6 +209,7 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the dragon templates directory
      */
+    @NotNull
     public File getDragonTemplateDirectory() {
         return dragonTemplateDirectory;
     }
@@ -214,6 +219,7 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the loot table directory
      */
+    @NotNull
     public File getLootTableDirectory() {
         return lootTableDirectory;
     }
@@ -223,6 +229,7 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return the particle shape definition directory
      */
+    @NotNull
     public File getParticleDirectory() {
         return particleDirectory;
     }
@@ -232,6 +239,7 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @return this instance
      */
+    @NotNull
     public static DragonEggDrop getInstance() {
         return instance;
     }
@@ -244,11 +252,17 @@ public class DragonEggDrop extends JavaPlugin {
      *
      * @param <T> command sender type
      */
-    public static <T extends CommandSender> void sendMessage(T sender, String message) {
+    @NotNull
+    public static <T extends CommandSender> void sendMessage(@NotNull T sender, @NotNull String message) {
+        Preconditions.checkArgument(sender != null, "sender must not be null");
+        Preconditions.checkArgument(message != null, "message must not be null");
+
         sender.sendMessage(CHAT_PREFIX + message);
     }
 
-    private void saveDefaultDirectory(String directory) {
+    private void saveDefaultDirectory(@NotNull String directory) {
+        Preconditions.checkArgument(directory != null, "directory must not be null");
+
         try (JarFile jar = new JarFile(getFile())) {
             Enumeration<JarEntry> entries = jar.entries();
 
@@ -267,18 +281,17 @@ public class DragonEggDrop extends JavaPlugin {
         }
     }
 
-    private void registerCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
-        PluginCommand commandObject = this.getCommand(command);
-        if (commandObject == null) {
+    private void registerCommandSafely(@NotNull String commandString, @NotNull CommandExecutor executor) {
+        PluginCommand command = getCommand(commandString);
+        if (command == null) {
             return;
         }
 
-        commandObject.setExecutor(executor);
-        commandObject.setTabCompleter(tabCompleter);
-    }
+        command.setExecutor(executor);
 
-    private void registerCommand(String command, TabExecutor executor) {
-        this.registerCommand(command, executor, executor);
+        if (executor instanceof TabCompleter) {
+            command.setTabCompleter((TabCompleter) executor);
+        }
     }
 
 }

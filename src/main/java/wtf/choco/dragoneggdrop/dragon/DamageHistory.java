@@ -14,6 +14,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a recordable history of damage for an entity.
@@ -22,13 +24,13 @@ import org.bukkit.entity.Entity;
  */
 public final class DamageHistory {
 
-    private static final Map<UUID, DamageHistory> ENTITY_DAMAGE_HISTORY = new HashMap<>();
+    private static final Map<@NotNull UUID, @NotNull DamageHistory> ENTITY_DAMAGE_HISTORY = new HashMap<>();
 
     private final UUID entityUUID;
-    private final Map<UUID, Double> totalDamage = new HashMap<>();
-    private final Deque<DamageEntry> damageHistory = new ArrayDeque<>();
+    private final Map<@NotNull UUID, @NotNull Double> totalDamage = new HashMap<>();
+    private final Deque<@NotNull DamageEntry> damageHistory = new ArrayDeque<>();
 
-    private DamageHistory(UUID entityUUID) {
+    private DamageHistory(@NotNull UUID entityUUID) {
         this.entityUUID = entityUUID;
     }
 
@@ -39,6 +41,7 @@ public final class DamageHistory {
      *
      * @see #getEntity()
      */
+    @NotNull
     public UUID getEntityUUID() {
         return entityUUID;
     }
@@ -53,6 +56,7 @@ public final class DamageHistory {
      *
      * @see #getEntityUUID()
      */
+    @Nullable
     public Entity getEntity() {
         return Bukkit.getEntity(entityUUID);
     }
@@ -64,7 +68,7 @@ public final class DamageHistory {
      *
      * @return the amount of damage caused by the entity
      */
-    public double getTotalDamageFrom(Entity entity) {
+    public double getTotalDamageFrom(@NotNull Entity entity) {
         return (entity != null) ? getTotalDamageFrom(entity.getUniqueId()) : 0.0;
     }
 
@@ -75,8 +79,8 @@ public final class DamageHistory {
      *
      * @return the amount of damage caused by the entity
      */
-    public double getTotalDamageFrom(UUID uuid) {
-        return (uuid != null) ? totalDamage.get(uuid) : 0.0;
+    public double getTotalDamageFrom(@NotNull UUID uuid) {
+        return (uuid != null && totalDamage.containsKey(uuid)) ? totalDamage.get(uuid) : 0.0;
     }
 
     /**
@@ -85,6 +89,7 @@ public final class DamageHistory {
      *
      * @return the top damager
      */
+    @Nullable
     public DamageEntry getTopDamager() {
         if (totalDamage.isEmpty()) {
             return null;
@@ -103,6 +108,7 @@ public final class DamageHistory {
      *
      * @return the top damager at the given offset
      */
+    @Nullable
     public DamageEntry getTopDamager(int offset) {
         if (totalDamage.isEmpty()) {
             return null;
@@ -130,7 +136,8 @@ public final class DamageHistory {
      *
      * @return the top x damagers
      */
-    public DamageEntry[] getTopDamagers(int amount) {
+    @Nullable
+    public DamageEntry @NotNull [] getTopDamagers(int amount) {
         Preconditions.checkArgument(amount > 0, "Invalid history amount. Must be > 0");
         DamageEntry[] topDamagers = new DamageEntry[amount];
 
@@ -158,7 +165,7 @@ public final class DamageHistory {
      * @param source the damage's source entity
      * @param damage the damage to record
      */
-    public void recordDamage(Entity source, double damage) {
+    public void recordDamage(@NotNull Entity source, double damage) {
         Preconditions.checkArgument(source != null, "Cannot record damage for null entity");
         Preconditions.checkArgument(damage > 0.0, "Recorded damage must be greater than 0");
 
@@ -172,6 +179,7 @@ public final class DamageHistory {
      *
      * @return the most recent damage. null if no damage has been recorded
      */
+    @Nullable
     public DamageEntry getMostRecentDamage() {
         return damageHistory.peek();
     }
@@ -186,6 +194,7 @@ public final class DamageHistory {
      *
      * @return the damage entry at the given offset
      */
+    @Nullable
     public DamageEntry getMostRecentDamage(int offset) {
         if (offset >= damageHistory.size()) {
             throw new IllegalArgumentException("Tried to get recent damage at unavailable offset (oldest damage recorded = " + damageHistory.size() + ")");
@@ -196,7 +205,7 @@ public final class DamageHistory {
         }
 
         int i = 0;
-        for (Iterator<DamageEntry> iterator = damageHistory.iterator(); iterator.hasNext(); i++) {
+        for (Iterator<@NotNull DamageEntry> iterator = damageHistory.iterator(); iterator.hasNext(); i++) {
             DamageEntry entry = iterator.next();
             if (i == offset) {
                 return entry;
@@ -255,7 +264,8 @@ public final class DamageHistory {
      *
      * @return the entity's damage history
      */
-    public static DamageHistory forEntity(UUID uuid) {
+    @NotNull
+    public static DamageHistory forEntity(@NotNull UUID uuid) {
         Preconditions.checkArgument(uuid != null, "Cannot get damage history for null UUID");
         return ENTITY_DAMAGE_HISTORY.computeIfAbsent(uuid, DamageHistory::new);
     }
@@ -268,7 +278,8 @@ public final class DamageHistory {
      *
      * @return the entity's damage history
      */
-    public static DamageHistory forEntity(Entity entity) {
+    @NotNull
+    public static DamageHistory forEntity(@NotNull Entity entity) {
         Preconditions.checkArgument(entity != null, "Cannot get damage history for null entity");
         return forEntity(entity.getUniqueId());
     }
@@ -291,12 +302,12 @@ public final class DamageHistory {
         private final UUID source;
         private final double damage;
 
-        private DamageEntry(UUID source, double damage) {
+        private DamageEntry(@NotNull UUID source, double damage) {
             this.source = source;
             this.damage = damage;
         }
 
-        private DamageEntry(Map.Entry<UUID, Double> entry) {
+        private DamageEntry(@NotNull Map.Entry<@NotNull UUID, @NotNull Double> entry) {
             this(entry.getKey(), entry.getValue());
         }
 
@@ -307,6 +318,7 @@ public final class DamageHistory {
          *
          * @see #getSourceEntity()
          */
+        @NotNull
         public UUID getSource() {
             return source;
         }
@@ -322,6 +334,7 @@ public final class DamageHistory {
          *
          * @see #getSource()
          */
+        @Nullable
         public Entity getSourceEntity() {
             return Bukkit.getEntity(source);
         }

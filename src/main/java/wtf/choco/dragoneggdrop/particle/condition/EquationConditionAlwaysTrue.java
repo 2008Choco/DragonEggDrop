@@ -2,6 +2,8 @@ package wtf.choco.dragoneggdrop.particle.condition;
 
 import com.google.gson.JsonObject;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An {@link EquationCondition} implementation. Will always be met.
  *
@@ -17,11 +19,12 @@ public final class EquationConditionAlwaysTrue implements EquationCondition {
     private EquationConditionAlwaysTrue() { }
 
     @Override
-    public boolean isMet(ConditionContext context) {
+    public boolean isMet(@NotNull ConditionContext context) {
         return true;
     }
 
-    public static EquationConditionAlwaysTrue create(@SuppressWarnings("unused") JsonObject object) {
+    @NotNull
+    public static EquationConditionAlwaysTrue create(@SuppressWarnings("unused") @NotNull JsonObject object) {
         return INSTANCE;
     }
 

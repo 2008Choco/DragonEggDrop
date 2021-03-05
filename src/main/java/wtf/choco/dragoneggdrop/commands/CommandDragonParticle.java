@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.particle.AnimatedParticleSession;
@@ -27,12 +29,12 @@ public final class CommandDragonParticle implements TabExecutor {
 
     private final DragonEggDrop plugin;
 
-    public CommandDragonParticle(DragonEggDrop plugin) {
+    public CommandDragonParticle(@NotNull DragonEggDrop plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only players may use this command. You can't see particles from the console, silly");
             return true;
@@ -83,7 +85,10 @@ public final class CommandDragonParticle implements TabExecutor {
         }
 
         Location finalEndLocation = endLocation;
-        AnimatedParticleSession particleSession = particleShapeDefinition.createSession(endLocation.getWorld(), endLocation.getX(), startY, endLocation.getZ());
+        World endLocationWorld = endLocation.getWorld();
+        assert endLocationWorld != null; // Theoretically impossible
+
+        AnimatedParticleSession particleSession = particleShapeDefinition.createSession(endLocationWorld, endLocation.getX(), startY, endLocation.getZ());
 
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
             particleSession.tick();
@@ -98,8 +103,8 @@ public final class CommandDragonParticle implements TabExecutor {
         if (!endLocation.equals(player.getLocation())) {
             suffix += ChatColor.GRAY + " at " + ChatColor.AQUA + String.format("(%s, %s, %s)", endLocation.getX(), endLocation.getY(), endLocation.getZ());
 
-            if (!player.getLocation().getWorld().equals(endLocation.getWorld())) {
-                suffix += ChatColor.GRAY + " in world " + ChatColor.GREEN + endLocation.getWorld().getName();
+            if (!Objects.equals(player.getLocation().getWorld(), endLocationWorld)) {
+                suffix += ChatColor.GRAY + " in world " + ChatColor.GREEN + endLocationWorld.getName();
             }
         }
         suffix += ChatColor.GRAY + ".";
@@ -108,8 +113,10 @@ public final class CommandDragonParticle implements TabExecutor {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    @SuppressWarnings("null") // Eclipse weirdness
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
         if (args.length == 1) {
             List<String> suggestions = new ArrayList<>();
 
@@ -153,7 +160,9 @@ public final class CommandDragonParticle implements TabExecutor {
                 case 2: return StringUtil.copyPartialMatches(args[1], Arrays.asList(String.valueOf(target.getX())), new ArrayList<>());
                 case 3: return StringUtil.copyPartialMatches(args[2], Arrays.asList(String.valueOf(target.getY())), new ArrayList<>());
                 case 4: return StringUtil.copyPartialMatches(args[3], Arrays.asList(String.valueOf(target.getZ())), new ArrayList<>());
-                case 5: return StringUtil.copyPartialMatches(args[4], Arrays.asList(target.getWorld().getName()), new ArrayList<>());
+                case 5:
+                    World world = target.getWorld();
+                    return world != null ? StringUtil.copyPartialMatches(args[4], Arrays.asList(world.getName()), new ArrayList<>()) : Collections.emptyList();
             }
         }
 

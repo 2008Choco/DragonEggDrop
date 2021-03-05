@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.api.BattleState;
@@ -52,7 +53,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
      * @param worldWrapper the world in which the dragon death is taking place
      * @param dragon the dragon dying in this runnable
      */
-    public DragonDeathRunnable(DragonEggDrop plugin, EndWorldWrapper worldWrapper, EnderDragon dragon) {
+    public DragonDeathRunnable(@NotNull DragonEggDrop plugin, @NotNull EndWorldWrapper worldWrapper, @NotNull EnderDragon dragon) {
         this.plugin = plugin;
         this.worldWrapper = worldWrapper;
         this.dragon = dragon;
@@ -64,7 +65,8 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         // Portal location
         DragonBattle dragonBattle = dragon.getDragonBattle();
-        this.portalLocation = dragonBattle.getEndPortalLocation().add(0.5, 0.0, 0.5);
+        Location endPortalLocation = dragonBattle != null ? dragonBattle.getEndPortalLocation() : null;
+        this.portalLocation = endPortalLocation != null ? endPortalLocation.add(0.5, 0.0, 0.5) : new Location(worldWrapper.getWorld(), 0, 63, 0);
 
         this.respawnDragon = config.getBoolean(DEDConstants.CONFIG_RESPAWN_ON_DEATH, false);
         this.runTaskTimer(plugin, 0, 1);
@@ -100,7 +102,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         if (template != null) {
             DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : template.getLootTable();
-            if (lootTable != null) {
+            if (lootTable != null && dragonBattle != null) {
                 lootTable.generate(dragonBattle, template, findDragonKiller(dragon));
             }
             else {

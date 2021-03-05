@@ -1,10 +1,14 @@
 package wtf.choco.dragoneggdrop.particle;
 
+import com.google.common.base.Preconditions;
+
 import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.particle.condition.ConditionContext;
@@ -24,16 +28,22 @@ public class AnimatedParticleSession {
     private int wait = 0;
 
     private final ParticleShapeDefinition shape;
-    private final List<ConditionalEquationData> equationData;
+    private final List<@NotNull ConditionalEquationData> equationData;
 
+    private final World world;
     private final Location currentLocation;
     private final ParticleVariables variables;
     private final ConditionContext equationContext;
 
-    AnimatedParticleSession(ParticleShapeDefinition definition, List<ConditionalEquationData> equationData, World world, double x, double y, double z) {
+    AnimatedParticleSession(@NotNull ParticleShapeDefinition definition, @NotNull List<@NotNull ConditionalEquationData> equationData, @NotNull World world, double x, double y, double z) {
+        Preconditions.checkArgument(definition != null, "definition must not be null");
+        Preconditions.checkArgument(equationData != null, "equationData must not be null");
+        Preconditions.checkArgument(world != null, "world must not be null");
+
         this.shape = definition;
         this.equationData = equationData;
 
+        this.world = world;
         this.currentLocation = new Location(world, x, y, z);
         this.variables = new ParticleVariables();
         this.equationContext = new ConditionContext(variables, world);
@@ -87,6 +97,7 @@ public class AnimatedParticleSession {
      *
      * @return the current location
      */
+    @NotNull
     public Location getCurrentLocation() {
         return currentLocation.clone();
     }
@@ -96,10 +107,12 @@ public class AnimatedParticleSession {
      *
      * @return the shape definition
      */
+    @NotNull
     public ParticleShapeDefinition getShape() {
         return shape;
     }
 
+    @Nullable
     private ConditionalEquationData getEquationDataForCurrentContext() {
         for (ConditionalEquationData equation : equationData) {
             if (equation.isMet(equationContext)) {
@@ -110,11 +123,11 @@ public class AnimatedParticleSession {
         return null;
     }
 
-    private void displayParticles(ConditionalEquationData equationData) {
+    private void displayParticles(@NotNull ConditionalEquationData equationData) {
         double x = equationData.getXExpression().evaluate(variables), z = equationData.getZExpression().evaluate(variables);
 
         this.currentLocation.add(x, 0.0, z);
-        this.currentLocation.getWorld().spawnParticle(equationData.getParticle(), currentLocation, equationData.getParticleAmount(), equationData.getParticleOffsetX(), equationData.getParticleOffsetY(), equationData.getParticleOffsetZ(), equationData.getParticleExtra(), null, true);
+        this.world.spawnParticle(equationData.getParticle(), currentLocation, equationData.getParticleAmount(), equationData.getParticleOffsetX(), equationData.getParticleOffsetY(), equationData.getParticleOffsetZ(), equationData.getParticleExtra(), null, true);
         this.currentLocation.subtract(x, 0.0, z);
     }
 

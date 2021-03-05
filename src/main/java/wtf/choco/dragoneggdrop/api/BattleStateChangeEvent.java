@@ -1,9 +1,13 @@
 package wtf.choco.dragoneggdrop.api;
 
+import com.google.common.base.Preconditions;
+
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Called when the state of the EnderDragon battle changes.
@@ -26,7 +30,10 @@ public class BattleStateChangeEvent extends Event {
      * @param previousState the previous state of the battle
      * @param newState the new state of the battle
      */
-    public BattleStateChangeEvent(DragonBattle dragonBattle, EnderDragon dragon, BattleState previousState, BattleState newState) {
+    public BattleStateChangeEvent(@Nullable DragonBattle dragonBattle, @Nullable EnderDragon dragon, @NotNull BattleState previousState, @NotNull BattleState newState) {
+        Preconditions.checkArgument(previousState != null, "previousState must not be null");
+        Preconditions.checkArgument(newState != null, "newState must not be null");
+
         this.dragonBattle = dragonBattle;
         this.dragon = dragon;
         this.previousState = previousState;
@@ -38,6 +45,7 @@ public class BattleStateChangeEvent extends Event {
      *
      * @return the involved EnderDragonBattle. Can return null
      */
+    @Nullable
     public DragonBattle getDragonBattle() {
         return dragonBattle;
     }
@@ -47,6 +55,7 @@ public class BattleStateChangeEvent extends Event {
      *
      * @return the involved dragon. Can return null
      */
+    @Nullable
     public EnderDragon getDragon() {
         return dragon;
     }
@@ -56,6 +65,7 @@ public class BattleStateChangeEvent extends Event {
      *
      * @return the previous battle state
      */
+    @NotNull
     public BattleState getPreviousState() {
         return previousState;
     }
@@ -65,15 +75,18 @@ public class BattleStateChangeEvent extends Event {
      *
      * @return the new battle state
      */
+    @NotNull
     public BattleState getNewState() {
         return newState;
     }
 
+    @NotNull
     @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

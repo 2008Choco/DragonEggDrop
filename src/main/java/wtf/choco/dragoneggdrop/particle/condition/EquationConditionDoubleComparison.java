@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import org.jetbrains.annotations.NotNull;
+
 import wtf.choco.commons.function.DoubleBiPredicate;
 import wtf.choco.commons.function.DoubleProvider;
 import wtf.choco.dragoneggdrop.utils.JsonUtils;
@@ -17,7 +19,7 @@ import wtf.choco.dragoneggdrop.utils.JsonUtils;
  */
 public class EquationConditionDoubleComparison implements EquationCondition {
 
-    private final DoubleProvider<ConditionContext> query;
+    private final DoubleProvider<@NotNull ConditionContext> query;
     private final double value;
     private final DoubleBiPredicate predicate;
 
@@ -28,18 +30,19 @@ public class EquationConditionDoubleComparison implements EquationCondition {
      * @param value the value against which the queried value should be compared
      * @param predicate the comparison predicate
      */
-    public EquationConditionDoubleComparison(DoubleProvider<ConditionContext> query, double value, DoubleBiPredicate predicate) {
+    public EquationConditionDoubleComparison(@NotNull DoubleProvider<@NotNull ConditionContext> query, double value, @NotNull DoubleBiPredicate predicate) {
         this.query = query;
         this.value = value;
         this.predicate = predicate;
     }
 
     @Override
-    public boolean isMet(ConditionContext context) {
+    public boolean isMet(@NotNull ConditionContext context) {
         return predicate.test(query.get(context), value);
     }
 
-    public static EquationConditionDoubleComparison create(JsonObject object, DoubleProvider<ConditionContext> query) {
+    @NotNull
+    public static EquationConditionDoubleComparison create(@NotNull JsonObject object, @NotNull DoubleProvider<@NotNull ConditionContext> query) {
         String operation = JsonUtils.getRequiredField(object, "operation", JsonElement::getAsString);
 
         DoubleBiPredicate predicate = null;

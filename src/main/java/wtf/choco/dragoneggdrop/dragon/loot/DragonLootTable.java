@@ -25,6 +25,8 @@ import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
@@ -51,8 +53,8 @@ public class DragonLootTable implements Registerable {
     private DragonLootElementEgg egg;
 
     private final String id;
-    private final List<ILootPool<DragonLootElementCommand>> commandPools;
-    private final List<ILootPool<DragonLootElementItem>> chestPools;
+    private final List<@NotNull ILootPool<@NotNull DragonLootElementCommand>> commandPools;
+    private final List<@NotNull ILootPool<@NotNull DragonLootElementItem>> chestPools;
 
     /**
      * Create a {@link DragonLootTable}.
@@ -65,13 +67,14 @@ public class DragonLootTable implements Registerable {
      * @see ILootPool
      * @see #fromFile(File)
      */
-    public DragonLootTable(String id, DragonLootElementEgg egg, List<ILootPool<DragonLootElementCommand>> commandPools, List<ILootPool<DragonLootElementItem>> chestPools) {
+    public DragonLootTable(@NotNull String id, @Nullable DragonLootElementEgg egg, @Nullable List<@NotNull ILootPool<@NotNull DragonLootElementCommand>> commandPools, @Nullable List<@NotNull ILootPool<@NotNull DragonLootElementItem>> chestPools) {
         this.id = id;
         this.egg = (egg != null) ? egg : new DragonLootElementEgg(0.0);
         this.commandPools = (commandPools != null) ? new ArrayList<>(commandPools) : Collections.EMPTY_LIST;
         this.chestPools = (chestPools != null) ? new ArrayList<>(chestPools) : Collections.EMPTY_LIST;
     }
 
+    @NotNull
     @Override
     public String getId() {
         return id;
@@ -92,6 +95,7 @@ public class DragonLootTable implements Registerable {
      *
      * @return the chest's name
      */
+    @Nullable
     public String getChestName() {
         return chestName;
     }
@@ -101,6 +105,7 @@ public class DragonLootTable implements Registerable {
      *
      * @return the egg element
      */
+    @Nullable
     public DragonLootElementEgg getEgg() {
         return egg;
     }
@@ -110,7 +115,8 @@ public class DragonLootTable implements Registerable {
      *
      * @return an immutable command pool list
      */
-    public List<ILootPool<DragonLootElementCommand>> getCommandPools() {
+    @NotNull
+    public List<@NotNull ILootPool<@NotNull DragonLootElementCommand>> getCommandPools() {
         return ImmutableList.copyOf(commandPools);
     }
 
@@ -119,7 +125,8 @@ public class DragonLootTable implements Registerable {
      *
      * @return an immutable chest pool list
      */
-    public List<ILootPool<DragonLootElementItem>> getChestPools() {
+    @NotNull
+    public List<@NotNull ILootPool<@NotNull DragonLootElementItem>> getChestPools() {
         return ImmutableList.copyOf(chestPools);
     }
 
@@ -132,12 +139,17 @@ public class DragonLootTable implements Registerable {
      * @param template the template for which to generate loot
      * @param killer the player that has slain the dragon. May be null
      */
-    public void generate(DragonBattle battle, DragonTemplate template, Player killer) {
+    public void generate(@NotNull DragonBattle battle, @NotNull DragonTemplate template, @Nullable Player killer) {
         Preconditions.checkArgument(battle != null, "Attempted to generate loot for null dragon battle");
         Preconditions.checkArgument(template != null, "Attempted to generate loot for null dragon template");
 
         Chest chest = null;
-        Location endPortalLocation = battle.getEndPortalLocation().add(0, 4, 0);
+        Location endPortalLocation = battle.getEndPortalLocation();
+        if (endPortalLocation == null) {
+            return;
+        }
+
+        endPortalLocation.add(0, 4, 0);
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DragonEggDrop plugin = DragonEggDrop.getInstance();
@@ -173,7 +185,7 @@ public class DragonLootTable implements Registerable {
      * @param template the template for which to generate loot.
      * @param player the player for whom to generate the loot. May be null
      */
-    public void generate(Block block, DragonTemplate template, Player player) {
+    public void generate(@NotNull Block block, @NotNull DragonTemplate template, @Nullable Player player) {
         Preconditions.checkArgument(template != null, "Attempted to generate loot for null dragon template");
 
         block.setType(Material.CHEST);
@@ -188,11 +200,12 @@ public class DragonLootTable implements Registerable {
      *
      * @return the JSON representation
      */
+    @NotNull
     public JsonObject asJson() {
         return new JsonObject();
     }
 
-    private <T extends IDragonLootElement> void generateLootPools(List<ILootPool<T>> pools, DragonEggDrop plugin, DragonBattle battle, DragonTemplate template, Player killer, ThreadLocalRandom random, Chest chest) {
+    private <T extends IDragonLootElement> void generateLootPools(@NotNull List<@NotNull ILootPool<@NotNull T>> pools, @NotNull DragonEggDrop plugin, @Nullable DragonBattle battle, @NotNull DragonTemplate template, @Nullable Player killer, @NotNull ThreadLocalRandom random, @Nullable Chest chest) {
         if (pools == null || pools.isEmpty()) {
             return;
         }
@@ -227,7 +240,10 @@ public class DragonLootTable implements Registerable {
      * @throws IllegalArgumentException if the file is invalid
      * @throws JsonParseException if the parsing at all fails
      */
-    public static DragonLootTable fromFile(File file) throws JsonParseException {
+    @NotNull
+    public static DragonLootTable fromFile(@NotNull File file) throws JsonParseException {
+        Preconditions.checkArgument(file != null, "file must not be null");
+
         String fileName = file.getName();
         if (!fileName.endsWith(".json")) {
             throw new IllegalArgumentException("Expected .json file. Got " + fileName.substring(fileName.lastIndexOf('.')) + " instead");
@@ -239,10 +255,6 @@ public class DragonLootTable implements Registerable {
             root = DragonEggDrop.GSON.fromJson(reader, JsonObject.class);
         } catch (IOException e) {
             throw new JsonParseException(e.getMessage(), e.getCause());
-        }
-
-        if (root == null) {
-            throw new JsonParseException("Invalid root element");
         }
 
         String id = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -301,7 +313,10 @@ public class DragonLootTable implements Registerable {
      *
      * @return all parsed DragonLootTable objects
      */
-    public static List<DragonLootTable> loadLootTables(DragonEggDrop plugin) {
+    @NotNull
+    public static List<@NotNull DragonLootTable> loadLootTables(@NotNull DragonEggDrop plugin) {
+        Preconditions.checkArgument(plugin != null, "plugin must not be null");
+
         Logger logger = plugin.getLogger();
         List<DragonLootTable> lootTables = new ArrayList<>();
 

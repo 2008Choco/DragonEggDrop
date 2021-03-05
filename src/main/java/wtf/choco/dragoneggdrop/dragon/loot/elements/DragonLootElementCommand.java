@@ -1,5 +1,6 @@
 package wtf.choco.dragoneggdrop.dragon.loot.elements;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
@@ -9,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
@@ -30,7 +33,9 @@ public class DragonLootElementCommand implements IDragonLootElement {
      * @param command the command to execute. null if none
      * @param weight this element's weight in the loot pool
      */
-    public DragonLootElementCommand(String command, double weight) {
+    public DragonLootElementCommand(@Nullable String command, double weight) {
+        Preconditions.checkArgument(command != null, "command must not be null");
+
         this.command = command;
         this.weight = weight;
     }
@@ -41,7 +46,7 @@ public class DragonLootElementCommand implements IDragonLootElement {
     }
 
     @Override
-    public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
+    public void generate(@Nullable DragonBattle battle, @NotNull DragonTemplate template, @Nullable Player killer, @NotNull Random random, @Nullable Chest chest) {
         if (command == null) {
             return;
         }
@@ -58,7 +63,10 @@ public class DragonLootElementCommand implements IDragonLootElement {
      *
      * @throws JsonParseException if parsing the object has failed
      */
-    public static DragonLootElementCommand fromJson(JsonObject root) {
+    @NotNull
+    public static DragonLootElementCommand fromJson(@NotNull JsonObject root) {
+        Preconditions.checkArgument(root != null, "root must not be null");
+
         double weight = root.has("weight") ? Math.max(root.get("weight").getAsDouble(), 0.0) : 1.0;
         String command = root.has("command") ? root.get("command").getAsString() : null;
 

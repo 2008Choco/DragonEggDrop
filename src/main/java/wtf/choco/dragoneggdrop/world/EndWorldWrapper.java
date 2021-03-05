@@ -12,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EnderDragon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
@@ -26,7 +28,7 @@ import wtf.choco.dragoneggdrop.tasks.RespawnRunnable;
  */
 public class EndWorldWrapper {
 
-    private static final Map<UUID, EndWorldWrapper> WRAPPERS = new HashMap<>();
+    private static final Map<@NotNull UUID, @NotNull EndWorldWrapper> WRAPPERS = new HashMap<>();
 
     private DragonTemplate activeTemplate, respawningTemplate, previousTemplate;
     private DragonLootTable lootTableOverride = null;
@@ -43,7 +45,8 @@ public class EndWorldWrapper {
      *
      * @param world the world to wrap
      */
-    protected EndWorldWrapper(World world) {
+    protected EndWorldWrapper(@NotNull World world) {
+        Preconditions.checkArgument(world != null, "world must not be null");
         Preconditions.checkArgument(world.getEnvironment() == Environment.THE_END, "EndWorldWrapper worlds must be of environment \"THE_END\"");
 
         this.plugin = DragonEggDrop.getInstance();
@@ -55,8 +58,15 @@ public class EndWorldWrapper {
      *
      * @return the represented world
      */
+    @NotNull
     public World getWorld() {
-        return Bukkit.getWorld(world);
+        World world = Bukkit.getWorld(this.world);
+
+        if (world == null) {
+            throw new IllegalStateException("The world doesn't exist?");
+        }
+
+        return world;
     }
 
     /**
@@ -73,7 +83,7 @@ public class EndWorldWrapper {
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(int respawnDelay, DragonTemplate template, DragonLootTable lootTable) {
+    public boolean startRespawn(int respawnDelay, @NotNull DragonTemplate template, @Nullable DragonLootTable lootTable) {
         Preconditions.checkArgument(respawnDelay >= 0, "Respawn delays must be greater than or equal to 0");
         Preconditions.checkArgument(template != null, "Cannot respawn null template");
 
@@ -103,7 +113,7 @@ public class EndWorldWrapper {
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(int respawnDelay, DragonTemplate template) {
+    public boolean startRespawn(int respawnDelay, @NotNull DragonTemplate template) {
         return startRespawn(respawnDelay, template, null);
     }
 
@@ -118,7 +128,7 @@ public class EndWorldWrapper {
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(RespawnReason reason, DragonTemplate template) {
+    public boolean startRespawn(@NotNull RespawnReason reason, @NotNull DragonTemplate template) {
         Preconditions.checkArgument(reason != null, "Cannot respawn a dragon under a null respawn type");
         return startRespawn(reason.getRespawnTime(plugin.getConfig()), template, null);
     }
@@ -135,7 +145,8 @@ public class EndWorldWrapper {
      * @see #startRespawn(int, DragonTemplate)
      */
     public boolean startRespawn(int respawnDelay) {
-        return startRespawn(respawnDelay, DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate(), null);
+        DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
+        return template != null && startRespawn(respawnDelay, template, null);
     }
 
     /**
@@ -150,8 +161,9 @@ public class EndWorldWrapper {
      * @see #startRespawn(RespawnReason, DragonTemplate)
      * @see #startRespawn(int)
      */
-    public boolean startRespawn(RespawnReason reason) {
-        return startRespawn(reason.getRespawnTime(plugin.getConfig()), DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate(), null);
+    public boolean startRespawn(@NotNull RespawnReason reason) {
+        DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
+        return template != null && startRespawn(reason.getRespawnTime(plugin.getConfig()), template, null);
     }
 
     /**
@@ -192,7 +204,7 @@ public class EndWorldWrapper {
      * @param updatePreviousTemplate whether to set the previous template to the current
      * active template (if not null)
      */
-    public void setActiveTemplate(DragonTemplate template, boolean updatePreviousTemplate) {
+    public void setActiveTemplate(@Nullable DragonTemplate template, boolean updatePreviousTemplate) {
         if (updatePreviousTemplate && activeTemplate != null) {
             this.previousTemplate = activeTemplate;
         }
@@ -207,7 +219,7 @@ public class EndWorldWrapper {
      *
      * @param template the battle to set
      */
-    public void setActiveTemplate(DragonTemplate template) {
+    public void setActiveTemplate(@Nullable DragonTemplate template) {
         this.setActiveTemplate(template, true);
     }
 
@@ -216,6 +228,7 @@ public class EndWorldWrapper {
      *
      * @return the current battle
      */
+    @Nullable
     public DragonTemplate getActiveTemplate() {
         return activeTemplate;
     }
@@ -228,7 +241,7 @@ public class EndWorldWrapper {
      *
      * @param respawningTemplate the template to set
      */
-    public void setRespawningTemplate(DragonTemplate respawningTemplate) {
+    public void setRespawningTemplate(@Nullable DragonTemplate respawningTemplate) {
         this.respawningTemplate = respawningTemplate;
     }
 
@@ -237,6 +250,7 @@ public class EndWorldWrapper {
      *
      * @return the respawning template
      */
+    @Nullable
     public DragonTemplate getRespawningTemplate() {
         return respawningTemplate;
     }
@@ -246,7 +260,7 @@ public class EndWorldWrapper {
      *
      * @param previousTemplate the previous template
      */
-    public void setPreviousTemplate(DragonTemplate previousTemplate) {
+    public void setPreviousTemplate(@Nullable DragonTemplate previousTemplate) {
         this.previousTemplate = previousTemplate;
     }
 
@@ -255,6 +269,7 @@ public class EndWorldWrapper {
      *
      * @return the last battle
      */
+    @Nullable
     public DragonTemplate getPreviousTemplate() {
         return previousTemplate;
     }
@@ -265,7 +280,7 @@ public class EndWorldWrapper {
      *
      * @param previousDragonUUID the UUID of the dragon that was slain
      */
-    public void setPreviousDragonUUID(UUID previousDragonUUID) {
+    public void setPreviousDragonUUID(@Nullable UUID previousDragonUUID) {
         this.previousDragonUUID = previousDragonUUID;
     }
 
@@ -274,6 +289,7 @@ public class EndWorldWrapper {
      *
      * @return the UUID of the dragon that was slain
      */
+    @Nullable
     public UUID getPreviousDragonUUID() {
         return previousDragonUUID;
     }
@@ -284,7 +300,7 @@ public class EndWorldWrapper {
      *
      * @param nextLootTable the next loot table to use
      */
-    public void setLootTableOverride(DragonLootTable nextLootTable) {
+    public void setLootTableOverride(@Nullable DragonLootTable nextLootTable) {
         this.lootTableOverride = nextLootTable;
     }
 
@@ -294,6 +310,7 @@ public class EndWorldWrapper {
      *
      * @return the next loot table
      */
+    @Nullable
     public DragonLootTable getLootTableOverride() {
         return lootTableOverride;
     }
@@ -315,7 +332,8 @@ public class EndWorldWrapper {
      *
      * @return the world's respective wrapper
      */
-    public static EndWorldWrapper of(World world) {
+    @NotNull
+    public static EndWorldWrapper of(@NotNull World world) {
         Preconditions.checkArgument(world != null, "Cannot get wrapper for non-existent (null) world");
         return WRAPPERS.computeIfAbsent(world.getUID(), uuid -> new EndWorldWrapper(world));
     }
@@ -325,7 +343,8 @@ public class EndWorldWrapper {
      *
      * @return all world wrappers
      */
-    public static Collection<EndWorldWrapper> getAll() {
+    @NotNull
+    public static Collection<@NotNull EndWorldWrapper> getAll() {
         return Collections.unmodifiableCollection(WRAPPERS.values());
     }
 

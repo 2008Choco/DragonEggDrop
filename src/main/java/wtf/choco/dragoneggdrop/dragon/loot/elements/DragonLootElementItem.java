@@ -1,6 +1,8 @@
 package wtf.choco.dragoneggdrop.dragon.loot.elements;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,10 +23,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.Chest;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -38,6 +42,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.BookMeta.Generation;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
@@ -54,6 +59,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import wtf.choco.commons.util.NamespacedKeyUtil;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
@@ -68,7 +75,7 @@ import wtf.choco.dragoneggdrop.utils.IntegerRange;
 public final class DragonLootElementItem implements IDragonLootElement {
 
     private IntegerRange amount, damage;
-    private Map<Enchantment, IntegerRange> enchantments;
+    private Map<@NotNull Enchantment, @NotNull IntegerRange> enchantments;
 
     private final ItemStack item;
     private final double weight;
@@ -79,7 +86,7 @@ public final class DragonLootElementItem implements IDragonLootElement {
      * @param item the item to generate
      * @param weight this element's weight in the loot pool
      */
-    private DragonLootElementItem(ItemStack item, double weight) {
+    private DragonLootElementItem(@NotNull ItemStack item, double weight) {
         this.item = item;
         this.weight = weight;
     }
@@ -90,7 +97,7 @@ public final class DragonLootElementItem implements IDragonLootElement {
     }
 
     @Override
-    public void generate(DragonBattle battle, DragonTemplate template, Player killer, Random random, Chest chest) {
+    public void generate(@Nullable DragonBattle battle, @NotNull DragonTemplate template, @Nullable Player killer, @NotNull Random random, @Nullable Chest chest) {
         if (item == null || item.getType() == Material.AIR) {
             return;
         }
@@ -111,38 +118,40 @@ public final class DragonLootElementItem implements IDragonLootElement {
 
         ItemStack generated = DragonEggDropPlaceholders.injectCopy(killer, item);
         ItemMeta meta = generated.getItemMeta();
-        if (meta == null) {
-            meta = Bukkit.getItemFactory().getItemMeta(generated.getType());
-        }
 
-        // Apply %dragon% placeholder
-        if (meta.hasDisplayName()) {
-            meta.setDisplayName(meta.getDisplayName().replace("%dragon%", template.getName()));
-        }
-        if (meta.hasLore()) {
-            meta.setLore(meta.getLore().stream().map(s -> s.replace("%dragon%", template.getName())).collect(Collectors.toList()));
-        }
-
-        // Generate enchantments
-        for (Map.Entry<Enchantment, IntegerRange> enchantmentEntry : enchantments.entrySet()) {
-            int level = enchantmentEntry.getValue().getRandomValue(random);
-            if (level <= 0) {
-                return;
+        if (meta != null) {
+            // Apply %dragon% placeholder
+            if (meta.hasDisplayName()) {
+                meta.setDisplayName(meta.getDisplayName().replace("%dragon%", template.getName()));
             }
 
-            if (meta instanceof EnchantmentStorageMeta) {
-                ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantmentEntry.getKey(), level, true);
-            } else {
-                meta.addEnchant(enchantmentEntry.getKey(), level, true);
+            List<String> lore = meta.getLore();
+            if (lore != null) {
+                meta.setLore(lore.stream().map(s -> s.replace("%dragon%", template.getName())).collect(Collectors.toList()));
             }
+
+            // Generate enchantments
+            for (Map.Entry<@NotNull Enchantment, @NotNull IntegerRange> enchantmentEntry : enchantments.entrySet()) {
+                int level = enchantmentEntry.getValue().getRandomValue(random);
+                if (level <= 0) {
+                    return;
+                }
+
+                if (meta instanceof EnchantmentStorageMeta) {
+                    ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantmentEntry.getKey(), level, true);
+                } else {
+                    meta.addEnchant(enchantmentEntry.getKey(), level, true);
+                }
+            }
+
+            // Apply damage
+            if (meta instanceof Damageable) {
+                ((Damageable) meta).setDamage(damage.getRandomValue(random));
+            }
+
+            generated.setItemMeta(meta);
         }
 
-        // Apply damage
-        if (meta instanceof Damageable) {
-            ((Damageable) meta).setDamage(damage.getRandomValue(random));
-        }
-
-        generated.setItemMeta(meta);
         generated.setAmount(amount.getRandomValue(random));
         inventory.setItem(slot, generated);
     }
@@ -156,7 +165,10 @@ public final class DragonLootElementItem implements IDragonLootElement {
      *
      * @throws JsonParseException if parsing the object has failed
      */
-    public static DragonLootElementItem fromJson(JsonObject root) throws JsonParseException {
+    @NotNull
+    public static DragonLootElementItem fromJson(@NotNull JsonObject root) throws JsonParseException {
+        Preconditions.checkArgument(root != null, "root must not be null");
+
         double weight = root.has("weight") ? Math.max(root.get("weight").getAsDouble(), 0.0) : 1.0;
 
         DragonLootElementItemBuilder elementBuilder = new DragonLootElementItemBuilder();
@@ -253,8 +265,8 @@ public final class DragonLootElementItem implements IDragonLootElement {
 
             JsonObject modifiersRoot = modifiersElement.getAsJsonObject();
             for (Entry<String, JsonElement> modifierEntry : modifiersRoot.entrySet()) {
-                Attribute attribute = Enums.getIfPresent(Attribute.class, modifierEntry.getKey().toUpperCase()).orNull();
-                if (attribute == null) {
+                Optional<@NotNull Attribute> attribute = Enums.getIfPresent(Attribute.class, modifierEntry.getKey().toUpperCase());
+                if (!attribute.isPresent()) {
                     throw new JsonParseException("Unexpected attribute modifier key. Given \"" + modifierEntry.getKey() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/Attribute.html");
                 }
 
@@ -279,13 +291,13 @@ public final class DragonLootElementItem implements IDragonLootElement {
 
                 String name = modifierRoot.get("name").getAsString();
                 double value = modifierRoot.get("value").getAsDouble();
-                AttributeModifier.Operation operation = Enums.getIfPresent(AttributeModifier.Operation.class, modifierRoot.get("operation").getAsString().toUpperCase()).orNull();
-                if (operation == null) {
+                Optional<@NotNull Operation> operation = Enums.getIfPresent(Operation.class, modifierRoot.get("operation").getAsString().toUpperCase());
+                if (!operation.isPresent()) {
                     throw new JsonParseException("Unknown operation for attribute modifier \"" + modifierEntry.getKey() + "\". Expected \"add_number\", \"add_scalar\" or \"multiply_scalar_1\"");
                 }
 
-                AttributeModifier modifier = (slot != null) ? new AttributeModifier(uuid, name, value, operation, slot) : new AttributeModifier(uuid, name, value, operation);
-                meta.addAttributeModifier(attribute, modifier);
+                AttributeModifier modifier = (slot != null) ? new AttributeModifier(uuid, name, value, operation.get(), slot) : new AttributeModifier(uuid, name, value, operation.get());
+                meta.addAttributeModifier(attribute.get(), modifier);
             }
         }
 
@@ -328,12 +340,12 @@ public final class DragonLootElementItem implements IDragonLootElement {
                     }
 
                     DyeColor colour = Enums.getIfPresent(DyeColor.class, patternRoot.get("color").getAsString().toUpperCase()).or(DyeColor.WHITE);
-                    PatternType pattern = Enums.getIfPresent(PatternType.class, patternRoot.get("pattern").getAsString().toUpperCase()).orNull();
-                    if (pattern == null) {
+                    Optional<@NotNull PatternType> pattern = Enums.getIfPresent(PatternType.class, patternRoot.get("pattern").getAsString().toUpperCase());
+                    if (!pattern.isPresent()) {
                         throw new JsonParseException("Unexpected value for \"pattern\". Given \"" + root.get("pattern").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/banner/PatternType.html");
                     }
 
-                    metaSpecific.addPattern(new Pattern(colour, pattern));
+                    metaSpecific.addPattern(new Pattern(colour, pattern.get()));
                 }
             }
         }
@@ -351,12 +363,12 @@ public final class DragonLootElementItem implements IDragonLootElement {
             }
 
             if (root.has("generation")) {
-                BookMeta.Generation generation = Enums.getIfPresent(BookMeta.Generation.class, root.get("generation").getAsString().toUpperCase()).orNull();
-                if (generation == null) {
+                Optional<@NotNull Generation> generation = Enums.getIfPresent(BookMeta.Generation.class, root.get("generation").getAsString().toUpperCase());
+                if (!generation.isPresent()) {
                     throw new JsonParseException("Unexpected value for \"generation\". Given \"" + root.get("generation").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/BookMeta.Generation.html");
                 }
 
-                metaSpecific.setGeneration(generation);
+                metaSpecific.setGeneration(generation.get());
             }
 
             if (root.has("pages") && root.get("pages").isJsonArray()) {
@@ -374,12 +386,12 @@ public final class DragonLootElementItem implements IDragonLootElement {
 
             FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
 
-            FireworkEffect.Type effectType = Enums.getIfPresent(FireworkEffect.Type.class, root.get("effect").getAsString().toUpperCase()).orNull();
-            if (effectType == null) {
+            Optional<@NotNull Type> effectType = Enums.getIfPresent(FireworkEffect.Type.class, root.get("effect").getAsString().toUpperCase());
+            if (!effectType.isPresent()) {
                 throw new JsonParseException("Unexpected value for \"effect\". Given \"" + root.get("effect").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/FireworkEffect.Type.html");
             }
 
-            effectBuilder.with(effectType);
+            effectBuilder.with(effectType.get());
             effectBuilder.flicker(root.has("flicker") ? root.get("flicker").getAsBoolean() : false);
             effectBuilder.flicker(root.has("trail") ? root.get("trail").getAsBoolean() : true);
 
@@ -450,12 +462,12 @@ public final class DragonLootElementItem implements IDragonLootElement {
                     JsonObject effectRoot = effectElement.getAsJsonObject();
                     FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
 
-                    FireworkEffect.Type effectType = Enums.getIfPresent(FireworkEffect.Type.class, effectRoot.get("effect").getAsString().toUpperCase()).orNull();
-                    if (effectType == null) {
+                    Optional<@NotNull Type> effectType = Enums.getIfPresent(FireworkEffect.Type.class, effectRoot.get("effect").getAsString().toUpperCase());
+                    if (!effectType.isPresent()) {
                         throw new JsonParseException("Unexpected value for \"effect\". Given \"" + effectRoot.get("effect").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/FireworkEffect.Type.html");
                     }
 
-                    effectBuilder.with(effectType);
+                    effectBuilder.with(effectType.get());
                     effectBuilder.flicker(effectRoot.has("flicker") ? effectRoot.get("flicker").getAsBoolean() : false);
                     effectBuilder.flicker(effectRoot.has("trail") ? effectRoot.get("trail").getAsBoolean() : true);
 
@@ -691,12 +703,12 @@ public final class DragonLootElementItem implements IDragonLootElement {
             TropicalFishBucketMeta metaSpecific = (TropicalFishBucketMeta) meta;
 
             if (root.has("pattern")) {
-                TropicalFish.Pattern pattern = Enums.getIfPresent(TropicalFish.Pattern.class, root.get("pattern").getAsString().toUpperCase()).orNull();
-                if (pattern == null) {
+                Optional<TropicalFish.@NotNull Pattern> pattern = Enums.getIfPresent(TropicalFish.Pattern.class, root.get("pattern").getAsString().toUpperCase());
+                if (!pattern.isPresent()) {
                     throw new JsonParseException("Unexpected value for \"pattern\". Given \"" + root.get("pattern").getAsString() + "\", expected https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/TropicalFish.Pattern.html");
                 }
 
-                metaSpecific.setPattern(pattern);
+                metaSpecific.setPattern(pattern.get());
             }
 
             if (root.has("color") && root.get("color").isJsonObject()) {
@@ -716,7 +728,8 @@ public final class DragonLootElementItem implements IDragonLootElement {
         return elementBuilder.build(item, weight);
     }
 
-    private static IntegerRange parseRange(JsonObject root, String elementName) {
+    @NotNull
+    private static IntegerRange parseRange(@NotNull JsonObject root, @NotNull String elementName) {
         JsonElement element = root.get(elementName);
         if (element.isJsonPrimitive()) {
             return IntegerRange.only(Math.max(element.getAsInt(), 0));
@@ -739,19 +752,19 @@ public final class DragonLootElementItem implements IDragonLootElement {
     private static final class DragonLootElementItemBuilder {
 
         private IntegerRange amount, damage;
-        private Map<Enchantment, IntegerRange> enchantments;
+        private Map<@NotNull Enchantment, @NotNull IntegerRange> enchantments;
 
         private DragonLootElementItemBuilder() { }
 
-        public void amount(IntegerRange amount) {
+        public void amount(@NotNull IntegerRange amount) {
             this.amount = amount;
         }
 
-        public void damage(IntegerRange damage) {
+        public void damage(@NotNull IntegerRange damage) {
             this.damage = damage;
         }
 
-        public void enchantment(Enchantment enchantment, IntegerRange levelRange) {
+        public void enchantment(@NotNull Enchantment enchantment, @NotNull IntegerRange levelRange) {
             if (enchantments == null) {
                 this.enchantments = new HashMap<>();
             }
@@ -759,7 +772,8 @@ public final class DragonLootElementItem implements IDragonLootElement {
             this.enchantments.put(enchantment, levelRange);
         }
 
-        public DragonLootElementItem build(ItemStack item, double weight) {
+        @NotNull
+        public DragonLootElementItem build(@NotNull ItemStack item, double weight) {
             DragonLootElementItem element = new DragonLootElementItem(item, weight);
 
             element.amount = (amount != null ? amount : IntegerRange.only(1));
