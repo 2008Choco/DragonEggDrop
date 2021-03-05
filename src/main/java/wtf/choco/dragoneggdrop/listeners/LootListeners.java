@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
+import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
@@ -38,7 +39,12 @@ public final class LootListeners implements Listener {
             return;
         }
 
-        DragonLootElementEgg egg = dragon.getLootTable().getEgg();
+        DragonLootTable lootTable = dragon.getLootTable();
+        if (lootTable == null) {
+            return;
+        }
+
+        DragonLootElementEgg egg = lootTable.getEgg();
         if (egg == null) {
             return;
         }
