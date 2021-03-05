@@ -4,9 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import wtf.choco.commons.function.DoubleBiPredicate;
+import wtf.choco.commons.function.DoubleProvider;
 import wtf.choco.dragoneggdrop.utils.JsonUtils;
-import wtf.choco.dragoneggdrop.utils.function.DoubleBiPredicate;
-import wtf.choco.dragoneggdrop.utils.function.DoubleProvider;
 
 /**
  * An {@link EquationCondition} implementation. Compares a double value fetched from a {@link ConditionContext}

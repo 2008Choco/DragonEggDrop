@@ -22,6 +22,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import wtf.choco.commons.util.UpdateChecker;
+import wtf.choco.commons.util.UpdateChecker.UpdateReason;
 import wtf.choco.dragoneggdrop.commands.CommandDragonEggDrop;
 import wtf.choco.dragoneggdrop.commands.CommandDragonParticle;
 import wtf.choco.dragoneggdrop.commands.CommandDragonRespawn;
@@ -42,8 +44,6 @@ import wtf.choco.dragoneggdrop.registry.HashRegistry;
 import wtf.choco.dragoneggdrop.registry.Registry;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
 import wtf.choco.dragoneggdrop.utils.DataFileUtils;
-import wtf.choco.dragoneggdrop.utils.UpdateChecker;
-import wtf.choco.dragoneggdrop.utils.UpdateChecker.UpdateReason;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 /**

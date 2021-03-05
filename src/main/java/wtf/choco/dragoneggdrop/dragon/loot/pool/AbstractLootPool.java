@@ -3,8 +3,8 @@ package wtf.choco.dragoneggdrop.dragon.loot.pool;
 import java.util.Collection;
 import java.util.Random;
 
+import wtf.choco.commons.collection.RandomCollection;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.IDragonLootElement;
-import wtf.choco.dragoneggdrop.utils.RandomCollection;
 
 abstract class AbstractLootPool<T extends IDragonLootElement> implements ILootPool<T> {
 

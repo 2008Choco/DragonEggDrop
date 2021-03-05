@@ -11,12 +11,12 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 
+import wtf.choco.commons.util.UpdateChecker;
+import wtf.choco.commons.util.UpdateChecker.UpdateReason;
+import wtf.choco.commons.util.UpdateChecker.UpdateResult;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
 import wtf.choco.dragoneggdrop.utils.DataFileUtils;
-import wtf.choco.dragoneggdrop.utils.UpdateChecker;
-import wtf.choco.dragoneggdrop.utils.UpdateChecker.UpdateReason;
-import wtf.choco.dragoneggdrop.utils.UpdateChecker.UpdateResult;
 
 public final class CommandDragonEggDrop implements TabExecutor {
 

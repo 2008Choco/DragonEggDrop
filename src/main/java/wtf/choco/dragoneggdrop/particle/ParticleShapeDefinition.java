@@ -25,7 +25,7 @@ import wtf.choco.dragoneggdrop.particle.condition.EquationConditionAlwaysTrue;
 import wtf.choco.dragoneggdrop.particle.condition.EquationConditionDoubleComparison;
 import wtf.choco.dragoneggdrop.particle.condition.EquationConditionStringComparison;
 import wtf.choco.dragoneggdrop.registry.Registerable;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
+import wtf.choco.dragoneggdrop.utils.math.ExpressionUtils;
 
 import static wtf.choco.dragoneggdrop.utils.JsonUtils.getOptionalField;
 import static wtf.choco.dragoneggdrop.utils.JsonUtils.getRequiredField;
@@ -197,7 +197,7 @@ public class ParticleShapeDefinition implements Registerable {
             String xExpressionString = getRequiredField(equationObject, "x", JsonElement::getAsString);
             String zExpressionString = getRequiredField(equationObject, "z", JsonElement::getAsString);
 
-            ConditionalEquationData equationData = new ConditionalEquationData(MathUtils.parseExpression(xExpressionString), MathUtils.parseExpression(zExpressionString));
+            ConditionalEquationData equationData = new ConditionalEquationData(ExpressionUtils.parseExpression(xExpressionString), ExpressionUtils.parseExpression(zExpressionString));
 
             if (equationObject.has("conditions")) {
                 JsonElement conditionsElement = equationObject.get("conditions");

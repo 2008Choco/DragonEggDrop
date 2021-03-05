@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.particle.condition.ConditionContext;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 
 /**
  * Represents a set of tickable equation data capable of animating a {@link ParticleShapeDefinition}
@@ -67,7 +67,7 @@ public class AnimatedParticleSession {
             this.displayParticles(equationData);
         }
 
-        this.currentLocation.subtract(0.0D, MathUtils.clamp(equationData.getSpeedMultiplier(), 0.1, 2.0), 0.0D);
+        this.currentLocation.subtract(0.0D, MathUtil.clamp(equationData.getSpeedMultiplier(), 0.1, 2.0), 0.0D);
         this.wait = 0;
     }
 

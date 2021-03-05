@@ -55,10 +55,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import wtf.choco.commons.util.NamespacedKeyUtil;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import wtf.choco.dragoneggdrop.utils.IntegerRange;
-import wtf.choco.dragoneggdrop.utils.NamespacedKeyUtil;
 
 /**
  * An implementation of {@link IDragonLootElement} to represent an item.

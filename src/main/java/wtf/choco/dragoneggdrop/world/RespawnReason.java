@@ -2,8 +2,8 @@ package wtf.choco.dragoneggdrop.world;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 
 /**
  * The trigger reason that allowed an Ender Dragon to start its respawning process.
@@ -30,7 +30,7 @@ public enum RespawnReason {
     }
 
     public int getRespawnTime(FileConfiguration config) {
-        return MathUtils.parseRespawnSeconds(config.getString(configPath), defaultSeconds);
+        return MathUtil.parseSeconds(config.getString(configPath), defaultSeconds);
     }
 
 }

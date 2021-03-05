@@ -5,13 +5,9 @@
 
   <groupId>wtf.choco</groupId>
   <artifactId>DragonEggDrop</artifactId>
-  <version>1.9.1</version>
+  <version>1.9.2-DEV</version>
   <name>DragonEggDrop</name>
   <description>Reward your players with a dragon egg and/or loot chest after every Ender Dragon battle in a grand fashion</description>
-
-  <properties>
-    <skipTests>true</skipTests>
-  </properties>
 
   <repositories>
     <repository>
@@ -24,7 +20,11 @@
     </repository>
     <repository>
       <id>CodeMC</id>
-      <url>https://repo.codemc.org/repository/maven-public</url>
+      <url>https://repo.codemc.org/repository/maven-public/</url>
+    </repository>
+    <repository>
+      <id>jitpack</id>
+      <url>https://jitpack.io/</url>
     </repository>
   </repositories>
 
@@ -79,6 +79,10 @@
               <pattern>org.bstats</pattern>
               <shadedPattern>wtf.choco.dragoneggdrop.metrics</shadedPattern>
             </relocation>
+            <relocation>
+              <pattern>wtf.choco.commons</pattern>
+              <shadedPattern>wtf.choco.dragoneggdrop.commons</shadedPattern>
+            </relocation>
           </relocations>
         </configuration>
         <executions>
@@ -128,17 +132,24 @@
     </dependency>
 
     <dependency>
-      <groupId>me.clip</groupId>
-      <artifactId>placeholderapi</artifactId>
-      <version>2.10.8</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.bstats</groupId>
       <artifactId>bstats-bukkit</artifactId>
       <version>1.7</version>
       <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.2008Choco</groupId>
+      <artifactId>ChocoCommons</artifactId>
+      <version>083c14a1f1</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>me.clip</groupId>
+      <artifactId>placeholderapi</artifactId>
+      <version>2.10.8</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

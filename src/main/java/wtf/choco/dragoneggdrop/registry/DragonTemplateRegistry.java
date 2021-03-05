@@ -1,7 +1,7 @@
 package wtf.choco.dragoneggdrop.registry;
 
+import wtf.choco.commons.collection.RandomCollection;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
-import wtf.choco.dragoneggdrop.utils.RandomCollection;
 
 /**
  * A special {@link Registry} implementation for {@link DragonTemplate DragonTemplates}.

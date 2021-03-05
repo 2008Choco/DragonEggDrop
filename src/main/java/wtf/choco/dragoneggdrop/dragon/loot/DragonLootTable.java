@@ -26,6 +26,7 @@ import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementCommand;
@@ -36,7 +37,6 @@ import wtf.choco.dragoneggdrop.dragon.loot.pool.ILootPool;
 import wtf.choco.dragoneggdrop.dragon.loot.pool.LootPoolCommand;
 import wtf.choco.dragoneggdrop.dragon.loot.pool.LootPoolItem;
 import wtf.choco.dragoneggdrop.registry.Registerable;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 
 /**
  * Represents a dragon's loot table. These tables are used to randomly generate unique
@@ -269,7 +269,7 @@ public class DragonLootTable implements Registerable {
             JsonObject chestRoot = root.getAsJsonObject("chest");
 
             if (chestRoot.has("chance")) {
-                chestChance = MathUtils.clamp(chestRoot.get("chance").getAsDouble(), 0.0, 100.0);
+                chestChance = MathUtil.clamp(chestRoot.get("chance").getAsDouble(), 0.0, 100.0);
             }
 
             if (chestRoot.has("name")) {

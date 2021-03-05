@@ -17,10 +17,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.PlayerInventory;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.utils.ConfigUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class PortalClickListener implements Listener {
@@ -59,7 +59,7 @@ public final class PortalClickListener implements Listener {
         boolean condensed = config.getBoolean(DEDConstants.CONFIG_RESPAWN_MESSAGES_CONDENSED);
         TimeUnit[] omitions = ConfigUtils.getTimeUnits(config.getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS));
 
-        DragonEggDrop.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + MathUtils.getFormattedTime(secondsRemaining, condensed, omitions));
+        DragonEggDrop.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + MathUtil.getFormattedTime(secondsRemaining, condensed, omitions));
     }
 
 }

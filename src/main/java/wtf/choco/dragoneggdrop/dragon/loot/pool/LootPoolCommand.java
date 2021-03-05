@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementCommand;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 
 /**
  * Represents a {@link ILootPool} implementation for {@link DragonLootElementCommand}s.
@@ -88,7 +88,7 @@ public class LootPoolCommand extends AbstractLootPool<DragonLootElementCommand> 
     public static LootPoolCommand fromJson(JsonObject root) {
         int minRolls = 0, maxRolls = 0;
         String name = root.has("name") ? root.get("name").getAsString() : null;
-        double chance = root.has("chance") ? MathUtils.clamp(root.get("chance").getAsDouble(), 0.0, 100.0) : 100.0;
+        double chance = root.has("chance") ? MathUtil.clamp(root.get("chance").getAsDouble(), 0.0, 100.0) : 100.0;
         List<DragonLootElementCommand> commandElements = new ArrayList<>();
 
         if (root.has("rolls")) {

@@ -16,12 +16,12 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.utils.CommandUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class CommandDragonRespawn implements TabExecutor {
@@ -85,7 +85,7 @@ public final class CommandDragonRespawn implements TabExecutor {
                 return true;
             }
 
-            int respawnSeconds = (args.length >= 2) ? MathUtils.parseRespawnSeconds(args[1]) : 300; // Default 5 minutes
+            int respawnSeconds = (args.length >= 2) ? MathUtil.parseSeconds(args[1]) : 300; // Default 5 minutes
             DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
             if (args.length >= 4) {
                 DragonTemplate templateArgument = plugin.getDragonTemplateRegistry().get(args[3]);

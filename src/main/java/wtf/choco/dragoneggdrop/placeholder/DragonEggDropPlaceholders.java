@@ -17,12 +17,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 
+import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DamageHistory;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.utils.ConfigUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
-import wtf.choco.dragoneggdrop.utils.math.MathUtils;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class DragonEggDropPlaceholders {
@@ -189,7 +189,7 @@ public final class DragonEggDropPlaceholders {
             boolean condensed = config.getBoolean(DEDConstants.CONFIG_RESPAWN_MESSAGES_CONDENSED);
             TimeUnit[] omitions = ConfigUtils.getTimeUnits(config.getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS));
 
-            return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn(), condensed, omitions) : "no respawn in progress";
+            return (endWorld.isRespawnInProgress()) ? MathUtil.getFormattedTime(endWorld.getTimeUntilRespawn(), condensed, omitions) : "no respawn in progress";
         }
 
         else if (placeholder.startsWith("respawn_time_")) { // %dragoneggdrop_respawn_time[_world]%
@@ -204,7 +204,7 @@ public final class DragonEggDropPlaceholders {
             boolean condensed = config.getBoolean(DEDConstants.CONFIG_RESPAWN_MESSAGES_CONDENSED);
             TimeUnit[] omitions = ConfigUtils.getTimeUnits(config.getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS));
 
-            return (endWorld.isRespawnInProgress()) ? MathUtils.getFormattedTime(endWorld.getTimeUntilRespawn(), condensed, omitions) : null;
+            return (endWorld.isRespawnInProgress()) ? MathUtil.getFormattedTime(endWorld.getTimeUntilRespawn(), condensed, omitions) : null;
         }
 
         else if (DragonEggDropPlaceholders.PATTERN_TOP_DAMAGER.asPredicate().test(placeholder)) { // %dragoneggdrop_top_damager<_number>[_world]%
