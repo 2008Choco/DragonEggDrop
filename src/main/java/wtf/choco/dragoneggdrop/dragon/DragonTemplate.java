@@ -308,14 +308,14 @@ public class DragonTemplate implements Registerable {
             templateBuilder.name(dragonName);
         }
 
-        String barColorString = templateFile.getString(DEDConstants.TEMPLATE_BAR_COLOR, "SOLID");
-        if (barColorString != null) {
-            templateBuilder.barStyle(Enums.getIfPresent(BarStyle.class, barColorString.toUpperCase()).or(BarStyle.SOLID));
+        String barStyleString = templateFile.getString(DEDConstants.TEMPLATE_BAR_STYLE, "SOLID");
+        if (barStyleString != null) {
+            templateBuilder.barStyle(Enums.getIfPresent(BarStyle.class, barStyleString.toUpperCase()).or(BarStyle.SOLID));
         }
 
-        String barStyleString = templateFile.getString(DEDConstants.TEMPLATE_BAR_STYLE, "PINK");
-        if (barStyleString != null) {
-            templateBuilder.barColor(Enums.getIfPresent(BarColor.class, barStyleString.toUpperCase()).or(BarColor.PINK));
+        String barColorString = templateFile.getString(DEDConstants.TEMPLATE_BAR_COLOR, "PINK");
+        if (barColorString != null) {
+            templateBuilder.barColor(Enums.getIfPresent(BarColor.class, barColorString.toUpperCase()).or(BarColor.PINK));
         }
 
         templateBuilder.spawnWeight(templateFile.getDouble(DEDConstants.TEMPLATE_SPAWN_WEIGHT, 1));
