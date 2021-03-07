@@ -34,7 +34,7 @@ public enum RespawnReason {
         this.defaultSeconds = defaultSeconds;
     }
 
-    public int getRespawnTime(@NotNull FileConfiguration config) {
+    public long getRespawnTime(@NotNull FileConfiguration config) {
         Preconditions.checkArgument(config != null, "config must not be null");
         return MathUtil.parseSeconds(config.getString(configPath), defaultSeconds);
     }

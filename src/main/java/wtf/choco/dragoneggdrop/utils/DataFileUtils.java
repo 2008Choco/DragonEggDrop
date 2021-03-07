@@ -26,6 +26,7 @@ import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.particle.ParticleShapeDefinition;
 import wtf.choco.dragoneggdrop.registry.Registry;
+import wtf.choco.dragoneggdrop.world.DragonRespawnData;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 /**
@@ -55,9 +56,6 @@ public final class DataFileUtils {
 
         for (EndWorldWrapper world : EndWorldWrapper.getAll()) {
             JsonObject jsonWorld = new JsonObject();
-            if (world.isRespawnInProgress()) {
-                jsonWorld.addProperty("respawnTime", world.getTimeUntilRespawn());
-            }
 
             DragonTemplate respawningTemplate = world.getRespawningTemplate();
             if (respawningTemplate != null) {
@@ -77,6 +75,12 @@ public final class DataFileUtils {
             DragonLootTable lootTableOverride = world.getLootTableOverride();
             if (lootTableOverride != null) {
                 jsonWorld.addProperty("lootTableOverride", lootTableOverride.getId());
+            }
+
+            DragonRespawnData respawnData = world.getDragonRespawnData();
+            if (world.isRespawnInProgress() && respawnData != null) {
+                jsonWorld.addProperty("respawnStartTime", respawnData.getStartTime());
+                jsonWorld.addProperty("respawnDuration", respawnData.getDuration());
             }
 
             root.add(world.getWorld().getName(), jsonWorld);
@@ -123,14 +127,6 @@ public final class DataFileUtils {
             EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             JsonObject element = entry.getValue().getAsJsonObject();
 
-            if (element.has("respawnTime")) {
-                if (worldWrapper.isRespawnInProgress()) {
-                    worldWrapper.stopRespawn();
-                }
-
-                worldWrapper.startRespawn(element.get("respawnTime").getAsInt());
-            }
-
             if (element.has("respawnTemplate")) {
                 DragonTemplate template = dragonTemplateRegistry.get(element.get("respawnTemplate").getAsString());
                 if (template != null) {
@@ -162,6 +158,27 @@ public final class DataFileUtils {
                     worldWrapper.setLootTableOverride(lootTable);
                 }
             }
+
+            if (element.has("respawnStartTime") && element.has("respawnDuration")) {
+                if (worldWrapper.isRespawnInProgress()) {
+                    worldWrapper.stopRespawn();
+                }
+
+                long startTime = element.get("respawnStartTime").getAsLong();
+                long duration = element.get("respawnDuration").getAsLong();
+
+                worldWrapper.startRespawn(new DragonRespawnData(worldWrapper, startTime, duration));
+            }
+
+            // LEGACY DATA
+            else if (element.has("respawnTime")) {
+                if (worldWrapper.isRespawnInProgress()) {
+                    worldWrapper.stopRespawn();
+                }
+
+                worldWrapper.startRespawn(element.get("respawnTime").getAsInt());
+            }
+            // LEGACY DATA END
         }
     }
 

@@ -1,5 +1,7 @@
 package wtf.choco.dragoneggdrop.tasks;
 
+import com.google.common.base.Preconditions;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,7 @@ import wtf.choco.dragoneggdrop.api.BattleState;
 import wtf.choco.dragoneggdrop.api.BattleStateChangeEvent;
 import wtf.choco.dragoneggdrop.utils.ActionBarUtil;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
+import wtf.choco.dragoneggdrop.world.DragonRespawnData;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 import wtf.choco.dragoneggdrop.world.PortalCrystal;
 
@@ -42,21 +45,21 @@ public class RespawnRunnable extends BukkitRunnable {
     private final int announceMessageRadiusSquared;
 
     private int currentCrystal = 0, currentMessage = 0;
-    private int secondsUntilRespawn;
 
     /**
      * Construct a new RespawnRunnable object.
      *
      * @param plugin an instance of the DragonEggDrop plugin
-     * @param world the world to execute a respawn
-     * @param respawnTime the time in seconds until the respawn is executed
+     * @param worldWrapper the world to execute a respawn
      */
-    public RespawnRunnable(@NotNull DragonEggDrop plugin, @NotNull World world, int respawnTime) {
-        this.plugin = plugin;
-        this.worldWrapper = EndWorldWrapper.of(world);
-        this.secondsUntilRespawn = respawnTime;
+    public RespawnRunnable(@NotNull DragonEggDrop plugin, @NotNull EndWorldWrapper worldWrapper) {
+        Preconditions.checkArgument(plugin != null, "plugin must not be null");
+        Preconditions.checkArgument(worldWrapper != null, "worldWrapper must not be null");
 
-        this.dragonBattle = world.getEnderDragonBattle();
+        this.plugin = plugin;
+        this.worldWrapper = worldWrapper;
+
+        this.dragonBattle = worldWrapper.getWorld().getEnderDragonBattle();
         this.dragon = dragonBattle.getEnderDragon();
 
         this.announceMessages = plugin.getConfig().getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_MESSAGES).stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
@@ -73,7 +76,13 @@ public class RespawnRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (this.secondsUntilRespawn > 0) {
+        DragonRespawnData respawnData = worldWrapper.getDragonRespawnData();
+        if (respawnData == null) {
+            this.cancel();
+            return;
+        }
+
+        if (!respawnData.isReady()) {
             if (announceRespawn) {
                 // Show actionbar messages
                 String message = announceMessages.get(currentMessage);
@@ -93,7 +102,6 @@ public class RespawnRunnable extends BukkitRunnable {
                 }
             }
 
-            this.secondsUntilRespawn--;
             return;
         }
 
@@ -161,15 +169,6 @@ public class RespawnRunnable extends BukkitRunnable {
             this.worldWrapper.stopRespawn();
             this.cancel();
         }
-    }
-
-    /**
-     * Get the amount of time remaining (in seconds) until the dragon respawns.
-     *
-     * @return the remaining time
-     */
-    public int getSecondsUntilRespawn() {
-        return secondsUntilRespawn;
     }
 
 }

@@ -36,6 +36,7 @@ public class EndWorldWrapper {
     private UUID previousDragonUUID;
 
     private RespawnRunnable respawnTask;
+    private DragonRespawnData dragonRespawnData;
 
     private final DragonEggDrop plugin;
     private final UUID world;
@@ -74,7 +75,7 @@ public class EndWorldWrapper {
      * template and respawn delay. This respawn may or may not fail depending on whether
      * or not a dragon already exists or a respawn is already in progress.
      *
-     * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
+     * @param respawnData the respawn data
      * @param template the dragon template to spawn. Must not be null
      * @param lootTable the loot table to use on death. This overrides any already-set
      * loot table from {@link #setLootTableOverride(DragonLootTable)}. If null, the
@@ -83,12 +84,12 @@ public class EndWorldWrapper {
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(int respawnDelay, @NotNull DragonTemplate template, @Nullable DragonLootTable lootTable) {
-        Preconditions.checkArgument(respawnDelay >= 0, "Respawn delays must be greater than or equal to 0");
-        Preconditions.checkArgument(template != null, "Cannot respawn null template");
+    public boolean startRespawn(@NotNull DragonRespawnData respawnData, @NotNull DragonTemplate template, @Nullable DragonLootTable lootTable) {
+        Preconditions.checkArgument(respawnData != null, "respawnData must not be null");
+        Preconditions.checkArgument(template != null, "template must not be null");
 
         boolean dragonExists = !getWorld().getEntitiesByClasses(EnderDragon.class).isEmpty();
-        if (dragonExists || respawnTask != null) {
+        if (dragonExists || respawnTask != null || dragonRespawnData != null) {
             return false;
         }
 
@@ -96,8 +97,9 @@ public class EndWorldWrapper {
             this.setLootTableOverride(lootTable);
         }
 
+        this.dragonRespawnData = respawnData;
         this.setRespawningTemplate(template);
-        this.respawnTask = new RespawnRunnable(plugin, getWorld(), respawnDelay);
+        this.respawnTask = new RespawnRunnable(plugin, this);
         this.respawnTask.runTaskTimer(plugin, 0, 20);
         return true;
     }
@@ -107,14 +109,47 @@ public class EndWorldWrapper {
      * template and respawn delay. This respawn may or may not fail depending on whether
      * or not a dragon already exists or a respawn is already in progress.
      *
-     * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
+     * @param time the time (in seconds) until the dragon spawns
+     * @param template the dragon template to spawn. Must not be null
+     * @param lootTable the loot table to use on death. This overrides any already-set
+     * loot table from {@link #setLootTableOverride(DragonLootTable)}. If null, the
+     * override will not be set and any existing override will be used (or the template
+     * loot table if one was not set prior)
+     *
+     * @return the result of the respawn. true if successful, false otherwise
+     */
+    public boolean startRespawn(long time, @NotNull DragonTemplate template, @Nullable DragonLootTable lootTable) {
+        return startRespawn(new DragonRespawnData(this, System.currentTimeMillis(), time * 1000), template, lootTable);
+    }
+
+    /**
+     * Commence the Dragon's respawning processes in this world with a specific dragon
+     * template and respawn delay. This respawn may or may not fail depending on whether
+     * or not a dragon already exists or a respawn is already in progress.
+     *
+     * @param respawnData the respawn data
      * @param template the dragon template to spawn. If null, a regular dragon will be
      * respawned
      *
      * @return the result of the respawn. true if successful, false otherwise
      */
-    public boolean startRespawn(int respawnDelay, @NotNull DragonTemplate template) {
-        return startRespawn(respawnDelay, template, null);
+    public boolean startRespawn(@NotNull DragonRespawnData respawnData, @NotNull DragonTemplate template) {
+        return startRespawn(respawnData, template, null);
+    }
+
+    /**
+     * Commence the Dragon's respawning processes in this world with a specific dragon
+     * template and respawn delay. This respawn may or may not fail depending on whether
+     * or not a dragon already exists or a respawn is already in progress.
+     *
+     * @param time the time (in seconds) until the dragon spawns
+     * @param template the dragon template to spawn. If null, a regular dragon will be
+     * respawned
+     *
+     * @return the result of the respawn. true if successful, false otherwise
+     */
+    public boolean startRespawn(long time, @NotNull DragonTemplate template) {
+        return startRespawn(time, template, null);
     }
 
     /**
@@ -138,15 +173,31 @@ public class EndWorldWrapper {
      * dragon template and a set respawn delay. This respawn may or may not fail depending
      * on whether or not a dragon already exists or a respawn is already in progress.
      *
-     * @param respawnDelay the delay (in seconds) until the dragon spawns (countdown time)
+     * @param respawnData the respawn data
      *
      * @return the result of the respawn. true if successful, false otherwise
      *
-     * @see #startRespawn(int, DragonTemplate)
+     * @see #startRespawn(DragonRespawnData, DragonTemplate)
      */
-    public boolean startRespawn(int respawnDelay) {
+    public boolean startRespawn(@NotNull DragonRespawnData respawnData) {
         DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
-        return template != null && startRespawn(respawnDelay, template, null);
+        return template != null && startRespawn(respawnData, template, null);
+    }
+
+    /**
+     * Commence the Dragon's respawning process in this world with a randomly selected
+     * dragon template and a set respawn delay. This respawn may or may not fail depending
+     * on whether or not a dragon already exists or a respawn is already in progress.
+     *
+     * @param time the time (in seconds) until the dragon spawns
+     *
+     * @return the result of the respawn. true if successful, false otherwise
+     *
+     * @see #startRespawn(long, DragonTemplate)
+     */
+    public boolean startRespawn(long time) {
+        DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
+        return template != null && startRespawn(time, template, null);
     }
 
     /**
@@ -159,7 +210,7 @@ public class EndWorldWrapper {
      * @return the result of the respawn. true if successful, false otherwise
      *
      * @see #startRespawn(RespawnReason, DragonTemplate)
-     * @see #startRespawn(int)
+     * @see #startRespawn(long)
      */
     public boolean startRespawn(@NotNull RespawnReason reason) {
         DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
@@ -170,29 +221,48 @@ public class EndWorldWrapper {
      * Halt the Dragon respawning process if any are currently running.
      */
     public void stopRespawn() {
+        // Cancels automatically but I want to be absolutely certain
         if (respawnTask != null) {
             this.respawnTask.cancel();
         }
 
         this.respawnTask = null;
+        this.dragonRespawnData = null;
     }
 
     /**
-     * Check whether a respawn is currently in progress or not.
+     * Check whether or not a respawn is currently in progress.
      *
-     * @return true if actively respawning
+     * @return true if a respawn is in progress, false otherwise
      */
     public boolean isRespawnInProgress() {
-        return respawnTask != null;
+        return dragonRespawnData != null && respawnTask != null;
     }
 
     /**
-     * Get the amount of time remaining until the dragon respawns.
+     * Set the dragon respawn data. Note that if a respawn has not yet started, this method
+     * is effectively useless as it will be overridden by
+     * {@link #startRespawn(DragonRespawnData, DragonTemplate, DragonLootTable)} or any of
+     * its overloads.
+     * <p>
+     * This method is best used such that {@link #isRespawnInProgress()} is true in order
+     * to change the respawn timings.
      *
-     * @return the time remaining (in seconds). -1 if a respawn is not in progress
+     * @param dragonRespawnData the respawn data to set
      */
-    public int getTimeUntilRespawn() {
-        return (respawnTask != null ? respawnTask.getSecondsUntilRespawn() : -1);
+    public void setDragonRespawnData(@Nullable DragonRespawnData dragonRespawnData) {
+        this.dragonRespawnData = dragonRespawnData;
+    }
+
+    /**
+     * Get the current respawn data and timings. This method will only return a value such
+     * that {@link #isRespawnInProgress()} is true.
+     *
+     * @return the respawn data. null if no respawn is in progress
+     */
+    @Nullable
+    public DragonRespawnData getDragonRespawnData() {
+        return dragonRespawnData;
     }
 
     /**
@@ -236,7 +306,7 @@ public class EndWorldWrapper {
     /**
      * Set the template to respawn during the next process. If a respawn is not in
      * process, this value will be overridden after a call to
-     * {@link #startRespawn(int, DragonTemplate, DragonLootTable)} (or any of its
+     * {@link #startRespawn(long, DragonTemplate, DragonLootTable)} (or any of its
      * overrides).
      *
      * @param respawningTemplate the template to set

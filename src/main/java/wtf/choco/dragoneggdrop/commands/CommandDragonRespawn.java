@@ -86,7 +86,7 @@ public final class CommandDragonRespawn implements TabExecutor {
                 return true;
             }
 
-            int respawnSeconds = (args.length >= 2) ? MathUtil.parseSeconds(args[1]) : 300; // Default 5 minutes
+            long respawnSeconds = (args.length >= 2) ? MathUtil.parseSeconds(args[1]) : 300; // Default 5 minutes
             DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
             assert template != null; // Impossible
 

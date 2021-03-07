@@ -22,6 +22,7 @@ import wtf.choco.commons.util.MathUtil;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.utils.ConfigUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
+import wtf.choco.dragoneggdrop.world.DragonRespawnData;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class PortalClickListener implements Listener {
@@ -64,8 +65,8 @@ public final class PortalClickListener implements Listener {
         }
 
         EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-        int secondsRemaining = endWorld.getTimeUntilRespawn();
-        if (secondsRemaining <= 0) {
+        DragonRespawnData respawnData = endWorld.getDragonRespawnData();
+        if (respawnData == null || respawnData.isReady()) {
             return;
         }
 
@@ -73,7 +74,7 @@ public final class PortalClickListener implements Listener {
         boolean condensed = config.getBoolean(DEDConstants.CONFIG_RESPAWN_MESSAGES_CONDENSED);
         TimeUnit[] omitions = ConfigUtils.getTimeUnits(config.getStringList(DEDConstants.CONFIG_RESPAWN_MESSAGES_OMIT_TIME_UNITS));
 
-        DragonEggDrop.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + MathUtil.getFormattedTime(secondsRemaining, condensed, omitions));
+        DragonEggDrop.sendMessage(player, "Dragon will respawn in " + ChatColor.YELLOW + MathUtil.getFormattedTime(respawnData.getRemainingTime(TimeUnit.SECONDS), TimeUnit.SECONDS, condensed, omitions));
     }
 
 }

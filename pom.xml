@@ -148,7 +148,7 @@
     <dependency>
       <groupId>com.github.2008Choco</groupId>
       <artifactId>ChocoCommons</artifactId>
-      <version>083c14a1f1</version>
+      <version>847194b904</version>
       <scope>compile</scope>
     </dependency>
 
