@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
+import wtf.choco.dragoneggdrop.tasks.DragonCheckRunnable;
 import wtf.choco.dragoneggdrop.tasks.RespawnRunnable;
 
 /**
@@ -38,6 +39,9 @@ public class EndWorldWrapper {
     private RespawnRunnable respawnTask;
     private DragonRespawnData dragonRespawnData;
 
+    private DragonCheckRunnable dragonCheckRunnable;
+    private boolean dragonDying = false;
+
     private final DragonEggDrop plugin;
     private final UUID world;
 
@@ -52,6 +56,8 @@ public class EndWorldWrapper {
 
         this.plugin = DragonEggDrop.getInstance();
         this.world = world.getUID();
+        this.dragonCheckRunnable = new DragonCheckRunnable(plugin, this);
+        this.dragonCheckRunnable.runTaskTimer(plugin, 0L, 20L);
     }
 
     /**
@@ -266,6 +272,24 @@ public class EndWorldWrapper {
     }
 
     /**
+     * Set whether or not the dragon is dying.
+     *
+     * @param dragonDying true if dying
+     */
+    public void setDragonDying(boolean dragonDying) {
+        this.dragonDying = dragonDying;
+    }
+
+    /**
+     * Check whether or not the dragon is dying and its death animation is playing.
+     *
+     * @return true if dying, false otherwise
+     */
+    public boolean isDragonDying() {
+        return dragonDying;
+    }
+
+    /**
      * Set the battle that is active according to DragonEggDrop. This battle instance will
      * be used to generate names and lore for loot respectively. Additionally, the last
      * battle will be set to the current active battle (unless null)
@@ -423,6 +447,7 @@ public class EndWorldWrapper {
      * battles, as well as the state of a world according to DragonEggDrop.
      */
     public static void clear() {
+        WRAPPERS.values().forEach(world -> world.dragonCheckRunnable.cancel());
         WRAPPERS.clear();
     }
 

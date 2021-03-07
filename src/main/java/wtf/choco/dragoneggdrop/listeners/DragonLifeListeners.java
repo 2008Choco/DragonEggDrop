@@ -117,6 +117,7 @@ public final class DragonLifeListeners implements Listener {
         DragonBattle dragonBattle = dragon.getDragonBattle();
         EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
         worldWrapper.setPreviousDragonUUID(dragon.getUniqueId());
+        worldWrapper.setDragonDying(true);
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_COMMENCED, BattleState.BATTLE_END);
         Bukkit.getPluginManager().callEvent(bscEventCrystals);

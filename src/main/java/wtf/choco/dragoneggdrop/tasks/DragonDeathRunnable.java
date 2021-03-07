@@ -99,6 +99,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
 
         DragonBattle dragonBattle = dragon.getDragonBattle();
         this.worldWrapper.setActiveTemplate(null);
+        this.worldWrapper.setDragonDying(false);
 
         if (template != null) {
             DragonLootTable lootTable = worldWrapper.hasLootTableOverride() ? worldWrapper.getLootTableOverride() : template.getLootTable();

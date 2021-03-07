@@ -33,7 +33,6 @@ import wtf.choco.dragoneggdrop.dragon.DamageHistory;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.listeners.DamageHistoryListener;
 import wtf.choco.dragoneggdrop.listeners.DragonLifeListeners;
-import wtf.choco.dragoneggdrop.listeners.KillCommandDeprecationListener;
 import wtf.choco.dragoneggdrop.listeners.LootListeners;
 import wtf.choco.dragoneggdrop.listeners.PortalClickListener;
 import wtf.choco.dragoneggdrop.listeners.RespawnListeners;
@@ -103,7 +102,6 @@ public final class DragonEggDrop extends JavaPlugin {
         PluginManager manager = Bukkit.getPluginManager();
         manager.registerEvents(new DamageHistoryListener(this), this);
         manager.registerEvents(new DragonLifeListeners(this), this);
-        manager.registerEvents(new KillCommandDeprecationListener(this), this);
         manager.registerEvents(new LootListeners(this), this);
         manager.registerEvents(new PortalClickListener(this), this);
         manager.registerEvents(new RespawnListeners(this), this);
