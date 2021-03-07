@@ -10,12 +10,16 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -46,14 +50,15 @@ public final class DragonLifeListeners implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     private void onDragonSpawn(CreatureSpawnEvent event) {
         if (!(event.getEntity() instanceof EnderDragon)) {
             return;
         }
 
         EnderDragon dragon = (EnderDragon) event.getEntity();
-        if (dragon.getWorld().getEnvironment() != Environment.THE_END) {
+        World world = dragon.getWorld();
+        if (world.getEnvironment() != Environment.THE_END) {
             return;
         }
 
@@ -62,15 +67,24 @@ public final class DragonLifeListeners implements Listener {
             return;
         }
 
-        EndWorldWrapper world = EndWorldWrapper.of(dragon.getWorld());
-
-        DragonTemplate template = world.getRespawningTemplate();
-        if (plugin.getConfig().getBoolean(DEDConstants.CONFIG_STRICT_COUNTDOWN) && world.isRespawnInProgress()) {
-            world.stopRespawn();
+        if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+            // These need to be reset in case there was a template from before
+            BossBar bossBar = dragonBattle.getBossBar();
+            dragon.setCustomName(null);
+            bossBar.setTitle(dragon.getName());
+            bossBar.setStyle(BarStyle.SOLID);
+            bossBar.setColor(BarColor.PINK);
+            return;
         }
 
-        world.setActiveTemplate((template != null) ? template : (template = plugin.getDragonTemplateRegistry().getRandomTemplate()));
-        world.setRespawningTemplate(null);
+        EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
+        DragonTemplate template = worldWrapper.getRespawningTemplate();
+        if (plugin.getConfig().getBoolean(DEDConstants.CONFIG_STRICT_COUNTDOWN) && worldWrapper.isRespawnInProgress()) {
+            worldWrapper.stopRespawn();
+        }
+
+        worldWrapper.setActiveTemplate((template != null) ? template : (template = plugin.getDragonTemplateRegistry().getRandomTemplate()));
+        worldWrapper.setRespawningTemplate(null);
 
         if (template == null) { // Theoretically impossible but we're going to be absolutely certain here
             return;
@@ -95,9 +109,12 @@ public final class DragonLifeListeners implements Listener {
         }
 
         EnderDragon dragon = (EnderDragon) event.getEntity();
-        DragonBattle dragonBattle = dragon.getDragonBattle();
-
         World world = event.getEntity().getWorld();
+        if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+            return;
+        }
+
+        DragonBattle dragonBattle = dragon.getDragonBattle();
         EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
         worldWrapper.setPreviousDragonUUID(dragon.getUniqueId());
 
@@ -126,6 +143,10 @@ public final class DragonLifeListeners implements Listener {
         }
 
         World world = player.getWorld();
+        if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+            return;
+        }
+
         List<@NotNull EnderCrystal> crystals = PortalCrystal.getAllSpawnedCrystals(world);
 
         // Check for 3 crystals because PlayerInteractEvent is fired first

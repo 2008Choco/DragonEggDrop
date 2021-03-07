@@ -13,13 +13,15 @@ public final class DEDConstants {
 
     public static final String CONFIG_LIGHTNING_AMOUNT = "lightning.amount";
     public static final String CONFIG_LIGHTNING_DAMAGES_ENTITIES = "lightning.damages-entities";
-
-    public static final String CONFIG_ALLOW_CRYSTAL_RESPAWNS = "allow-crystal-respawns";
-    public static final String CONFIG_STRICT_COUNTDOWN = "strict-countdown";
     public static final String CONFIG_RESPAWN_ON_JOIN = "respawn-on-join";
     public static final String CONFIG_JOIN_RESPAWN_DELAY = "join-respawn-delay";
     public static final String CONFIG_RESPAWN_ON_DEATH = "respawn-on-death";
     public static final String CONFIG_DEATH_RESPAWN_DELAY = "death-respawn-delay";
+
+    public static final String CONFIG_ALLOW_CRYSTAL_RESPAWNS = "allow-crystal-respawns";
+    public static final String CONFIG_STRICT_COUNTDOWN = "strict-countdown";
+
+    public static final String CONFIG_DISABLED_WORLDS = "disabled-worlds";
 
     public static final String CONFIG_RESPAWN_MESSAGES_MESSAGES = "respawn-messages.messages";
     public static final String CONFIG_RESPAWN_MESSAGES_CONDENSED = "respawn-messages.condensed";

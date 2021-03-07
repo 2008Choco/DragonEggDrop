@@ -27,7 +27,7 @@ public final class RespawnListeners implements Listener {
     @EventHandler
     private void onPlayerSwitchWorlds(PlayerChangedWorldEvent event) {
         World world = event.getPlayer().getWorld();
-        if (world.getEnvironment() != Environment.THE_END) {
+        if (world.getEnvironment() != Environment.THE_END || plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
             return;
         }
 
@@ -71,7 +71,7 @@ public final class RespawnListeners implements Listener {
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
         World world = event.getPlayer().getWorld();
-        if (world.getEnvironment() != Environment.THE_END) {
+        if (world.getEnvironment() != Environment.THE_END || plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
             return;
         }
 

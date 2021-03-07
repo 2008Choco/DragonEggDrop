@@ -124,6 +124,10 @@ public final class DataFileUtils {
                 return;
             }
 
+            if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+                return;
+            }
+
             EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             JsonObject element = entry.getValue().getAsJsonObject();
 

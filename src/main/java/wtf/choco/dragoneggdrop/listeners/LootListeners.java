@@ -17,21 +17,33 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
+import wtf.choco.dragoneggdrop.utils.DEDConstants;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class LootListeners implements Listener {
 
+    private final DragonEggDrop plugin;
+
+    public LootListeners(DragonEggDrop plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     private void onItemSpawn(ItemSpawnEvent event) {
         Item item = event.getEntity();
-        ItemStack stack = item.getItemStack();
         World world = item.getWorld();
 
-        if (world.getEnvironment() != Environment.THE_END || stack.getType() != Material.DRAGON_EGG || stack.hasItemMeta()) {
+        if (world.getEnvironment() != Environment.THE_END || plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+            return;
+        }
+
+        ItemStack stack = item.getItemStack();
+        if (stack.getType() != Material.DRAGON_EGG || stack.hasItemMeta()) {
             return;
         }
 

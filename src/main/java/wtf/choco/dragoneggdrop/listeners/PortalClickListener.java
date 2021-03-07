@@ -42,6 +42,10 @@ public final class PortalClickListener implements Listener {
 
         Player player = event.getPlayer();
         World world = player.getWorld();
+        if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+            return;
+        }
+
         PlayerInventory inventory = player.getInventory();
 
         if (event.getMaterial() != Material.BEDROCK || world.getEnvironment() != World.Environment.THE_END || event.getHand() != EquipmentSlot.HAND

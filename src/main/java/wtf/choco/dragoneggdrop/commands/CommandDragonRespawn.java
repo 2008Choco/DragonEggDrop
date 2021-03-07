@@ -80,6 +80,11 @@ public final class CommandDragonRespawn implements TabExecutor {
                 return true;
             }
 
+            if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+                DragonEggDrop.sendMessage(sender, "Dragon respawning is disabled in this world.");
+                return true;
+            }
+
             EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
             if (worldWrapper.isRespawnInProgress()) {
                 DragonEggDrop.sendMessage(sender, "A respawn is already in progress. It must be stopped (" + ChatColor.YELLOW + "/" + label + " <stop>" + ChatColor.GRAY + ") before starting another");
@@ -131,6 +136,11 @@ public final class CommandDragonRespawn implements TabExecutor {
             if (args.length >= 2 && args[1].equalsIgnoreCase("set")) {
                 World world = getWorldFromContext(sender, args, 3);
                 if (world == null) {
+                    return true;
+                }
+
+                if (plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS).contains(world.getName())) {
+                    DragonEggDrop.sendMessage(sender, "Dragon respawning is disabled in this world.");
                     return true;
                 }
 
@@ -226,9 +236,12 @@ public final class CommandDragonRespawn implements TabExecutor {
             else if (args[0].equalsIgnoreCase("template") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
                 List<String> possibleOptions = new ArrayList<>();
                 possibleOptions.add("set");
+
+                List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
                 Bukkit.getWorlds().forEach(world -> {
-                    if (world.getEnvironment() == Environment.THE_END) {
-                        possibleOptions.add(world.getName());
+                    String worldName = world.getName();
+                    if (world.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(worldName)) {
+                        possibleOptions.add(worldName);
                     }
                 });
 
@@ -238,7 +251,8 @@ public final class CommandDragonRespawn implements TabExecutor {
 
         else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
-                return StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
+                return StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(w.getName()))
                         .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
             }
 
@@ -252,7 +266,8 @@ public final class CommandDragonRespawn implements TabExecutor {
                 return StringUtil.copyPartialMatches(args[3], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), new ArrayList<>());
             }
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
-                return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
+                List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
+                return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(w.getName()))
                         .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
             }
         }

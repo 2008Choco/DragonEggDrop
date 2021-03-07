@@ -29,6 +29,10 @@ allow-crystal-respawns: true
 # Whether or not to stop any running countdowns when a dragon has been spawned before its completion (such as with end crystals).
 strict-countdown: true
 
+# A list of world names in which DragonEggDrop's features will not apply
+disabled-worlds:
+- WorldName
+
 respawn-messages:
   # The messages to show in the action bar when a respawn countdown is running.
   # May be set to either one message or a list of messages. Lists will be iterated in order every second.

@@ -104,7 +104,7 @@ public final class DragonEggDrop extends JavaPlugin {
         manager.registerEvents(new DamageHistoryListener(this), this);
         manager.registerEvents(new DragonLifeListeners(this), this);
         manager.registerEvents(new KillCommandDeprecationListener(this), this);
-        manager.registerEvents(new LootListeners(), this);
+        manager.registerEvents(new LootListeners(this), this);
         manager.registerEvents(new PortalClickListener(this), this);
         manager.registerEvents(new RespawnListeners(this), this);
 
