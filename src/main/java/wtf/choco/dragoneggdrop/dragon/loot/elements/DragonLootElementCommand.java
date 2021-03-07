@@ -51,7 +51,7 @@ public class DragonLootElementCommand implements IDragonLootElement {
             return;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DragonEggDropPlaceholders.inject(killer, command).replace("%dragon%", template.getName()));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DragonEggDropPlaceholders.inject(killer, command.replace("%dragon%", template.getName())));
     }
 
     /**
