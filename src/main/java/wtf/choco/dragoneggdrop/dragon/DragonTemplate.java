@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
@@ -323,15 +321,19 @@ public class DragonTemplate implements Registerable {
         templateBuilder.spawnWeight(templateFile.getDouble(DEDConstants.TEMPLATE_SPAWN_WEIGHT, 1));
 
         if (templateFile.isList(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT)) {
-            Stream<@NotNull String> spawnAnnouncementStream = templateFile.getStringList(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT).stream();
+            List<@NotNull String> spawnAnnouncement = templateFile.getStringList(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT);
 
             if (dragonName != null) {
-                String finalDragonName = dragonName;
-                spawnAnnouncementStream.map(s -> s.replace("%dragon%", finalDragonName));
+                for (int i = 0; i < spawnAnnouncement.size(); i++) {
+                    spawnAnnouncement.set(i, spawnAnnouncement.get(i).replace("%dragon%", dragonName));
+                }
             }
 
-            spawnAnnouncementStream.map(line -> ChatColor.translateAlternateColorCodes('&', line));
-            templateBuilder.spawnAnnouncement(spawnAnnouncementStream.collect(Collectors.toList()));
+            for (int i = 0; i < spawnAnnouncement.size(); i++) {
+                spawnAnnouncement.set(i, ChatColor.translateAlternateColorCodes('&', spawnAnnouncement.get(i)));
+            }
+
+            templateBuilder.spawnAnnouncement(spawnAnnouncement);
         }
         else if (templateFile.isString(DEDConstants.TEMPLATE_SPAWN_ANNOUNCEMENT)) {
             List<@NotNull String> spawnAnnouncement = null;
