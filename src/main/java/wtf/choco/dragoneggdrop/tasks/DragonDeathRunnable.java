@@ -66,7 +66,13 @@ public class DragonDeathRunnable extends BukkitRunnable {
         // Portal location
         DragonBattle dragonBattle = dragon.getDragonBattle();
         Location endPortalLocation = dragonBattle != null ? dragonBattle.getEndPortalLocation() : null;
-        this.portalLocation = endPortalLocation != null ? endPortalLocation.add(0.5, 0.0, 0.5) : new Location(worldWrapper.getWorld(), 0, 63, 0);
+
+        if (endPortalLocation != null) {
+            this.portalLocation = endPortalLocation.add(0.5, 4.0, 0.5);
+        } else {
+            this.portalLocation = new Location(worldWrapper.getWorld(), 0.5, 63, 0.5);
+            this.portalLocation.setY(worldWrapper.getWorld().getHighestBlockYAt(0, 0) + 1);
+        }
 
         this.respawnDragon = config.getBoolean(DEDConstants.CONFIG_RESPAWN_ON_DEATH, false);
         this.runTaskTimer(plugin, 0, 1);
@@ -75,7 +81,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
         Bukkit.getPluginManager().callEvent(bscEventCrystals);
 
         if (particleShapeDefinition != null) {
-            this.particleSession = particleShapeDefinition.createSession(worldWrapper.getWorld(), portalLocation.getX() + 0.5, portalLocation.getZ() + 0.5);
+            this.particleSession = particleShapeDefinition.createSession(worldWrapper.getWorld(), portalLocation.getX(), portalLocation.getZ());
         }
     }
 
@@ -90,11 +96,10 @@ public class DragonDeathRunnable extends BukkitRunnable {
         }
 
         // Particles finished, place reward
-        Location location = particleSession != null ? particleSession.getCurrentLocation().clone().add(0, 1, 0) : portalLocation.clone().add(0.0, 4.0, 0.0);
 
         // Summon Zeus!
         for (int i = 0; i < lightningAmount; i++) {
-            this.worldWrapper.getWorld().strikeLightning(location).setMetadata(DEDConstants.METADATA_LOOT_LIGHTNING, new FixedMetadataValue(plugin, true));
+            this.worldWrapper.getWorld().strikeLightning(portalLocation).setMetadata(DEDConstants.METADATA_LOOT_LIGHTNING, new FixedMetadataValue(plugin, true));
         }
 
         DragonBattle dragonBattle = dragon.getDragonBattle();
@@ -110,7 +115,7 @@ public class DragonDeathRunnable extends BukkitRunnable {
                 this.plugin.getLogger().warning("Could not generate loot for template " + template.getId() + ". Invalid loot table. Is \"loot\" defined in the template?");
 
                 // Let's just generate an egg instead...
-                location.getBlock().setType(Material.DRAGON_EGG);
+                portalLocation.getBlock().setType(Material.DRAGON_EGG);
             }
 
             this.worldWrapper.setLootTableOverride(null); // Reset the loot table override. Use the template's loot table next instead
