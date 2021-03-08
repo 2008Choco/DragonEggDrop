@@ -40,7 +40,7 @@ import wtf.choco.dragoneggdrop.utils.DEDConstants;
  *
  * @author Parker Hawke - Choco
  */
-public class DragonTemplate implements Registerable {
+public final class DragonTemplate implements Registerable {
 
     private final String id;
     private final ParticleShapeDefinition particleShapeDefinition;
