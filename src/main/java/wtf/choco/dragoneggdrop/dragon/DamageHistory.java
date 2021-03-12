@@ -1,6 +1,9 @@
 package wtf.choco.dragoneggdrop.dragon;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -16,6 +19,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import wtf.choco.dragoneggdrop.utils.JsonUtils;
 
 /**
  * Represents a recordable history of damage for an entity.
@@ -162,16 +167,25 @@ public final class DamageHistory {
     /**
      * Record damage to this history.
      *
+     * @param source the UUID of the damage's source entity
+     * @param damage the damage to record
+     */
+    public void recordDamage(@NotNull UUID source, double damage) {
+        Preconditions.checkArgument(source != null, "source must not be null");
+        Preconditions.checkArgument(damage > 0.0, "damage must be greater than 0");
+
+        this.totalDamage.merge(source, damage, Double::sum);
+        this.damageHistory.push(new DamageEntry(source, damage));
+    }
+
+    /**
+     * Record damage to this history.
+     *
      * @param source the damage's source entity
      * @param damage the damage to record
      */
     public void recordDamage(@NotNull Entity source, double damage) {
-        Preconditions.checkArgument(source != null, "Cannot record damage for null entity");
-        Preconditions.checkArgument(damage > 0.0, "Recorded damage must be greater than 0");
-
-        UUID entityUUID = source.getUniqueId();
-        this.totalDamage.merge(entityUUID, damage, Double::sum);
-        this.damageHistory.push(new DamageEntry(entityUUID, damage));
+        this.recordDamage(source.getUniqueId(), damage);
     }
 
     /**
@@ -254,6 +268,64 @@ public final class DamageHistory {
     public void clear() {
         this.clearTotalDamage();
         this.clearDamageHistory();
+    }
+
+    /**
+     * Serialize this damage history to a {@link JsonObject}.
+     *
+     * @return the serialized history
+     */
+    @NotNull
+    public JsonObject toJson() {
+        JsonObject object = new JsonObject();
+
+        object.addProperty("entityUUID", entityUUID.toString());
+
+        if (!damageHistory.isEmpty()) {
+            JsonArray damageEntriesArray = new JsonArray();
+            this.damageHistory.forEach(entry -> {
+                JsonObject entryObject = new JsonObject();
+
+                entryObject.addProperty("source", entry.source.toString());
+                entryObject.addProperty("damage", entry.getDamage());
+
+                damageEntriesArray.add(entryObject);
+            });
+
+            object.add("damageEntries", damageEntriesArray);
+        }
+
+        return object;
+    }
+
+    /**
+     * Deserialize a {@link DamageHistory} instance from the given {@link JsonObject}.
+     *
+     * @param object the object from which to deserialize
+     *
+     * @return the damage history instance
+     */
+    @NotNull
+    public static DamageHistory fromJson(JsonObject object) {
+        UUID entityUUID = JsonUtils.getRequiredField(object, "entityUUID", element -> UUID.fromString(element.getAsString()));
+        JsonArray damageEntriesArray = JsonUtils.getOptionalField(object, "damageEntries", JsonElement::getAsJsonArray, new JsonArray());
+
+        DamageHistory damageHistory = new DamageHistory(entityUUID);
+
+        damageEntriesArray.forEach(damageEntryElement -> {
+            if (!damageEntryElement.isJsonObject()) {
+                return;
+            }
+
+            JsonObject damageEntryObject = damageEntryElement.getAsJsonObject();
+
+            UUID source = UUID.fromString(damageEntryObject.get("source").getAsString());
+            double damage = damageEntryObject.get("damage").getAsDouble();
+
+            damageHistory.recordDamage(source, damage);
+        });
+
+        return damageHistory;
     }
 
     /**

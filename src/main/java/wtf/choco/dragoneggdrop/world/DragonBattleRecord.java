@@ -146,7 +146,7 @@ public class DragonBattleRecord {
             object.addProperty("lootTable", lootTable.getId());
         }
 
-        // TODO: Add damage history
+        object.add("damageHistory", damageHistory.toJson());
         object.addProperty("deathTimestamp", deathTimestamp);
 
         return object;
@@ -168,7 +168,7 @@ public class DragonBattleRecord {
         String templateId = JsonUtils.getRequiredField(object, "template", JsonElement::getAsString);
         String lootTableId = JsonUtils.getOptionalField(object, "lootTable", JsonElement::getAsString, "");
         long deathTimestamp = JsonUtils.getOptionalField(object, "deathTimestamp", JsonElement::getAsLong, 0L);
-        // TODO: Damage history
+        DamageHistory damageHistory = JsonUtils.getOptionalField(object, "damageHistory", element -> DamageHistory.fromJson(element.getAsJsonObject()), DamageHistory.dummy());
 
         DragonEggDrop plugin = DragonEggDrop.getInstance();
 
@@ -179,7 +179,7 @@ public class DragonBattleRecord {
 
         DragonLootTable lootTable = plugin.getLootTableRegistry().get(lootTableId); // Can be null
 
-        return new DragonBattleRecord(world, template, DamageHistory.dummy(), deathTimestamp, lootTable); // TODO: Damage history
+        return new DragonBattleRecord(world, template, damageHistory, deathTimestamp, lootTable);
     }
 
 }
