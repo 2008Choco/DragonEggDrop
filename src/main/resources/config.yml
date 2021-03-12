@@ -33,6 +33,10 @@ strict-countdown: true
 disabled-worlds:
 - WorldName
 
+# The amount of dragon battles to keep a history of.
+# If an nth + 1 battle is fought, the oldest battle will be discarded. Be cautious with erroneously large numbers.
+world-history-size: 5
+
 respawn-messages:
   # The messages to show in the action bar when a respawn countdown is running.
   # May be set to either one message or a list of messages. Lists will be iterated in order every second.

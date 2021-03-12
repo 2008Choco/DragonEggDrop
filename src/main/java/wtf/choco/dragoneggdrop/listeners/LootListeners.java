@@ -23,6 +23,7 @@ import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.dragon.loot.elements.DragonLootElementEgg;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
+import wtf.choco.dragoneggdrop.world.DragonBattleRecord;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class LootListeners implements Listener {
@@ -47,12 +48,12 @@ public final class LootListeners implements Listener {
             return;
         }
 
-        DragonTemplate dragon = EndWorldWrapper.of(world).getPreviousTemplate();
-        if (dragon == null) {
+        DragonBattleRecord previousDragonBattle = EndWorldWrapper.of(world).getPreviousDragonBattle();
+        if (previousDragonBattle == null) {
             return;
         }
 
-        DragonLootTable lootTable = dragon.getLootTable();
+        DragonLootTable lootTable = previousDragonBattle.getLootTable();
         if (lootTable == null) {
             return;
         }
@@ -67,14 +68,16 @@ public final class LootListeners implements Listener {
             return;
         }
 
+        DragonTemplate dragonTemplate = previousDragonBattle.getTemplate();
+
         String name = egg.getName();
         if (name != null) {
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name.replace("%dragon%", dragon.getName())));
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name.replace("%dragon%", dragonTemplate.getName())));
         }
 
         List<@NotNull String> lore = egg.getLore();
         if (lore != null && !lore.isEmpty()) {
-            meta.setLore(lore.stream().map(line -> ChatColor.translateAlternateColorCodes('&', line.replace("%dragon%", dragon.getName()))).collect(Collectors.toList()));
+            meta.setLore(lore.stream().map(line -> ChatColor.translateAlternateColorCodes('&', line.replace("%dragon%", dragonTemplate.getName()))).collect(Collectors.toList()));
         }
 
         stack.setItemMeta(meta);

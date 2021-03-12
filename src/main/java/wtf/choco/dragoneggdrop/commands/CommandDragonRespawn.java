@@ -1,10 +1,15 @@
 package wtf.choco.dragoneggdrop.commands;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,17 +28,23 @@ import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.utils.CommandUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
+import wtf.choco.dragoneggdrop.world.DragonBattleRecord;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
 public final class CommandDragonRespawn implements TabExecutor {
 
     /* /dragonrespawn
-     *     <stop, interrupt, cancel> [world] - Stop any active respawn countdown
-     *     start [time] [world] [template] [loot_table] - Start a respawn
-     *     template - Get the template to spawn in the currnet world
+     *     : <stop, interrupt, cancel> [world] - Stop any active respawn countdown
+     *     : start [time] [world] [template] [loot_table] - Start a respawn
+     *     : template - Get the template to spawn in the current world
      *         set <template> [world] - Set the dragon to spawn while the countdown is active
      *         [world] - Get the template to spawn in the specified world
+     *     : history [world]
      */
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+             .withLocale(Locale.US)
+             .withZone(ZoneId.systemDefault());
 
     private final DragonEggDrop plugin;
 
@@ -183,6 +194,32 @@ public final class CommandDragonRespawn implements TabExecutor {
             return true;
         }
 
+        else if (args[0].equalsIgnoreCase("history")) {
+            World world = getWorldFromContext(sender, args, 1);
+            if (world == null) {
+                return true;
+            }
+
+            EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
+            List<@NotNull DragonBattleRecord> previousDragonBattles = worldWrapper.getPreviousDragonBattles();
+            if (previousDragonBattles.isEmpty()) {
+                DragonEggDrop.sendMessage(sender, "There have been no dragon battles in this world.");
+                return true;
+            }
+
+            sender.sendMessage(ChatColor.GRAY + "Previous battles in world " + ChatColor.GREEN + world.getName() + ChatColor.GRAY + ":");
+            for (int i = 0; i < previousDragonBattles.size(); i++) {
+                DragonBattleRecord battleRecord = previousDragonBattles.get(i);
+
+                DragonTemplate template = battleRecord.getTemplate();
+                DragonLootTable lootTable = battleRecord.getLootTable();
+                Instant deathTimestamp = battleRecord.getDeathInstant().truncatedTo(ChronoUnit.SECONDS);
+                String deathTimestampString = DATE_FORMATTER.format(deathTimestamp);
+
+                sender.sendMessage(ChatColor.WHITE.toString() + (i + 1) + ". " + template.getName() + ChatColor.GRAY + (lootTable != null ? " (loot table: " + ChatColor.AQUA + lootTable.getId() + ChatColor.GRAY + ")" : "") + " killed " + ChatColor.YELLOW + deathTimestampString);
+            }
+        }
+
         else {
             DragonEggDrop.sendMessage(sender, "Unknown argument " + ChatColor.YELLOW + args[0] + ChatColor.GRAY + ". Usage: " + ChatColor.YELLOW + "/" + label + " <stop|start|template>");
         }
@@ -203,14 +240,14 @@ public final class CommandDragonRespawn implements TabExecutor {
             CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_STOP, suggestions, "stop", "interrupt", "cancel");
             CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_START, suggestions, "start");
             CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE, suggestions, "template");
+            CommandUtils.addIfHasPermission(sender, DEDConstants.PERMISSION_COMMAND_HISTORY, suggestions, "history");
 
             return StringUtil.copyPartialMatches(args[0], suggestions, new ArrayList<>());
         }
 
         else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("interrupt") || args[0].equalsIgnoreCase("cancel") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_STOP)) {
-                return StringUtil.copyPartialMatches(args[1], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END)
-                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[1], getNonDisabledWorlds(), new ArrayList<>());
             }
 
             else if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
@@ -234,47 +271,40 @@ public final class CommandDragonRespawn implements TabExecutor {
             }
 
             else if (args[0].equalsIgnoreCase("template") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
-                List<String> possibleOptions = new ArrayList<>();
-                possibleOptions.add("set");
+                List<String> suggestions = getNonDisabledWorlds();
+                suggestions.add("set");
 
-                List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
-                Bukkit.getWorlds().forEach(world -> {
-                    String worldName = world.getName();
-                    if (world.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(worldName)) {
-                        possibleOptions.add(worldName);
-                    }
-                });
+                return StringUtil.copyPartialMatches(args[1], suggestions, new ArrayList<>());
+            }
 
-                return StringUtil.copyPartialMatches(args[1], possibleOptions, new ArrayList<>());
+            else if (args[0].equalsIgnoreCase("history") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_HISTORY)) {
+                return StringUtil.copyPartialMatches(args[1], getNonDisabledWorlds(), new ArrayList<>());
             }
         }
 
         else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
-                List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
-                return StringUtil.copyPartialMatches(args[2], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(w.getName()))
-                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[2], getNonDisabledWorlds(), new ArrayList<>());
             }
 
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
-                return StringUtil.copyPartialMatches(args[2], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[2], plugin.getDragonTemplateRegistry().keys(), new ArrayList<>());
             }
         }
 
         else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
-                return StringUtil.copyPartialMatches(args[3], new ArrayList<>(plugin.getDragonTemplateRegistry().keys()), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[3], plugin.getDragonTemplateRegistry().keys(), new ArrayList<>());
             }
+
             else if (args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("set") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_TEMPLATE)) {
-                List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
-                return StringUtil.copyPartialMatches(args[3], Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(w.getName()))
-                        .map(World::getName).collect(Collectors.toList()), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[3], getNonDisabledWorlds(), new ArrayList<>());
             }
         }
 
         else if (args.length == 5) {
             if (args[0].equalsIgnoreCase("start") && sender.hasPermission(DEDConstants.PERMISSION_COMMAND_RESPAWN_START)) {
-                return StringUtil.copyPartialMatches(args[4], new ArrayList<>(plugin.getLootTableRegistry().keys()), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[4], plugin.getLootTableRegistry().keys(), new ArrayList<>());
             }
         }
 
@@ -283,18 +313,19 @@ public final class CommandDragonRespawn implements TabExecutor {
 
     private World getWorldFromContext(CommandSender sender, String[] args, int argumentIndex) {
         if (args.length >= (argumentIndex + 1)) {
-            World world = Bukkit.getWorld(args[argumentIndex]);
+            String worldName = args[argumentIndex];
+            World world = Bukkit.getWorld(worldName);
             if (world == null) {
-                DragonEggDrop.sendMessage(sender, "Could not find a world with the name " + ChatColor.YELLOW + args[argumentIndex]);
+                DragonEggDrop.sendMessage(sender, "Could not find a world with the name " + ChatColor.YELLOW + worldName);
                 return null;
             }
 
             if (world.getEnvironment() != Environment.THE_END) {
-                DragonEggDrop.sendMessage(sender, "The specified world (" + ChatColor.YELLOW + args[argumentIndex] + ChatColor.GRAY + ") is not an end world");
+                DragonEggDrop.sendMessage(sender, "The specified world (" + ChatColor.YELLOW + worldName + ChatColor.GRAY + ") is not an end world");
                 return null;
             }
 
-            return Bukkit.getWorld(args[argumentIndex]);
+            return Bukkit.getWorld(worldName);
         }
 
         if (!(sender instanceof Player)) {
@@ -309,6 +340,20 @@ public final class CommandDragonRespawn implements TabExecutor {
         }
 
         return world;
+    }
+
+    private List<@NotNull String> getNonDisabledWorlds() {
+        List<@NotNull String> result = new ArrayList<>();
+
+        List<@NotNull String> disabledWorlds = plugin.getConfig().getStringList(DEDConstants.CONFIG_DISABLED_WORLDS);
+        Bukkit.getWorlds().forEach(world -> {
+            String worldName = world.getName();
+            if (world.getEnvironment() == Environment.THE_END && !disabledWorlds.contains(worldName)) {
+                result.add(worldName);
+            }
+        });
+
+        return result;
     }
 
 }

@@ -32,11 +32,13 @@ import org.jetbrains.annotations.NotNull;
 import wtf.choco.dragoneggdrop.DragonEggDrop;
 import wtf.choco.dragoneggdrop.api.BattleState;
 import wtf.choco.dragoneggdrop.api.BattleStateChangeEvent;
+import wtf.choco.dragoneggdrop.dragon.DamageHistory;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.placeholder.DragonEggDropPlaceholders;
 import wtf.choco.dragoneggdrop.tasks.DragonDeathRunnable;
 import wtf.choco.dragoneggdrop.utils.ActionBarUtil;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
+import wtf.choco.dragoneggdrop.world.DragonBattleRecord;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 import wtf.choco.dragoneggdrop.world.PortalCrystal;
 
@@ -116,8 +118,14 @@ public final class DragonLifeListeners implements Listener {
 
         DragonBattle dragonBattle = dragon.getDragonBattle();
         EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
-        worldWrapper.setPreviousDragonUUID(dragon.getUniqueId());
         worldWrapper.setDragonDying(true);
+
+        // Record the battle
+        DragonTemplate dragonTemplate = worldWrapper.getActiveTemplate();
+        if (dragonTemplate != null) {
+            DragonBattleRecord record = new DragonBattleRecord(worldWrapper, dragonTemplate, DamageHistory.forEntity(dragon), System.currentTimeMillis(), worldWrapper.getLootTableOverride());
+            worldWrapper.recordDragonBattle(record);
+        }
 
         BattleStateChangeEvent bscEventCrystals = new BattleStateChangeEvent(dragonBattle, dragon, BattleState.BATTLE_COMMENCED, BattleState.BATTLE_END);
         Bukkit.getPluginManager().callEvent(bscEventCrystals);

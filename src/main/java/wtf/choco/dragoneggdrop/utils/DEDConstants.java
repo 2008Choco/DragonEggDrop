@@ -22,6 +22,7 @@ public final class DEDConstants {
     public static final String CONFIG_STRICT_COUNTDOWN = "strict-countdown";
 
     public static final String CONFIG_DISABLED_WORLDS = "disabled-worlds";
+    public static final String CONFIG_WORLD_HISTORY_SIZE = "world-history-size";
 
     public static final String CONFIG_RESPAWN_MESSAGES_MESSAGES = "respawn-messages.messages";
     public static final String CONFIG_RESPAWN_MESSAGES_CONDENSED = "respawn-messages.condensed";
@@ -46,6 +47,7 @@ public final class DEDConstants {
     public static final String PERMISSION_COMMAND_TEMPLATE_GENERATELOOT = "dragoneggdrop.command.template.generateloot";
     public static final String PERMISSION_COMMAND_TEMPLATE_INFO = "dragoneggdrop.command.template.info";
     public static final String PERMISSION_COMMAND_TEMPLATE_LIST = "dragoneggdrop.command.template.list";
+    public static final String PERMISSION_COMMAND_HISTORY = "dragoneggdrop.command.history";
     public static final String PERMISSION_OVERRIDE_CRYSTALS = "dragoneggdrop.overridecrystals";
 
     // Metadata constants

@@ -5,12 +5,15 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderDragon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +23,7 @@ import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.tasks.DragonCheckRunnable;
 import wtf.choco.dragoneggdrop.tasks.RespawnRunnable;
+import wtf.choco.dragoneggdrop.utils.DEDConstants;
 
 /**
  * Represents a wrapped {@link World} object with {@link Environment#THE_END} to separate
@@ -31,10 +35,11 @@ public class EndWorldWrapper {
 
     private static final Map<@NotNull UUID, @NotNull EndWorldWrapper> WRAPPERS = new HashMap<>();
 
-    private DragonTemplate activeTemplate, respawningTemplate, previousTemplate;
+    private DragonTemplate activeTemplate, respawningTemplate;
     private DragonLootTable lootTableOverride = null;
 
-    private UUID previousDragonUUID;
+    private final LinkedList<DragonBattleRecord> battleHistory; // Intentionally not annotated
+    private final int maxBattleHistorySize;
 
     private RespawnRunnable respawnTask;
     private DragonRespawnData dragonRespawnData;
@@ -49,13 +54,17 @@ public class EndWorldWrapper {
      * Construct a new EndWorldWrapper around an existing world
      *
      * @param world the world to wrap
+     * @param maxHistorySize the maximum amount of history to store
      */
-    protected EndWorldWrapper(@NotNull World world) {
+    protected EndWorldWrapper(@NotNull World world, int maxHistorySize) {
         Preconditions.checkArgument(world != null, "world must not be null");
         Preconditions.checkArgument(world.getEnvironment() == Environment.THE_END, "EndWorldWrapper worlds must be of environment \"THE_END\"");
 
         this.plugin = DragonEggDrop.getInstance();
         this.world = world.getUID();
+        this.battleHistory = new LinkedList<>();
+        this.maxBattleHistorySize = maxHistorySize;
+
         this.dragonCheckRunnable = new DragonCheckRunnable(plugin, this);
         this.dragonCheckRunnable.runTaskTimer(plugin, 0L, 20L);
     }
@@ -291,30 +300,12 @@ public class EndWorldWrapper {
 
     /**
      * Set the battle that is active according to DragonEggDrop. This battle instance will
-     * be used to generate names and lore for loot respectively. Additionally, the last
-     * battle will be set to the current active battle (unless null)
-     *
-     * @param template the battle to set
-     * @param updatePreviousTemplate whether to set the previous template to the current
-     * active template (if not null)
-     */
-    public void setActiveTemplate(@Nullable DragonTemplate template, boolean updatePreviousTemplate) {
-        if (updatePreviousTemplate && activeTemplate != null) {
-            this.previousTemplate = activeTemplate;
-        }
-
-        this.activeTemplate = template;
-    }
-
-    /**
-     * Set the battle that is active according to DragonEggDrop. This battle instance will
-     * be used to generate names and lore for loot respectively. Additionally, the last
-     * battle will be set to the current active battle (unless null)
+     * be used to generate names and lore for loot respectively.
      *
      * @param template the battle to set
      */
     public void setActiveTemplate(@Nullable DragonTemplate template) {
-        this.setActiveTemplate(template, true);
+        this.activeTemplate = template;
     }
 
     /**
@@ -350,42 +341,84 @@ public class EndWorldWrapper {
     }
 
     /**
-     * Set the template represented in the last successful battle.
+     * Record a {@link DragonBattleRecord} to this world at the top of the history. If there are
+     * more recorded dragon battles than {@link #getMaxBattleHistorySize()}, the oldest entry will
+     * be pushed out and returned. Note that this method will push out any records that exceed the
+     * maximum battle history size but will only return the oldest.
      *
-     * @param previousTemplate the previous template
-     */
-    public void setPreviousTemplate(@Nullable DragonTemplate previousTemplate) {
-        this.previousTemplate = previousTemplate;
-    }
-
-    /**
-     * Get the template represented in the last successful battle.
+     * @param record the record to record
      *
-     * @return the last battle
+     * @return the oldest record that was pushed out. null if none
      */
     @Nullable
-    public DragonTemplate getPreviousTemplate() {
-        return previousTemplate;
+    public DragonBattleRecord recordDragonBattle(@NotNull DragonBattleRecord record) {
+        Preconditions.checkArgument(record != null, "record must not be null");
+
+        DragonBattleRecord lastRecord = null;
+        while (battleHistory.size() >= maxBattleHistorySize) {
+            if (lastRecord == null) {
+                lastRecord = battleHistory.pollLast();
+                continue;
+            }
+
+            this.battleHistory.pollLast();
+        }
+
+        this.battleHistory.push(record);
+        return lastRecord;
     }
 
     /**
-     * Set the UUID of the dragon that was most recently slain. This is mostly for
-     * internal use. Please avoid calling this.
+     * Get a previous dragon battle at the given index. If the index is negative or exceeds
+     * {@link #getMaxBattleHistorySize()}, null will be returned.
      *
-     * @param previousDragonUUID the UUID of the dragon that was slain
-     */
-    public void setPreviousDragonUUID(@Nullable UUID previousDragonUUID) {
-        this.previousDragonUUID = previousDragonUUID;
-    }
-
-    /**
-     * Get the UUID of the dragon that was most recently slain.
+     * @param index the index of the record to fetch. Must be between 0 and
+     * {@link #getMaxBattleHistorySize()}
      *
-     * @return the UUID of the dragon that was slain
+     * @return the record. null if none
      */
     @Nullable
-    public UUID getPreviousDragonUUID() {
-        return previousDragonUUID;
+    public DragonBattleRecord getPreviousDragonBattle(int index) {
+        return index >= 0 && index < getPreviousDragonBattleCount() ? battleHistory.get(index) : null;
+    }
+
+    /**
+     * Get the most recent dragon battle. Equivalent to calling {@code getPreviousDragonBattle(0)}.
+     *
+     * @return the most recent dragon battle. null if none
+     */
+    @Nullable
+    public DragonBattleRecord getPreviousDragonBattle() {
+        return battleHistory.peek();
+    }
+
+    /**
+     * Get a {@link List} of previous dragon battles where index 0 is the most recent dragon
+     * battle and {@link Collection#size()} is the oldest.
+     *
+     * @return all previous dragon battles
+     */
+    @NotNull
+    public List<@NotNull DragonBattleRecord> getPreviousDragonBattles() {
+        return Collections.unmodifiableList(battleHistory);
+    }
+
+    /**
+     * Get the amount of battles recorded in the battle history.
+     *
+     * @return the amount of battle records
+     */
+    public int getPreviousDragonBattleCount() {
+        return battleHistory.size();
+    }
+
+    /**
+     * Get the maximum amount of battles recordable by this world.
+     *
+     * @return the max battle history size
+     */
+    public int getMaxBattleHistorySize() {
+        return maxBattleHistorySize;
     }
 
     /**
@@ -429,7 +462,9 @@ public class EndWorldWrapper {
     @NotNull
     public static EndWorldWrapper of(@NotNull World world) {
         Preconditions.checkArgument(world != null, "Cannot get wrapper for non-existent (null) world");
-        return WRAPPERS.computeIfAbsent(world.getUID(), uuid -> new EndWorldWrapper(world));
+
+        FileConfiguration config = DragonEggDrop.getInstance().getConfig();
+        return WRAPPERS.computeIfAbsent(world.getUID(), uuid -> new EndWorldWrapper(world, config.getInt(DEDConstants.CONFIG_WORLD_HISTORY_SIZE, 5)));
     }
 
     /**

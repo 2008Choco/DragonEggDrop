@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +28,7 @@ import wtf.choco.dragoneggdrop.dragon.DamageHistory.DamageEntry;
 import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.utils.ConfigUtils;
 import wtf.choco.dragoneggdrop.utils.DEDConstants;
+import wtf.choco.dragoneggdrop.world.DragonBattleRecord;
 import wtf.choco.dragoneggdrop.world.DragonRespawnData;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
@@ -180,8 +180,8 @@ public final class DragonEggDropPlaceholders {
             }
 
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            DragonTemplate template = endWorld.getPreviousTemplate();
-            return (template != null) ? template.getName() : null;
+            DragonBattleRecord previousDragonBattle = endWorld.getPreviousDragonBattle();
+            return (previousDragonBattle != null) ? previousDragonBattle.getTemplate().getName() : null;
         }
 
         else if (placeholder.startsWith("slain_dragon_")) { // %dragoneggdrop_slain_dragon[_world]%
@@ -191,8 +191,8 @@ public final class DragonEggDropPlaceholders {
             }
 
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            DragonTemplate template = endWorld.getPreviousTemplate();
-            return (template != null) ? template.getName() : "no dragon";
+            DragonBattleRecord previousDragonBattle = endWorld.getPreviousDragonBattle();
+            return (previousDragonBattle != null) ? previousDragonBattle.getTemplate().getName() : null;
         }
 
         else if (placeholder.equalsIgnoreCase("respawn_time")) { // %dragoneggdrop_respawn_time%
@@ -251,13 +251,13 @@ public final class DragonEggDropPlaceholders {
                 return "invalid world";
             }
 
-            DamageHistory history = null;
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            UUID previousDragonUUID = endWorld.getPreviousDragonUUID();
-            if (previousDragonUUID != null) {
-                history = DamageHistory.forEntity(previousDragonUUID);
+            DragonBattleRecord previousDragonBattle = endWorld.getPreviousDragonBattle();
+            if (previousDragonBattle == null) {
+                return "None";
             }
 
+            DamageHistory history = previousDragonBattle.getDamageHistory();
             if (history == null || offset >= history.uniqueDamagers()) {
                 return "None";
             }
@@ -287,23 +287,19 @@ public final class DragonEggDropPlaceholders {
                 return "invalid world";
             }
 
-            DamageHistory history = null;
             EndWorldWrapper endWorld = EndWorldWrapper.of(world);
-            UUID previousDragonUUID = endWorld.getPreviousDragonUUID();
-            if (previousDragonUUID != null) {
-                history = DamageHistory.forEntity(previousDragonUUID);
+            DragonBattleRecord previousDragonBattle = endWorld.getPreviousDragonBattle();
+            if (previousDragonBattle == null) {
+                return "0";
             }
 
-            if (history == null) {
+            DamageHistory history = previousDragonBattle.getDamageHistory();
+            if (history == null || offset >= history.uniqueDamagers()) {
                 return "0";
             }
 
             DamageEntry topDamageEntry = history.getTopDamager(offset);
-            if (topDamageEntry == null) {
-                return "0";
-            }
-
-            return (history != null && offset < history.uniqueDamagers()) ? DECIMAL_FORMAT.format(topDamageEntry.getDamage()) : "0";
+            return topDamageEntry != null ? DECIMAL_FORMAT.format(topDamageEntry.getDamage()) : "0";
         }
 
         return null;

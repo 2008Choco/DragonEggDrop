@@ -2,6 +2,7 @@ package wtf.choco.dragoneggdrop.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
@@ -12,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -26,6 +28,7 @@ import wtf.choco.dragoneggdrop.dragon.DragonTemplate;
 import wtf.choco.dragoneggdrop.dragon.loot.DragonLootTable;
 import wtf.choco.dragoneggdrop.particle.ParticleShapeDefinition;
 import wtf.choco.dragoneggdrop.registry.Registry;
+import wtf.choco.dragoneggdrop.world.DragonBattleRecord;
 import wtf.choco.dragoneggdrop.world.DragonRespawnData;
 import wtf.choco.dragoneggdrop.world.EndWorldWrapper;
 
@@ -52,42 +55,45 @@ public final class DataFileUtils {
             return;
         }
 
-        JsonObject root = new JsonObject();
+        JsonObject object = new JsonObject();
 
         for (EndWorldWrapper world : EndWorldWrapper.getAll()) {
-            JsonObject jsonWorld = new JsonObject();
+            JsonObject objectWorld = new JsonObject();
 
             DragonTemplate respawningTemplate = world.getRespawningTemplate();
             if (respawningTemplate != null) {
-                jsonWorld.addProperty("respawnTemplate", respawningTemplate.getId());
+                objectWorld.addProperty("respawnTemplate", respawningTemplate.getId());
             }
 
             DragonTemplate activeTemplate = world.getActiveTemplate();
             if (activeTemplate != null) {
-                jsonWorld.addProperty("activeTemplate", activeTemplate.getId());
-            }
-
-            DragonTemplate previousTemplate = world.getPreviousTemplate();
-            if (previousTemplate != null) {
-                jsonWorld.addProperty("previousTemplate", previousTemplate.getId());
+                objectWorld.addProperty("activeTemplate", activeTemplate.getId());
             }
 
             DragonLootTable lootTableOverride = world.getLootTableOverride();
             if (lootTableOverride != null) {
-                jsonWorld.addProperty("lootTableOverride", lootTableOverride.getId());
+                objectWorld.addProperty("lootTableOverride", lootTableOverride.getId());
             }
 
             DragonRespawnData respawnData = world.getDragonRespawnData();
             if (world.isRespawnInProgress() && respawnData != null) {
-                jsonWorld.addProperty("respawnStartTime", respawnData.getStartTime());
-                jsonWorld.addProperty("respawnDuration", respawnData.getDuration());
+                objectWorld.addProperty("respawnStartTime", respawnData.getStartTime());
+                objectWorld.addProperty("respawnDuration", respawnData.getDuration());
             }
 
-            root.add(world.getWorld().getName(), jsonWorld);
+            List<@NotNull DragonBattleRecord> previousDragonBattles = world.getPreviousDragonBattles();
+            if (previousDragonBattles.size() >= 1) {
+                JsonArray historyArray = new JsonArray();
+                previousDragonBattles.forEach(record -> historyArray.add(record.toJson()));
+
+                objectWorld.add("history", historyArray);
+            }
+
+            object.add(world.getWorld().getName(), objectWorld);
         }
 
         try (PrintWriter writer = new PrintWriter(file)) {
-            DragonEggDrop.GSON.toJson(root, new JsonWriter(writer));
+            DragonEggDrop.GSON.toJson(object, new JsonWriter(writer));
         } catch (JsonIOException | IOException e) {
             e.printStackTrace();
         }
@@ -129,18 +135,18 @@ public final class DataFileUtils {
             }
 
             EndWorldWrapper worldWrapper = EndWorldWrapper.of(world);
-            JsonObject element = entry.getValue().getAsJsonObject();
+            JsonObject worldObject = entry.getValue().getAsJsonObject();
 
-            if (element.has("respawnTemplate")) {
-                DragonTemplate template = dragonTemplateRegistry.get(element.get("respawnTemplate").getAsString());
+            if (worldObject.has("respawnTemplate")) {
+                DragonTemplate template = dragonTemplateRegistry.get(worldObject.get("respawnTemplate").getAsString());
                 if (template != null) {
                     worldWrapper.setRespawningTemplate(template);
                 }
             }
 
             Collection<@NotNull EnderDragon> dragons = world.getEntitiesByClass(EnderDragon.class);
-            if (element.has("activeTemplate") && !dragons.isEmpty()) {
-                DragonTemplate template = dragonTemplateRegistry.get(element.get("activeTemplate").getAsString());
+            if (worldObject.has("activeTemplate") && !dragons.isEmpty()) {
+                DragonTemplate template = dragonTemplateRegistry.get(worldObject.get("activeTemplate").getAsString());
                 DragonBattle battle = world.getEnderDragonBattle();
 
                 if (template != null && battle != null) {
@@ -149,38 +155,45 @@ public final class DataFileUtils {
                 }
             }
 
-            if (element.has("previousTemplate")) {
-                DragonTemplate template = dragonTemplateRegistry.get(element.get("previousTemplate").getAsString());
-                if (template != null) {
-                    worldWrapper.setPreviousTemplate(template);
-                }
+            if (worldObject.has("history")) {
+                JsonArray historyArray = worldObject.getAsJsonArray("history");
+                historyArray.forEach(historyEntryElement -> {
+                    if (!historyEntryElement.isJsonObject()) {
+                        return;
+                    }
+
+                    JsonObject historyEntryObject = historyEntryElement.getAsJsonObject();
+                    DragonBattleRecord dragonBattleRecord = DragonBattleRecord.fromJson(worldWrapper, historyEntryObject);
+
+                    worldWrapper.recordDragonBattle(dragonBattleRecord);
+                });
             }
 
-            if (element.has("lootTableOverride")) {
-                DragonLootTable lootTable = lootTableRegistry.get(element.get("lootTableOverride").getAsString());
+            if (worldObject.has("lootTableOverride")) {
+                DragonLootTable lootTable = lootTableRegistry.get(worldObject.get("lootTableOverride").getAsString());
                 if (lootTable != null) {
                     worldWrapper.setLootTableOverride(lootTable);
                 }
             }
 
-            if (element.has("respawnStartTime") && element.has("respawnDuration")) {
+            if (worldObject.has("respawnStartTime") && worldObject.has("respawnDuration")) {
                 if (worldWrapper.isRespawnInProgress()) {
                     worldWrapper.stopRespawn();
                 }
 
-                long startTime = element.get("respawnStartTime").getAsLong();
-                long duration = element.get("respawnDuration").getAsLong();
+                long startTime = worldObject.get("respawnStartTime").getAsLong();
+                long duration = worldObject.get("respawnDuration").getAsLong();
 
                 worldWrapper.startRespawn(new DragonRespawnData(worldWrapper, startTime, duration));
             }
 
             // LEGACY DATA
-            else if (element.has("respawnTime")) {
+            else if (worldObject.has("respawnTime")) {
                 if (worldWrapper.isRespawnInProgress()) {
                     worldWrapper.stopRespawn();
                 }
 
-                worldWrapper.startRespawn(element.get("respawnTime").getAsInt());
+                worldWrapper.startRespawn(worldObject.get("respawnTime").getAsInt());
             }
             // LEGACY DATA END
         }

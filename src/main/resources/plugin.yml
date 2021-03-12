@@ -14,7 +14,7 @@ commands:
     aliases: [ded]
   dragonrespawn:
     description: Functionality to manipulate the dragon respawn process
-    usage: /<command> <stop|start|template>
+    usage: /<command> <stop|start|template|history>
     aliases: [respawndragon, dragonspawn, spawndragon]
     permission: dragoneggdrop.command.respawn
   dragontemplate:
@@ -44,6 +44,7 @@ permissions:
       dragoneggdrop.command.respawn.*: true
       dragoneggdrop.command.template: true
       dragoneggdrop.command.template.*: true
+      dragoneggdrop.command.history: true
       dragoneggdrop.command.particle: true
 
   dragoneggdrop.overridecrystals:
