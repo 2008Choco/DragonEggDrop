@@ -15,7 +15,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderDragon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +40,6 @@ public class EndWorldWrapper {
     private DragonLootTable lootTableOverride = null;
 
     private final LinkedList<DragonBattleRecord> battleHistory; // Intentionally not annotated
-    private final int maxBattleHistorySize;
 
     private RespawnRunnable respawnTask;
     private DragonRespawnData dragonRespawnData;
@@ -58,9 +56,8 @@ public class EndWorldWrapper {
      * Construct a new EndWorldWrapper around an existing world
      *
      * @param world the world to wrap
-     * @param maxHistorySize the maximum amount of history to store
      */
-    protected EndWorldWrapper(@NotNull World world, int maxHistorySize) {
+    protected EndWorldWrapper(@NotNull World world) {
         Preconditions.checkArgument(world != null, "world must not be null");
         Preconditions.checkArgument(world.getEnvironment() == Environment.THE_END, "EndWorldWrapper worlds must be of environment \"THE_END\"");
 
@@ -68,7 +65,6 @@ public class EndWorldWrapper {
         this.worldUUID = world.getUID();
         this.worldReference = new WeakReference<>(world);
         this.battleHistory = new LinkedList<>();
-        this.maxBattleHistorySize = maxHistorySize;
 
         this.dragonCheckRunnable = new DragonCheckRunnable(plugin, this);
         this.dragonCheckRunnable.runTaskTimer(plugin, 0L, 20L);
@@ -375,7 +371,7 @@ public class EndWorldWrapper {
         Preconditions.checkArgument(record != null, "record must not be null");
 
         DragonBattleRecord lastRecord = null;
-        while (battleHistory.size() >= maxBattleHistorySize) {
+        while (battleHistory.size() >= getMaxBattleHistorySize()) {
             if (lastRecord == null) {
                 lastRecord = battleHistory.pollLast();
                 continue;
@@ -438,7 +434,7 @@ public class EndWorldWrapper {
      * @return the max battle history size
      */
     public int getMaxBattleHistorySize() {
-        return maxBattleHistorySize;
+        return plugin.getConfig().getInt(DEDConstants.CONFIG_WORLD_HISTORY_SIZE, 5);
     }
 
     /**
@@ -482,9 +478,7 @@ public class EndWorldWrapper {
     @NotNull
     public static EndWorldWrapper of(@NotNull World world) {
         Preconditions.checkArgument(world != null, "Cannot get wrapper for non-existent (null) world");
-
-        FileConfiguration config = DragonEggDrop.getInstance().getConfig();
-        return WRAPPERS.computeIfAbsent(world.getUID(), uuid -> new EndWorldWrapper(world, config.getInt(DEDConstants.CONFIG_WORLD_HISTORY_SIZE, 5)));
+        return WRAPPERS.computeIfAbsent(world.getUID(), uuid -> new EndWorldWrapper(world));
     }
 
     /**
