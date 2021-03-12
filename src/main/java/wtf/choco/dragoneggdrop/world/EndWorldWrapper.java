@@ -2,6 +2,8 @@ package wtf.choco.dragoneggdrop.world;
 
 import com.google.common.base.Preconditions;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,8 +49,10 @@ public class EndWorldWrapper {
     private DragonCheckRunnable dragonCheckRunnable;
     private boolean dragonDying = false;
 
+    private Reference<@Nullable World> worldReference;
+    private final UUID worldUUID;
+
     private final DragonEggDrop plugin;
-    private final UUID world;
 
     /**
      * Construct a new EndWorldWrapper around an existing world
@@ -61,7 +65,8 @@ public class EndWorldWrapper {
         Preconditions.checkArgument(world.getEnvironment() == Environment.THE_END, "EndWorldWrapper worlds must be of environment \"THE_END\"");
 
         this.plugin = DragonEggDrop.getInstance();
-        this.world = world.getUID();
+        this.worldUUID = world.getUID();
+        this.worldReference = new WeakReference<>(world);
         this.battleHistory = new LinkedList<>();
         this.maxBattleHistorySize = maxHistorySize;
 
@@ -76,13 +81,28 @@ public class EndWorldWrapper {
      */
     @NotNull
     public World getWorld() {
-        World world = Bukkit.getWorld(this.world);
+        World world = worldReference.get();
+
+        if (world == null) {
+            world = Bukkit.getWorld(worldUUID);
+            this.worldReference = new WeakReference<>(world);
+        }
 
         if (world == null) {
             throw new IllegalStateException("The world doesn't exist?");
         }
 
         return world;
+    }
+
+    /**
+     * Get the UUID of the world represented by this wrapper.
+     *
+     * @return the represented world UUID
+     */
+    @NotNull
+    public UUID getWorldUUID() {
+        return worldUUID;
     }
 
     /**
@@ -195,7 +215,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(DragonRespawnData, DragonTemplate)
      */
     public boolean startRespawn(@NotNull DragonRespawnData respawnData) {
-        DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
+        DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
         return template != null && startRespawn(respawnData, template, null);
     }
 
@@ -211,7 +231,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(long, DragonTemplate)
      */
     public boolean startRespawn(long time) {
-        DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
+        DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
         return template != null && startRespawn(time, template, null);
     }
 
@@ -228,7 +248,7 @@ public class EndWorldWrapper {
      * @see #startRespawn(long)
      */
     public boolean startRespawn(@NotNull RespawnReason reason) {
-        DragonTemplate template = DragonEggDrop.getInstance().getDragonTemplateRegistry().getRandomTemplate();
+        DragonTemplate template = plugin.getDragonTemplateRegistry().getRandomTemplate();
         return template != null && startRespawn(reason.getRespawnTime(plugin.getConfig()), template, null);
     }
 
